@@ -40,3 +40,4 @@ class EditStaticPage extends EditRecord
         return $data;
     }
 }
+

@@ -950,7 +950,7 @@ return [
         'homeConferencePartners' => 'Partnerët e Konferencës',
         'homeToLeft' => 'Në të majtë',
         'homeToRight' => 'Në të djathtë',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Tani nuk ka seri aktive, ju lutemi krijoni një seri të parë.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Tani nuk ka seri aktive, ju lutemi krijoni një seri të parë.',
 
         'loginEmail' => 'Email',
         'login' => 'Hyrje',

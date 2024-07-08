@@ -2,6 +2,8 @@
 
 namespace App\Panel\Conference\Resources;
 
+use App\Actions\StaticPages\StaticPageCreateAction;
+use App\Actions\StaticPages\StaticPageUpdateAction;
 use App\Forms\Components\TagSuggestions;
 use App\Models\Enums\ContentType;
 use App\Models\StaticPage;
@@ -19,8 +21,10 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 
 class StaticPageResource extends Resource
@@ -40,6 +44,19 @@ class StaticPageResource extends Resource
     {
         return __('translation.announcementResource.announcementResourceNavigationGroup');
     }
+    protected static ?string $navigationGroup = 'Conferences';
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = static::getModel()::query();
+
+        if(!app()->getCurrentSerieId()){
+            $query->where('serie_id', 0);
+        }
+
+        return $query;
+    }
+
 
     public static function form(Form $form): Form
     {
@@ -159,6 +176,20 @@ class StaticPageResource extends Resource
                                 'lg' => 3,
                             ]),
                     ]),
+                TextInput::make('slug')
+                    ->alphaDash()
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
+                        return $rule
+                            ->where('conference_id', app()->getCurrentConference()->getKey())
+                            ->where('serie_id', app()->getCurrentSerie()?->getKey() ?? 0);
+                    }),
+                TextInput::make('title')
+                    ->required(),
+                TinyEditor::make('meta.content')
+                    ->label('Content')
+                    ->minHeight(600)
+                    ->columnSpanFull()
+                    ->helperText('The complete page content.'),
             ]);
     }
 
@@ -169,6 +200,11 @@ class StaticPageResource extends Resource
                 TextColumn::make('title')
                     ->label(__('translation.staticPageResource.staticPageResourceLabelTitle'))
                     ->searchable(),
+                TextColumn::make('slug')
+                    ->searchable()
+                    ->color('primary')
+                    ->url(fn (StaticPage $staticPage) => $staticPage->getUrl())
+                    ->openUrlInNewTab(),
                 TextColumn::make('path')
                     ->label(__('translation.staticPageResource.staticPageResourceLabelPath'))
                     ->getStateUsing(fn (StaticPage $record) => $record->getUrl()),
@@ -180,12 +216,8 @@ class StaticPageResource extends Resource
                 //
             ])
             ->actions([
-                Action::make('preview')
-                    ->label(__('translation.button.preview'))
-                    ->icon('heroicon-o-eye')
-                    ->url(fn (StaticPage $record) => $record->getUrl())
-                    ->color('gray'),
-                EditAction::make(),
+                EditAction::make()
+                    ->using(fn(StaticPage $record, array $data) => StaticPageUpdateAction::run($record, $data)),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -205,8 +237,6 @@ class StaticPageResource extends Resource
     {
         return [
             'index' => Pages\ListStaticPages::route('/'),
-            'create' => Pages\CreateStaticPage::route('/create'),
-            'edit' => Pages\EditStaticPage::route('/{record}/edit'),
         ];
     }
 }

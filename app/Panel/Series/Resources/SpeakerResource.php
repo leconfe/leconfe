@@ -21,11 +21,11 @@ use App\Panel\Series\Resources\SpeakerResource\Pages;
 
 class SpeakerResource extends Resource
 {
-    // protected static ?string $navigationGroup = 'Conferences';
-
     protected static ?string $model = Speaker::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'Conference';
 
     public static function getNavigationLabel(): string
     {

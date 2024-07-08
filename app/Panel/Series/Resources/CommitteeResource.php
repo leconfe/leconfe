@@ -20,9 +20,9 @@ use App\Panel\Series\Resources\CommitteeResource\Pages;
 
 class CommitteeResource extends Resource
 {
-    // protected static ?string $navigationGroup = 'Conferences';
-
     protected static ?string $model = Committee::class;
+
+    protected static ?string $navigationGroup = 'Conference';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 

@@ -12,7 +12,9 @@ trait BelongsToSerie
     public static function bootBelongsToSerie()
     {
         static::creating(function (Model $model) {
-            $model->serie_id ??= App::getCurrentSerieId();
+            if(App::getCurrentSerieId()){
+                $model->serie_id ??= App::getCurrentSerieId();
+            }
         });
     }
 

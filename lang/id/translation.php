@@ -961,7 +961,7 @@ return [
         'homeConferencePartners' => 'Partner Konferensi',
         'homeToLeft' => 'Ke Kiri',
         'homeToRight' => 'Ke Kanan',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Saat ini tidak ada seri aktif, silakan buat seri terlebih dahulu.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Saat ini tidak ada seri aktif, silakan buat seri terlebih dahulu.',
 
         'loginEmail' => 'Email',
         'login' => 'Login',

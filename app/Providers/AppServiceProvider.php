@@ -191,13 +191,7 @@ class AppServiceProvider extends ServiceProvider
                 // Eager load conference relations
                 $conference->load(['media', 'meta']);
 
-
-                if(isset($pathInfos[3]) && !blank($pathInfos[3])){
-                    $serie = Serie::where('path', $pathInfos[3])->first();
-                }
-
-                $serie ??= $conference->currentSerie;
-                if($serie){
+                if(isset($pathInfos[3]) && !blank($pathInfos[3]) && $serie = Serie::where('path', $pathInfos[3])->first()){
                     $this->app->setCurrentSerieId($serie->getKey());
                     $this->app->scopeCurrentSerie();
                 }

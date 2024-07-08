@@ -967,7 +967,7 @@ return [
         'homeConferencePartners' => 'Conference Partners',
         'homeToLeft' => 'To Left',
         'homeToRight' => 'To Right',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Currently no active serie, please create a serie first.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Currently no active serie, please create a serie first.',
 
         'loginEmail' => 'Email',
         'login' => 'Login',
