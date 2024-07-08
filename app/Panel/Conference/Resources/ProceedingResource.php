@@ -26,6 +26,16 @@ class ProceedingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.proceeding.proceedingResourceTitle');
+    }
+   
+    public static function getModelLabel(): string
+    {
+        return __('translation.proceeding.proceedingResourceTitle');
+    }
+    
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
@@ -38,26 +48,31 @@ class ProceedingResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Fieldset::make('Identification')
+                Fieldset::make(__('translation.proceeding.proceedingResourceTitle'))
                     ->columns(3)
                     ->schema([
                         TextInput::make('volume')
+                            ->label(__('translation.proceeding.proceedingResourceLabelVolume'))
                             ->numeric()
                             ->minValue(0),
                         TextInput::make('number')
+                            ->label(__('translation.proceeding.proceedingResourceLabelNumber'))
                             ->numeric()
                             ->minValue(0),
                         TextInput::make('year')
+                             ->label(__('translation.proceeding.proceedingResourceLabelYear'))
                             ->numeric()
                             ->minValue(0),
                     ]),
                 TextInput::make('title')
-                    ->label('Title')
+                    ->label(__('translation.proceeding.proceedingResourceLabelTitle'))
                     ->required(),
                 Textarea::make('description')
+                    ->label(__('translation.proceeding.proceedingResourceLabelDescription'))
                     ->nullable()
                     ->autosize(),
                 SpatieMediaLibraryFileUpload::make('cover')
+                    ->label(__('translation.proceeding.proceedingResourceLabelCover'))
                     ->collection('cover')
                     ->imageResizeUpscale(false)
                     ->image()
@@ -72,17 +87,20 @@ class ProceedingResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
+                    ->label(__('translation.proceeding.proceedingResourceLabelTableTitle'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('submissions_count')
-                    ->label('Submissions')
+                    ->label(__('translation.proceeding.proceedingResourceLabelTableSubmissions'))
                     ->counts('submissions'),
                 TextColumn::make('current')
                     ->hidden(fn(Component $livewire) => $livewire->activeTab === 'future')
                     ->state(fn(Proceeding $record) => $record->published && $record->current ? 'Current' : '')
+                    ->label(__('translation.proceeding.proceedingResourceLabelTableCurrent'))
                     ->badge(),
                 TextColumn::make('published_at')
                     ->sortable()
+                    ->label(__('translation.proceeding.proceedingResourceLabelTablePublishedAt'))
                     ->hidden(fn(Component $livewire) => $livewire->activeTab === 'future')
                     ->date(Setting::get('format_date'))
             ])

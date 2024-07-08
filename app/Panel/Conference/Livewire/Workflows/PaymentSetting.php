@@ -42,10 +42,10 @@ class PaymentSetting extends WorkflowStage implements HasActions, HasForms
     public function submitAction()
     {
         return Action::make('submitAction')
-            ->label('Save')
+            ->label(__('translation.button.save'))
             ->icon('lineawesome-save-solid')
-            ->failureNotificationTitle('Save Failed')
-            ->successNotificationTitle('Saved')
+            ->failureNotificationTitle(__('translation.workflowPaymentSetting.failureNotificationTitleSaveFailed'))
+            ->successNotificationTitle(__('translation.workflowPaymentSetting.successNotificationTitleSaved'))
             ->action(function (Action $action) {
                 $this->form->validate();
 
@@ -81,11 +81,12 @@ class PaymentSetting extends WorkflowStage implements HasActions, HasForms
                     ->hidden(fn (Get $get) => ! $get('payment.enabled'))
                     ->schema([
                         Select::make('payment.method')
-                            ->label('Payment Method')
+                            ->label(__('translation.workflowPaymentSetting.labelPaymentMethod'))
                             ->required()
                             ->options(Payment::getAllDriverNames())
                             ->reactive(),
                         Select::make('payment.supported_currencies')
+                            ->label(__('translation.workflowPaymentSetting.labelSupportedCurrencies'))
                             ->searchable()
                             ->required()
                             ->multiple()

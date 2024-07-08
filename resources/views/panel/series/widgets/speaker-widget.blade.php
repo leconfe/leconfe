@@ -1,9 +1,9 @@
 <x-filament-widgets::widget>
     <x-filament::section icon="heroicon-m-user-group" icon-color="info">
-        <x-slot name="heading">Speaker</x-slot>
+        <x-slot name="heading">{{ __('translation.seriesWidget.speakerWidgetHeading') }}</x-slot>
     
         @if ($speakers->isEmpty())
-            <h2 class="text-xl text-center text-gray-900 dark:text-white">Now there's no speaker here</h2>
+            <h2 class="text-xl text-center text-gray-900 dark:text-white">{{ __('translation.seriesWidget.speakerWidgetH2') }}</h2>
         @else
             <div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                 @foreach ($speakers as $speaker)

@@ -38,6 +38,18 @@ class PresenterResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.presenter.presenterResourceLabelTitlePresenters');
+    }
+    
+    public static function getModelLabel(): string
+    {
+        return __('translation.presenter.presenterResourceLabelTitlePresenters');
+    }
+
+
+
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
@@ -66,7 +78,7 @@ class PresenterResource extends Resource
             ->defaultGroup('submission.id')
             ->groups([
                 Group::make('submission.id')
-                    ->label('Group by Submission')
+                    ->label(__('translation.presenter.presenterResourceLabelGroupBySubmission'))
                     ->titlePrefixedWithLabel(false)
                     ->getTitleFromRecordUsing(fn (Presenter $record): string => 'Submission : '.ucfirst($record->submission?->getMeta('title')))
                     ->getDescriptionFromRecordUsing(fn (Presenter $record): string => 'Status : '.$record->submission->status->value)
@@ -138,7 +150,7 @@ class PresenterResource extends Resource
                         ]),
                         Panel::make([
                             TextColumn::make('notes')
-                                ->label('Notes')
+                                ->label(__('translation.presenter.PresenterResourceLabelNotes'))
                                 ->size('xs')
                                 ->getStateUsing(function (Presenter $record) {
                                     return new HtmlString(<<<HTML
@@ -178,8 +190,8 @@ class PresenterResource extends Resource
     {
         return [
             Tables\Actions\Action::make('approve')
-                ->label('Approve')
-                ->modalHeading('Approve Presenter')
+                ->label(__('translation.presenter.presenterResourceLabelApprove'))
+                ->modalHeading(__('translation.presenter.presenterResourceModalHeadingApprove'))
                 ->icon('heroicon-o-check')
                 ->iconSize('md')
                 ->color('primary')
@@ -192,7 +204,7 @@ class PresenterResource extends Resource
                 })
                 ->form([
                     Select::make('set_date')
-                        ->label('Set Date')
+                        ->label(__('translation.presenter.presenterResourceLabelSetDate'))
                         ->required()
                         ->preload()
                         ->searchable()
@@ -204,15 +216,15 @@ class PresenterResource extends Resource
                                 ->toArray();
                         }),
                     TinyEditor::make('notes')
-                        ->label('Notes')
+                        ->label(__('translation.presenter.presenterResourceLabelNotes'))
                         ->required()
-                        ->placeholder('Enter your notes here...')
-                        ->helperText('This note will be sent to and seen by the presenter.')
+                        ->placeholder(__('translation.presenter.presenterResourcePlaceholderEnterYourNotes'))
+                        ->helperText(__('translation.presenter.presenterResourceHelperTextNote'))
                         ->profile('email'),
                     Checkbox::make('do-not-notify-presenter')
-                        ->label("Don't Send Notification to Presenter"),
+                        ->label(__('translation.presenter.presenterResourceLabelCheckBox')),
                 ])
-                ->successNotificationTitle('The presenter has been approved.')
+                ->successNotificationTitle(__('translation.presenter.presenterResourcesuccessNotificationTitleApproved'))
                 ->action(function (Tables\Actions\Action $action, array $data, Presenter $record) {
                     $approvedPresenter = PresenterApprovedAction::run($record);
                             
@@ -233,7 +245,7 @@ class PresenterResource extends Resource
                             Mail::to($record->email)
                                 ->send($getTemplateMail);
                         } catch (\Exception $e) {
-                            $action->failureNotificationTitle('The email notification was not delivered.');
+                            $action->failureNotificationTitle(__('translation.presenter.presenterResourceFailureNotificationTitleEmail'));
                             $action->failure();
                         }
                     }
@@ -241,8 +253,8 @@ class PresenterResource extends Resource
                     $action->success();
                 }),
                 Tables\Actions\Action::make('reject')
-                    ->label('Reject')
-                    ->modalHeading('Reject Presenter')
+                    ->label(__('translation.presenter.presenterResourceLabelReject'))
+                    ->modalHeading(__('translation.presenter.presenterResourceModalHeadingRejectPresenter'))
                     ->icon('heroicon-o-x-mark')
                     ->iconSize('md')
                     ->color('danger')
@@ -255,15 +267,15 @@ class PresenterResource extends Resource
                     })
                     ->form([
                         TinyEditor::make('notes')
-                            ->label('Notes')
+                            ->label(__('translation.presenter.presenterResourceLabelNotes'))
                             ->profile('email')
                             ->required()
-                            ->placeholder('Enter your note here...')
-                            ->helperText('This note will be sent to and seen by the presenter.'),
+                            ->placeholder(__('translation.presenter.presenterResourceplaceholderEnterYoutNote'))
+                            ->helperText(__('translation.presenter.presenterResourceHelperTextThisNoteWill')),
                         Checkbox::make('do-not-notify-presenter')
-                            ->label("Don't Send Notification to Presenter"),
+                            ->label(__('translation.presenter.presenterResourceLabelCheckBox')),
                     ])
-                    ->successNotificationTitle('The presenter has been rejected.')
+                    ->successNotificationTitle(__('translation.presenter.presenterResourcesuccessNotificationTitleRejected'))
                     ->action(function (Tables\Actions\Action $action, array $data, Presenter $record) {
                         $rejectedPresenter = PresenterRejectedAction::run($record);
                             
@@ -282,7 +294,7 @@ class PresenterResource extends Resource
                                 Mail::to($record->email)
                                     ->send($getTemplateMail);
                             } catch (\Exception $e) {
-                                $action->failureNotificationTitle('The email notification was not delivered.');
+                                $action->failureNotificationTitle(__('translation.presenter.presenterResourceFailureNotificationTitleEmail'));
                                 $action->failure();
                             }
                         }

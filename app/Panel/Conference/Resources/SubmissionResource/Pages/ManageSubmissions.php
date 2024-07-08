@@ -12,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
@@ -30,6 +31,16 @@ class ManageSubmissions extends ManageRecords
 
     protected const TAB_ARCHIVED = 'Archived';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.submissions.labelSubmission');
+    }
+   
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.submissions.labelSubmission');
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -40,8 +51,14 @@ class ManageSubmissions extends ManageRecords
                     })
                     ->type('warning')
                     ->content(function () {
-                        $htmlString = 'Call for abstract stage is closed. ';
-                        $htmlString .= sprintf("<a href='%s' class='text-warning-700 hover:underline'>Click here</a> to open it.", Workflow::getUrl());
+                        $htmlString =  __('translation.submissions.contentCallForAbstractStageIsClosed');;
+                        $htmlString .= sprintf(
+                            "<a href='%s' class='text-warning-700 hover:underline'>%s</a> %s",
+                            Workflow::getUrl(),
+                            __('translation.submissions.contentClickHere'),
+                            __('translation.submissions.contentToOpenIt')
+                        );
+                        
 
                         return new HtmlString($htmlString);
                     }),
@@ -56,7 +73,8 @@ class ManageSubmissions extends ManageRecords
                 ->authorize('Workflow:update')
                 ->outlined()
                 ->icon('heroicon-o-cog')
-                ->url(Workflow::getUrl()),
+                ->url(Workflow::getUrl())
+                ->label(__('translation.submissions.labelButtonSettings')),
             Action::make('create')
                 ->button()
                 ->authorize('Submission:create')
@@ -67,10 +85,10 @@ class ManageSubmissions extends ManageRecords
                 ->icon('heroicon-o-plus')
                 ->label(function (Action $action) {
                     if ($action->isDisabled()) {
-                        return 'Submission is not open';
+                        return __('translation.submissions.labelButtonSubmissionIsNotOpen');
                     }
 
-                    return 'Submission';
+                    return __('translation.submissions.labelButtonSubmissionn');
                 }),
         ];
     }
@@ -169,10 +187,10 @@ class ManageSubmissions extends ManageRecords
     public function getTabs(): array
     {
         return [
-            static::TAB_MYQUEUE => $this->createTab('My Queue', static::TAB_MYQUEUE),
-            static::TAB_ACTIVE => $this->createTab('Active', static::TAB_ACTIVE),
-            static::TAB_PUBLISHED => $this->createTab('Published', static::TAB_PUBLISHED),
-            static::TAB_ARCHIVED => $this->createTab('Archived', static::TAB_ARCHIVED),
+            static::TAB_MYQUEUE => $this->createTab(__('translation.submissions.tabMyQueue'), static::TAB_MYQUEUE),
+            static::TAB_ACTIVE => $this->createTab(__('translation.submissions.tabActive'), static::TAB_ACTIVE),
+            static::TAB_PUBLISHED => $this->createTab(__('translation.submissions.tabPublished'), static::TAB_PUBLISHED),
+            static::TAB_ARCHIVED => $this->createTab(__('translation.submissions.tabArchived'), static::TAB_ARCHIVED),
         ];
     }
 

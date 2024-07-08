@@ -50,6 +50,11 @@ class SubmissionResource extends Resource
         return parent::getEloquentQuery()->with(['meta', 'user'])->orderBy('updated_at', 'desc');
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('translation.submissions.labelSubmission');
+    }
+
     public static function getGlobalSearchResults(string $search): Collection
     {
         $search = strtolower($search);

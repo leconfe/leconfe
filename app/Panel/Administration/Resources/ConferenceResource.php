@@ -25,7 +25,9 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
+use PhpParser\Node\Stmt\Label;
 use Squire\Models\Country;
 
 class ConferenceResource extends Resource
@@ -33,25 +35,40 @@ class ConferenceResource extends Resource
     protected static ?string $model = Conference::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-window';
+    // c
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.conference.getNavigationLabel');
+    }
+   
+    public static function getModelLabel(): string
+    {
+        return __('translation.conference.getNavigationLabel');
+    }
+ 
+            
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label(__('translation.conference.labelName'))
                     ->columnSpanFull()
                     ->required(),
                 Grid::make()
                     ->schema([
                         TextInput::make('meta.acronym')
-                            ->helperText('The acronym of the conference series'),
+                            ->label(__('translation.conference.labelAcronym'))
+                            ->helperText(__('translation.conference.helperTextTheAcronymOfTheConferenceSeries')),
                         TextInput::make('meta.issn')
                             ->label('ISSN')
-                            ->helperText('The ISSN of the conference series'),
+                            ->helperText(__('translation.conference.helperTextTheISSNOfTheConferenceSeries')),
                     ]),
                 TextInput::make('path')
-                    ->label('Path')
-                    ->helperText('The path of the conference. This will be used in the URL of the conference.')
+                    ->label(__('translation.conference.labelPath'))
+                    ->helperText(__('translation.conference.helperTextThepath'))
                     ->required()
                     ->rule('alpha_dash')
                     ->unique(ignoreRecord: true)
@@ -67,6 +84,7 @@ class ConferenceResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('name')
+                    ->label(__('translation.conference.labelName'))
                     ->searchable(),
             ])
             ->actions([

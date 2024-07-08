@@ -38,16 +38,21 @@ class EditingSetting extends WorkflowStage implements HasForms
                 Shout::make('settings.stage-closed')
                     ->hidden(fn (): bool => $this->isStageOpen())
                     ->color('warning')
-                    ->content("The {$this->getStageLabel()} is not open yet, Start now or schedule opening"),
+                    ->content(
+                        __('translation.editingSetting.editingSettingContentThe') . 
+                        $this->getStageLabel() . 
+                        __('translation.editingSetting.editingSettingContentIsNotOpenYetStart')
+                    ),
+                    
                 Grid::make()
                     ->schema([
                         TagsInput::make('settings.draft_allowed_file_types')
-                            ->label('Draft File Type')
-                            ->helperText('Allowed file types for draft files')
+                            ->label(__('translation.editingSetting.editingSettingLabelDraftFileType'))
+                            ->helperText(__('translation.editingSetting.editingSettingHelperTextDraftFileType'))
                             ->splitKeys([',']),
                         TagsInput::make('settings.production_allowed_file_types')
-                            ->label('Production File Type')
-                            ->helperText('Allowed file types for production files')
+                            ->label(__('translation.editingSetting.editingSettingLabelProductionFileType'))
+                            ->helperText(__('translation.editingSetting.editingSettingHelperTextProductionFileType'))
                             ->splitKeys([',']),
                     ])
                     ->columns(1),
@@ -62,8 +67,8 @@ class EditingSetting extends WorkflowStage implements HasForms
         }
 
         Notification::make('editing-saved')
-            ->title('Saved')
-            ->body('Settings Saved successfully')
+            ->title(__('translation.button.save'))
+            ->body(__('translation.editingSetting.editingSettingBodyNotification'))
             ->success()
             ->send();
     }

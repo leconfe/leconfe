@@ -16,7 +16,7 @@ class About extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return 'About the Conference';
+        return __('translation.pagesBlade.aboutAboutTheConference');
     }
 
     public function getBreadcrumbs(): array

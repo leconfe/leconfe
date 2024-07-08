@@ -51,34 +51,40 @@ class InformationSetting extends Component implements HasForms
                     ->columns(1)
                     ->schema([
                         TextInput::make('name')
+                            ->label(__('translation.informationSetting.informationSettingLabelName'))
                             ->columnSpanFull()
                             ->required(),
                         TextInput::make('meta.acronym')
                             ->unique(column: 'path', ignorable: $this->conference)
+                            ->label(__('translation.informationSetting.informationSettingLabelAcronym'))
                             ->rule('alpha_dash')
                             ->live(onBlur: true),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
+                            ->label(__('translation.informationSetting.informationSettingLabelLogo'))
                             ->image()
                             ->imageResizeUpscale(false)
                             ->conversion('thumb'),
                         TextInput::make('meta.theme')
-                            ->placeholder('e.g. Creating a better future with us')
-                            ->helperText("The theme of the conference. This will be used in the conference's branding.")
+                            ->label(__('translation.informationSetting.informationSettingLabelTheme'))
+                            ->placeholder(__('translation.informationSetting.informationSettingPlaceholderTheme'))
+                            ->helperText(__('translation.informationSetting.informationSettingHelperTextTheme'))
                             ->columnSpanFull(),
                         Textarea::make('meta.description')
-                            ->hint('Recommended length: 50-160 characters')
-                            ->helperText('A short description of the conference. This will used to help search engines understand the conference.')
+                            ->label(__('translation.informationSetting.informationSettingLabelDescription'))
+                            ->hint(__('translation.informationSetting.informationSettingHintDescription'))
+                            ->helperText(__('translation.informationSetting.informationSettingHelperTextDescription'))
                             ->maxLength(255)
                             ->autosize(),
                         TinyEditor::make('meta.page_footer')
+                            ->label(__('translation.informationSetting.informationSettingLabelPageFooter'))
                             ->minHeight(300),
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.informationSetting.informationSettingSuccessNotificationTitle'))
+                        ->failureNotificationTitle(__('translation.informationSetting.informationSettingFailureNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

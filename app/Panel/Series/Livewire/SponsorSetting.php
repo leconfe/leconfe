@@ -22,7 +22,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class SponsorSetting extends Component implements HasForms, HasTable
+class   SponsorSetting extends Component implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
 
@@ -30,6 +30,7 @@ class SponsorSetting extends Component implements HasForms, HasTable
     {
         return [
             TextInput::make('name')
+                ->label(__('translation.serieSetting.sponsorSettingLabelName'))
                 ->required(),
             SpatieMediaLibraryFileUpload::make('logo')
                 ->multiple(false)
@@ -41,17 +42,17 @@ class SponsorSetting extends Component implements HasForms, HasTable
     public function table(Table $table)
     {
         return $table
-            ->heading("Sponsors")
+            ->heading(__('translation.serieSetting.sponsorSettingHeadingSponsors'))
             ->reorderable('order_column')
             ->headerActions([
                 CreateAction::make('create')
-                    ->label("Add Sponsor")
+                    ->label(__('translation.serieSetting.sponsorSettingLabelAddSponsor'))
                     ->modalWidth('xl')
                     ->model(Sponsor::class)
                     ->form(static::sponsorFormSchema())
             ])
             ->query(fn (): Builder => Sponsor::ordered()->with('media'))
-            ->emptyStateHeading(__("No sponsors found"))
+            ->emptyStateHeading(__('translation.serieSetting.sponsorSettingEmptyStateHeading'))
             ->columns([
                 Split::make([
                     SpatieMediaLibraryImageColumn::make('logo')

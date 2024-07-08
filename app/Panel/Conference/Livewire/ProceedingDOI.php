@@ -40,13 +40,14 @@ class ProceedingDOI extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
+                    ->label(__('translation.subsmissionDOI.subsmissionDOILabelTitle'))
                     ->searchable(),
                 TextColumn::make('doi.doi')
                     ->searchable()
                     ->label('DOI'),
                 TextColumn::make('doi.status')
                     ->badge()
-                    ->label('Status'),
+                    ->label(__('translation.subsmissionDOI.subsmissionDOILabelStatus')),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -58,7 +59,7 @@ class ProceedingDOI extends Component implements HasForms, HasTable
             ])
             ->actions([
                 Action::make('edit')
-                    ->label('Edit')
+                    ->label(__('translation.button.edit'))
                     ->icon('heroicon-o-pencil')
                     ->button()
                     ->fillForm(function (Proceeding $record, Table $table) {
@@ -73,7 +74,7 @@ class ProceedingDOI extends Component implements HasForms, HasTable
                             ->label('DOI')
                             ->suffixAction(
                                 FormAction::make('generate')
-                                    ->label('Generate')
+                                    ->label(__('translation.subsmissionDOI.subsmissionDOILabelGenerate'))
                                     ->button()
                                     // ->outlined()
                                     // ->color('secondary')

@@ -9,7 +9,14 @@ class AbstractFiles extends SubmissionFilesTable
 {
     protected ?string $category = SubmissionFileCategory::ABSTRACT_FILES;
 
-    protected string $tableHeading = 'Abstract Files';
+    // protected string $tableHeading = 'Abstract Files';
+
+    protected string $tableHeading;
+
+    public function __construct()
+    {
+        $this->tableHeading = __('translation.submissions.uploadFilesStepTableHeading');
+    }
 
     protected $listeners = [
         'refreshAbstractsFiles' => '$refresh',

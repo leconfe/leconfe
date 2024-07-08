@@ -11,7 +11,14 @@ class PresenterFiles extends SubmissionFilesTable
 
     protected ?string $category = SubmissionFileCategory::PRESENTER_FILES;
 
-    protected string $tableHeading = 'Presenter Files';
+    // protected string $tableHeading = 'Presenter Files';
+
+    protected string $tableHeading;
+
+    public function __construct()
+    {
+        $this->tableHeading = __('translation.submissions.presenterFilestableHeading');
+    }
 
     public function isViewOnly(): bool
     {

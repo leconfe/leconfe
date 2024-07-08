@@ -113,7 +113,7 @@
                         {{-- @endif --}}
                     </div>
                 @empty
-                    <div class="text-gray-500">No Navigation Menu items found</div>
+                    <div class="text-gray-500">{{ __('navigationMenuSetting.navmn') }}</div>
                 @endforelse
             </div>
             <div class="flex items-center p-4 pt-0">
@@ -124,7 +124,7 @@
         </div>
     @empty
         <div>
-            No Navigation Menu found
+            {{ __('navigationMenuSetting.navmnn') }}
         </div>
     @endforelse
 

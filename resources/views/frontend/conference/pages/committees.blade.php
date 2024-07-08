@@ -3,7 +3,7 @@
         <x-website::breadcrumbs :breadcrumbs="$this->getBreadcrumbs()" />
     </div>
     <div class="flex mb-5 space-x-4">
-        <h1 class="text-xl font-semibold min-w-fit">List Committee</h1>
+        <h1 class="text-xl font-semibold min-w-fit"> {{ __('translation.pagesBlade.committeesListCommittee') }}</h1>
         <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
     </div>
     <div class="space-y-4">
@@ -45,7 +45,7 @@
             </div>
         @empty
             <div class="col-span-2 text-center text-gray-500">
-                No commiittees found.
+                {{ __('translation.pagesBlade.committeesNocommiitteesFound') }}
             </div>
         @endforelse
     </div>

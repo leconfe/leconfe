@@ -13,7 +13,7 @@
                         <div class="grid sm:grid-cols-6 gap-4">
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Given Name <span class="text-red-500">*</span>
+                                    {{ __('translation.pagesBlade.registerGivenName') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" class="input input-sm" wire:model="given_name" required />
                                 @error('given_name')
@@ -24,7 +24,7 @@
                             </div>
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Family Name
+                                    {{ __('translation.pagesBlade.registerFamilyName') }}
                                 </label>
                                 <input type="text" class="input input-sm" wire:model="family_name" />
                                 @error('family_name')
@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Affiliation
+                                    {{ __('translation.pagesBlade.registerAffiliation') }}
                                 </label>
                                 <input type="text" class="input input-sm" wire:model="affiliation" />
                                 @error('affiliation')
@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Country
+                                    {{ __('translation.pagesBlade.registerCountry') }}
                                 </label>
                                 <select class="select select-sm font-normal" name="country" wire:model='country'>
                                     <option value="none" selected disabled>Select country</option>
@@ -63,7 +63,7 @@
 
                             <div class="form-control sm:col-span-6 gap-2">
                                 <label class="label-text">
-                                    Email <span class="text-red-500">*</span>
+                                    {{ __('translation.pagesBlade.registerEmail') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="email" class="input input-sm" wire:model="email" />
                                 @error('email')
@@ -74,7 +74,7 @@
                             </div>
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Password <span class="text-red-500">*</span>
+                                    {{ __('translation.pagesBlade.registerPassword') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="password" class="input input-sm" wire:model="password" required />
                                 @error('password')
@@ -85,7 +85,7 @@
                             </div>
                             <div class="form-control sm:col-span-3 gap-2">
                                 <label class="label-text">
-                                    Password Confirmation <span class="text-red-500">*</span>
+                                    {{ __('translation.pagesBlade.registerPasswordConfirmation') }}<span class="text-red-500">*</span>
                                 </label>
                                 <input type="password" class="input input-sm" wire:model="password_confirmation" required />
                                 @error('password_confirmation')
@@ -97,7 +97,7 @@
                             
                             @if($currentConference)
                             <div class="form-control sm:col-span-6 gap-2">
-                                <label class="label-text">Register as <span class="text-red-500">*</span></label>
+                                <label class="label-text">{{ __('translation.pagesBlade.registerRegisterAs') }}<span class="text-red-500">*</span></label>
                                 @foreach ($roles as $role)
                                     <div class="form-control">
                                         <div class="inline-flex gap-2 items-center cursor">
@@ -117,7 +117,7 @@
 
                             @if(!$currentConference)
                                 <div class="col-span-full space-y-4">
-                                    <p class="">Which conferences listed on this website are you interested in registering for?</p>
+                                    <p class="">{{ __('translation.pagesBlade.registerWhichConferencesListedOnThisWebsiteAreYou') }}</p>
                                     @foreach ($conferences as $conference)
                                         <div class="conference form-control gap-2">
                                             <label class="conference-name label-text font-medium">{{ $conference->name }}</label>
@@ -141,7 +141,7 @@
                                         <input type="checkbox" class="checkbox checkbox-sm" wire:model="privacy_statement_agree"
                                             required />
                                         <p class="label-text">
-                                            I accept and approve according to <x-website::link :href="$privacyStatementUrl" class="link link-primary link-hover">Privacy Statement.</x-website::link>
+                                            {{ __('translation.pagesBlade.registerIAcceptAndApproveAccordingTo') }}<x-website::link :href="$privacyStatementUrl" class="link link-primary link-hover">{{ __('translation.pagesBlade.registerPrivacyStatement') }}</x-website::link>
                                         </p>
                                     </label>
                                 </div>
@@ -150,21 +150,21 @@
                         <div class="flex gap-2">
                             <button type="submit" class="btn btn-primary btn-sm" wire:loading.attr="disabled">
                                 <span class="loading loading-spinner loading-xs" wire:loading></span>
-                                Register
+                                {{ __('translation.pagesBlade.registerRegister') }}
                             </button>
                             <x-website::link class="btn btn-outline btn-sm" :href="url('login')">
-                                Login
+                                {{ __('translation.pagesBlade.registerLogin') }}
                             </x-website::link>
                         </div>
                     </form>
                 @else
-                    <p>This conference is currently closing user registrations</p>
+                    <p>{{ __('translation.pagesBlade.registerThisConferenceIsCurrentlyClosingUserRegistrations') }}</p>
                 @endif
         @else
-                <p>Thank you for completing the registration! What would you like to proceed with next?</p>
+                <p>{{ __('translation.pagesBlade.registerThankYoForCompletingTheRegistrationWhatWould') }}</p>
                 <ul class='list-disc list-inside'> 
-                    <li><x-website::link class="link link-primary link-hover" href="{{ $currentConference ? route('filament.conference.pages.profile') : route('filament.administration.pages.profile') }}">Edit My Profile</x-website::link></li>
-                    <li><x-website::link class="link link-primary link-hover" href="{{ $homeUrl }}">Continue Browsing</x-website::link></li>
+                    <li><x-website::link class="link link-primary link-hover" href="{{ $currentConference ? route('filament.conference.pages.profile') : route('filament.administration.pages.profile') }}">{{ __('translation.pagesBlade.registerEditMyProfile') }}</x-website::link></li>
+                    <li><x-website::link class="link link-primary link-hover" href="{{ $homeUrl }}">{{ __('translation.pagesBlade.registerContinueBrowsing') }}</x-website::link></li>
                 </ul>
         @endif
     </div>

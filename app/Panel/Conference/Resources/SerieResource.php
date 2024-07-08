@@ -26,7 +26,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class SerieResource extends Resource
-{
+{  
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.serieSetting.serieSettingTitleLabel');
+    }
+
     protected static ?string $model = Serie::class;
 
     protected static ?int $navigationSort = 3;
@@ -41,25 +46,29 @@ class SerieResource extends Resource
                 Grid::make()
                     ->schema([
                         TextInput::make('title')
-                            ->label('Title')
+                            ->label(__('translation.serie.serieResourceLabelTitle'))
                             ->autofocus()
                             ->autocomplete()
                             ->required()
-                            ->placeholder('Enter the title of the serie'),
+                            ->placeholder(__('translation.serie.serieResourceplaceHolderEnterSerieTitle')),
                         TextInput::make('path')
-                            ->label('Path')
+                            ->label(__('translation.serie.serieResourceLabelPath'))
                             ->rule('alpha_dash')
                             ->required()
-                            ->placeholder('Enter the path of the serie'),
+                            ->placeholder(__('translation.serie.serieResourceplaceHolderEnterSeriePath')),
                         TextInput::make('meta.theme')
-                            ->placeholder('e.g. Creating a better future with us')
+                            ->label(__('translation.serie.serieResourceLabelTheme'))
+                            ->placeholder(__('translation.serie.serieResourceplaceHolderCreatingAbetter'))
                             ->columnSpanFull()
-                            ->helperText("The theme of the conference. This will be used in the conference's branding."),
-                        TextInput::make('meta.publisher_name'),
-                        TextInput::make('meta.publisher_location'),
+                            ->helperText(__('translation.serie.serieResourceHelperTextTheThemeOfTheConference')),
+                        TextInput::make('meta.publisher_name')
+                            ->label(__('translation.serie.serieResourceLabelPublisherName')),
+                        TextInput::make('meta.publisher_location')
+                            ->label(__('translation.serie.serieResourceLabelPublisherLocation')),
                         Textarea::make('meta.description')
-                            ->hint('Recommended length: 50-160 characters')
-                            ->helperText('A short description of the conference. This will used to help search engines understand the conference.')
+                            ->label(__('translation.serie.serieResourceLabelDescription'))
+                            ->hint(__('translation.serie.serieResourcehintRecommendedLength'))
+                            ->helperText(__('translation.serie.serieResourcehelperTextAShortDescription'))
                             ->maxLength(255)
                             ->autosize()
                             ->columnSpanFull(),
@@ -67,14 +76,14 @@ class SerieResource extends Resource
                 Grid::make()
                     ->schema([
                         DatePicker::make('date_start')
-                            ->label('Start Date')
-                            ->placeholder('Enter the start date of the serie')
+                            ->label(__('translation.serie.serieResourceLabelStartDate'))
+                            ->placeholder(__('translation.serie.serieResourceLabelPlaceHolderStartDate'))
                             ->requiredWith('date_end'),
                         DatePicker::make('date_end')
-                            ->label('End Date')
+                            ->label(__('translation.serie.serieResourceLabelEndDate'))
                             ->afterOrEqual('date_start')
                             ->requiredWith('date_start')
-                            ->placeholder('Enter the end date of the serie'),
+                            ->placeholder(__('translation.serie.serieResourceLabelPlaceHolderEndDate')),
                     ]),
                 Select::make('type')
                     ->required()
@@ -90,14 +99,17 @@ class SerieResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
+                    ->label(__('translation.serie.serieResourceLabelTitle'))
                     ->searchable()
                     ->description(fn (Serie $record) => $record->current ? 'Current' : null)
                     ->sortable()
                     ->wrap()
                     ->wrapHeader(),
                 TextColumn::make('date_start')
+                    ->label(__('translation.serie.serieResourceLabelDateStart'))
                     ->date(Setting::get('format_date')),
                 TextColumn::make('date_end')
+                    ->label(__('translation.serie.serieResourceLabelDateEnd'))
                     ->date(Setting::get('format_date')),
 
             ])
@@ -107,13 +119,13 @@ class SerieResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('publish')
-                        ->label('Publish')
+                        ->label(__('translation.button.publish'))
                         ->requiresConfirmation()
                         ->icon('heroicon-o-arrow-up-on-square')
                         ->color('primary')
                         ->form([
                             Checkbox::make('set_as_current')
-                                ->label('Set as current serie'),
+                                ->label(__('translation.serie.serieResourceSetAsCurrentSerie')),
                         ])
                         ->hidden(fn (Serie $record) => $record->isArchived() || $record->isCurrent() || $record->isPublished() || $record->trashed())
                         ->action(function (Serie $record, array $data, Tables\Actions\Action $action) {
@@ -122,7 +134,7 @@ class SerieResource extends Resource
                             return $action->success();
                         }),
                     Tables\Actions\Action::make('set_as_current')
-                        ->label('Set As Current')
+                        ->label(__('translation.button.setAsCurrent'))
                         ->requiresConfirmation()
                         ->icon('heroicon-o-check-circle')
                         ->color('success')

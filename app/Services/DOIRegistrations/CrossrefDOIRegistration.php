@@ -32,7 +32,7 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
 				Action::make('export')
 					->icon('heroicon-s-document-arrow-down')
 					->color('primary')
-					->label('Export XML')
+					->label(__('translation.croessrefDOIRegistration.labelExportXML'))
 					->action(function (Submission $record) {
 						try {
 							$xml = $this->exportXml($record);
@@ -44,13 +44,13 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
 						} catch (\Throwable $th) {
 							Notification::make()
 								->danger()
-								->title('Failed to export')
+								->title(__('translation.croessrefDOIRegistration.notificationTitleFailed'))
 								->body($th->getMessage())
 								->send();
 						}
 					}),
 				Action::make('deposit')
-					->label('Deposit XML')
+					->label(__('translation.croessrefDOIRegistration.labelDepositXML'))
 					->icon('heroicon-s-cloud-arrow-up')
 					->color('primary')
 					->action(function (Submission $record) {
@@ -60,19 +60,19 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
 							if ($result) {
 								Notification::make()
 									->success()
-									->title('Deposit success')
+									->title(__('translation.croessrefDOIRegistration.notificationTitleSuccess'))
 									->send();
 							}
 						} catch (\Exception $e) {
 							Notification::make()
 								->danger()
-								->title('Failed to deposit')
+								->title(__('translation.croessrefDOIRegistration.notificationTitleFailed'))
 								->body($e->getMessage())
 								->send();
 						}
 					}),
 				Action::make('view_error')
-					->label('View Error Message')
+					->label(__('translation.croessrefDOIRegistration.labelViewErrorMessage'))
 					->color('danger')
 					->icon('heroicon-o-x-mark')
 					->hidden(fn(Submission $record) => $record->doi?->status !== DOIStatus::Error)
@@ -100,7 +100,7 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
 			])
 				->size(ActionSize::Small)
 				->outlined()
-				->label('Crossref')
+				->label(__('translation.croessrefDOIRegistration.labelCrossref'))
 				->button()
 				->hidden(fn(Submission $record) => !$record->doi),
 		];
@@ -117,39 +117,39 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
 			// 		Checkbox::make('meta.doi_automatic_deposit')
 			// 			->label('Automatically deposit DOIs')
 			// 	]),5
-			Placeholder::make('Crossref Settings')
-				->content("The following items are required for a successful Crossref deposit"),
+			Placeholder::make(__('translation.croessrefDOIRegistration.makeCrossrefSettings'))
+				->content(__('translation.croessrefDOIRegistration.contentCrossrefSettings')),
 			TextInput::make('meta.doi_crossref_depositor_name')
-				->label("Depositor Name")
-				->helperText("Name of the organization registering the DOIs. It is included with deposited metadata and used to record who submitted the deposit.")
+				->label(__('translation.croessrefDOIRegistration.labelDepositorName'))
+				->helperText(__('translation.croessrefDOIRegistration.helperTextCrossrefDepositorName'))
 				->required(),
 			TextInput::make('meta.doi_crossref_depositor_email')
-				->label("Depositor Email")
-				->helperText("Email address of the individual responsible for registering content with Crossref. It is included with the deposited metadata and used when sending the deposit confirmation email.")
+				->label(__('translation.croessrefDOIRegistration.labelDepositorName'))
+				->helperText(__('translation.croessrefDOIRegistration.helperTextDepositorName'))
 				->required(),
 			Placeholder::make('information')
 				->hiddenLabel()
-				->content(new HtmlString(<<<HTML
-					<div class="prose prose-sm max-w-none">
-						<p>If you would like to register Digital Object Identifiers (DOIs) directly with <a href="http://www.crossref.org/">Crossref</a>, you will need to add your <a href="https://www.crossref.org/documentation/member-setup/account-credentials/">Crossref account credentials</a> into the username and password fields below.</p>
-						<p>Depending on your Crossref membership, there are two ways to enter your username and password:</p>
-						<ul>
-							<li>If you are using an organizational account, add your <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00376">shared username and password</a></li>
-							<li>If you are using a <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00368">personal account</a>, enter your email address and the role in the username field. The username will look like: email@example.com/role</li>
-							<li>If you do not know or have access to your Crossref credentials, you can contact <a href="https://support.crossref.org/">Crossref support</a> for assistance. Without credentials, you may still export metadata into the Crossref XML format, but you cannot register your DOIs with Crossref from Leconfe.</li>
-						</ul>
-					</div>
-				HTML)),
+				->content(new HtmlString('
+				<div class="prose prose-sm max-w-none">
+					<p>' . __('translation.croessrefDOIRegistration.contentInformationIfYouWould') . ' <a href="http://www.crossref.org/">' . __('translation.croessrefDOIRegistration.contentInformationCrossref') . '</a> ' . __('translation.croessrefDOIRegistration.contentInformationyYouWillNeed') . ' <a href="https://www.crossref.org/documentation/member-setup/account-credentials/">' . __('translation.croessrefDOIRegistration.contentInformationCrossrefAccountCredentials') . '</a> ' . __('translation.croessrefDOIRegistration.contentInformationIntoTheUsername') . '</p>
+					<p>' . __('translation.croessrefDOIRegistration.contentInformationDependingOn') . '</p>
+					<ul>
+						<li>' . __('translation.croessrefDOIRegistration.contentInformatiIfYouAreUsing') . ' <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00376">' . __('translation.croessrefDOIRegistration.contentInformatiSharedUsernameAndPassword') . '</a></li>
+						<li>' . __('translation.croessrefDOIRegistration.contentInformatiIfYouAreUsingA') . ' <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00368">' . __('translation.croessrefDOIRegistration.contentInformatiPersonalAccount') . '</a> ' . __('translation.croessrefDOIRegistration.contentInformatiContentInformatiPersonalAccount') . '</li>
+						<li>' . __('translation.croessrefDOIRegistration.contentInformatiIYouDoNotKnow') . ' <a href="https://support.crossref.org/">' . __('translation.croessrefDOIRegistration.contentInformatiCrossrefSupport') . '</a> ' . __('translation.croessrefDOIRegistration.contentInformatiForAssistance') . '</li>
+					</ul>
+				</div>
+			')),	
 			TextInput::make('meta.doi_crossref_username')
-				->label("Username")
-				->helperText('The Crossref username that will be used to authenticate your deposits. If you are using a personal account, please see the advice above.'),
+				->label(__('translation.croessrefDOIRegistration.labelUsername'))
+				->helperText(__('translation.croessrefDOIRegistration.helperTextUsername')),
 			TextInput::make('meta.doi_crossref_password')
-				->label("Password")
+				->label(__('translation.croessrefDOIRegistration.labelPassword'))
 				->password()
 				->revealable()
 				->required(),
 			Checkbox::make('meta.doi_crossref_test')
-				->label('Use the Crossref test API (testing environment) for the DOI deposit.')
+				->label(__('translation.croessrefDOIRegistration.labelUseTheCrossrefTestAPI'))
 				->inline()
 		];
 	}

@@ -45,13 +45,14 @@ class CreateSubmission extends Page implements HasForms
     {
         return [
             TextInput::make('meta.title')
+                ->label(__('translation.submissions.labelTitle'))
                 ->required(),
-            Section::make('Privacy Consent')
+            Section::make(__('translation.submissions.titlePrivacyConsent'))
                 ->schema([
                     Checkbox::make('privacy_consent')
                         ->inline()
                         ->required()
-                        ->label('Yes, I agree to have my data collected and stored according to the privacy statement.'),
+                        ->label(__('translation.submissions.checkboxYesIagreeToHaveMyData')),
                 ]),
         ];
     }

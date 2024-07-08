@@ -22,6 +22,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Hash;
 
 class Profile extends Page implements HasForms
@@ -31,6 +32,11 @@ class Profile extends Page implements HasForms
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'panel.conference.pages.profile';
+
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.profile.getHeadingProfile');
+    }
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -73,25 +79,29 @@ class Profile extends Page implements HasForms
                 Section::make()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('profile')
-                            ->label('Profile Photo')
+                            ->label(__('translation.profile.labelProfilePhoto'))
                             ->collection('profile')
                             ->avatar()
                             ->columnSpan(['lg' => 2]),
                         TextInput::make('given_name')
+                            ->label(__('translation.profile.labelGivenName'))
                             ->required(),
-                        TextInput::make('family_name'),
+                        TextInput::make('family_name')
+                            ->label(__('translation.profile.labelFamilyName')),
                         TextInput::make('email')
                             ->columnSpan(['lg' => 2])
                             ->disabled(fn (?User $record) => $record)
                             ->dehydrated(fn (?User $record) => !$record)
                             ->unique(ignoreRecord: true),
                         TextInput::make('password')
+                            ->label(__('translation.profile.labelPassword'))
                             ->required(fn (?User $record) => !$record)
                             ->password()
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->confirmed(),
                         TextInput::make('password_confirmation')
+                            ->label(__('translation.profile.labelPasswordConfirmation'))
                             ->requiredWith('password')
                             ->password()
                             ->dehydrated(false),
@@ -109,12 +119,12 @@ class Profile extends Page implements HasForms
             $user = UserUpdateAction::run(auth()->user(), $this->informationForm->getState());
             Notification::make()
                 ->success()
-                ->title('Saved!')
+                ->title(__('translation.profile.titleSaved'))
                 ->send();
         } catch (\Throwable $th) {
             Notification::make()
                 ->danger()
-                ->title('Failed to save.')
+                ->title(__('translation.profile.titleFailedTSave'))
                 ->send();
         }
     }
@@ -127,7 +137,7 @@ class Profile extends Page implements HasForms
                 Forms\Components\Section::make()
                     ->schema([
                         CheckboxList::make('roles')
-                            ->label('Roles')
+                            ->label(__('translation.profile.labelRoles'))
                             ->options(UserRole::selfAssignedRoleValues()),
                         TagsInput::make('meta.reviewing_interests')
                             ->placeholder('')
@@ -155,12 +165,12 @@ class Profile extends Page implements HasForms
             
             Notification::make()
                 ->success()
-                ->title('Saved!')
+                ->title(__('translation.profile.titleSaved'))
                 ->send();
         } catch (\Throwable $th) {
             Notification::make()
                 ->danger()
-                ->title('Failed to save.')
+                ->title(__('translation.profile.titleFailedTSave'))
                 ->send();
             throw $th;
         }
@@ -171,11 +181,11 @@ class Profile extends Page implements HasForms
         return $form
             ->statePath('notificationFormData')
             ->schema([
-                Section::make('New Announcement')
-                    ->description("These are notifications when there's a new announcement send.")
+                Section::make(__('translation.profile.labelNewAnnouncement'))
+                    ->description(__('translation.profile.descriptionTheseAreNotificationsWhenTheres'))
                     ->schema([
                         Checkbox::make('meta.notification.enable_new_announcement_email')
-                            ->label('Enable Email Notification'),
+                            ->label(__('translation.profile.labelCheckBoxEnableNotification')),
                     ])
                     ->aside(),
             ]);
@@ -193,12 +203,12 @@ class Profile extends Page implements HasForms
             
             Notification::make()
                 ->success()
-                ->title('Saved!')
+                ->title(__('translation.profile.titleSaved'))
                 ->send();
         } catch (\Throwable $th) {
             Notification::make()
                 ->danger()
-                ->title('Failed to save.')
+                ->title(__('translation.profile.titleFailedTSave'))
                 ->send();   
             throw $th;
         }
@@ -210,7 +220,7 @@ class Profile extends Page implements HasForms
             ->schema([
                 Tabs::make()
                     ->schema([
-                        Tab::make('Information')
+                        Tab::make(__('translation.profile.labelInformation'))
                             ->icon('heroicon-o-information-circle')
                             ->schema([
                                 BladeEntry::make('information-form')
@@ -219,12 +229,13 @@ class Profile extends Page implements HasForms
                                             {{ $this->informationForm }}
                             
                                             <x-filament::button type="submit">
-                                                Save
+                                                {{__("translation.button.save")}}
                                             </x-filament::button>                
                                         </form>
                                     '),
                             ]),
                         Tab::make('Roles')
+                            ->label(__('translation.profile.labelRoles'))
                             ->icon('heroicon-o-shield-check')
                             ->hidden(!app()->getCurrentConference())
                             ->schema([
@@ -246,12 +257,12 @@ class Profile extends Page implements HasForms
                                             {{ $this->rolesForm }}
                             
                                             <x-filament::button type="submit">
-                                                Save
+                                                {{__("translation.button.save")}}
                                             </x-filament::button>                
                                         </form>
                                     '),
                             ]),
-                        Tab::make('Notifications')
+                        Tab::make(__('translation.profile.labelNotifications'))
                             ->icon('heroicon-o-bell')
                             ->schema([
                                 BladeEntry::make('notification-form')
@@ -262,7 +273,7 @@ class Profile extends Page implements HasForms
                                             </x-filament::section>
 
                                             <x-filament::button type="submit">
-                                                Save
+                                                {{__("translation.button.save")}}
                                             </x-filament::button>                
                                         </form>
                                     '),

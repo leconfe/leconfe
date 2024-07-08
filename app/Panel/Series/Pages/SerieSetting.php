@@ -16,11 +16,23 @@ class SerieSetting extends Page
 {
     protected static string $view = 'panel.series.pages.serie-setting';
 
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';
 
     protected static ?string $navigationIcon = 'heroicon-o-window';
 
-    protected static ?string $navigationLabel = 'Serie';
+    // protected static ?string $navigationLabel = 'Serie';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.serieSetting.serieSettingTitleLabel');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.serieSetting.serieSettingGetNavigationGroup');
+    }
+
+   
 
     public function mount(): void
     {
@@ -39,12 +51,14 @@ class SerieSetting extends Page
                 InfolistsVerticalTabs\Tabs::make()
                     ->schema([
                         InfolistsVerticalTabs\Tab::make('Information')
+                            ->label(__('translation.serieSetting.serieSettingTabsInformation'))
                             ->icon('heroicon-o-information-circle')
                             ->schema([
                                 LivewireEntry::make('information-setting')
                                     ->livewire(InformationSetting::class)
                             ]),
                         InfolistsVerticalTabs\Tab::make('Sponsors')
+                            ->label(__('translation.serieSetting.serieSettingTabsSponsor'))
                             ->icon("lineawesome-users-solid")
                             ->schema([
                                 LivewireEntry::make('sponsors-setting')

@@ -41,6 +41,7 @@ class AuthorRoleResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label(__('translation.authorRoleResource.authorRoleResourceLabelName'))
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
@@ -56,10 +57,11 @@ class AuthorRoleResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('translation.authorRoleResource.authorRoleResourceLabelName'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('authors_count')
-                    ->label('Authors')
+                    ->label(__('translation.authorRoleResource.authorRoleResourceLabelAuthors'))
                     ->counts('authors')
                     ->badge()
                     ->color(fn (int $state) => $state > 0 ? 'primary' : 'gray'),
@@ -75,7 +77,7 @@ class AuthorRoleResource extends Resource
                         try {
                             $authorCount = $record->authors()->count();
                             if ($authorCount > 0) {
-                                throw new \Exception('Cannot delete '.$record->name.', there are authors who are still associated with this role');
+                                throw new \Exception(__('translation.authorRoleResource.authorRoleResourceDeleteActionCannot').$record->name.__('translation.authorRoleResource.authorRoleResourceDeleteActionThereAreAuthors'));
                             }
 
                             return $record->delete();
@@ -94,8 +96,8 @@ class AuthorRoleResource extends Resource
                     ->mutateFormDataUsing(function (array $data): array {
                         return $data;
                     })
-                    ->label('New Author Role')
-                    ->modalHeading('New Author Role'),
+                    ->label(__('translation.authorRoleResource.authorRoleResourceLabelNewAuthorRole'))
+                    ->modalHeading(__('translation.authorRoleResource.authorRoleResourceLabelNewAuthorRole')),
             ]);
     }
 

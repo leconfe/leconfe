@@ -31,8 +31,10 @@ class Guidelines extends \Livewire\Component implements HasForms
         return $form
             ->schema([
                 TinyEditor::make('reviewGuidelines')
+                    ->label(__('translation.guidelines.labelReviewGuidelines'))
                     ->minHeight(300),
                 TinyEditor::make('competingInterests')
+                    ->label(__('translation.guidelines.labelReviewGuidelines'))
                     ->minHeight(300),
             ]);
     }
@@ -45,8 +47,8 @@ class Guidelines extends \Livewire\Component implements HasForms
         $this->conference->setMeta('competing_interests', Purify::clean($data['competingInterests']));
 
         Notification::make()
-            ->title('Success!')
-            ->body('The guidelines have been updated.')
+            ->title(__('translation.guidelines.titleSuccess'))
+            ->body(__('translation.guidelines.bodyTheGuidelinesHaveBeenUpdated'))
             ->success()
             ->send();
     }

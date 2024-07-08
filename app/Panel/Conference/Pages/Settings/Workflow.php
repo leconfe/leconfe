@@ -21,6 +21,8 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
+
 
 class Workflow extends Page implements HasForms, HasInfolists
 {
@@ -32,7 +34,27 @@ class Workflow extends Page implements HasForms, HasInfolists
 
     protected static ?string $navigationIcon = 'heroicon-o-window';
 
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.pluginResource.navigationGroupTitle');
+    }
+
+    // public static function getModelLabel(): string
+    // {
+    //     return __('translation.workflow.getModelLabelWorkflow');
+    // }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.workflow.getModelLabelWorkflow');
+    }
+
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.workflow.getModelLabelWorkflow');
+    }
 
     public function mount()
     {
@@ -61,11 +83,12 @@ class Workflow extends Page implements HasForms, HasInfolists
                 ->persistTabInQueryString()
                 ->tabs([
                     Tab::make('Call for Abstract')
+                        ->label(__('translation.workflow.tabCallforAbstract'))
                         ->icon('iconpark-documentfolder-o')
                         ->schema([
                             HorizontalTabs::make()
                                 ->tabs([
-                                    HorizontalTab::make('General')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabGeneral'))
                                         ->icon('iconpark-documentfolder-o')
                                         ->schema([
                                             LivewireEntry::make('abstract-setting')
@@ -74,16 +97,17 @@ class Workflow extends Page implements HasForms, HasInfolists
                                 ]),
                         ]),
                     Tab::make('Payment')
+                        ->label(__('translation.workflow.tabCallforPayment'))
                         ->icon('heroicon-o-currency-dollar')
                         ->schema([
                             HorizontalTabs::make()
                                 ->tabs([
-                                    HorizontalTab::make('General')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabPayment'))
                                         ->schema([
                                             LivewireEntry::make('payment-setting')
                                                 ->livewire(PaymentSetting::class),
                                         ]),
-                                    HorizontalTab::make('Submission Payment Items')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabSubmissionPaymentItems'))
                                         ->schema([
                                             LivewireEntry::make('payment-items')
                                                 ->livewire(SubmissionPaymentItemTable::class),
@@ -92,18 +116,19 @@ class Workflow extends Page implements HasForms, HasInfolists
 
                         ]),
                     Tab::make('Peer Review')
+                        ->label(__('translation.workflow.tabCallforPeerReview'))
                         ->icon('iconpark-search-o')
                         ->schema([
                             HorizontalTabs::make()
                                 ->tabs([
-                                    HorizontalTab::make('General')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabPeerReview'))
                                         ->icon('iconpark-documentfolder-o')
                                         ->schema([
                                             LivewireEntry::make('peer-review-setting')
                                                 ->livewire(PeerReviewSetting::class)
                                                 ->lazy(),
                                         ]),
-                                    HorizontalTab::make('Reviewer Guidelines')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabPeerReviewGuidelines'))
                                         ->icon('iconpark-docsuccess-o')
                                         ->schema([
                                             LivewireEntry::make('peer-review-setting')
@@ -120,11 +145,12 @@ class Workflow extends Page implements HasForms, HasInfolists
                                 ]),
                         ]),
                     Tab::make('Editing')
+                        ->label(__('translation.workflow.tabCallforEditing'))
                         ->icon('iconpark-paperclip')
                         ->schema([
                             HorizontalTabs::make()
                                 ->tabs([
-                                    HorizontalTab::make('General')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabEditing'))
                                         ->icon('iconpark-documentfolder-o')
                                         ->schema([
                                             LivewireEntry::make('editing-setting')
@@ -134,11 +160,12 @@ class Workflow extends Page implements HasForms, HasInfolists
                                 ]),
                         ]),
                     Tab::make('Advanced')
+                        ->label(__('translation.workflow.tabCallforAdvanced'))
                         ->icon('heroicon-o-bookmark-square')
                         ->schema([
                             HorizontalTabs::make()
                                 ->tabs([
-                                    HorizontalTab::make('Author Roles')
+                                    HorizontalTab::make(__('translation.workflow.horizontalTabAuthorRoles'))
                                         ->icon('heroicon-o-users')
                                         ->extraAttributes(['class' => '!p-0'])
                                         ->schema([

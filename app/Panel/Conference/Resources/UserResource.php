@@ -45,7 +45,22 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';
+
+    public static function getNavigationLabel(): string
+   {
+       return __('translation.userResource.getNavigationLabelUser');
+   }
+ 
+    public static function getModelLabel(): string
+   {
+       return __('translation.userResource.getNavigationLabelUser');
+   }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.pluginResource.navigationGroupTitle');
+    }
 
     protected static ?int $navigationSort = 5;
 
@@ -71,14 +86,16 @@ class UserResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\SpatieMediaLibraryFileUpload::make('profile')
-                                    ->label('Profile Photo')
+                                    ->label(__('translation.userResource.labelProfilePhoto'))
                                     ->collection('profile')
                                     ->alignCenter()
                                     ->avatar()
                                     ->columnSpan(['lg' => 2]),
                                 Forms\Components\TextInput::make('given_name')
+                                    ->label(__('translation.userResource.labelGivenName'))
                                     ->required(),
-                                Forms\Components\TextInput::make('family_name'),
+                                Forms\Components\TextInput::make('family_name')
+                                    ->label(__('translation.userResource.labelFamilyName')),
                                 Forms\Components\TextInput::make('email')
                                     ->columnSpan(['lg' => 2])
                                     ->disabled(fn (?User $record) => $record)
@@ -89,11 +106,13 @@ class UserResource extends Resource
                                     ->password()
                                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                                     ->dehydrated(fn ($state) => filled($state))
+                                    ->label(__('translation.userResource.labelPassword'))
                                     ->confirmed(),
                                 Forms\Components\TextInput::make('password_confirmation')
                                     ->requiredWith('password')
                                     ->password()
-                                    ->dehydrated(false),
+                                    ->dehydrated(false)
+                                    ->label(__('translation.userResource.labelPasswordConfirmation')),
                                 ...ContributorForm::additionalFormField(),
                             ])
                             ->columns(2),
@@ -106,16 +125,16 @@ class UserResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('created_at')
-                                    ->label('Created at')
+                                    ->label(__('translation.userResource.labelCreatedAt'))
                                     ->content(fn (?User $record): ?string => $record?->created_at?->diffForHumans() ?? '-'),
 
                                 Forms\Components\Placeholder::make('updated_at')
-                                    ->label('Last modified at')
+                                    ->label(__('translation.userResource.labelLastModifiedAt'))
                                     ->content(fn (?User $record): ?string => $record?->updated_at?->diffForHumans() ?? '-'),
 
                                 Forms\Components\Placeholder::make('disabled_at')
                                     ->visible(fn (?User $record) => $record?->isBanned())
-                                    ->label('Disabled at')
+                                    ->label(__('translation.userResource.labelDisabledAt'))
                                     ->content(function (?User $record): ?string {
                                         $ban = $record?->bans->first();
 
@@ -123,7 +142,7 @@ class UserResource extends Resource
                                     }),
                                 Forms\Components\Placeholder::make('disabled_until')
                                     ->visible(fn (?User $record) => $record?->isBanned())
-                                    ->label('Disabled until')
+                                    ->label(__('translation.userResource.labelDisabledUntil'))
                                     ->content(function (?User $record): ?string {
                                         $ban = $record?->bans->first();
 
@@ -131,7 +150,7 @@ class UserResource extends Resource
                                     }),
 
                             ]),
-                        Forms\Components\Section::make('User Roles')
+                        Forms\Components\Section::make(__('translation.userResource.labelUserRoles'))
                             ->schema([
                                 Forms\Components\CheckboxList::make('roles')
                                     ->label('')
@@ -158,6 +177,7 @@ class UserResource extends Resource
                 Split::make([
                     SpatieMediaLibraryImageColumn::make('profile')
                         ->grow(false)
+                        ->label(__('translation.userResource.labelProfile'))
                         ->collection('profile')
                         ->conversion('avatar')
                         ->width(50)
@@ -177,6 +197,7 @@ class UserResource extends Resource
                         ->circular(),
                     Stack::make([
                         TextColumn::make('full_name')
+                            ->label(__('translation.userResource.labelFullName'))
                             ->weight(FontWeight::Medium)
                             ->searchable(
                                 query: fn ($query, $search) => $query
@@ -197,6 +218,7 @@ class UserResource extends Resource
                             ->icon('heroicon-m-envelope'),
                         TextColumn::make('affiliation')
                             // ->color(Color::hex('#A6CE39'))
+                            ->label(__('translation.userResource.labelAffiliation'))
                             ->size('sm')
                             ->wrap()
                             ->color('gray')
@@ -259,13 +281,13 @@ class UserResource extends Resource
                     Impersonate::make()
                         ->grouped()
                         ->hidden(fn ($record) => !auth()->user()->can('loginAs', $record))
-                        ->label(fn (User $record) => "Login as {$record->given_name}")
+                        ->label(fn (User $record) => __('translation.userResource.labelLoginAs') . ' ' . $record->given_name)
                         ->icon('heroicon-m-key')
                         ->color('primary')
                         ->redirectTo(fn () => route('filament.conference.pages.dashboard')),
                     Action::make('enable')
                         ->visible(fn (User $record) => auth()->user()->can('enable', $record))
-                        ->label(fn (User $record) => 'Enable User')
+                        ->label(fn (User $record) => __('translation.userResource.labelEnableUser'))
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
@@ -274,37 +296,37 @@ class UserResource extends Resource
                         }),
                     Action::make('disable')
                         ->visible(fn (User $record) => auth()->user()->can('disable', $record))
-                        ->label(fn (User $record) => 'Disable')
+                        ->label(fn (User $record) => __('translation.userResource.labelDisable'))
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->modalWidth('xl')
-                        ->modalHeading(fn (User $record) => "Disable User : {$record->full_name}")
+                        ->modalHeading(fn (User $record) => __('translation.userResource.labelDisableUser') . ' ' . $record->full_name)
                         ->form([
                             Textarea::make('comment')
-                                ->label('Reason for Disabling User'),
+                                ->label(__('translation.userResource.labelReasonForDisablingUser')),
                             DatePicker::make('expired_at')
-                                ->label('Until')
+                                ->label(__('translation.userResource.labelUntil'))
                                 ->minDate(now()->addDay())
-                                ->hint('To disable permanently, leave field empty'),
+                                ->hint(__('translation.userResource.hintaToDisablePermanently')),
                         ])
                         ->action(function (array $data, User $record) {
                             $record->ban($data);
                         }),
                     Action::make('email')
                         ->visible(fn (User $record) => auth()->user()->can('sendEmail', $record))
-                        ->label(fn (User $record) => 'Send Email')
+                        ->label(fn (User $record) => __('translation.userResource.labelSendEmail'))
                         ->icon('heroicon-o-envelope')
                         ->modalWidth('3xl')
                         ->fillForm(fn ($record) => ['to' => $record->email])
-                        ->modalHeading(fn (User $record) => "Send Email to {$record->full_name}")
+                        ->modalHeading(fn (User $record) => __('translation.userResource.modalHeadingSendEmailTo') ." ".$record->full_name)
                         ->form([
                             Grid::make()
                                 ->schema([
                                     TextInput::make('subject')
-                                        ->label('Subject')
+                                        ->label(__('translation.userResource.labelSubject'))
                                         ->required(),
                                     TextInput::make('to')
-                                        ->label('To')
+                                        ->label(__('translation.userResource.labelTo'))
                                         ->disabled()
                                         ->required(),
                                 ]),

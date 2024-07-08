@@ -23,7 +23,7 @@ class SubmissionsTableWidget extends BaseWidget
 
 
         return SubmissionResource::table($table)
-            ->heading('My Submissions')
+            ->heading(__('translation.dashboard.headingMySubmissions'))
             ->query($submissionQuery);
     }
 }

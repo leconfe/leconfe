@@ -30,9 +30,21 @@ class AnnouncementResource extends Resource
 {
     protected static ?string $model = Announcement::class;
 
-    protected static ?string $modelLabel = 'Announcement';
+    // protected static ?string $modelLabel = 'Announcement';
 
-    protected static ?string $navigationGroup = 'Conferences';
+    public static function getModelLabel(): string
+    {
+        return __('translation.announcementResource.announcementResourceModelLabel');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
+    }
+    
+
+
+    // protected static ?string $navigationGroup = 'Conferences';
 
     protected static ?string $navigationIcon = 'heroicon-o-speaker-wave';
 
@@ -50,14 +62,15 @@ class AnnouncementResource extends Resource
                         Section::make()
                             ->schema([
                                 TextInput::make('title')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelTitle'))
                                     ->required(),
                                 TinyEditor::make('meta.content')
                                     ->toolbarSticky(true)
-                                    ->label('Announcement')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelAnnouncement'))
                                     ->minHeight(600)
-                                    ->helperText('The complete announcement content.'),
+                                    ->helperText(__('translation.announcementResource.announcementResourceHelperTextAnnouncement')),
                                 Checkbox::make('send_email')
-                                    ->label('Send email about this to subscribed users')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelCheckBox'))
                                     ->hidden(fn (?Announcement $record) => $record),
                             ])->columnSpan([
                                 'default' => 'full',
@@ -66,6 +79,7 @@ class AnnouncementResource extends Resource
                         Section::make()
                             ->schema([
                                 TextInput::make('author')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelAuthor'))
                                     ->default(function () {
                                         $user = auth()->user();
 
@@ -78,13 +92,15 @@ class AnnouncementResource extends Resource
                                     ->afterStateUpdated(fn ($set, $state) => $set('common_tags', AnnouncementTag::whereInFromString($state, ContentType::Announcement->value)->pluck('id')->toArray()))
                                     ->reactive(),
                                 TagSuggestions::make('common_tags')
-                                    ->label('Commonly used tags')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelCommonlyUsedTags'))
                                     ->helperText(function (TagSuggestions $component) {
                                         if (count($component->getOptions())) {
                                             return null;
                                         }
-
-                                        return new HtmlString(<<<'HTML'
+                                    
+                                        $translation = __('translation.announcementResource.announcementResourceLabelH4');
+                                    
+                                        return new HtmlString(<<<HTML
                                             <div class="fi-ta-empty-state-content mx-auto grid max-w-lg justify-items-center text-center">
                                                 <div class="fi-ta-empty-state-icon-ctn mb-4 rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
                                                     <svg class="fi-ta-empty-state-icon h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -93,11 +109,12 @@ class AnnouncementResource extends Resource
                                                 </div>
                                             
                                                 <h4 class="fi-ta-empty-state-heading text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                                                    No tags
+                                                    $translation
                                                 </h4>
                                             </div>
-                                            HTML);
+                                        HTML);
                                     })
+                                    
                                     ->options(AnnouncementTag::withCount('announcements')->orderBy('announcements_count', 'desc')->limit(10)->pluck('name', 'id')->toArray())
                                     ->afterStateUpdated(function ($set, $state) {
                                         if (! empty($state)) {
@@ -109,9 +126,11 @@ class AnnouncementResource extends Resource
                                     ->dehydrated(false)
                                     ->reactive(),
                                 SpatieMediaLibraryFileUpload::make('featured_image')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelFeaturedImage'))
                                     ->collection('featured_image')
                                     ->image(),
                                 DatePicker::make('meta.expires_at')
+                                    ->label(__('translation.announcementResource.announcementResourceLabelExpiresAt'))
                                     ->minDate(today()->subDay()),
                             ])->columnSpan([
                                 'default' => 'full',
@@ -128,8 +147,10 @@ class AnnouncementResource extends Resource
             ->defaultPaginationPageOption(5)
             ->columns([
                 TextColumn::make('title')
+                    ->label(__('translation.announcementResource.announcementResourceLabelTitle'))
                     ->searchable(),
                 TextColumn::make('expires_at')
+                    ->label(__('translation.announcementResource.announcementResourceLabelExpiresAt'))
                     ->date(Setting::get('format_date'))
                     ->getStateUsing(fn (Announcement $record) => $record->getMeta('expires_at')),
             ])
@@ -138,6 +159,7 @@ class AnnouncementResource extends Resource
             ])
             ->actions([
                 Action::make('view')
+                    ->label(__('translation.button.view'))
                     ->icon('heroicon-o-eye')
                     ->url(fn($record) =>  route('livewirePageGroup.conference.pages.announcement-page', [
                         'announcement' => $record->id,

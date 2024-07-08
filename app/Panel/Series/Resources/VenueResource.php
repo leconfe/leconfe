@@ -31,6 +31,16 @@ class VenueResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.venueResource.getModelLabelVenue');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('translation.venueResource.getModelLabelVenue');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,15 +48,19 @@ class VenueResource extends Resource
                 Grid::make(1)
                     ->schema([
                         TextInput::make('name')
+                            ->label(__('translation.venueResource.venueResourceLabelName'))
                             ->required(),
                         TextInput::make('location')
+                            ->label(__('translation.venueResource.venueResourceLabelLocation'))
                             ->required(),
                         SpatieMediaLibraryFileUpload::make('photo')
+                            ->label(__('translation.venueResource.venueResourceLabelPhoto'))
                             ->collection('thumbnail')
                             ->conversion('thumb')
                             ->multiple(false)
                             ->required(),
-                        Textarea::make('description'),
+                        Textarea::make('description')
+                            ->label(__('translation.venueResource.venueResourceLabelDescription')),
                     ]),
             ]);
     }
@@ -56,9 +70,12 @@ class VenueResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('translation.venueResource.venueResourceLabelName'))
                     ->searchable(),
-                TextColumn::make('location'),
+                TextColumn::make('location')
+                    ->label(__('translation.venueResource.venueResourceLabelLocation')),
                 SpatieMediaLibraryImageColumn::make('photo')
+                    ->label(__('translation.venueResource.venueResourceLabelPhoto'))
                     ->collection('thumbnail')
                     ->conversion('thumb'),
             ])
@@ -68,18 +85,19 @@ class VenueResource extends Resource
                         SpatieMediaLibraryImageEntry::make('photo')
                             ->collection('thumbnail')
                             ->conversion('thumb')
-                            ->label('')
+                            ->label(__('translation.venueResource.venueResourceLabelPhoto'))
                             ->visible(fn ($record) => $record->hasMedia('thumbnail')),
                         TextEntry::make('name')
                             ->size(TextEntrySize::Large)
                             ->weight(FontWeight::Bold)
-                            ->label('')
+                            ->label(__('translation.venueResource.venueResourceLabelName'))
                             ->color('secondary'),
                         TextEntry::make('location')
-                            ->label('Location')
+                            ->label(__('translation.venueResource.venueResourceLabelLocation'))
                             ->color('secondary')
                             ->icon('heroicon-m-map-pin'),
                         TextEntry::make('description')
+                            ->label(__('translation.venueResource.venueResourceLabelDescription'))
                             ->color('secondary'),
                     ]),
                 ActionGroup::make([

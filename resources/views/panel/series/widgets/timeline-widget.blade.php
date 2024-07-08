@@ -1,8 +1,8 @@
 <x-filament-widgets::widget>
     <x-filament::section icon="heroicon-m-clock" icon-color="info">
-        <x-slot name="heading">Timeline</x-slot>
+        <x-slot name="heading">{{ __('translation.seriesWidget.timelineWidgetHeading') }}</x-slot>
         @if ($timeline->isEmpty())
-            <h2 class="text-xl text-center text-gray-900 dark:text-white">Now there's no timeline here</h2>
+            <h2 class="text-xl text-center text-gray-900 dark:text-white">{{ __('translation.seriesWidget.timelineWidgetH2') }}</h2>
         @else
             <div class="timelines max-h-64 overflow-y-scroll divide-y">
                 @foreach ($timeline as $timelines)

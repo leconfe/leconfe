@@ -25,7 +25,7 @@ class CommitteeRoleResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'Committee Role';
+        return __('translation.committeResource.committeeRoleResource');
     }
 
     public static function getEloquentQuery(): Builder
@@ -39,6 +39,7 @@ class CommitteeRoleResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label(__('translation.committeResource.committeeRoleResourceTableLabelName'))
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
@@ -54,10 +55,11 @@ class CommitteeRoleResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('translation.committeResource.committeeRoleResourceTableLabelName'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('committees_count')
-                    ->label('Committees')
+                    ->label(__('translation.committeResource.committeeRoleResourceTableLabelCommittees'))
                     ->counts('committees')
                     ->badge()
                     ->color(fn (int $state) => $state > 0 ? 'primary' : 'gray'),
@@ -73,7 +75,7 @@ class CommitteeRoleResource extends Resource
                         try {
                             $speakerCount = $record->committees()->count();
                             if ($speakerCount > 0) {
-                                throw new \Exception('Cannot delete '.$record->name.', there are '.static::$roleType.' who are still associated with this role');
+                                throw new \Exception(__('translation.committeResource.listCommittesTabsCommitteeCannotDelete').$record->name.__('translation.committeResource.listCommittesTabsCommitteeThereAre').static::$roleType.__('translation.committeResource.committeeRoleResourceTableLabelWhoAreStill'));
                             }
 
                             return $record->delete();
@@ -90,14 +92,14 @@ class CommitteeRoleResource extends Resource
             ->emptyStateActions([
                 // Tables\Actions\CreateAction::make(),
             ])
-            ->heading('Committee Roles Table')
+            ->heading(__('translation.committeResource.committeeRoleResourceHeadingCommitteeRolesTable'))
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         return $data;
                     })
-                    ->label('New Committee Role')
-                    ->modalHeading('New Committee` Role'),
+                    ->label(__('translation.committeResource.committeeRoleResourceLabelNewCommitteeRole'))
+                    ->modalHeading(__('translation.committeResource.committeeRoleResourcemodalHeadingNewCommitteeRole')),
             ]);
     }
 

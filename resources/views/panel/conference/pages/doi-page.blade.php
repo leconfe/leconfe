@@ -5,7 +5,7 @@
                 alpine-active="activeTab === 'submissions'"
                 x-on:click="activeTab = 'submissions'"
                 >
-                Submissions
+                {{ __('translation.subsmissionDOI.titleSubmissions') }}
             </x-filament::tabs.item>
         @endif
 
@@ -14,7 +14,7 @@
             alpine-active="activeTab === 'proceedings'"
             x-on:click="activeTab = 'proceedings'"
             >
-                Proceedings
+                {{ __('translation.subsmissionDOI.titleProceedings') }}
             </x-filament::tabs.item>
         @endif
     </x-filament::tabs>

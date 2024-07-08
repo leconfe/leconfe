@@ -1,7 +1,7 @@
 <x-website::layouts.main>
     <div class="space-y-4 grid">
         <div class="grid justify-items-center">
-            <h1 class="text-xl font-medium">Search Conference</h1>
+            <h1 class="text-xl font-medium">{{ __('translation.searchBlade.searchConference') }}</h1>
         </div>
         <form class="max-w-xl w-full mx-auto space-y-2" x-data="{ advancedSearch: @js($isAdvancedSearch) }" wire:ignore.self>
             <div class="flex">
@@ -14,14 +14,14 @@
                         required 
                     />
                     <button type="submit" class="absolute top-0 end-0 px-4 flex items-center gap-2 text-sm font-medium h-full text-white bg-primary rounded-e border border-primary">
-                        <span class="">Search</span>
+                        <span class="">{{ __('translation.searchBlade.search') }}</span>
                         <x-heroicon-s-magnifying-glass class="h-4 w-4"/>
                     </button>
                 </div>
             </div>
             <div class="buttons flex items-center">
                 <div class="flex items-center gap-2" wire:loading.flex>
-                    <span class="text-primary sr-only">Searching</span>
+                    <span class="text-primary sr-only">{{ __('translation.searchBlade.searching') }}</span>
                     <span class="loading loading-spinner loading-sm text-primary"></span>
                 </div>
                 <button 
@@ -29,7 +29,7 @@
                     class="text-sm flex items-center gap-2 text-primary ml-auto"
                     x-on:click="advancedSearch = !advancedSearch"
                     >
-                        Advanced Search <x-heroicon-c-chevron-down class="h-4 w-4 transition-transform" ::class="advancedSearch && 'rotate-180'"/>
+                    {{ __('translation.searchBlade.advancedSearch') }} <x-heroicon-c-chevron-down class="h-4 w-4 transition-transform" ::class="advancedSearch && 'rotate-180'"/>
                 </button>
             </div>
             <div class="space-y-4" x-show="advancedSearch" x-collapse x-cloak>
@@ -38,7 +38,7 @@
                     wire:model.live='topic'
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     >
-                    <option value selected>Topics</option>
+                    <option value selected>{{ __('translation.searchBlade.topics') }}</option>
                     @foreach ($topics as $topic)
                         <option value="{{ $topic->name }}">{{ $topic->name }}</option>
                     @endforeach
@@ -66,7 +66,7 @@
         @endif
         @else 
         <div class="flex items-center justify-center w-full">
-            <p class="text-gray-500">No conference found</p>
+            <p class="text-gray-500">{{ __('translation.searchBlade.noConferenceFound') }}</p>
         </div>
         @endif
 

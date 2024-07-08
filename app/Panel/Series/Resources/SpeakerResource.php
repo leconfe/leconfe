@@ -29,7 +29,7 @@ class SpeakerResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Speakers';
+        return __('translation.seriesWidget.speakerWidgetHeading');
     }
 
     public static function getEloquentQuery(): Builder
@@ -46,14 +46,14 @@ class SpeakerResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'Speaker';
+        return __('translation.seriesWidget.speakerWidgetHeading');
     }
 
     public static function selectSpeakerField($form): Select
     {
         return Select::make('speaker_id')
-            ->label('Select Existing Speaker')
-            ->placeholder('Select Speaker')
+            ->label(__('translation.speakerResource.speakerResourceLabelSelectSpeaker'))
+            ->placeholder(__('translation.speakerResource.speakerResourceplaceholderSelectSpeaker'))
             ->preload()
             ->native(false)
             ->searchable()
@@ -103,7 +103,7 @@ class SpeakerResource extends Resource
                 static::selectSpeakerField($form),
                 ...ContributorForm::generalFormField(app()->getCurrentSerie()),
                 Forms\Components\Select::make('speaker_role_id')
-                    ->label('Role')
+                    ->label(__('translation.speakerResource.speakerResourceLabelRole'))
                     ->required()
                     ->searchable()
                     ->relationship(
@@ -113,12 +113,13 @@ class SpeakerResource extends Resource
                     ->preload()
                     ->createOptionForm([
                         TextInput::make('name')
+                            ->label(__('translation.speakerResource.speakerResourceLabelName'))
                             ->required(),
                     ])
                     ->createOptionAction(
                         fn (FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
-                            ->modalHeading('Create Speaker Position')
+                            ->modalHeading(__('translation.speakerResource.speakerResourcemodalHeadingCreateSpeakerPosition'))
                             ->mutateFormDataUsing(function (array $data): array {
                                 return $data;
                             })
@@ -137,7 +138,7 @@ class SpeakerResource extends Resource
     {
         return $table
             ->reorderable('order_column')
-            ->heading('Speakers Table')
+            ->heading(__('translation.speakerResource.speakerResourceHeadingSpeakersTable'))
             ->headerActions([
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')

@@ -52,7 +52,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
             ->record($this->submission)
             ->schema([
                 TextEntry::make('id')
-                    ->label('Proceeding')
+                    ->label(__('translation.submissions.submmisionProceedingLabelProceeding'))
                     ->html()
                     ->getStateUsing(function (Submission $record) {
                         if ($record->proceeding){
@@ -64,12 +64,12 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                             HTML;
                         }
 
-                        return 'This submission has not yet been scheduled for publication in the proceedings.';
+                        return __('translation.submissions.submmisionProceedingGetStateUsing');
                     })
                     ->suffixActions([
                         Action::make('assign_proceeding')
                             ->button()
-                            ->label(fn(Submission $record) => $record->proceeding ? 'Change Proceeding' : 'Assign to Proceeding')
+                            ->label(fn(Submission $record) => $record->proceeding ? __('translation.submissions.labelChangeProceeding') : __('translation.submissions.labelAssignToProceeding'))
                             ->visible(fn (Submission $record) => auth()->user()->can('editing', $record))
                             ->modalWidth(MaxWidth::ExtraLarge)
                             ->form(fn (Submission $record) => static::getFormAssignProceeding($record))
@@ -82,7 +82,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
     {
         return [
             Select::make('proceeding_id')
-                ->label('Proceeding')
+                ->label(__('translation.submissions.submmisionProceedingLabelProceeding'))
                 ->placeholder('None')
                 ->formatStateUsing(fn () => $submission->proceeding_id ?? null)
                 // ->native(false)
@@ -115,13 +115,13 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
             })
             ->schema([
                 SpatieMediaLibraryFileUpload::make('media.article-cover')
-                    ->label('Cover Image')
+                    ->label(__('translation.submissions.submmisionProceedingLabelCoverImage'))
                     ->collection('article-cover')
                     ->model($this->submission)
                     ->image()
                     ->preserveFilenames(),
                 TextInput::make('meta.article_pages')
-                    ->label('Pages')
+                    ->label(__('translation.submissions.submmisionProceedingLabelPages'))
                     ->maxWidth('xs')
                     ->placeholder('e.g. 1-10'),
             ]);

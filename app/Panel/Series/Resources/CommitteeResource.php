@@ -28,7 +28,7 @@ class CommitteeResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Committee';
+        return __('translation.committeResource.getModelLabelCommittee');
     }
 
     public static function getEloquentQuery(): Builder
@@ -45,14 +45,14 @@ class CommitteeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'Committee';
+        return __('translation.committeResource.getModelLabelCommittee');
     }
 
     public static function selectCommitteeField($form): Select
     {
         return Select::make('committee_id')
-            ->label('Select Existing Committee')
-            ->placeholder('Select Committee')
+            ->label(__('translation.committeResource.committeResourceLabelSelectExisting'))
+            ->placeholder(__('translation.committeResource.committeResourcePlaceHolderSelectExisting'))
             ->preload()
             ->native(false)
             ->searchable()
@@ -102,7 +102,7 @@ class CommitteeResource extends Resource
                 static::selectCommitteeField($form),
                 ...ContributorForm::generalFormField(app()->getCurrentSerie()),
                 Forms\Components\Select::make('committee_role_id')
-                    ->label('Role')
+                    ->label(__('translation.committeResource.committeResourceLabelRole'))
                     ->required()
                     ->searchable()
                     ->relationship(
@@ -114,7 +114,7 @@ class CommitteeResource extends Resource
                     ->createOptionAction(
                         fn (FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
-                            ->modalHeading('Create Committee Role')
+                            ->modalHeading(__('translation.committeResource.committeResourcemodalHeadingRole'))
                     )
                     ->columnSpan([
                         'lg' => 2,
@@ -127,7 +127,7 @@ class CommitteeResource extends Resource
     {
         return $table
             ->reorderable('order_column')
-            ->heading('Committee Table')
+            ->heading(__('translation.committeResource.committeResourceHeadingCommitteeTable'))
             ->headerActions([
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')

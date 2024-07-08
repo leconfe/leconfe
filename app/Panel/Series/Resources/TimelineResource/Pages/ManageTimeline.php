@@ -14,7 +14,7 @@ class ManageTimeline extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->modalHeading('Add Timeline')
+                ->modalHeading(__('translation.timeLineResource.timeLineResourceAddTimeline'))
                 ->form(fn () => TimelineResource::formSchemas())
                 ->mutateFormDataUsing(function (array $data) {
                     $dateFormat = date('Y-m-d', strtotime($data['date']));

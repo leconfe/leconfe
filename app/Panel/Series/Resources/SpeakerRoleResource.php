@@ -33,6 +33,7 @@ class SpeakerRoleResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label(__('translation.speakerResource.speakerRoleResourceLabelName'))
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
@@ -48,10 +49,11 @@ class SpeakerRoleResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('translation.speakerResource.speakerRoleResourceLabelName'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('speakers_count')
-                    ->label('Speakers')
+                    ->label(__('translation.speakerResource.speakerRoleResourceLabelSpeakers'))
                     ->counts('speakers')
                     ->badge()
                     ->color(fn (int $state) => $state > 0 ? 'primary' : 'gray'),
@@ -67,7 +69,7 @@ class SpeakerRoleResource extends Resource
                         try {
                             $speakerCount = $record->speakers()->count();
                             if ($speakerCount > 0) {
-                                throw new \Exception('Cannot delete '.$record->name.', there are speakers who are still associated with this role');
+                                throw new \Exception(__('translation.speakerResource.speakerRoleResourceDeleteCannot').$record->name.__('translation.speakerResource.speakerRoleResourceDeleteThereAre'));
                             }
 
                             return $record->delete();
@@ -81,14 +83,14 @@ class SpeakerRoleResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->heading('Speaker Roles Table')
+            ->heading(__('translation.speakerResource.speakerRoleResourceHeadingSpeakerRolesTable'))
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         return $data;
                     })
-                    ->label('New Speaker Role')
-                    ->modalHeading('New Speaker Role'),
+                    ->label(__('translation.speakerResource.speakerRoleResourceLabelNewSpeakerRole'))
+                    ->modalHeading(__('translation.speakerResource.speakerRoleResourceModalHeadingNewSpeakerRole')),
             ]);
     }
 

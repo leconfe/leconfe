@@ -46,7 +46,7 @@ class SidebarSetting extends Component implements HasForms, HasActions
         SidebarFacade::updateActiveList($orderedItems);
 
         Notification::make()
-            ->title('Sidebar Updated')
+            ->title(__('translation.SidebarSetting.notificationTitle'))
             ->success()
             ->send();
 

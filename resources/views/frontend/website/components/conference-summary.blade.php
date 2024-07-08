@@ -24,6 +24,6 @@
             <p class="conference-description line-clamp-4 text-sm">{{ $conference->getMeta('description') }}</p>
         @endif
 
-        <a href="{{ $conference->getHomeUrl() }}" class="btn btn-primary btn-sm">Check Conference</a>
+        <a href="{{ $conference->getHomeUrl() }}" class="btn btn-primary btn-sm">{{ __('translation.button.checkConference') }}</a>
     </div>
 </div>

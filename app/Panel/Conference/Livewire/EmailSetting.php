@@ -99,11 +99,11 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
                         ]),
                     TableAction::make('restoreDefault')
                         ->color('gray')
-                        ->successNotificationTitle('Email template restored to default data.')
+                        ->successNotificationTitle(__('translation.emailSetting.successNotificationTitleEmailTemplateRestored'))
                         ->icon('heroicon-o-arrow-path')
-                        ->label('Restore Default')
+                        ->label(__('translation.emailSetting.labelRestoreDefault'))
                         ->requiresConfirmation()
-                        ->failureNotificationTitle('Are you sure you want to restore default data?')
+                        ->failureNotificationTitle(__('translation.emailSetting.failureNotificationTitleEmailTemplateRestored'))
                         ->action(function (MailTemplate $record, TableAction $action) {
 
                             try {
@@ -126,13 +126,13 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
             ->schema([
                 VerticalTabs\Tabs::make()
                     ->schema([
-                        VerticalTabs\Tab::make('Email Templates')
+                        VerticalTabs\Tab::make(__('translation.emailSetting.verticalTabsEmailTemplates'))
                             ->icon('heroicon-o-envelope')
                             ->schema([
                                 BladeEntry::make('mail-templates')
                                     ->blade('{{ $this->table }}'),
                             ]),
-                        VerticalTabs\Tab::make('Layout Templates')
+                        VerticalTabs\Tab::make(__('translation.emailSetting.verticalTabsLayoutTemplates'))
                             ->icon('heroicon-o-bars-3-bottom-left')
                             ->schema([
                                 BladeEntry::make('layout-templates')
@@ -154,20 +154,20 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
     {
         return $form
             ->schema([
-                Section::make('Layout Template')
+                Section::make(__('translation.emailSetting.headerLayoutTemplates'))
                     ->schema([
                         TinyEditor::make('mail_header')
-                            ->label('Header')
+                            ->label(__('translation.emailSetting.labelHeader'))
                             ->profile('email'),
                         TinyEditor::make('mail_footer')
-                            ->label('Footer')
+                            ->label(__('translation.emailSetting.labelFooter'))
                             ->profile('email'),
                     ]),
                 Actions::make([
                     Action::make('saveLayoutForm')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.emailSetting.successNotificationTitle'))
+                        ->failureNotificationTitle(__('translation.emailSetting.failureNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->layoutTemplateForm->getState();
 
@@ -179,9 +179,9 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
                             }
                         }),
                     Action::make('testEmail')
-                        ->label('Test Email')
+                        ->label(__('translation.emailSetting.labelTestEmail'))
                         ->color('gray')
-                        ->successNotificationTitle('Success sent test mail to your email.')
+                        ->successNotificationTitle(__('translation.emailSetting.successNotificationTitleSentToYourEmail'))
                         ->action(function (Action $action) {
                             try {
                                 Mail::to(auth()->user()->email)->send(new TestMail);
@@ -189,7 +189,7 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
                             } catch (\Throwable $th) {
                                 Notification::make()
                                     ->danger()
-                                    ->title('Failed to send test mail to your email.')
+                                    ->title(__('translation.emailSetting.titleFailedToSendTestMail'))
                                     ->body($th->getMessage())
                                     ->send();
                             }

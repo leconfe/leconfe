@@ -45,22 +45,25 @@ class AdditionalInformationSetting extends Component implements HasForms
                 Section::make('')
                     ->schema([
                         Repeater::make('meta.additional_information')
-                            ->helperText('Add your additional information here. Feel free to format it as you prefer.')
+                            ->label(__('translation.conferenceSettingsAbout.additionalinFormationLabel'))
+                            ->helperText(__('translation.conferenceSetting.helperTextAdditional'))
                             ->schema([
-                                TextInput::make('title')->required(),
+                                TextInput::make('title')->required()
+                                    ->label(__('translation.conferenceSetting.labelTitle')),
                                 Toggle::make('is_shown')
-                                    ->label('Display this on the front page ?')
+                                    ->label(__('translation.conferenceSetting.labelAdditional'))
                                     ->default(true),
-                                TinyEditor::make('content')->required(),
+                                TinyEditor::make('content')->required()
+                                    ->label(__('translation.conferenceSetting.labelContent')),
                             ])
                             ->collapsible(),
                     ]),
 
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.conferenceSetting.successNotificationTitleAdditional'))
+                        ->failureNotificationTitle(__('translation.conferenceSetting.failureNotificationTitleTitleAdditional'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

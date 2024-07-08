@@ -18,15 +18,15 @@ class ManagePresenters extends ManageRecords
     public function getTabs(): array
     {
         return [
-            'unchecked' => Tab::make()
+            'unchecked' => Tab::make(__('translation.presenter.managePresentersTabUnchecked'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PresenterStatus::Unchecked))
                 ->badge($this->presenterTabQuery(PresenterStatus::Unchecked)->count())
                 ->badgeColor($this->presenterTabQuery(PresenterStatus::Unchecked)->count() > 0 ? 'primary' : 'gray'),
-            'approved' => Tab::make()
+            'approved' => Tab::make(__('translation.presenter.managePresentersTabApproved'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PresenterStatus::Approve))
                 ->badge($this->presenterTabQuery(PresenterStatus::Approve)->count())
                 ->badgeColor($this->presenterTabQuery(PresenterStatus::Approve)->count() > 0 ? 'primary' : 'gray'),
-            'rejected' => Tab::make()
+            'rejected' => Tab::make(__('translation.presenter.managePresentersTabRejected'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', PresenterStatus::Reject))
                 ->badge($this->presenterTabQuery(PresenterStatus::Reject)->count())
                 ->badgeColor($this->presenterTabQuery(PresenterStatus::Reject)->count() > 0 ? 'primary' : 'gray'),

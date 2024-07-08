@@ -51,7 +51,7 @@ class ManualPayment extends BasePayment
     {
         return [
             TinyEditor::make('manual.instructions')
-                ->label('Payment Instruction')
+                ->label(__('translation.workflowPaymentSetting.labelPaymentInstruction'))
                 ->required(),
         ];
     }

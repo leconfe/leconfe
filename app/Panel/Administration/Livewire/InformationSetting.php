@@ -41,9 +41,10 @@ class InformationSetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         TextInput::make('meta.name')
-                            ->label('Website Name')
+                            ->label(__('translation.informationSettingAdmin.labelWebsitename'))
                             ->required(),
                         SpatieMediaLibraryFileUpload::make('logo')
+                            ->label(__('translation.informationSettingAdmin.labelLogo'))
                             ->collection('logo')
                             ->model(app()->getSite())
                             ->image()
@@ -53,19 +54,21 @@ class InformationSetting extends Component implements HasForms
                                 'sm' => 2,
                             ]),
                         Textarea::make('meta.description')
+                            ->label(__('translation.informationSettingAdmin.labelDescription'))
                             ->rows(3)
                             ->autosize()
                             ->columnSpanFull()
-                            ->hint('Recommended length: 50-160 characters')
-                            ->helperText('A short description of the website. This will used to help search engines understand the website.'),
+                            ->hint(__('translation.informationSettingAdmin.hintRecommendedLength:50-160chara'))
+                            ->helperText(__('translation.informationSettingAdmin.helperTextAShortDescritionOfTheWebsite')),
                         TinyEditor::make('meta.about')
-                            ->label('About Site')
+                            ->label(__('translation.informationSettingAdmin.labelAboutSite'))
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state))
                             ->columnSpan([
                                 'sm' => 2,
                             ]),
                         TinyEditor::make('meta.page_footer')
+                            ->label(__('translation.informationSettingAdmin.labelPageFooter'))
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state))
                             ->columnSpan([
@@ -75,8 +78,9 @@ class InformationSetting extends Component implements HasForms
                     ->columns(2),
                 Actions::make([
                     Action::make('save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Failed!')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.informationSettingAdmin.successNotificationTitleSaved'))
+                        ->failureNotificationTitle(__('translation.informationSettingAdmin.failureNotificationTitleFailed'))
                         ->action(function (Action $action) {
                             $data = $this->form->getState();
                             try {

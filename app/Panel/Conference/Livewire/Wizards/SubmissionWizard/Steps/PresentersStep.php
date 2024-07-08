@@ -12,7 +12,7 @@ class PresentersStep extends Component implements HasWizardStep
 
     public static function getWizardLabel(): string
     {
-        return 'Presenters';
+        return __('translation.submissions.getWizardLabelPresenters');
     }
 
     public function render()

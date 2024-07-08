@@ -62,7 +62,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     {
         return [
             Action::make('create-navigation-menu')
-                ->label('Add Navigation Menu')
+                ->label(__('translation.navigationMenuSetting.labelAddNavigationMenu'))
                 ->modalWidth('xl')
                 ->form($this->getNavigationMenuForm())
                 ->action(function ($data) {
@@ -74,7 +74,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function editNavigationMenuAction(): Action
     {
         return Action::make('editNavigationMenuAction')
-            ->label('Edit')
+            ->label(__('translation.button.edit'))
             ->modalWidth('xl')
             ->icon('heroicon-s-pencil')
             ->size('xs')
@@ -94,7 +94,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function deleteNavigationMenuAction(): Action
     {
         return Action::make('deleteNavigationMenuAction')
-            ->label('Delete')
+            ->label(__('translation.button.delete'))
             ->icon('heroicon-s-trash')
             ->color('danger')
             ->size('xs')
@@ -110,8 +110,8 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function addNavigationMenuItemAction(): Action
     {
         return Action::make('addNavigationMenuItemAction')
-            ->label('Add Item')
-            ->modalHeading('Add Navigation Menu Item')
+            ->label(__('translation.navigationMenuSetting.labeladd'))
+            ->modalHeading(__('translation.navigationMenuSetting.modalheadingAddNavigationMenuItem'))
             ->icon('heroicon-s-plus')
             ->size('xs')
             ->color('gray')
@@ -127,8 +127,8 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function addNavigationMenuItemChildAction(): Action
     {
         return Action::make('addNavigationMenuItemChildAction')
-            ->label('Add Item')
-            ->modalHeading('Add Navigation Menu Item Child')
+            ->label(__('translation.navigationMenuSetting.labeladd'))
+            ->modalHeading(__('translation.navigationMenuSetting.modalheadingAddNavigationMenuItemChild'))
             ->icon('heroicon-s-plus')
             ->size('xs')
             ->color('gray')
@@ -148,8 +148,8 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function editNavigationMenuItemAction(): Action
     {
         return Action::make('editNavigationMenuItemAction')
-            ->label('Edit Item')
-            ->modalHeading('Edit Navigation Menu Item')
+            ->label(__('translation.button.edit'))
+            ->modalHeading(__('translation.navigationMenuSetting.modalheadingEditNavigationMenuItem'))
             ->extraAttributes([
                 'class' => 'hidden',
             ])
@@ -172,7 +172,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     public function deleteNavigationItemMenuAction(): Action
     {
         return Action::make('deleteNavigationItemMenuAction')
-            ->label('Delete')
+            ->label(__('translation.button.delete'))
             ->icon('heroicon-s-trash')
             ->color('danger')
             ->size('xs')
@@ -192,7 +192,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
 
             return [
                 TextInput::make('name')
-                    ->label('Name')
+                    ->label(__('translation.navigationMenuSetting.labelname'))
                     ->required()
                     ->reactive()
                     ->debounce()
@@ -204,7 +204,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
                         $set('handle', Str::slug($state));
                     }),
                 TextInput::make('handle')
-                    ->label('Handle')
+                    ->label(__('translation.navigationMenuSetting.labelhandle'))
                     ->rules([
                         fn (): Closure => function (string $attribute, $value, Closure $fail) use ($id) {
                             if (NavigationMenu::query()->where('handle', $value)->where('id', '!=', $id)->exists()) {
@@ -222,8 +222,10 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
         return function (array $arguments) {
             return [
                 TextInput::make('label')
+                    ->label(__('translation.navigationMenuSetting.labelLabel'))
                     ->required(),
                 Select::make('type')
+                    ->label(__('translation.navigationMenuSetting.labelType'))
                     ->options(NavigationMenuItem::getTypeOptions())
                     ->required()
                     ->reactive(),
@@ -247,7 +249,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
                         return $type ? $type::getAdditionalForm() : [];
                     }),
                 Checkbox::make('meta.new_tab')
-                    ->label('Open in new tab')
+                    ->label(__('translation.navigationMenuSetting.labeltab'))
                     ->default(false),
             ];
         };

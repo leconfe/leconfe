@@ -42,7 +42,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
 
     public static function getWizardLabel(): string
     {
-        return 'Details';
+        return __('translation.submissions.getWizardLabelDetails');
     }
 
     protected function getFormModel()
@@ -59,25 +59,28 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
     {
         return [
             Section::make([
-                Section::make('Submission Details')
-                    ->description('Please provide the following details to help us manage your submission in our system.')
+                Section::make(__('translation.submissions.wizardDetailStepTitleSubmissionDetails'))
+                    ->description(__('translation.submissions.wizardDetailStepDescriptionPleaseHelpUs'))
                     ->aside()
                     ->schema([
                         Hidden::make('nextStep'),
                         Select::make('topic')
                             ->preload()
                             ->multiple()
-                            ->label('Topic')
+                            ->label(__('translation.submissions.wizardDetailStepLabelTopic'))
                             ->searchable()
                             ->relationship('topics', 'name'),
                         TextInput::make('meta.title')
+                            ->label(__('translation.submissions.wizardDetailStepLabelTitle'))
                             ->required(),
                         SpatieTagsInput::make('meta.keywords')
+                            ->label(__('translation.submissions.wizardDetailStepLabelKeywords'))
                             ->splitKeys([','])
                             ->placeholder('')
                             ->model($this->record)
                             ->type('submissionKeywords'),
                         TinyEditor::make('meta.abstract')
+                            ->label(__('translation.submissions.wizardDetailStepLabelAbstract'))
                             ->minHeight(300)
                             ->required()
                             ->profile('basic'),
@@ -89,7 +92,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
     public function nextStep()
     {
         return Action::make('nextStep')
-            ->label('Next')
+            ->label(__('translation.button.next'))
             ->successNotificationTitle('Saved')
             ->action(function (Action $action) {
                 $this->record = SubmissionUpdateAction::run($this->form->getState(), $this->record);

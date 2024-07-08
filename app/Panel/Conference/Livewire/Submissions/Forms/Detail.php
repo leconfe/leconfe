@@ -40,19 +40,23 @@ class Detail extends \Livewire\Component implements HasForms
             })
             ->model($this->submission)
             ->schema([
-                TextInput::make('meta.title'),
-                TextInput::make('meta.subtitle'),
+                TextInput::make('meta.title')
+                ->label(__('translation.submissions.viewSubMissionDetailLabelTitle')),
+                TextInput::make('meta.subtitle')
+                ->label(__('translation.submissions.viewSubMissionDetailLabelSubtitle')),
                 Select::make('topics')
                     ->preload()
                     ->multiple()
                     ->relationship('topics', 'name')
-                    ->label('Topic')
+                    ->label(__('translation.submissions.viewSubMissionDetailLabelTopic'))
                     ->searchable(),
                 SpatieTagsInput::make('meta.keywords')
                     ->splitKeys([','])
                     ->placeholder('')
+                    ->label(__('translation.submissions.viewSubMissionDetailLabelKeywords'))
                     ->type('submissionKeywords'),
                 TinyEditor::make('meta.abstract')
+                    ->label(__('translation.submissions.viewSubMissionDetailLabelAbstract'))
                     ->required()
                     ->minHeight(300)
                     ->profile('basic'),

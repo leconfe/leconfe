@@ -37,17 +37,18 @@ class ErrorReportSetting extends Component implements HasForms
         return $form
             ->statePath('formData')
             ->schema([
-                Section::make('Error Reporting')
-                    ->description(new HtmlString(<<<'HTML'
-                                        Sending report of technical problems helps us improve Leconfe.
-                                    HTML))
+                Section::make(__('translation.errorReportSetting.titleErrorReporting'))
+                    ->description(new HtmlString(
+                        __('translation.errorReportSetting.descriptionSendingReportOfTechnicalProblems')
+                    ))
                     ->schema([
                         Toggle::make('send_error_report')
-                            ->label('Send error report to Leconfe'),
+                            ->label(__('translation.errorReportSetting.labelTonggleSendErrorReportToLeconfe')),
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->successNotificationTitle('Saved!')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.errorReportSetting.successNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

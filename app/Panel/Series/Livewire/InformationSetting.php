@@ -52,55 +52,59 @@ class InformationSetting extends Component implements HasForms
                     ->columns(1)
                     ->schema([
                         TextInput::make('title')
-                            ->label('Serie Title')
+                            ->label(__('translation.serieSetting.informationSettingLabelSerieTitle'))
                             ->autofocus()
                             ->autocomplete()
                             ->required()
-                            ->placeholder('Enter the title of the serie'),
+                            ->placeholder(__('translation.serieSetting.informationSettingPlaceHolderEnterSerie')),
                         TextInput::make('issn')
-                            ->label('ISSN')
-                            ->placeholder('Enter the ISSN of the serie'),
+                            ->label(__('translation.serieSetting.informationSettingLabelIssn'))
+                            ->placeholder(__('translation.serieSetting.informationSettingPlaceHolderIssn')),
                         Grid::make([
                             'xl' => 2
                         ])
                             ->schema([
                                 SpatieMediaLibraryFileUpload::make('thumbnail')
+                                    ->label(__('translation.serieSetting.informationSettingLabelThumbnail'))
                                     ->collection('thumbnail')
-                                    ->helperText('An image representation of the serie that will be used in the list of series.')
+                                    ->helperText(__('translation.serieSetting.informationSettingHelperTextAnImageRepresentation'))
                                     ->image()
                                     ->conversion('thumb'),
                                 SpatieMediaLibraryFileUpload::make('cover')
+                                    ->label(__('translation.serieSetting.informationSettingLabelCover'))
                                     ->collection('cover')
-                                    ->helperText('Cover image for the serie.')
+                                    ->helperText(__('translation.serieSetting.informationSettingHelperTextCoverImageForTheSerie'))
                                     ->image()
                                     ->conversion('thumb'),
                             ]),
                         Grid::make()
                             ->schema([
                                 DatePicker::make('date_start')
-                                    ->label('Start Date')
-                                    ->placeholder('Enter the start date of the serie')
+                                    ->label(__('translation.serieSetting.informationSettingLabelStartDate'))
+                                    ->placeholder(__('translation.serieSetting.informationSettingPlaceHolderEnterThStart'))
                                     ->requiredWith('date_end'),
                                 DatePicker::make('date_end')
-                                    ->label('End Date')
+                                    ->label(__('translation.serieSetting.informationSettingLabelEndDate'))
                                     ->afterOrEqual('date_start')
                                     ->requiredWith('date_start')
-                                    ->placeholder('Enter the end date of the serie'),
+                                    ->placeholder(__('translation.serieSetting.informationSettingPlaceHolderEnterTheEnd')),
                             ]),
                         Select::make('type')
+                            ->label(__('translation.serieSetting.informationSettingLabelType'))
                             ->required()
                             ->options(SerieType::array()),
                         TinyEditor::make('meta.about')
-                            ->label('About Serie')
+                            ->label(__('translation.serieSetting.informationSettingLabelAboutSerie'))
                             ->minHeight(300),
                         TinyEditor::make('meta.additional_content')
+                            ->label(__('translation.serieSetting.informationSettingLabelAdditionalContent'))
                             ->minHeight(300),
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.serieSetting.informationSettingSuccessNotificationTitle'))
+                        ->failureNotificationTitle(__('translation.serieSetting.informationSettingFailureNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

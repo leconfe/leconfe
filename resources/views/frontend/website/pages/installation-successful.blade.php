@@ -9,11 +9,11 @@
     </div>
     <div class="space-y-4 px-1 sm:px-4">
         <div class="text-center">
-            <h1 class="text-2xl font-bold">Installation Successful</h1>
-            <p class="text-lg">You have successfully installed Leconfe</p>
+            <h1 class="text-2xl font-bold">{{ __('translation.installationSuccesfullyBlade.installationSuccessful') }}</h1>
+            <p class="text-lg">{{ __('translation.installationSuccesfullyBlade.youHaveSuccessfullyInstalledLeconfe') }}</p>
         </div>
         <div class="text-center">
-            <a href="{{ route('filament.administration.pages.dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            <a href="{{ route('filament.administration.pages.dashboard') }}" class="btn btn-primary">{{ __('translation.installationSuccesfullyBlade.gotoDashboard') }}</a>
         </div>
     </div>
 </div>

@@ -37,12 +37,12 @@ class StageSchedule extends Component implements HasActions, HasForms
             ->modalWidth('xl')
             ->modalAlignment('center')
             ->icon('iconpark-internaltransmission-o')
-            ->label('Close')
+            ->label(__('translation.stageSchedule.closeActionLabelClose'))
             ->requiresConfirmation()
-            ->modalHeading('Are you sure you want to close the stage ?')
-            ->modalDescription('Authors will not be allowed to submit to this stage.')
+            ->modalHeading(__('translation.stageSchedule.closeActionModalHeading'))
+            ->modalDescription(__('translation.stageSchedule.closeActionModalDescription'))
             ->modalIconColor('danger')
-            ->successNotificationTitle('Stage Closed')
+            ->successNotificationTitle(__('translation.stageSchedule.closeActionsuccessNotificationTitle'))
             ->action(function (Action $action) {
                 $this->closeStage();
                 $action->success();
@@ -56,11 +56,11 @@ class StageSchedule extends Component implements HasActions, HasForms
                 fn (): bool => $this->isStageOpen()
             )
             ->icon('iconpark-externaltransmission')
-            ->label('Open')
+            ->label(__('translation.stageSchedule.openActionLabelOpen'))
             ->requiresConfirmation()
-            ->modalHeading('Are you sure you want to open the stage ?')
-            ->modalDescription('This will allow authors to submit to this stage.')
-            ->successNotificationTitle('Stage Opened')
+            ->modalHeading(__('translation.stageSchedule.openActionModalHeading'))
+            ->modalDescription(__('translation.stageSchedule.openActionModalDescription'))
+            ->successNotificationTitle(__('translation.stageSchedule.openActionSuccessNotificationTitle'))
             ->modalIconColor('success')
             ->action(function (Action $action) {
                 $this->openStage();
@@ -71,7 +71,7 @@ class StageSchedule extends Component implements HasActions, HasForms
     public function scheduleAction()
     {
         return Action::make('scheduleAction')
-            ->label('Schedule')
+            ->label(__('translation.stageSchedule.scheduleActionLabelSchedules'))
             ->icon('iconpark-calendar-o')
             ->modalWidth('xl')
             ->mountUsing(function (Form $form) {
@@ -82,21 +82,21 @@ class StageSchedule extends Component implements HasActions, HasForms
             })
             ->form([
                 DatePicker::make('start_date')
-                    ->label('Start')
+                    ->label(__('translation.stageSchedule.scheduleActionLabelDateStart'))
                     ->required()
                     ->native(false)
                     ->displayFormat('d-F-Y')
                     ->default(now())
                     ->maxDate(now()->addYear()),
                 DatePicker::make('end_date')
-                    ->label('End')
+                    ->label(__('translation.stageSchedule.scheduleActionLabelDateEnd'))
                     ->required()
                     ->native(false)
                     ->displayFormat('d-F-Y')
                     ->default(now())
                     ->maxDate(now()->addYear()),
             ])
-            ->successNotificationTitle('Scheduled')
+            ->successNotificationTitle(__('translation.stageSchedule.successNotificationTitleScheduled'))
             ->action(function (array $data, Action $action) {
                 $this->setSchedule(
                     $data['start_date'],

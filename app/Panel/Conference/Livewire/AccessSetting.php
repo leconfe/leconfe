@@ -38,18 +38,18 @@ class AccessSetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         Checkbox::make('allow_registration')
-                            ->label('Allow Registration')
-                            ->helperText('Allow public to register on the site.'),
+                            ->label(__('translation.accessSetting.labelAllowRegistration'))
+                            ->helperText(__('translation.accessSetting.helperAllowPublictoRegisterOnTheSite')),
                         Checkbox::make('must_verify_email')
-                            ->label('Must Verify Email')
-                            ->helperText('Require users to verify their email address before they can log in.'),
+                            ->label(__('translation.accessSetting.labelMustVerifyEmail'))
+                            ->helperText(__('translation.accessSetting.helperRequireUsersToVerify'))
                     ])
                     ->columns(1),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.accessSetting.successNotificationTitleSaved'))
+                        ->failureNotificationTitle(__('translation.accessSetting.failureNotificationTitleSaved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

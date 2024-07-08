@@ -5,7 +5,7 @@
             <div>
                 <x-filament::button icon="heroicon-o-chevron-left" x-show="! isFirstStep()" x-cloak x-on:click="previousStep"
                     color="secondary" size="sm">
-                    Previous
+                    {{ __('translation.button.previous') }}
                 </x-filament::button>
             </div>
     

@@ -11,6 +11,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -21,10 +22,19 @@ class Dashboard extends Page implements HasInfolists
 
     protected static ?string $navigationIcon = 'heroicon-m-home';
 
-    protected static ?string $title = 'Administration';
+    // protected static ?string $title = 'Administration';
 
-    protected static ?string $navigationLabel = 'Dashboard';
-
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.dashboard.getNavigationLabel');
+    }
+   
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.dashboard.getNavigationLabel');
+    }
+        
+    
     protected static string $view = 'panel.administration.pages.dashboard';
 
     public function infolist(Infolist $infolist): Infolist
@@ -34,7 +44,7 @@ class Dashboard extends Page implements HasInfolists
                 Section::make('')
                     ->schema([
                         Actions::make([
-                            Action::make('System Information')
+                            Action::make(__('translation.dashboard.titleSystemInformation'))
                                 ->icon('heroicon-m-cog-8-tooth')
                                 ->color('primary')
                                 ->requiresConfirmation()
@@ -44,7 +54,7 @@ class Dashboard extends Page implements HasInfolists
 
                         ]),
                         Actions::make([
-                            Action::make('Expire User Session')
+                            Action::make(__('translation.dashboard.titleExpireUserSession'))
                                 ->icon('heroicon-m-user')
                                 ->color('primary')
                                 ->requiresConfirmation()
@@ -52,15 +62,15 @@ class Dashboard extends Page implements HasInfolists
                                 ->successNotification(
                                     Notification::make()
                                         ->success()
-                                        ->title('Session cleared')
-                                        ->body('User session cleared succesfully'),
+                                        ->title(__('translation.dashboard.successNotificationtitle'))
+                                        ->body(__('translation.dashboard.successNotificationbodyUserSession')),
                                 )
                                 ->extraAttributes(['class' => 'w-48'])
                                 ->action(fn (Action $action) => $this->expireUserSession($action)),
 
                         ]),
                         Actions::make([
-                            Action::make('Clear Data Caches')
+                            Action::make(__('translation.dashboard.titleClearDataCaches'))
                                 ->icon('heroicon-m-circle-stack')
                                 ->color('primary')
                                 ->requiresConfirmation()
@@ -68,8 +78,8 @@ class Dashboard extends Page implements HasInfolists
                                 ->successNotification(
                                     Notification::make()
                                         ->success()
-                                        ->title('Clear succesfully')
-                                        ->body('Data caches cleared succesfully'),
+                                        ->title(__('translation.dashboard.successNotificationbodyClearSuccesfully'))
+                                        ->body(__('translation.dashboard.failureNotificationTitleClearSuccesfully')),
                                 )
                                 ->extraAttributes(['class' => 'w-48'])
                                 ->action(function (Action $action) {
@@ -78,7 +88,7 @@ class Dashboard extends Page implements HasInfolists
                                 }),
                         ]),
                         Actions::make([
-                            Action::make('Clear View Caches')
+                            Action::make(__('translation.dashboard.titleClearViewCaches'))
                                 ->icon('heroicon-m-trash')
                                 ->color('primary')
                                 ->requiresConfirmation()
@@ -86,8 +96,8 @@ class Dashboard extends Page implements HasInfolists
                                 ->successNotification(
                                     Notification::make()
                                         ->success()
-                                        ->title('Clear succesfully')
-                                        ->body('View caches cleared succesfully'),
+                                        ->title(__('translation.dashboard.successNotificationbodyClearSuccesfullys'))
+                                        ->body(__('translation.dashboard.successNotificationbodyViewCaches')),
                                 )
                                 ->extraAttributes(['class' => 'w-48'])
                                 ->action(function (Action $action) {

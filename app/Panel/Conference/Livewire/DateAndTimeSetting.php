@@ -40,15 +40,14 @@ class DateAndTimeSetting extends Component implements HasForms
         return $form
             ->statePath('formData')
             ->schema([
-                Section::make('Date and Time Formats')
-                    ->description(new HtmlString(<<<'HTML'
-                                        Please select the desired format for dates and times. You may also enter a custom format using
-                                    special <a href="https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters" target="_blank"
-                                        class="filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline text-sm text-primary-600 hover:text-primary-500 filament-tables-link-action">format characters</a>.
-                                    HTML))
+                Section::make(__('translation.dateTimeSetting.titleDateAndTime'))
+                ->description(new HtmlString(
+                    __('translation.dateTimeSetting.descriptionDateAndTime') . ' <a href="https://www.php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters" target="_blank"
+                    class="filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline text-sm text-primary-600 hover:text-primary-500 filament-tables-link-action">' . __('translation.dateTimeSetting.descriptionFormatCharacters') . '</a>.'
+                    ))
                     ->schema([
                         Radio::make('select_format_date')
-                            ->label('Date')
+                            ->label(__('translation.dateTimeSetting.labeldate'))
                             ->options(
                                 fn () => collect([
                                     'F j, Y',
@@ -57,16 +56,16 @@ class DateAndTimeSetting extends Component implements HasForms
                                     'Y F j',
                                 ])
                                     ->mapWithKeys(fn ($format) => [$format => $now->format($format)])
-                                    ->put('custom', 'Custom')
+                                    ->put('custom', __('translation.dateTimeSetting.labelcustom'))
                             ),
                         TextInput::make('format_date')
                             ->hiddenLabel()
-                            ->placeholder('Enter a custom date format')
+                            ->placeholder(__('translation.dateTimeSetting.placeholderEnterCustomDateFormat'))
                             ->required(fn (Get $get) => $get('select_format_date') === 'custom')
                             ->dehydrated()
                             ->dehydrateStateUsing(fn (Get $get, ?string $state) => $get('select_format_date') === 'custom' ? $state : $get('select_format_date')),
                         Radio::make('select_format_time')
-                            ->label('Time')
+                            ->label(__('translation.dateTimeSetting.labeltime'))
                             ->options(
                                 fn () => collect([
                                     'h:i A',
@@ -74,18 +73,19 @@ class DateAndTimeSetting extends Component implements HasForms
                                     'H:i',
                                 ])
                                     ->mapWithKeys(fn ($format) => [$format => $now->format($format)])
-                                    ->put('custom', 'Custom')
+                                    ->put('custom', __('translation.dateTimeSetting.labelcustom'))
                             ),
                         TextInput::make('format_time')
                             ->hiddenLabel()
-                            ->placeholder('Enter a custom time format')
+                            ->placeholder(__('dateTimeSetting.placehdcs'))
                             ->required(fn (Get $get) => $get('select_format_time') === 'custom')
                             ->dehydrated()
                             ->dehydrateStateUsing(fn (Get $get, ?string $state) => $get('select_format_time') === 'custom' ? $state : $get('select_format_time')),
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->successNotificationTitle('Saved!')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.dateTimeSetting.successNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

@@ -48,6 +48,7 @@ class SubmissionWizardForm extends Component implements HasForms
                                 ->aside()
                                 ->schema([
                                     TextInput::make('meta.title')
+                                        
                                         ->required(),
                                     SpatieTagsInput::make('keywords')
                                         ->placeholder('')

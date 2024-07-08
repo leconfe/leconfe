@@ -16,7 +16,7 @@
                         }"
                         x-on:click="tab = 'current'"
                         class="w-40 p-2 border border-primary first:rounded-l last:rounded-r">
-                        Current
+                        {{ __('translation.homeBlade.current') }}
                     </button>
                     <button 
                         :class="{
@@ -25,7 +25,7 @@
                         }"
                         x-on:click="tab = 'upcoming'"
                         class="w-40 p-2 border-y border-primary first:rounded-l last:rounded-r">
-                        Upcoming
+                        {{ __('translation.homeBlade.upcoming') }}
                     </button>
                     <button 
                         :class="{
@@ -34,13 +34,13 @@
                         }"
                         x-on:click="tab = 'allconferences'"
                         class="w-40 p-2 border border-primary first:rounded-l last:rounded-r text-nowrap">
-                        All Conferences
+                        {{ __('translation.homeBlade.allConferences') }}
                     </button>
                     <a 
                         href="{{ route('livewirePageGroup.website.pages.search') }}"  
                         class="w-40 p-2 border border-l-0 border-primary text-primary first:rounded-l last:rounded-r flex items-center justify-center gap-2">
                         <x-heroicon-s-magnifying-glass class="h-4 w-4"/>
-                        Search
+                        {{ __('translation.homeBlade.search') }}
                     </a>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                     @endif
                 @else
                     <div class="text-center my-12">
-                        <p class="text-lg font-bold">There are no conferences taking place at this time</p>
+                        <p class="text-lg font-bold">{{ __('translation.homeBlade.thereAreNoConferencesTakingPlaceAtThisTime') }}</p>
                     </div>
                 @endif
             </div>
@@ -72,7 +72,7 @@
                     @endif
                 @else
                     <div class="text-center my-12">
-                        <p class="text-lg font-bold">There are no upcoming conferences taking place at this time</p>
+                        <p class="text-lg font-bold">{{ __('translation.homeBlade.thereAreNoUpComingConferencesTakingPlaceAtThisTime') }}</p>
                     </div>
                 @endif
             </div>
@@ -88,7 +88,7 @@
                     @endif
                 @else
                     <div class="text-center my-12">
-                        <p class="text-lg font-bold">There are no conferences</p>
+                        <p class="text-lg font-bold">{{ __('translation.homeBlade.thereAreNoConferences') }}</p>
                     </div>
                 @endif
             </div>

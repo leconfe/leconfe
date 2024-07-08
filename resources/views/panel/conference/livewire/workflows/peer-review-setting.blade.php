@@ -2,12 +2,12 @@
     <div class="flex items-center">
         <div class="flex space-x-3 justify-center items-center">
             <h3 class="text-xl font-semibold leading-6 text-gray-950 dark:text-white">
-                Peer Review
+                {{ __('translation.peerReviewSetting.peerReviewSettingH3') }}
             </h3>
             @if($this->isStageOpen())
-                <x-filament::badge color="success">Open</x-filament::badge>
+                <x-filament::badge color="success">{{ __('translation.button.open') }}</x-filament::badge>
             @else
-                <x-filament::badge color="warning">Close</x-filament::badge>
+                <x-filament::badge color="warning">{{ __('translation.button.close') }}</x-filament::badge>
             @endif
         </div>
         @livewire(App\Panel\Conference\Livewire\Workflows\Components\StageSchedule::class, ['stage' => $this->getStage()])

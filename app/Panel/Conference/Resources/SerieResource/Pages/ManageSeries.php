@@ -9,10 +9,19 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageSeries extends ManageRecords
 {
-    protected static string $resource = SerieResource::class;
+    protected static string $resource = SerieResource::class;  
+    
+    public function getHeading(): string|Htmlable
+    {
+        return  __('translation.serieSetting.serieSettingTitleLabel');
+    }
+
+
+
 
     protected function getHeaderActions(): array
     {
@@ -25,13 +34,13 @@ class ManageSeries extends ManageRecords
     public function getTabs(): array
     {
         return [
-            'current' => Tab::make()
+            'current' => Tab::make(__('translation.serie.managaSeriesTabCurrent'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('state', SerieState::Current)),
-            'draft' => Tab::make()
+            'draft' => Tab::make(__('translation.serie.managaSeriesTabDraft'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('state', SerieState::Draft)),
-            'upcoming' => Tab::make()
+            'upcoming' => Tab::make(__('translation.serie.managaSeriesTabUpcoming'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('state', SerieState::Published)),
-            'archived' => Tab::make()
+            'archived' => Tab::make(__('translation.serie.managaSeriesTabArchived'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('state', SerieState::Archived)),
         ];
     }

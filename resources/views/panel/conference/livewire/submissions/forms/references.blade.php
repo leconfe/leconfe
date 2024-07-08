@@ -3,7 +3,7 @@
         {{ $this->form }}
         @can('editing', $submission)
             <x-filament::button type="submit" icon="iconpark-save-o">
-                Submit
+                {{ __('translation.button.submit') }}
             </x-filament::button>
         @endcan
     </form>

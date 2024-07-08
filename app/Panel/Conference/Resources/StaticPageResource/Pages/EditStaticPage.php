@@ -18,7 +18,7 @@ class EditStaticPage extends EditRecord
             Actions\DeleteAction::make(),
             Actions\Action::make('view')
                 ->icon('heroicon-o-eye')
-                ->label('Preview')
+                ->label(__('translation.button.preview'))
                 ->color('success')
                 ->url(fn ($record) => $record->getUrl()),
         ];

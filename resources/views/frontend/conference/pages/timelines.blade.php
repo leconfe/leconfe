@@ -3,7 +3,7 @@
         <div class="flex flex-wrap">
             <div class="flex flex-col basis-1/2">
                 <div class="flex flex-col space-y-1 mb-3">
-                    <h2 class="text-heading">Event Timelines</h2>
+                    <h2 class="text-heading">{{ __('translation.pagesBlade.timeLines') }}</h2>
                     <div class="border border-primary w-12"></div>
                 </div>
 

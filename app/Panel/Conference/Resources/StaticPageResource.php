@@ -29,7 +29,17 @@ class StaticPageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationGroup = 'Conferences';
+    // protected static ?string $navigationGroup = 'Conferences';
+
+    public static function getModelLabel(): string
+    {
+        return __('translation.staticPageResource.staticPageResourceGetModelLabel');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
+    }
 
     public static function form(Form $form): Form
     {
@@ -40,6 +50,7 @@ class StaticPageResource extends Resource
                         Section::make()
                             ->schema([
                                 TextInput::make('title')
+                                    ->label(__('translation.staticPageResource.staticPageResourceLabelTitle'))
                                     ->lazy()
                                     ->helperText(function ($state, ?StaticPage $record) {
 
@@ -85,15 +96,15 @@ class StaticPageResource extends Resource
                                         $route = $record->getUrl();
 
                                         return new HtmlString("
-                                            <p>Your page will be at :</p>
-                                            <p>{$route}</p>
-                                        ");
+                                        <p>" . __('translation.staticPageResource.staticPageResourceHtmlString') . "</p>
+                                        <p>{$route}</p>
+                                    ");
                                     })
                                     ->required(),
                                 TinyEditor::make('meta.content')
-                                    ->label('Content')
+                                    ->label(__('translation.staticPageResource.staticPageResourceLabelContent'))
                                     ->minHeight(600)
-                                    ->helperText('The complete page content.'),
+                                    ->helperText(__('translation.staticPageResource.staticPagehelperText')),
                             ])->columnSpan([
                                 'default' => 'full',
                                 'lg' => 9,
@@ -107,13 +118,15 @@ class StaticPageResource extends Resource
                                         return $user->full_name;
                                     })
                                     ->dehydrated(false)
-                                    ->disabled(),
+                                    ->disabled()
+                                    ->label(__('translation.staticPageResource.staticPageResourceLabelAuthor')),
                                 SpatieTagsInput::make('tags')
                                     ->type(ContentType::StaticPage->value)
                                     ->afterStateUpdated(fn ($set, $state) => $set('common_tags', StaticPageTag::whereInFromString($state, ContentType::StaticPage->value)->pluck('id')->toArray()))
-                                    ->reactive(),
+                                    ->reactive()
+                                    ->label(__('translation.staticPageResource.staticPageResourceLabelTags')),
                                 TagSuggestions::make('common_tags')
-                                    ->label('Commonly used tags')
+                                    ->label(__('translation.staticPageResource.staticPageResourceLabelCommonlyUsedTags'))
                                     ->helperText(
                                         fn (CheckboxList $component) => count($component->getOptions()) ? null :
                                             new HtmlString('
@@ -125,7 +138,7 @@ class StaticPageResource extends Resource
                                                         </div>
                                                     
                                                         <h4 class="fi-ta-empty-state-heading text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                                                            No tags
+                                                        ' . __("translation.staticPageResource.staticPageResourceH4NoTags") . '
                                                         </h4>
                                                     </div>
                                     ')
@@ -154,9 +167,10 @@ class StaticPageResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
+                    ->label(__('translation.staticPageResource.staticPageResourceLabelTitle'))
                     ->searchable(),
                 TextColumn::make('path')
-                    ->label('Path')
+                    ->label(__('translation.staticPageResource.staticPageResourceLabelPath'))
                     ->getStateUsing(fn (StaticPage $record) => $record->getUrl()),
             ])
             ->filters([
@@ -167,6 +181,7 @@ class StaticPageResource extends Resource
             ])
             ->actions([
                 Action::make('preview')
+                    ->label(__('translation.button.preview'))
                     ->icon('heroicon-o-eye')
                     ->url(fn (StaticPage $record) => $record->getUrl())
                     ->color('gray'),

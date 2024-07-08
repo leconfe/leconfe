@@ -13,7 +13,7 @@
             </div>
         @else
             <div>
-                No information provided.
+               {{ __('translation.pagesBlade.aboutNoInformationProvided') }}
             </div>
         @endif
     </div>

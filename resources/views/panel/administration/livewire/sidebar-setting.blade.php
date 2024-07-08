@@ -1,12 +1,12 @@
 <div class="sidebar-settings space-y-4">
     <x-filament::section>
         <x-slot name="heading">
-            Sidebars Manager
+            {{ __('translation.sideBarSetting.headingSidebarsManagers') }}
         </x-slot>
         @if ($sidebars->isEmpty())
             <div>
                 <p class="text-sm text-gray-500">
-                    No sidebars found.
+                    {{ __('translation.sideBarSetting.emptyNoSidebarsFound') }}
                 </p>
             </div>
         @else
@@ -33,7 +33,7 @@
                     </template>
                 </div>
                 <x-filament::button x-on:click="save" wire:target="save">
-                    Save
+                    {{ __('translation.button.save') }}
                 </x-filament::button>
             </div>
         @endif

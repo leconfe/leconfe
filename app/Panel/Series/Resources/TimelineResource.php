@@ -29,20 +29,34 @@ class TimelineResource extends Resource
         return $form->schema(static::formSchemas());
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.timeLineResource.getModelLabelTimeline');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('translation.timeLineResource.getModelLabelTimeline');
+    }
+
     public static function formSchemas(): array
     {
         return [
             Grid::make(1)
                 ->schema([
                     TextInput::make('title')
+                        ->label(__('translation.timeLineResource.timeLineResourceLabelTitle'))
                         ->required(),
-                    TextInput::make('subtitle'),
+                    TextInput::make('subtitle')
+                        ->label(__('translation.timeLineResource.timeLineResourceLabelSubtitle')),
                     DatePicker::make('date')
+                        ->label(__('translation.timeLineResource.timeLineResourceLabelDate'))
                         ->rule('date')
                         ->required(),
                     Grid::make(2)
                         ->schema([
                             CheckboxList::make('roles')
+                                ->label(__('translation.timeLineResource.timeLineResourceLabelRoles'))
                                 ->options(Role::all()->pluck('name', 'name'))
                                 ->columns(2),
                         ]),
@@ -56,11 +70,14 @@ class TimelineResource extends Resource
         return $table
             ->query(Timeline::query())
             ->columns([
-                TextColumn::make('title'),
+                TextColumn::make('title')
+                    ->label(__('translation.timeLineResource.timeLineResourceLabelTitle')),
                 TextColumn::make('date')
+                    ->label(__('translation.timeLineResource.timeLineResourceLabelDate'))
                     ->dateTime(Setting::get('format_date'))
                     ->sortable(),
                 TextColumn::make('roles')
+                    ->label(__('translation.timeLineResource.timeLineResourceLabelRoles'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Author' => 'warning',

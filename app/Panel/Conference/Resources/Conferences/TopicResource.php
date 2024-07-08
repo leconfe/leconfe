@@ -17,7 +17,17 @@ use Filament\Tables\Table;
 
 class TopicResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Conferences';
+    // protected static ?string $navigationGroup = 'Conferences';
+
+    public static function getModelLabel(): string
+    {
+        return __('translation.topicResource.topicResourceGetModelLabel');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
+    }
 
     protected static ?string $model = Topic::class;
 
@@ -31,6 +41,7 @@ class TopicResource extends Resource
                     ->columns(1)
                     ->schema([
                         TextInput::make('name')
+                            ->label(__('translation.topicResource.topicResourceLabelName'))
                             ->required(),
                     ]),
             ]);
@@ -40,7 +51,8 @@ class TopicResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                ->label(__('translation.topicResource.topicResourceLabelName')),
             ])
             ->actions([
                 ViewAction::make(),

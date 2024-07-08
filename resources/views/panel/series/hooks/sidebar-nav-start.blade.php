@@ -41,7 +41,7 @@
 
                 @if($currentSerie->current)
                 <x-filament::badge size="sm" class="" color="primary">
-                    Current
+                    {{ __('translation.sidebarNavStart.current') }}
                 </x-filament::badge>
                 @endif
             </span>
@@ -56,7 +56,7 @@
 
     <x-filament::dropdown.list>
         <div class="flex w-full items-center gap-2 whitespace-nowrap p-2 text-sm transition-colors duration-75 outline-none font-medium border-b">
-            Switch Series
+            {{ __('translation.sidebarNavStart.switchSeries') }}
         </div>
         
         @can('Administration:view')
@@ -74,7 +74,7 @@
             icon="heroicon-m-arrow-uturn-left"
             tag="a"
         >
-            Back to Conference
+        {{ __('translation.sidebarNavStart.backtoConference') }}
         </x-filament::dropdown.list.item>
         <div class="max-h-64 overflow-y-scroll border-t">
             @foreach (Serie::where('path', '!=', $currentSerie->path)->latest()->get() as $serie)
@@ -87,7 +87,7 @@
                     {{ $serie->title }}
                     @if($serie->current)
                     <x-slot name="badge">
-                        Current
+                        {{ __('translation.sidebarNavStart.current') }}
                     </x-slot>
                     @endif
                 </x-filament::dropdown.list.item>

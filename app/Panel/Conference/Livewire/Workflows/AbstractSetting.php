@@ -37,9 +37,9 @@ class AbstractSetting extends WorkflowStage implements HasActions, HasForms
     public function submitAction()
     {
         return Action::make('submitAction')
-            ->label('Save')
+            ->label(__('translation.button.save'))
             ->icon('lineawesome-save-solid')
-            ->successNotificationTitle('Saved')
+            ->successNotificationTitle(__('translation.workflowAbstractSetting.successNotificationTitleSaved'))
             ->action(function (Action $action) {
                 $this->form->validate();
                 foreach ($this->form->getState()['settings'] as $key => $value) {
@@ -58,8 +58,8 @@ class AbstractSetting extends WorkflowStage implements HasActions, HasForms
                 ->content("The {$this->getStageLabel()} is not open yet, Start now or schedule opening"),
             Grid::make()->schema([
                 TagsInput::make('settings.allowed_file_types')
-                    ->label('Allowed File Types')
-                    ->helperText('Allowed file types for abstracts')
+                    ->label(__('translation.workflowAbstractSetting.labelAllowedFileTypes'))
+                    ->helperText(__('translation.workflowAbstractSetting.helperTextAllowedFile'))
                     ->splitKeys([',', 'enter', ' ']),
             ])
                 ->columns(1),

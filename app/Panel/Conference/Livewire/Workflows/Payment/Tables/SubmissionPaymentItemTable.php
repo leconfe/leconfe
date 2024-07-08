@@ -40,16 +40,19 @@ class SubmissionPaymentItemTable extends \Livewire\Component implements HasForms
         $formField = [
             Hidden::make('type'),
             TextInput::make('name')
+                ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelName'))
                 ->required(),
             Textarea::make('description')
+                ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelDescription'))
                 ->autosize(),
             Repeater::make('fees')
+                ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelFees'))
                 ->required()
                 ->schema([
                     Grid::make()
                         ->schema([
                             Select::make('currency_id')
-                                ->label('Currency')
+                                ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelCurrency'))
                                 ->searchable()
                                 ->required()
                                 ->disabled()
@@ -58,6 +61,7 @@ class SubmissionPaymentItemTable extends \Livewire\Component implements HasForms
                                 ->optionsLimit(250)
                                 ->distinct(),
                             TextInput::make('fee')
+                                ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelFee'))
                                 ->required()
                                 ->minValue(1)
                                 ->prefix(fn (Get $get) => $get('currency_id') ? Currency::find($get('currency_id'))->symbol_native : null)
@@ -81,14 +85,16 @@ class SubmissionPaymentItemTable extends \Livewire\Component implements HasForms
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('name')
+                    ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelName'))
                     ->searchable(),
                 TextColumn::make('description')
+                    ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelDescription'))
                     ->searchable()
                     ->wrap(),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New Payment Item')
+                    ->label(__('translation.workflowPaymentSetting.submissionPaymentItemTableLabelNewPaymentItem'))
                     ->mountUsing(function (Form $form) {
                         $fees = collect(App::getCurrentConference()->getMeta('payment.supported_currencies'))
                             ->map(fn ($currency) => [

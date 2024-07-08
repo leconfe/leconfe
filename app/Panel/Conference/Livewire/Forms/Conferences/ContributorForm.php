@@ -23,7 +23,7 @@ class ContributorForm extends Component
     {
         return [
             Forms\Components\SpatieMediaLibraryFileUpload::make('profile')
-                ->label('Profile Picture')
+                ->label(__('translation.profile.labelProfilePhoto'))
                 ->image()
                 ->key('profile')
                 ->collection('profile')
@@ -33,9 +33,12 @@ class ContributorForm extends Component
                     'lg' => 2,
                 ]),
             Forms\Components\TextInput::make('given_name')
+                ->label(__('translation.profile.labelGivenName'))
                 ->required(),
-            Forms\Components\TextInput::make('family_name'),
+            Forms\Components\TextInput::make('family_name')
+                ->label(__('translation.profile.labelFamilyName')),
             Forms\Components\TextInput::make('email')
+                ->label(__('translation.profile.labelEmail'))
                 ->required()
                 ->unique(
                     ignoreRecord: true,
@@ -56,27 +59,31 @@ class ContributorForm extends Component
     {
         return [
             Forms\Components\TagsInput::make('meta.expertise')
+                ->label(__('translation.profile.labelExpertise'))
                 ->placeholder('')
                 ->columnSpan([
                     'lg' => 2,
                 ]),
             Forms\Components\TextInput::make('meta.affiliation')
+                ->label(__('translation.profile.labelAffiliation'))
                 ->prefixIcon('heroicon-s-building-library')
-                ->placeholder('University of Jakarta')
+                ->placeholder(__('translation.profile.placeholderUniversityofJakarta'))
                 ->columnSpan([
                     'lg' => 2,
                 ]),
             Forms\Components\Select::make('meta.country')
-                ->placeholder('Select a country')
+                ->label(__('translation.profile.labelCountry'))
+                ->placeholder(__('translation.profile.placeholderSelectaCountry'))
                 ->searchable()
                 ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
                 ->optionsLimit(250),
             Forms\Components\TextInput::make('meta.phone')
+                ->label(__('translation.profile.labelPhone'))
                 ->prefixIcon('heroicon-s-phone')
                 ->type('tel')
                 ->rule('phone:INTERNATIONAL')
-                ->helperText('International format, e.g. +6281234567890'),
-            Forms\Components\Fieldset::make('Scholar Profile')
+                ->helperText(__('translation.profile.helperPhone')),
+            Forms\Components\Fieldset::make(__('translation.profile.titleScholarProfile'))
                 ->schema([
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -103,6 +110,7 @@ class ContributorForm extends Component
             IndexColumn::make('no')
                 ->toggleable(),
             SpatieMediaLibraryImageColumn::make('profile')
+                ->label(__('translation.speakerResource.contributorFormLabelProfile'))
                 ->collection('profile')
                 ->conversion('avatar')
                 ->width(50)
@@ -117,6 +125,7 @@ class ContributorForm extends Component
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('full_name')
+                ->label(__('translation.speakerResource.contributorFormLabelFullname'))
                 ->searchable(
                     query: fn ($query, $search) => $query
                         ->where('given_name', 'LIKE', "%{$search}%")
@@ -124,6 +133,7 @@ class ContributorForm extends Component
                 )
                 ->toggleable(),
             TextColumn::make('role.name')
+                ->label(__('translation.speakerResource.contributorFormLabelRole'))
                 ->badge()
                 ->limitList(3)
                 ->listWithLineBreaks(),

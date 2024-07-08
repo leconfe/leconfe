@@ -27,22 +27,22 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
 
     public static function getWizardLabel(): string
     {
-        return 'Review';
-    }
+        return __('translation.submissions.getWizardLabelReview');
+    } 
 
     public function submitAction()
     {
         return Action::make('submitAction')
-            ->label('Submit')
+            ->label(__('translation.button.submit'))
             ->modalWidth('xl')
             ->modalAlignment('center')
             ->requiresConfirmation()
-            ->modalHeading('Submit abstract')
+            ->modalHeading(__('translation.submissions.reviewStepPopupSubmitAbstract'))
             ->modalDescription(function (): string {
-                return 'You will be submitting your abstract to the conference, Please review your submission carefully before proceeding.';
+                return __('translation.submissions.reviewStepPopupModalDescription');
             })
-            ->modalSubmitActionLabel('Submit')
-            ->successNotificationTitle('Abstract submitted, please wait for the conference manager to review your submission.')
+            ->modalSubmitActionLabel(__('translation.submissions.reviewStepPopupmodalSubmitActionLabel'))
+            ->successNotificationTitle(__('translation.submissions.reviewStepPopupsuccessNotificationTitle'))
             ->successRedirectUrl(fn (): string => SubmissionResource::getUrl('complete', ['record' => $this->record]))
             ->action(function (Action $action) {
                 try {
@@ -56,7 +56,7 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                         ->lazy()
                         ->each(fn ($user) => $user->notify(new NewSubmission($this->record)));
                 } catch (\Exception $e) {
-                    $action->failureNotificationTitle('Failed to send notifications');
+                    $action->failureNotificationTitle(__('translation.submissions.reviewStepfailureNotificationTitleSendNotifications'));
                     $action->failure();
                 }
 

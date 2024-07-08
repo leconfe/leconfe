@@ -47,8 +47,8 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
     public function selectAuthorField(): Select
     {
         return Select::make('author_id')
-            ->label('Select Existing Author')
-            ->placeholder('Select Author')
+            ->label(__('translation.submissions.contributtorListLabelSelectExisting'))
+            ->placeholder(__('translation.submissions.contributtorListPlaceHolderSelect'))
             ->preload()
             ->native(false)
             ->searchable()
@@ -115,7 +115,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->createOptionAction(
                             fn (FormAction $action) => $action->color('primary')
                                 ->modalWidth('xl')
-                                ->modalHeading('Create Author Role')
+                                ->modalHeading(__('translation.submissions.contributtorListModalHeadingCreate'))
                         )
                         ->preload()
                         ->required()
@@ -135,7 +135,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ->reorderable(
                 fn () => $this->viewOnly ? false : 'order_column'
             )
-            ->heading('Contributors')
+            ->heading(__('translation.submissions.authorStepContributors'))
             ->query(
                 fn (): Builder => $this->getQuery()
             )
@@ -162,11 +162,11 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New Contributor')
+                    ->label(__('translation.submissions.authorStepNewContributors'))
                     ->modalWidth('2xl')
                     ->icon('heroicon-o-user-plus')
-                    ->modalHeading('Add Contributor')
-                    ->successNotificationTitle('Contributor added')
+                    ->modalHeading(__('translation.submissions.modalHeadingAddContributor'))
+                    ->successNotificationTitle(__('translation.submissions.successNotificationTitlContributoradded'))
                     ->form($this->getContributorFormSchema())
                     ->using(function (array $data) {
                         $author = Author::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();

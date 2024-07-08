@@ -6,7 +6,7 @@
     </div>
     <div class="relative mb-4">
         <div class="flex mb-5 space-x-4">
-            <div class="text-xl font-semibold min-w-fit">List Proceeding</div>
+            <div class="text-xl font-semibold min-w-fit"> {{__('translation.pagesBlade.proceedingsListProceeding')}}</div>
             <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-10">
@@ -32,7 +32,7 @@
                 </div>
             @empty
                 <div class="col-span-2 text-center text-gray-500">
-                    No proceeding found.
+                    {{__('translation.pagesBlade.proceedingsNoProceedingFound')}}
                 </div>
             @endforelse
         </div>

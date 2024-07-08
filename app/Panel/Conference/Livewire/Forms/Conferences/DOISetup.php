@@ -49,56 +49,56 @@ class DOISetup extends Component implements HasForms
                         Fieldset::make('DOIs')
                             ->schema([
                                 Checkbox::make('meta.doi_enabled')
-                                    ->label('Allow Digital Object Identifiers (DOIs) to be assigned to work published in this conference')
+                                    ->label(__('translation.doiSetup.labelAllowDigital'))
                             ])
                             ->columns(1),
-                        Fieldset::make('Items with DOIs')
+                        Fieldset::make(__('translation.doiSetup.fieldsetItemsWithDOIs'))
                             ->schema([
                                 Placeholder::make('items.description')
                                     ->hiddenLabel()
-                                    ->content(new HtmlString('Select which items will be assigned a DOI.')),
+                                    ->content(new HtmlString(__('translation.doiSetup.contentItemsWithDOIs'))),
                                 CheckboxList::make('meta.doi_items')
                                     ->hiddenLabel()
                                     ->options([
-                                        'articles' => 'Articles',
+                                        'articles' => __('translation.doiSetup.optionsArticles'),
                                     ])
                             ])
                             ->columns(1),
                         TextInput::make('meta.doi_prefix')
-                            ->label('DOI Prefix')
+                            ->label(__('translation.doiSetup.labelDOIPrefix'))
                             // ->maxWidth(MaxWidth::Small)
-                            ->helperText(new HtmlString('The DOI Prefix is assigned by a registration agency, such as Crossref or DataCite. Example: 10.xxxx'))
+                            ->helperText(new HtmlString(__('translation.doiSetup.helperTextDOIPrefix')))
                             ->placeholder('10.xxxxx')
                             ->regex('/^10\.\d+$/')
                             ->requiredUnless('meta.doi_enabled', true)
                             ->validationMessages([
-                                'regex' => 'The DOI Prefix must be in the format 10.xxxx.',
-                                'required_unless' => 'The DOI Prefix is required if DOIs are enabled.'
+                                'regex' => __('translation.doiSetup.validationMessagesRegex'),
+                                'required_unless' => __('translation.doiSetup.validationMessagesRequiredUnless')
                             ]),
                         Select::make('meta.doi_automatic_assignment')
-                            ->label('Automatic DOI Assignment')
-                            ->helperText(new HtmlString('When should a submission be assigned a DOI?'))
-                            ->placeholder('Never')
+                            ->label(__('translation.doiSetup.labelAutomaticDOIAssignment'))
+                            ->helperText(new HtmlString(__('translation.doiSetup.helperTextAutomaticDOIAssignment')))
+                            ->placeholder(__('translation.doiSetup.placeholderAutomaticDOIAssignment'))
                             ->options([
-                                'edit_stage' => 'Upon reaching editing stage',
-                                'published' => 'Upon Publication',
+                                'edit_stage' => __('translation.doiSetup.optionsEditStage'),
+                                'published' => __('translation.doiSetup.optionsPublished'),
                             ]),
-                        Fieldset::make('DOI Format')
+                        Fieldset::make(__('translation.doiSetup.doiFormat'))
                             ->schema([
                                 Radio::make('meta.doi_format')
                                     ->hiddenLabel()
                                     ->options([
-                                        'default' => 'Default - Automatically generates a unique eight-character suffix',
-                                        'none' => 'None - Suffixes must be entered manually on the DOI management page and will not be generated automatically'
+                                        'default' => __('translation.doiSetup.optionsDOIFormatDefault'),
+                                        'none' => __('translation.doiSetup.optionsDOIFormatNone')
                                     ])
                             ])
                             ->columns(1)
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.doiSetup.successNotificationTitleDOISetup'))
+                        ->failureNotificationTitle(__('translation.doiSetup.failureNotificationTitleDOISetup'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

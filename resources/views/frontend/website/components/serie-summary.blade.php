@@ -24,6 +24,6 @@
             <p class="serie-description text-sm">{{ $serie->getMeta('description') }}</p>
         @endif
 
-        <a href="{{ $serie->getHomeUrl() }}" class="btn btn-primary btn-sm">Check Conference</a>
+        <a href="{{ $serie->getHomeUrl() }}" class="btn btn-primary btn-sm">{{ __('translation.button.checkConference') }}</a>
     </div>
 </div>

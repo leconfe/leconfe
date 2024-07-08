@@ -42,7 +42,7 @@ class References extends \Livewire\Component implements HasForms
             ->save();
 
         Notification::make()
-            ->body('Saved successfully')
+            ->body(__('translation.submissions.referenceBodySavedSuccessfully'))
             ->success()
             ->send();
     }
@@ -52,7 +52,7 @@ class References extends \Livewire\Component implements HasForms
         return $form
             ->schema([
                 TinyEditor::make('meta.references')
-                    ->label('References')
+                    ->label(__('translation.submissions.referenceLabelReferences'))
                     ->hiddenLabel()
                     ->minHeight(300),
             ]);

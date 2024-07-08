@@ -15,24 +15,24 @@ class Overview extends BaseWidget
     protected static bool $isLazy = false;
 
     protected static ?string $pollingInterval = null;
-
+    
     protected function getStats(): array
     {
         return [
-            Stat::make('Submitted Submissions', Submission::count())
+            Stat::make(__('translation.dashboard.titleSubmittedSubmissions'), Submission::count())
                 ->icon('heroicon-o-document-text')
-                ->description('Total number of submissions'),
-            Stat::make('Published Submission', Submission::query()
+                ->description(__('translation.dashboard.descriptionTotalnumberofSubmissions')),
+            Stat::make(__('translation.dashboard.titlePublishedSubmission'), Submission::query()
                 ->where('status', SubmissionStatus::Published)
                 ->where('published_at', '>=', now()->subMonth())
                 ->count())
-                ->description('Published Submission in the last 30 days'),
-            Stat::make('New Authors', User::query()
+                ->description(__('translation.dashboard.descriptionPublishedTheLast30Days')),
+            Stat::make(__('translation.dashboard.titleNewAuthors'), User::query()
                 ->where('created_at', '>=', now()->subMonth())
                 ->whereHas('roles', fn($query) => $query->where('name', UserRole::Author->value))
                 ->count())
                 ->icon('heroicon-o-user-group')
-                ->description('New authors in the last 30 days'),
+                ->description(__('translation.dashboard.descriptionNewAuthorsIn')),
         ];
     }
 }

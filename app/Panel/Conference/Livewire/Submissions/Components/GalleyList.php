@@ -57,7 +57,7 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
     {
         return [
             TextInput::make('label')
-                ->label('Label')
+                ->label(__('translation.submissions.galleyListLabel'))
                 ->helperText(fn () => new HtmlString('
                     <p class="text-sm italic text-gray-600">
                         Typically used to identify the file format (e.g. PDF, HTML, etc.)
@@ -65,11 +65,11 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                 '))
                 ->required(),
             Toggle::make('is_remote_url')
-                ->label('This galley will be available at a separate website.')
+                ->label(__('translation.submissions.galleyListLabelThisGalley'))
                 ->live()
                 ->default(false),
             TextInput::make('remote_url')
-                ->label('Remote URL')
+                ->label(__('translation.submissions.galleyListLabelRemoteURL'))
                 ->visible(fn (Get $get) => $get('is_remote_url'))
                 ->required()
                 ->activeUrl()
@@ -87,8 +87,8 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                 ->createOptionAction(function (FormAction $action) {
                     $action->modalWidth('xl')
                         ->color('primary')
-                        ->failureNotificationTitle('There was a problem creating the file type')
-                        ->successNotificationTitle('File type created successfully');
+                        ->failureNotificationTitle(__('translation.submissions.galleyListfailureNotificationTitleCreating'))
+                        ->successNotificationTitle(__('translation.submissions.galleyListsuccessNotificationTitleCreating'));
                 })
                 ->createOptionUsing(function (array $data) {
                     SubmissionFileType::create($data);
@@ -122,13 +122,13 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                     $set('media.name', pathinfo($state->getClientOriginalName(), PATHINFO_FILENAME));
                 }),
             Checkbox::make('media.is_custom_name')
-                ->label('Manually set the file name')
+                ->label(__('translation.submissions.galleyListLabelManuallySetThe'))
                 ->visible(function (Get $get, $context) {
                     return ! $get('is_remote_url') && $context == 'create';
                 })
                 ->live(),
             TextInput::make('media.name')
-                ->label('File Name')
+                ->label(__('translation.submissions.galleyListLabelFileName'))
                 ->required()
                 ->visible(function (Get $get, $context) {
                     $isRemoteUrl = $get('is_remote_url');
@@ -158,7 +158,7 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
         return $table
             ->query($this->getQuery())
             ->reorderable(fn () => $this->viewOnly ? false : 'order_column')
-            ->heading('Galleys')
+            ->heading(__('translation.submissions.galleyListHeading'))
             ->columns([
                 Split::make([
                     TextColumn::make('label')
@@ -172,11 +172,11 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('Add Galley')
+                    ->label(__('translation.submissions.galleyListLabelAddGalley'))
                     ->modalWidth('2xl')
                     ->icon('heroicon-o-arrow-up-tray')
-                    ->successNotificationTitle('Galley added successfully')
-                    ->failureNotificationTitle('There was a problem adding the galley')
+                    ->successNotificationTitle(__('translation.submissions.galleyListsuccessNotificationTitle'))
+                    ->failureNotificationTitle(__('translation.submissions.galleyListfailureNotificationTitle'))
                     ->form(static::getGalleyFormSchema())
                     ->using(function (array $data, \Livewire\Component $livewire) {
                         try {
@@ -198,8 +198,8 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
             ->actions([
                 EditAction::make()
                     ->modalWidth('2xl')
-                    ->successNotificationTitle('Galley updated successfully')
-                    ->failureNotificationTitle('There was a problem updating the galley')
+                    ->successNotificationTitle(__('translation.submissions.galleyListsuccessNotificationTitleUpdate'))
+                    ->failureNotificationTitle(__('translation.submissions.galleyListfailureNotificationTitleUpdate'))
                     ->mutateRecordDataUsing(function (array $data, SubmissionGalley $record) {
                         $data['is_remote_url'] = (bool) $record->remote_url;
                         if ($record->file) {

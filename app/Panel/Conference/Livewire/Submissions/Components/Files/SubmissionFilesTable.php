@@ -62,7 +62,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TextColumn::make('media.file_name')
                 ->wrap()
-                ->label('Filename')
+                ->label(__('translation.submissions.uploadFilesStepFilename'))
                 ->color('primary')
                 ->action(fn (Model $record) => $record->media)
                 ->description(fn (Model $record) => $record->type->name),
@@ -73,7 +73,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     {
         return TableAction::make('download_all')
             ->icon('iconpark-download-o')
-            ->label('Download All Files')
+            ->label(__('translation.submissions.uploadFilesStepDownloadAllFiles'))
             ->button()
             ->hidden(fn (): bool => $this->isViewOnly())
             ->color('gray')
@@ -82,7 +82,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 if ($files->count()) {
                     return MediaStream::create('files.zip')->addMedia($files);
                 }
-                $action->failureNotificationTitle("There's nothing to download");
+                $action->failureNotificationTitle(__('translation.submissions.uploadFilesStepUploadnothingToDownload'));
                 $action->failure();
             });
     }
@@ -102,8 +102,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ])
                 ->createOptionAction(function (FormAction $action) {
                     $action->modalWidth('xl')
-                        ->failureNotificationTitle('There was a problem creating the file type')
-                        ->successNotificationTitle('File type created successfully');
+                        ->failureNotificationTitle(__('translation.submissions.uploadFilesfailureNotificationTitleType'))
+                        ->successNotificationTitle(__('translation.submissions.uploadFilessuccessNotificationTitleType'));
                 })
                 ->createOptionUsing(function (array $data) {
                     SubmissionFileType::create($data);
@@ -155,15 +155,15 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     {
         return TableAction::make('upload')
             ->icon('iconpark-upload')
-            ->label('Upload Files')
+            ->label(__('translation.submissions.uploadFilesStepUpload'))
             ->outlined()
             ->hidden(fn (): bool => $this->isViewOnly())
             ->modalWidth('xl')
             ->form(
                 $this->uploadFormSchema()
             )
-            ->successNotificationTitle('Files added successfully')
-            ->failureNotificationTitle('There was a problem adding the files')
+            ->successNotificationTitle(__('translation.submissions.uploadFilessuccessNotificationTitleFilesAdded'))
+            ->failureNotificationTitle(__('translation.submissions.uploadFilesfailureNotificationTitleFilesAdded'))
             ->action(
                 fn (array $data, TableAction $action) => $this->handleUploadAction($data, $action)
             );
@@ -182,14 +182,14 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TableAction::make('rename')
                 ->icon('iconpark-edit')
-                ->label('Rename')
+                ->label(__('translation.submissions.uploadFilesLabelRename'))
                 ->modalWidth('md')
-                ->modalHeading('Edit file')
-                ->modalHeading('Rename')
+                ->modalHeading(__('translation.submissions.uploadFilesModalHeadingEditFile'))
+                ->modalHeading(__('translation.submissions.uploadFilesModalHeadingRename'))
                 ->hidden(
                     fn (): bool => $this->isViewOnly() || $this->submission->isDeclined()
                 )
-                ->successNotificationTitle('File renamed successfully')
+                ->successNotificationTitle(__('translation.submissions.uploadFilessuccessNotificationTitleFilesRenamed'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
                     $form->fill([
                         'file_name' => $record->media->file_name,
@@ -205,7 +205,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->modalSubmitActionLabel('Rename')
                 ->form([
                     TextInput::make('file_name')
-                        ->label('New Filename')
+                        ->label(__('translation.submissions.uploadFilesLabelNewFilename'))
                         ->formatStateUsing(function (SubmissionFile $record) {
                             return str($record->media->file_name)->beforeLast('.'.$record->media->extension);
                         })
@@ -251,7 +251,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return $table
             ->heading($this->tableHeading())
             ->description($this->tableDescription())
-            ->emptyStateHeading('No Files')
+            ->emptyStateHeading(__('translation.submissions.submissionFilesTablesemptyStateHeading'))
             ->query($this->tableQuery())
             ->columns($this->tableColumns())
             ->headerActions($this->headerActions())

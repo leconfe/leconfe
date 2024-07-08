@@ -18,6 +18,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 
 class SiteSettings extends Page implements HasInfolists
@@ -29,6 +30,16 @@ class SiteSettings extends Page implements HasInfolists
     protected static string $view = 'panel.administration.pages.site-settings';
 
     public array $appearanceFormData = [];
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.siteSettings.getTitleSiteSettings');
+    }
+   
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.siteSettings.getTitleSiteSettings');
+    }
 
     public function mount()
     {
@@ -45,11 +56,11 @@ class SiteSettings extends Page implements HasInfolists
             ->schema([
                 Tabs::make('site_settings')
                     ->tabs([
-                        Tabs\Tab::make('About')
+                        Tabs\Tab::make(__('translation.siteSettings.verticalTabsTitleInformation'))
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->tabs([
-                                        VerticalTabs\Tab::make('Information')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsTitleInformation'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 LivewireEntry::make('access_setting')
@@ -59,25 +70,25 @@ class SiteSettings extends Page implements HasInfolists
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Appearance')
+                        Tabs\Tab::make(__('translation.siteSettings.titleApprearance'))
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->tabs([
-                                        VerticalTabs\Tab::make('Setup')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsSetup'))
                                             ->icon('heroicon-o-adjustments-horizontal')
                                             ->schema([
                                                 LivewireEntry::make('sidebar_setting')
                                                     ->livewire(SetupSetting::class)
                                                     ->lazy(),
                                             ]),
-                                        VerticalTabs\Tab::make('Sidebar')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsSidebar'))
                                             ->icon('heroicon-o-view-columns')
                                             ->schema([
                                                 LivewireEntry::make('sidebar_setting')
                                                     ->livewire(SidebarSetting::class)
                                                     ->lazy(),
                                             ]),
-                                        VerticalTabs\Tab::make('Navigation Menu')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsNavigationMenu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
                                                 LivewireEntry::make('navigation-menu-setting')
@@ -88,25 +99,25 @@ class SiteSettings extends Page implements HasInfolists
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('System')
+                        Tabs\Tab::make(__('translation.siteSettings.titleSystem'))
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->tabs([
-                                        VerticalTabs\Tab::make('Access Options')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsAccesOptions'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 LivewireEntry::make('access_setting')
                                                     ->livewire(AccessSetting::class)
                                                     ->lazy(),
                                             ]),
-                                        VerticalTabs\Tab::make('Date & Time')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsDatenTime'))
                                             ->icon('heroicon-o-clock')
                                             ->schema([
                                                 LivewireEntry::make('date_and_time')
                                                     ->livewire(DateAndTimeSetting::class)
                                                     ->lazy(),
                                             ]),
-                                        VerticalTabs\Tab::make('Error Reporting')
+                                        VerticalTabs\Tab::make(__('translation.siteSettings.verticalTabsErrorReporting'))
                                             ->icon('heroicon-o-exclamation-triangle')
                                             ->schema([
                                                 LivewireEntry::make('error_report_setting')

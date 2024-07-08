@@ -17,13 +17,13 @@
         <div class="sticky z-30 flex flex-col self-start col-span-4 gap-3 top-24" x-data="{ decision:@js($submissionDecision) }">
             @if ($submission->stage == SubmissionStage::PeerReview && !$reviewStageOpen)
                 <div class="p-4 text-base text-white rounded-lg bg-primary-700">
-                    This submission has been accepted. Now, we are waiting to next stage is open.
+                    {{ __('translation.submissions.callforabstractThisSubmission') }}
                 </div>
             @endif
 
             @if($submission->getEditors()->isEmpty() && ! $user->hasRole(\App\Models\Enums\UserRole::Editor->value))
                 <div class="px-4 py-3.5 text-base text-white rounded-lg border-2 border-primary-700 bg-primary-500">
-                    {{ $user->can('assignParticipant', $submission) ? 'Assign an editor to enable the editorial decisions for this stage.' : 'No editor assigned to this submission.' }}
+                    {{ $user->can('assignParticipant', $submission) ? __('translation.submissions.callforabstractAssignAnEditor') :__('translation.submissions.callforabstractNoEditorAssigned') }}
                 </div>
             @else
 

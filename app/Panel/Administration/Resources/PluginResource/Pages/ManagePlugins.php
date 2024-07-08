@@ -19,8 +19,8 @@ class ManagePlugins extends ManageRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
-            'disabled' => Tab::make()
+            'all' => Tab::make(__('translation.plugin.tabsNameAll')),
+            'disabled' => Tab::make(__('translation.plugin.tabsNameDisabled'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('enabled', false)),
         ];
     }
@@ -29,8 +29,8 @@ class ManagePlugins extends ManageRecords
     {
         return [
             Actions\Action::make('add-plugin')
-                ->label('Add new')
-                ->modalHeading('Add new Plugin')
+                ->label(__('translation.plugin.labelAddnew'))
+                ->modalHeading(__('translation.plugin.modalheadingAddNewPlugin'))
                 ->disabled(fn () => ! auth()->user()->can('install', ModelsPlugin::class))
                 ->form([
                     FileUpload::make('file')
@@ -45,7 +45,7 @@ class ManagePlugins extends ManageRecords
                     } catch (\Throwable $th) {
                         Notification::make('install-failed')
                             ->danger()
-                            ->title('Install failed')
+                            ->title(__('translation.plugin.titleInstallFailed'))
                             ->body($th->getMessage())
                             ->send();
 
@@ -55,12 +55,12 @@ class ManagePlugins extends ManageRecords
                     }
 
                     Notification::make('install-success')
-                        ->title('Install success')
+                        ->title(__('translation.plugin.titleInstallSuccess'))
                         ->success()
-                        ->body('Plugin installed successfully')
+                        ->body(__('translation.plugin.titlePluginInstalledSuccessfully'))
                         ->send();
                 })
-                ->modalSubmitActionLabel('Submit'),
+                ->modalSubmitActionLabel(__('translation.button.submit')),
         ];
     }
 }

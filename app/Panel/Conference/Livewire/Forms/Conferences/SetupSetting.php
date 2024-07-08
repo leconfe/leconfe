@@ -56,9 +56,9 @@ class SetupSetting extends Component implements HasForms
                                 'sm' => 2,
                             ]),
                         ColorPicker::make('meta.appearance_color')
-                            ->label('Appearance Color'),
+                            ->label(__('translation.setupSetting.setupSettingLabelAppearanceColor')),
                         CssFileUpload::make('styleSheet')
-                            ->label('Custom Stylesheet')
+                            ->label(__('translation.setupSetting.setupSettingLabelCustomStylesheet'))
                             ->collection('styleSheet')
                             ->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
                                 return Str::random().'.css';
@@ -73,9 +73,9 @@ class SetupSetting extends Component implements HasForms
 
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.setupSetting.setupSettingSuccessNotificationTitle'))
+                        ->failureNotificationTitle(__('translation.setupSetting.setupSettingFailureNotificationTitle'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
                             try {

@@ -5,13 +5,13 @@
                 alpine-active="activeTab === 'Proceeding Data'"
                 x-on:click="activeTab = 'Proceeding Data'"
                 >
-                Proceeding Data
+                {{ __('translation.viewProceeding.proceedingData') }}
             </x-filament::tabs.item>
             <x-filament::tabs.item 
                 alpine-active="activeTab === 'Articles'"
                 x-on:click="activeTab = 'Articles'"
                 >
-                Articles
+                {{ __('translation.viewProceeding.articles') }}
             </x-filament::tabs.item>
         </x-filament::tabs>
         <div x-show="activeTab === 'Proceeding Data'">
@@ -22,7 +22,7 @@
 
                 @can('update', $this->getRecord())
                 <x-filament::button type="submit" icon="iconpark-save-o">
-                    Save
+                    {{ __('translation.button.save') }}
                 </x-filament::button>
                 @endcan
             </form>

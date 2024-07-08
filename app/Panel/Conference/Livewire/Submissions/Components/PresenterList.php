@@ -53,8 +53,8 @@ class PresenterList extends Component implements HasForms, HasTable
     public function selectPresenterField(): Select
     {
         return Select::make('presenter_id')
-            ->label('Select Existing Presenter')
-            ->placeholder('Select Presenter')
+            ->label(__('translation.submissions.presenterStepLabelSelectExisting'))
+            ->placeholder(__('translation.submissions.presenterStepLabelSelectPresenter'))
             ->preload()
             ->native(false)
             ->searchable()
@@ -132,7 +132,7 @@ class PresenterList extends Component implements HasForms, HasTable
                 ActionGroup::make([
                     ...PresenterResource::getTableActions(),
                 ])
-                ->label('Set Decision')
+                ->label(__('translation.submissions.presenterStepLabelSetDecision'))
                 ->icon('heroicon-o-chevron-up-down')
                 ->color('primary')
                 ->button()
@@ -161,11 +161,11 @@ class PresenterList extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New Presenter')
+                    ->label(__('translation.submissions.presenterStepLabelNewPresenter'))
                     ->modalWidth('2xl')
                     ->icon('heroicon-o-user-plus')
-                    ->modalHeading('Add Presenter')
-                    ->successNotificationTitle('Presenter added')
+                    ->modalHeading(__('translation.submissions.presenterStepLabelAddPresenter'))
+                    ->successNotificationTitle(__('translation.submissions.presenterStepsuccessNotificationTitle'))
                     ->form($this->getPresenterFormSchema())
                     ->using(function (array $data, Action $action) {
                         $presenter = Presenter::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();

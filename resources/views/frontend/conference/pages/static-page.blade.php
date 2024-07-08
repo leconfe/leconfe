@@ -13,7 +13,7 @@
             </div>
         @else
             <div>
-                No content provided.
+                {{ __('translation.pagesBlade.staticPage') }}
             </div>
         @endif
     </div>

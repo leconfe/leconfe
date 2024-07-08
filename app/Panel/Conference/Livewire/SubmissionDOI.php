@@ -48,6 +48,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
+                    ->label(__('translation.subsmissionDOI.subsmissionDOILabelTitle'))
                     ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
@@ -70,7 +71,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
             ])
             ->actions([
                 Action::make('edit')
-                    ->label('Edit')
+                    ->label(__('translation.button.edit'))
                     ->icon('heroicon-o-pencil')
                     ->button()
                     ->fillForm(function (Submission $record, Table $table) {
@@ -85,7 +86,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                             ->label('DOI')
                             ->suffixAction(
                                 FormAction::make('generate')
-                                    ->label('Generate')
+                                    ->label(__('translation.subsmissionDOI.subsmissionDOILabelGenerate'))
                                     ->button()
                                     // ->outlined()
                                     // ->color('secondary')

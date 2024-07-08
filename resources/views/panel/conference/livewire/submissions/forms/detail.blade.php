@@ -5,7 +5,7 @@
                 {{ $this->form }}
                 @can('editing', $submission)
                     <x-filament::button type="submit" icon="iconpark-save-o">
-                        Save
+                       {{ __('translation.button.save') }}
                     </x-filament::button>
                 @endcan
             </div>

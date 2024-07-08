@@ -42,16 +42,16 @@ class PrivacySetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         TinyEditor::make('meta.privacy_statement')
-                            ->label('Privacy Statement'),
+                            ->label(__('translation.privacySetting.labelPrivacyStatement')),
                     ])
                     ->extraAttributes([
                         'class' => '!p-0',
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.privacySetting.successNotificationTitleSaved'))
+                        ->failureNotificationTitle(__('translation.privacySetting.failureNotificationTitleDataCould'))
                         ->action(function (Action $action) {
                             $privacyStatementFormData = $this->form->getState();
                             try {

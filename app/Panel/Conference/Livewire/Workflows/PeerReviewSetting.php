@@ -41,8 +41,8 @@ class PeerReviewSetting extends WorkflowStage implements HasActions, HasForms
     {
         return Action::make('submitAction')
             ->icon('lineawesome-save-solid')
-            ->label('save')
-            ->successNotificationTitle('Setting saved')
+            ->label(__('translation.button.save'))
+            ->successNotificationTitle(__('translation.peerReviewSetting.successNotificationTitleSettingSaved'))
             ->action(function (Action $action) {
                 $this->form->validate();
                 $data = $this->form->getState();
@@ -60,12 +60,12 @@ class PeerReviewSetting extends WorkflowStage implements HasActions, HasForms
                 Shout::make('settings.stage-closed')
                     ->hidden(fn (): bool => $this->isStageOpen())
                     ->color('warning')
-                    ->content('The call for abstracts is not open yet, Start now or schedule opening'),
+                    ->content(__('translation.peerReviewSetting.contentPeerReviewSetting')),
                 Grid::make()
                     ->schema([
                         TagsInput::make('settings.allowed_file_types')
-                            ->label('Allowed File Types')
-                            ->helperText('Allowed file types')
+                            ->label(__('translation.peerReviewSetting.labelAllowedFileTypes'))
+                            ->helperText(__('translation.peerReviewSetting.helperTextAllowedFileTypes'))
                             ->splitKeys([',', 'enter', ' ']),
                         /**
                          * Question:
@@ -84,25 +84,25 @@ class PeerReviewSetting extends WorkflowStage implements HasActions, HasForms
                             ->acceptedFileTypes(
                                 ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
                             )
-                            ->helperText('Upload paper templates')
+                            ->helperText(__('translation.peerReviewSetting.helperTextUploadPaperTemplates'))
                             ->saveRelationshipsUsing(
                                 static fn (SpatieMediaLibraryFileUpload $component) => $component->saveUploadedFiles()
                             )
-                            ->label('Paper templates'),
+                            ->label(__('translation.peerReviewSetting.labelPaperTemplates')),
                         TextInput::make('settings.invitation_response_days')
-                            ->label('Invitation Response Deadline')
+                            ->label(__('translation.peerReviewSetting.labelInvitationResponseDeadline'))
                             ->default(14)
-                            ->helperText('Deadline for reviewers to respond to invitations')
+                            ->helperText(__('translation.peerReviewSetting.helperTextDeadlineForReviewersToRespond'))
                             ->numeric()
                             ->minLength(2)
                             ->columns(1)
-                            ->suffix('Days'),
-                        Fieldset::make('Review Deadline')
+                            ->suffix(__('translation.peerReviewSetting.suffixDays')),
+                        Fieldset::make(__('translation.peerReviewSetting.fieldsetReviewDeadline'))
                             ->schema([
                                 DatePicker::make('settings.start_at')
-                                    ->label('Date start'),
+                                    ->label(__('translation.peerReviewSetting.labelDateStart')),
                                 DatePicker::make('settings.end_at')
-                                    ->label('Date end'),
+                                    ->label(__('translation.peerReviewSetting.labelDateEnd')),
                             ]),
                     ])
                     ->columns(1),

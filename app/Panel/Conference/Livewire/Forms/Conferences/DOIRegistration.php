@@ -47,8 +47,8 @@ class DOIRegistration extends Component implements HasForms
                 Section::make()
                     ->schema([
                         Select::make('meta.doi_registration_agency')
-                            ->label("Registration Agency")
-                            ->helperText('Please select the registration agency you would like to use when depositing DOIs.')
+                            ->label(__('translation.doiRegistration.labelRegistrationAgency'))
+                            ->helperText(__('translation.doiRegistration.helperTextRegistrationAgency'))
                             ->reactive()
                             ->options(DOIRegistrationFacade::getAllDriverNames()),
                         Grid::make(1)
@@ -61,9 +61,9 @@ class DOIRegistration extends Component implements HasForms
                     ]),
                 Actions::make([
                     Action::make('save')
-                        ->label('Save')
-                        ->successNotificationTitle('Saved!')
-                        ->failureNotificationTitle('Data could not be saved.')
+                        ->label(__('translation.button.save'))
+                        ->successNotificationTitle(__('translation.doiRegistration.successNotificationTitleSaved'))
+                        ->failureNotificationTitle(__('translation.doiRegistration.failureNotificationTitleRegistrationAgency'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
 

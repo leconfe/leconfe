@@ -24,6 +24,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ConferenceSetting extends Page implements HasForms, HasInfolists
 {
@@ -31,15 +32,31 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';  
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.pluginResource.navigationGroupTitle');
+    }
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static string $view = 'panel.conference.pages.settings.conference';
 
-    protected ?string $heading = 'Conference Settings';
+    // protected ?string $heading = 'Conference Settings';
 
-    protected static ?string $navigationLabel = 'Conference';
+    // protected static ?string $navigationLabel = 'Conference';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.conferenceSetting.getNavigationLabelConferenceSettings');
+    }
+
+    public function getHeading(): string|Htmlable
+    {
+        return __('translation.conferenceSetting.getNavigationLabelConferenceSettings');
+    }
+    
 
     public function mount(): void
     {
@@ -57,11 +74,11 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
             ->schema([
                 Tabs::make('website_settings')
                     ->tabs([
-                        Tabs\Tab::make('About')
+                        Tabs\Tab::make(__('translation.conferenceSettingsAbout.tabsHeadingAbout'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->schema([
-                                        InfolistsVerticalTabs\Tab::make('Information')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsAbout.infolistsVerticalTabsInformation'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 LivewireEntry::make('information-setting')
@@ -69,7 +86,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                                         'conference' => App::getCurrentConference(),
                                                     ]),
                                             ]),
-                                        InfolistsVerticalTabs\Tab::make('Additional Information')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsAbout.infolistsVerticalTabsAdditionalInformation'))
                                             ->icon('heroicon-o-plus-circle')
                                             ->schema([
                                                 LivewireEntry::make('information-setting')
@@ -77,7 +94,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                                         'conference' =>  App::getCurrentConference(),
                                                     ])
                                             ]),
-                                        InfolistsVerticalTabs\Tab::make('Privacy')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsAbout.infolistsVerticalTabsPrivacy'))
                                             ->icon('heroicon-o-shield-check')
                                             ->schema([
                                                 LivewireEntry::make('information-setting')
@@ -87,11 +104,11 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                             ]),
                                     ]),
                             ]),
-                        Tabs\Tab::make('Appearance')
+                        Tabs\Tab::make(__('translation.conferenceSettingsApprance.tabsHeadingAppearance'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->schema([
-                                        InfolistsVerticalTabs\Tab::make('Setup')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsApprance.infolistsVerticalTabsSetup'))
                                             ->icon('heroicon-o-adjustments-horizontal')
                                             ->schema([
                                                 LivewireEntry::make('setup-setting')
@@ -99,7 +116,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                                         'conference' => App::getCurrentConference(),
                                                     ]),
                                             ]),
-                                        InfolistsVerticalTabs\Tab::make('Sidebar')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsApprance.infolistsVerticalTabsSidebar'))
                                             ->icon('heroicon-o-view-columns')
                                             ->schema([
                                                 LivewireEntry::make('sidebar-setting')
@@ -107,7 +124,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                                         'conference' => App::getCurrentConference(),
                                                     ]),
                                             ]),
-                                        InfolistsVerticalTabs\Tab::make('Navigation Menu')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsApprance.infolistsVerticalTabsNavigationMenu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
                                                 LivewireEntry::make('navigation-menu-setting')
@@ -115,18 +132,18 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                             ]),
                                     ]),
                             ]),
-                        Tabs\Tab::make('System')
+                        Tabs\Tab::make(__('translation.conferenceSidebarSetting.notificationTitle'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->tabs([
-                                        InfolistsVerticalTabs\Tab::make('Access Options')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSidebarSetting.SetupSettingLabelAccessOptions'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 LivewireEntry::make('access_setting')
                                                     ->livewire(AccessSetting::class)
                                                     ->lazy(),
                                             ]),
-                                        InfolistsVerticalTabs\Tab::make('Date & Time')
+                                        InfolistsVerticalTabs\Tab::make(__('translation.conferenceSidebarSetting.SetupSettingLabelDateNTime'))
                                             ->icon('heroicon-o-clock')
                                             ->schema([
                                                 LivewireEntry::make('date_and_time')

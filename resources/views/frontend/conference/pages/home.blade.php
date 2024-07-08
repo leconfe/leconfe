@@ -44,13 +44,13 @@
             @if ($currentSerie->sponsors->isNotEmpty())
                 <section id="conference-partner" class="space-y-4">
                     <div class="sponsors space-y-4" x-data="carousel">
-                        <h2 class="text-xl text-center font-semibold">Conference Partners</h2>
+                        <h2 class="text-xl text-center font-semibold">{{ __('translation.pagesBlade.homeConferencePartners') }}</h2>
                         <div class="sponsors-carousel flex items-center w-full gap-4" x-bind="carousel">
                             <button x-on:click="toLeft"
                                 role="button"
                                 class="hidden bg-gray-400 hover:bg-gray-500 h-10 w-10 rounded-full md:flex items-center justify-center">
                                 <x-heroicon-m-chevron-left class="h-6 w-fit text-white" />
-                                <span class="sr-only">To Left</span>
+                                <span class="sr-only">{{ __('translation.pagesBlade.homeToLeft') }}</span>
                             </button>
                             <ul x-ref="slider"
                                 class="flex-1 flex w-full snap-x snap-mandatory overflow-x-scroll gap-3 py-4">
@@ -70,7 +70,7 @@
                                 role="button"
                                 class="hidden bg-gray-400 hover:bg-gray-500 h-10 w-10 rounded-full md:flex items-center justify-center">
                                 <x-heroicon-m-chevron-right class="h-6 w-fit text-white" />
-                                <span class="sr-only">To Right</span>
+                                <span class="sr-only">{{ __('translation.pagesBlade.homeToRight') }}</span>
                             </button>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
         </div>
     @else 
         <div>
-            <p>Currently no active serie, please create a serie first.</p>
+            <p>{{ __('translation.pagesBlade.homeCurrentlyNoActiveSeriePleaseCreateASerieFirst') }}</p>
         </div>
     @endif
 </x-website::layouts.main>

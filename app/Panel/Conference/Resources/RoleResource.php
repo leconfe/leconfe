@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 use Livewire\Component as Livewire;
+use Illuminate\Contracts\Support\Htmlable;
 
 class RoleResource extends Resource
 {
@@ -32,7 +33,19 @@ class RoleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.pluginResource.navigationGroupTitle');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('translation.roleResource.getNavigationLabel');
+    }
+   
+
 
     protected static ?int $navigationSort = 6;
 
@@ -49,10 +62,11 @@ class RoleResource extends Resource
             ->schema([
                 Section::make()
                     ->schema([
-                        TextInput::make('name'),
+                        TextInput::make('name')
+                            ->label(__('translation.roleResource.labelName')),
                         Select::make('copy_permissions_from')
                             ->dehydrated(false)
-                            ->label('Copy permissions from')
+                            ->label(__('translation.roleResource.labelCopyPermissionsFrom'))
                             ->hidden(fn(string $operation) => $operation === 'view')
                             ->options(fn() => static::getEloquentQuery()->pluck('name', 'id')->toArray())
                             ->live()
@@ -78,7 +92,7 @@ class RoleResource extends Resource
                     ->columns([
                         'sm' => 2,
                     ]),
-                Section::make('Advanced Permissions')
+                Section::make(__('translation.roleResource.labelAdvancedPermissions'))
                     ->schema(static::getPermissionEntitySchema())
                     ->collapsible(false)
                     ->columns([
@@ -94,6 +108,7 @@ class RoleResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('name')
+                    ->label(__('translation.roleResource.labelName'))
                     ->searchable(),
             ])
             ->filters([
@@ -106,10 +121,10 @@ class RoleResource extends Resource
                 Tables\Actions\Action::make('persistRolePermissions')
                     ->requiresConfirmation()
                     ->icon('heroicon-o-shield-check')
-                    ->label('Persist Permissions')
+                    ->label(__('translation.roleResource.labelPersistPermissions'))
                     ->hidden(fn(Role $record) => !in_array($record->name, UserRole::values()) || app()->isProduction())
                     ->action(fn(Role $record) => RolePersistAssignedPermissions::run($record))
-                    ->successNotificationTitle('Permissions persisted successfully.')
+                    ->successNotificationTitle(__('translation.roleResource.successNotificationTitle'))
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

@@ -15,16 +15,16 @@
             <div class="flex flex-wrap justify-between">
                 <p class="text-xs text-gray-500">
                     @if ($diffInDays > 0)
-                        Published {{ $diffInDays }} days ago
+                        {{ __('translation.pagesBlade.annoucementPublished') }} {{ $diffInDays }} {{ __('translation.pagesBlade.annoucementDaysAgo') }}
                     @else
-                        Published today
+                        {{ __('translation.pagesBlade.annoucementPublishedToday') }}
                     @endif
                 </p>
                 <p class="text-gray-500 text-xs">
                     @if ($user = $announcement->user)
-                        By {{ $user->fullName }}
+                        {{ __('translation.pagesBlade.annoucementBy') }} {{ $user->fullName }}
                     @else
-                        By Admin
+                        {{ __('translation.pagesBlade.annoucementByAdmin') }}
                     @endif
                 </p>
             </div>
@@ -36,7 +36,7 @@
             <div class="flex">
                 <a class="ms-auto btn btn-primary btn-xs"
                     href="{{ route('filament.conference.resources.conferences.announcements.edit', ['record' => $announcement->getKey()]) }}">
-                    <x-heroicon-s-pencil-square class="h-4 w-4" /> Edit
+                    <x-heroicon-s-pencil-square class="h-4 w-4" /> {{ __('translation.button.edit') }}
                 </a>
             </div>
         @endcan
