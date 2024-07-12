@@ -80,7 +80,7 @@ class Detail extends \Livewire\Component implements HasForms
             ->save();
 
         Notification::make()
-            ->body('Saved successfully')
+            ->body(__('translation.submissions.getWizardSuccessNotificationTitleSaved'))
             ->success()
             ->send();
     }

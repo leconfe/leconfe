@@ -55,8 +55,8 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
         abort_if(! $this->review, 404);
 
-        abort_if($this->review->status == ReviewerStatus::DECLINED, 403, 'You have declined this review request');
-        abort_if($this->review->status == ReviewerStatus::CANCELED, 403, 'This review request has been canceled');
+        abort_if($this->review->status == ReviewerStatus::DECLINED, 403, __('translation.reviewSubmissionPage.abortIfDeclined'));
+        abort_if($this->review->status == ReviewerStatus::CANCELED, 403, __('translation..abortIfCanceled'));
 
         if ($this->review->status == ReviewerStatus::PENDING) {
             redirect(SubmissionResource::getUrl('reviewer-invitation', ['record' => $this->record]));
@@ -72,7 +72,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return 'Review: '.$this->record->getMeta('title');
+        return __('translation.reviewSubmissionPage.getHeadingReview').$this->record->getMeta('title');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -83,23 +83,26 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 ShoutEntry::make('thank-you')
                     ->visible(fn (): bool => $this->review->reviewSubmitted())
                     ->type('success')
-                    ->content('Thank you for your time and effort in reviewing this submission. Your review will be used to help the editor make a decision on the submission.'),
+                    ->content(__('translation.reviewSubmissionPage.contentThankYouForYourTime')),
                 InfolistSection::make()
-                    ->heading('Submission Details')
+                    ->heading(__('translation.reviewSubmissionPage.headingSubmissionDetails'))
                     ->schema([
                         Grid::make(2)
                             ->schema([
                                 TextEntry::make('Title')
+                                    ->label(__('translation.reviewSubmissionPage.labelTitle'))
                                     ->color('gray')
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->getMeta('title')
                                     ),
                                 TextEntry::make('Keywords')
+                                    ->label(__('translation.reviewSubmissionPage.labelKeywords'))
                                     ->color('gray')
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ')
                                     ),
                                 TextEntry::make('Abstract')
+                                    ->label(__('translation.reviewSubmissionPage.labelAbstract'))
                                     ->color('gray')
                                     ->html()
                                     ->columnSpanFull()
@@ -122,7 +125,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     public function getHeaderActions(): array
     {
         return [
-            Action::make('View Guidelines')
+            Action::make(__('translation.reviewSubmissionPage.actionViewGuidelines'))
                 ->icon('heroicon-o-information-circle')
                 ->color('info')
                 ->action(
@@ -137,7 +140,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             // ->disabled(fn (): bool => $this->review->reviewSubmitted())
             ->schema([
                 Section::make()
-                    ->heading('Recommendation')
+                    ->heading(__('translation.reviewSubmissionPage.headingRecommendation'))
                     ->schema([
                         Select::make('recommendation')
                             ->required()
@@ -156,14 +159,14 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             )
             ->schema([
                 Section::make()
-                    ->heading('Review Form')
+                    ->heading(__('translation.reviewSubmissionPage.headingReviewForm'))
                     ->schema([
                         TinyEditor::make('reviewData.review_author_editor')
                             ->minHeight(300)
-                            ->label('Review for Author and Editor'),
+                            ->label(__('translation.reviewSubmissionPage.labelReviewForAuthorAndEditor')),
                         TinyEditor::make('reviewData.review_editor')
                             ->minHeight(300)
-                            ->label('Review for Editor'),
+                            ->label(__('translation.reviewSubmissionPage.labelReviewForEditor')),
 
                     ]),
             ]);
@@ -187,12 +190,12 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 fn (): string => ! is_null($this->review->recommendation) ? 'gray' : 'primary'
             )
             ->label(
-                fn (): string => ! is_null($this->review->recommendation) ? 'Review Submitted' : 'Review'
+                fn (): string => ! is_null($this->review->recommendation) ? __('translation.reviewSubmissionPage.labelReviewSubmitted') : __('translation.reviewSubmissionPage.labelReview')
             )
             ->disabled(
                 fn (): bool => ! is_null($this->review->recommendation)
             )
-            ->successNotificationTitle('Review submitted successfully')
+            ->successNotificationTitle(__('translation.reviewSubmissionPage.successNotificationTitleReviewSubmittedSuccessfully'))
             ->action(function (Action $action) {
                 $this->validateAllForms();
 

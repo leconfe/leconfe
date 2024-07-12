@@ -165,7 +165,7 @@ class SubmissionResource extends Resource
                                     ->count();
 
                                 if (! $editorAssigned && $record->stage != SubmissionStage::Wizard) {
-                                    return 'No Editor Assigned';
+                                    return __('translation.submissions.submissionResourceNoEditorAssigned');
                                 }
                             }),
                         Tables\Columns\TextColumn::make('withdrawn-notification')
@@ -176,7 +176,7 @@ class SubmissionResource extends Resource
                             ->color('danger')
                             ->getStateUsing(function (Submission $record) {
                                 if (filled($record->withdrawn_reason)) {
-                                    return 'Pending Withdrawal';
+                                    return __('translation.submissions.submissionResourcePendingWithdrawal');
                                 }
                             }),
                     ]),
@@ -184,6 +184,7 @@ class SubmissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
+                    ->label(__('translation.button.view'))
                     ->icon('lineawesome-eye-solid')
                     ->authorize(function (Submission $record) {
                         return auth()->user()->can('view', $record);

@@ -2,7 +2,8 @@
 
 @php
     $code = '429';
-    $title = 'Too Many Request';
-    $message = 'The request was rejected because too many requests were made';
+    $title = __('translation.errorsBlade.429TooManyRequest');
+    $message =  __('translation.errorsBlade.429Message');
 @endphp
+
 

@@ -29,14 +29,14 @@ class PluginResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('translation.pluginResource.pluginResourcegetNavigationLabel');
+        return __('translation.pluginResource.pluginResourcegetNavigationLabels');
     }
 
 
 
     public static function getNavigationLabel(): string
     {
-        return __('translation.pluginResource.pluginResourcegetNavigationLabel');
+        return __('translation.pluginResource.pluginResourcegetNavigationLabels');
     }
 
 

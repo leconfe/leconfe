@@ -24,14 +24,9 @@ class AnnouncementList extends Page
     {
         return [
             'announcements' => Announcement::query()
-                ->whereMeta('expires_at', '>', now()->startOfDay())
-                ->orWhereMeta('expires_at', '')
+                ->where('expires_at', '>', now()->startOfDay())
                 ->orderBy('created_at', 'desc')
-                ->with([
-                    'tags' => fn ($query) => $query->take(3),
-                    'user',
-                ])
-                ->withCount('tags')
+                ->with('meta')
                 ->get(),
         ];
     }

@@ -20,9 +20,9 @@ use App\Panel\Series\Resources\CommitteeResource\Pages;
 
 class CommitteeResource extends Resource
 {
-    // protected static ?string $navigationGroup = 'Conferences';
-
     protected static ?string $model = Committee::class;
+
+    // protected static ?string $navigationGroup = 'Conference';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
@@ -30,6 +30,12 @@ class CommitteeResource extends Resource
     {
         return __('translation.committeResource.getModelLabelCommittee');
     }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
+    }
+
 
     public static function getEloquentQuery(): Builder
     {
@@ -82,7 +88,7 @@ class CommitteeResource extends Resource
                 $committee = Committee::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
                 $role = CommitteeRoleResource::getEloquentQuery()->whereName($committee?->role?->name)->first();
 
-                $formData = [ 
+                $formData = [
                     'committee_id' => $state,
                     'given_name' => $committee->given_name,
                     'family_name' => $committee->family_name,

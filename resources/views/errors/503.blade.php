@@ -2,6 +2,6 @@
 
 @php
     $code = '503';
-    $title = 'Service Unavailable';
-    $message = 'Service not available. Please try again later';
+    $title = __('translation.errorsBlade.503ServerError');
+    $message = __('translation.errorsBlade.503Message');
 @endphp

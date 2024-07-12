@@ -119,7 +119,7 @@ class Serie extends Model implements HasMedia, HasAvatar, HasName
     {
         return $this->isCurrent()
             ? route('livewirePageGroup.conference.pages.home', ['conference' => $this->conference])
-            : route('livewirePageGroup.archive.pages.home', ['conference' => $this->conference, 'serie' => $this->path]);
+            : route('livewirePageGroup.series.pages.home', ['conference' => $this->conference, 'serie' => $this->path]);
     }
 
     public function isCurrent(): bool

@@ -24,6 +24,8 @@ class TimelineResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
+    // protected static ?string $navigationGroup = 'Conference';
+
     public static function form(Form $form): Form
     {
         return $form->schema(static::formSchemas());
@@ -37,6 +39,11 @@ class TimelineResource extends Resource
     public static function getModelLabel(): string
     {
         return __('translation.timeLineResource.getModelLabelTimeline');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
     }
 
     public static function formSchemas(): array

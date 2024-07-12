@@ -87,7 +87,7 @@ return [
     |
     */
 
-    'locale' => 'sq',
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -225,4 +225,12 @@ return [
         'MetaTag' => App\Facades\MetaTag::class,
         'Setting' => App\Facades\Setting::class,
     ])->toArray(),
+
+    'locales' => [
+        'en' => '🇬🇧  English',
+        'id' =>  '🇮🇩  Indonesia',
+        'sq' => '🇦🇱  Albania',
+    ]
+
+
 ];

@@ -48,7 +48,7 @@ class Home extends Page
         return [
             'currentProceeding' => $currentProceeding,
             'currentSerie' => $currentSerie,
-            'announcements' => Announcement::query()->get(),
+            // 'announcements' => Announcement::query()->get(),
             'acceptedSubmission' => app()->getCurrentConference()->submission()->published()->get(),
             'additionalInformations' => $additionalInformations,
             'venues' => Venue::query()->get(),

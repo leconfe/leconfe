@@ -2,6 +2,6 @@
 
 @php
     $code = '500';
-    $title = 'Server Error';
-    $message = 'A server error occurred. Please try again later';
+    $title = __('translation.errorsBlade.500ServerError');
+    $message = __('translation.errorsBlade.500Message');
 @endphp

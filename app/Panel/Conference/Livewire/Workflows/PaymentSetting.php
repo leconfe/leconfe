@@ -76,6 +76,7 @@ class PaymentSetting extends WorkflowStage implements HasActions, HasForms
             ->statePath('data')
             ->schema([
                 Toggle::make('payment.enabled')
+                    ->label(__('translation.pluginResource.pluginResourceLabelEnabled'))
                     ->reactive(),
                 Grid::make(1)
                     ->hidden(fn (Get $get) => ! $get('payment.enabled'))

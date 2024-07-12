@@ -25,12 +25,20 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
-
+use Illuminate\Support\Facades\Config;
 
 class PanelProvider extends ServiceProvider
 {
     public function seriesPanel(Panel $panel): Panel
     {
+        $currentConference = app()->getCurrentConference();
+        $locales = Config::get('app.locales');
+        $selectedLanguages = $selectedLanguages ?? [];
+        if ($currentConference) {
+            $selectedLanguages = $currentConference->getMeta('languages');
+        }
+
+
         $this->setupPanel($panel)
             ->id('series')
             ->path('{conference:path}/series/{serie:path}/panel')
@@ -43,6 +51,14 @@ class PanelProvider extends ServiceProvider
             ->userMenuItems([
                 'logout' => MenuItem::make()
                     ->url(fn (): string => route('conference.logout')),
+                    ...collect($locales)->map(function ($label, $locale) use ($selectedLanguages) {
+                        if (in_array($locale, $selectedLanguages ?? [])) {
+                            return MenuItem::make()
+                                ->label($label)
+                                ->url(fn (): string => route('translation', $locale));
+                        }
+                        return null;
+                    })->filter()->toArray(),
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
@@ -64,12 +80,19 @@ class PanelProvider extends ServiceProvider
 
     public function conferencePanel(Panel $panel): Panel
     {
+        $currentConference = app()->getCurrentConference();
+        $locales = Config::get('app.locales');
+        $selectedLanguages = $selectedLanguages ?? [];
+        if ($currentConference) {
+            $selectedLanguages = $currentConference->getMeta('languages');
+        }
+
         $this->setupPanel($panel)
             ->id('conference')
             ->default()
             ->path('{conference:path}/panel')
             ->bootUsing(fn () => static::setupFilamentComponent())
-            ->homeUrl(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()]))
+            ->homeUrl(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => $currentConference]))
             ->discoverResources(in: app_path('Panel/Conference/Resources'), for: 'App\\Panel\\Conference\\Resources')
             ->discoverPages(in: app_path('Panel/Conference/Pages'), for: 'App\\Panel\\Conference\\Pages')
             ->discoverWidgets(in: app_path('Panel/Conference/Widgets'), for: 'App\\Panel\\Conference\\Widgets')
@@ -78,6 +101,14 @@ class PanelProvider extends ServiceProvider
             ->userMenuItems([
                 'logout' => MenuItem::make()
                     ->url(fn (): string => route('conference.logout')),
+                ...collect($locales)->map(function ($label, $locale) use ($selectedLanguages) {
+                    if (in_array($locale, $selectedLanguages ?? [])) {
+                        return MenuItem::make()
+                            ->label($label)
+                            ->url(fn (): string => route('translation', $locale));
+                    }
+                    return null;
+                })->filter()->toArray(),
                 'profile' => MenuItem::make()
                     ->url(fn (): string => Profile::getUrl()),
             ])

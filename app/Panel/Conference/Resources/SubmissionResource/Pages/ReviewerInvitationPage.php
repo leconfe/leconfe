@@ -68,7 +68,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     public function acceptAction()
     {
         return Action::make('acceptAction')
-            ->label('Accept Request')
+            ->label(__('translation.reviewerInvitationPage.labelAcceptRequest'))
             ->icon('lineawesome-check-circle-solid')
             ->visible(
                 fn (): bool => $this->review->status == ReviewerStatus::PENDING
@@ -76,7 +76,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->color('primary')
             ->outlined()
             ->requiresConfirmation()
-            ->successNotificationTitle('Request Accepted')
+            ->successNotificationTitle(__('translation.reviewerInvitationPage.successNotificationTitleRequestAccepted'))
             ->action(function (Action $action) {
                 $this->review->update([
                     'date_confirmed' => now(),
@@ -98,7 +98,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 new ReviewerAcceptedInvitationMail($this->review)
                             );
                     } catch (\Exception $e) {
-                        $action->failureNotificationTitle('Failed to send notification to author');
+                        $action->failureNotificationTitle(__('translation.reviewerInvitationPage.failureNotificationTitleFailedToSendNotification'));
                         $action->failure();
                     }
                 }
@@ -110,7 +110,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     public function declineAction()
     {
         return Action::make('declineAction')
-            ->label('Decline Request')
+            ->label(__('translation.reviewerInvitationPage.labelDeclineRequest'))
             ->icon('lineawesome-times-circle-solid')
             ->visible(
                 fn (): bool => $this->review->status == ReviewerStatus::PENDING
@@ -118,7 +118,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->outlined()
             ->color('danger')
             ->requiresConfirmation()
-            ->successNotificationTitle('Request Declined')
+            ->successNotificationTitle(__('translation.reviewerInvitationPage.successNotificationTitleRequestDeclined'))
             ->action(function (Action $action) {
                 $this->review->update([
                     'date_confirmed' => now(),
@@ -131,7 +131,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                             new ReviewerDeclinedInvitationMail($this->review)
                         );
                 } catch (\Exception $e) {
-                    $action->failureNotificationTitle('Failed to send notification to author');
+                    $action->failureNotificationTitle(__('translation.reviewerInvitationPage.failureNotificationTitleRequestDeclined'));
                     $action->failure();
                 }
 
@@ -146,31 +146,34 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->schema([
                 Section::make()
                     ->aside()
-                    ->heading('Request for review')
-                    ->description('You have been selected as a potential reviewer of the following submission. Below is an overview of the submission, as well as the timeline for this review. We hope that you are able to participate')
+                    ->heading(__('translation.reviewerInvitationPage.headingRequestForReview'))
+                    ->description(__('translation.reviewerInvitationPage.descriptionRequestForReview'))
                     ->schema([
-                        Fieldset::make('Submission Details')
+                        Fieldset::make(__('translation.reviewerInvitationPage.fieldsetSubmissionDetails'))
                             ->schema([
                                 TextEntry::make('Title')
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title'))
+                                    ->label(__('translation.reviewerInvitationPage.labelTitle')),
                                 TextEntry::make('Keyword')
                                     ->getStateUsing(function (Submission $submission) {
                                         return $submission->tagsWithType('submissionKeywords')->pluck('name')->join(', ');
-                                    }),
+                                    })
+                                    ->label(__('translation.reviewerInvitationPage.labelKeyword')),
                                 TextEntry::make('Abstract')
                                     ->html()
                                     ->columnSpanFull()
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract'))
+                                    ->label(__('translation.reviewerInvitationPage.labelAbstract')),
                             ]),
                         LivewireEntry::make('review-files')
                             ->livewire(PaperFiles::class, [
                                 'submission' => $this->record,
                                 'viewOnly' => true,
                             ]),
-                        Fieldset::make('Review Schedule')
+                        Fieldset::make(__('translation.reviewerInvitationPage.fieldsetReviewSchedule'))
                             ->columns(2)
                             ->schema([
-                                TextEntry::make('Review Start at')
+                                TextEntry::make(__('translation.reviewerInvitationPage.textEntryReviewStarAt'))
                                     ->getStateUsing(
                                         fn (): string => app()
                                             ->getCurrentConference()
@@ -179,7 +182,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                                 $this->review->date_assigned->addDays(1)->format(Setting::get('format_date'))
                                             )
                                     ),
-                                TextEntry::make('Review End at')
+                                TextEntry::make(__('translation.reviewerInvitationPage.textEntryReviewEndAt'))
                                     ->getStateUsing(
                                         fn (): string => app()
                                             ->getCurrentConference()

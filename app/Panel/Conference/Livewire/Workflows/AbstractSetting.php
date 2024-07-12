@@ -55,7 +55,7 @@ class AbstractSetting extends WorkflowStage implements HasActions, HasForms
             Shout::make('settings.stage-closed')
                 ->hidden(fn (): bool => $this->isStageOpen())
                 ->color('warning')
-                ->content("The {$this->getStageLabel()} is not open yet, Start now or schedule opening"),
+                ->content(__('translation.workflowAbstractSetting.contentThe') .$this->getStageLabel() .__('translation.workflowAbstractSetting.contentIsNotOpenYet')),
             Grid::make()->schema([
                 TagsInput::make('settings.allowed_file_types')
                     ->label(__('translation.workflowAbstractSetting.labelAllowedFileTypes'))

@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class VenueResource extends Resource
 {
-
     protected static ?string $model = Venue::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';

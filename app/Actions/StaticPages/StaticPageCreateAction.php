@@ -10,12 +10,10 @@ class StaticPageCreateAction
 {
     use AsAction;
 
-    public function handle($data, $sendEmail = false)
+    public function handle(array $data)
     {
         try {
             DB::beginTransaction();
-
-            $data['created_by'] = auth()->user()->id;
 
             $staticPage = StaticPage::create($data);
 

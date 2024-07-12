@@ -77,6 +77,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->label(__('translation.submissions.wizardDetailStepLabelKeywords'))
                             ->splitKeys([','])
                             ->placeholder('')
+                            ->required()
                             ->model($this->record)
                             ->type('submissionKeywords'),
                         TinyEditor::make('meta.abstract')
@@ -93,7 +94,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
     {
         return Action::make('nextStep')
             ->label(__('translation.button.next'))
-            ->successNotificationTitle('Saved')
+            ->successNotificationTitle(__('translation.submissions.getWizardSuccessNotificationTitleSaved'))
             ->action(function (Action $action) {
                 $this->record = SubmissionUpdateAction::run($this->form->getState(), $this->record);
                 $this->dispatch('next-wizard-step');

@@ -71,3 +71,9 @@ Route::get('phpmyinfo', function () {
 
 Route::any('{conference:path}/logout', LogoutController::class)->name('conference.logout');
 Route::any('logout', LogoutController::class)->name('logout');
+
+Route::get('switch-language/{locale}', function ($locale) {
+    session()->put('locale', $locale);
+    return redirect()->back();
+})->name('translation');
+

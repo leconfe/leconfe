@@ -21,11 +21,16 @@ use App\Panel\Series\Resources\SpeakerResource\Pages;
 
 class SpeakerResource extends Resource
 {
-    // protected static ?string $navigationGroup = 'Conferences';
-
     protected static ?string $model = Speaker::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    // protected static ?string $navigationGroup = 'Conference';
+
+    public static function getNavigationGroup(): string
+    {
+        return __('translation.announcementResource.announcementResourceNavigationGroup');
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -83,7 +88,7 @@ class SpeakerResource extends Resource
                 $speaker = Speaker::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
                 $role = SpeakerRoleResource::getEloquentQuery()->whereName($speaker?->role?->name)->first();
 
-                $formData = [ 
+                $formData = [
                     'speaker_id' => $state,
                     'given_name' => $speaker->given_name,
                     'family_name' => $speaker->family_name,

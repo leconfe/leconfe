@@ -11,7 +11,7 @@ class AnnouncementUpdateAction
 {
     use AsAction;
 
-    public function handle(array $data, Announcement $announcement): Model
+    public function handle(Announcement $announcement, array $data): Model
     {
         try {
             DB::beginTransaction();

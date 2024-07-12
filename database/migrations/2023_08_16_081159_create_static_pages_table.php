@@ -2,6 +2,7 @@
 
 use App\Models\Conference;
 use App\Models\Enums\ContentType;
+use App\Models\Serie;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,14 +15,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_contents', function (Blueprint $table) {
+        Schema::create('static_pages', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Conference::class);
+            $table->foreignIdFor(Serie::class)->nullable()->default(0);
             $table->string('title');
             $table->string('slug');
-            $table->enum('content_type', ContentType::array());
-            $table->foreignIdFor(User::class, 'created_by');
             $table->timestamps();
+
+
+            $table->unique(['conference_id', 'serie_id', 'slug']);
         });
     }
 
@@ -30,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_contents');
+        Schema::dropIfExists('static_pages');
     }
 };

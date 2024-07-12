@@ -41,13 +41,13 @@ class ConferenceResource extends Resource
     {
         return __('translation.conference.getNavigationLabel');
     }
-   
+
     public static function getModelLabel(): string
     {
         return __('translation.conference.getNavigationLabel');
     }
- 
-            
+
+
 
     public static function form(Form $form): Form
     {
@@ -89,6 +89,7 @@ class ConferenceResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('open-conference')
+                    ->label(__('translation.conference.labelOpenConference'))
                     ->icon('heroicon-o-link')
                     ->button()
                     ->color('gray')

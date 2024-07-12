@@ -105,7 +105,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
 
 <div id="impersonate-banner">
     <div>
-        Login as <strong>{{ $display }}</strong>
+        {{ __('translation.userResource.labelLoginAs') }} <strong>{{ $display }}</strong>
     </div>
 
     <a href="{{ route('filament-impersonate.leave') }}">{{ __('filament-impersonate::banner.leave') }}</a>

@@ -12,6 +12,7 @@ use App\Panel\Conference\Livewire\Forms\Conferences\AdditionalInformationSetting
 use App\Panel\Conference\Livewire\Forms\Conferences\ContactSetting;
 use App\Panel\Conference\Livewire\Forms\Conferences\InformationSetting;
 use App\Panel\Conference\Livewire\Forms\Conferences\PrivacySetting;
+use App\Panel\Conference\Livewire\Forms\Conferences\SelectLanguage;
 use App\Panel\Conference\Livewire\Forms\Conferences\SetupSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use Filament\Forms\Components\Livewire;
@@ -32,7 +33,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
 
     protected static ?int $navigationSort = 1;
 
-    // protected static ?string $navigationGroup = 'Settings';  
+    // protected static ?string $navigationGroup = 'Settings';
 
     public static function getNavigationGroup(): string
     {
@@ -56,7 +57,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
     {
         return __('translation.conferenceSetting.getNavigationLabelConferenceSettings');
     }
-    
+
 
     public function mount(): void
     {
@@ -124,6 +125,14 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                                         'conference' => App::getCurrentConference(),
                                                     ]),
                                             ]),
+                                        InfolistsVerticalTabs\Tab::make(__('translation.selectLanguage.pilihBahasa'))
+                                            ->icon('heroicon-o-language')
+                                            ->schema([
+                                                LivewireEntry::make('select-langguage')
+                                                    ->livewire(SelectLanguage::class, [
+                                                        'conference' => App::getCurrentConference(),
+                                                    ]),
+                                            ]),
                                         InfolistsVerticalTabs\Tab::make(__('translation.conferenceSettingsApprance.infolistsVerticalTabsNavigationMenu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
@@ -152,7 +161,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
                                             ]),
                                     ]),
                             ]),
-                        Tabs\Tab::make('E-Mail')
+                        Tabs\Tab::make(__('translation.conferenceSidebarSetting.SetupSettingLabelEmail'))
                             ->schema([
                                 LivewireEntry::make('mail_setting')
                                     ->livewire(EmailSetting::class)

@@ -2,6 +2,6 @@
 
 @php
     $code = '403';
-    $title = $exception->getMessage() ?: 'Forbidden';
-    $message = 'Access denied, you do not have permission to access this page';
+    $title = $exception->getMessage() ?: __('translation.errorsBlade.403Forbidden');
+    $message = __('translation.errorsBlade.403Message');
 @endphp

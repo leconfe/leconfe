@@ -29,7 +29,7 @@ return [
         'successNotificationTitleSaved' => 'Tersimpan!',
         'failureNotificationTitleSaved' => 'Data tidak dapat disimpan.',
 
-    
+
     ],
 
     'dashboard' => [
@@ -100,6 +100,9 @@ return [
         'labelPageFooter' => 'Footer Halaman',
         'hintRecommendedLength:50-160chara' => 'Panjang yang disarankan: 50-160 karakter',
         'helperTextAShortDescritionOfTheWebsite' => 'Deskripsi singkat tentang situs web. Ini akan digunakan untuk membantu mesin pencari memahami situs web.',
+        'successNotificationTitleSaved' => 'Disimpan!',
+        'failureNotificationTitleFailed' => 'Gagal!',
+
     ],
 
     'navigationMenuSetting' => [
@@ -182,6 +185,7 @@ return [
 
     'conference' => [
         'getNavigationLabel' => 'Konferensi',
+        'labelOpenConference' => 'Buka Konferensi',
         'labelName' => 'Nama',
         'labelPath' => 'Jalur',
         'labelAcronym' => 'Akronim',
@@ -241,7 +245,7 @@ return [
 
 
         'authorStepContributors' => 'Kontributor',
-        'authorStepPleaseSubmission.' => 'Harap berikan informasi untuk semua kontributor yang terlibat dalam pengajuan ini.',
+        'authorStepPleaseSubmission' => 'Harap berikan informasi untuk semua kontributor yang terlibat dalam pengajuan ini.',
         'authorStepNewContributors' => 'Kontributor Baru',
         'modalHeadingAddContributor' => 'Tambah Kontributor',
         'successNotificationTitlContributoradded' => 'Kontributor ditambahkan',
@@ -373,10 +377,15 @@ return [
         'presenterFilestableHeading' => 'Berkas Presenter',
 
         'submissionFilesTablesemptyStateHeading' => 'Tidak Ada Berkas',
+        'submissionResourceNoEditorAssigned' => 'Tidak Ada Editor yang Ditugaskan',
+        'submissionResourcePendingWithdrawal' => 'Penarikan yang Tertunda',
+        'submissionResourceSubmissionDetail' => 'Detail Pengajuan',
+
+
     ],
 
     'presenter' => [
-        // 'presenterResourceLabelTitlePresenters' => 'Presenters',
+        'presenterResourceLabelTitlePresenters' => 'Pembicara',
         'presenterResourceLabelGroupBySubmission' => 'Kelompokkan berdasarkan Pengajuan',
         'presenterResourceLabelNotes' => 'Catatan',
         'presenterResourceLabelApprove' => 'Setujui',
@@ -413,11 +422,11 @@ return [
         'proceedingResourceLabelTableTitle' => 'Judul',
         'proceedingResourceLabelTableSubmissions' => 'Pengajuan',
         'proceedingResourceLabelTablePublishedAt' => 'Dipublikasikan pada',
-    
-        'manageProceedingsTabsTitleFuture' => 'Prosiding Masa Depan',
-        'manageProceedingsTabsTitleBack' => 'Prosiding Sebelumnya', 
 
-        ],    
+        'manageProceedingsTabsTitleFuture' => 'Prosiding Masa Depan',
+        'manageProceedingsTabsTitleBack' => 'Prosiding Sebelumnya',
+
+        ],
 
     'serie' => [
         'managaSeriesTabCurrent' => 'Saat Ini',
@@ -521,7 +530,7 @@ return [
         'venueResourceLabelLocation' => 'Lokasi',
         'venueResourceLabelPhoto' => 'Foto',
         'venueResourceLabelDescription' => 'Deskripsi',
-    ], 
+    ],
 
     'serieSetting' => [
         'serieSettingTitleLabel' => 'Serial',
@@ -529,7 +538,7 @@ return [
         'serieSettingTabsInformation' => 'Informasi',
         'serieSettingTabsSponsor' => 'Sponsor',
 
-    
+
         'informationSettingLabelSerieTitle' => 'Judul Serial',
         'informationSettingPlaceHolderEnterSerie' => 'Masukkan judul serial',
         'informationSettingLabelIssn' => 'ISSN',
@@ -575,28 +584,47 @@ return [
         'topicResourceLabelName' => 'Nama',
     ],
 
-   'staticPageResource' => [
+    'staticPageResource' => [
         'staticPageResourceGetModelLabel' => 'Halaman Statis',
         'staticPageResourceLabelTitle' => 'Judul',
         'staticPageResourceLabelContent' => 'Konten',
         'staticPageResourceLabelAuthor' => 'Penulis',
         'staticPageResourceLabelTags' => 'Tag',
         'staticPageResourceLabelPath' => 'Path',
-        'staticPageResourceLabelCommonlyUsedTags' => 'Tag yang sering digunakan',
-        'staticPageResourceH4NoTags' => 'Tidak ada tag',
-        'staticPageResourceHtmlString' => 'Halaman Anda akan berada di :',
+        'staticPageResourceLabelSlug' => 'Slug',
+        'staticPageResourceLabelCommonlyUsedTags' => 'Tag yang Sering Digunakan',
+        'staticPageResourceH4NoTags' => 'Tidak Ada Tag',
+        'staticPageResourceHtmlString' => 'Halaman Anda akan berada di:',
         'staticPagehelperText' => 'Konten halaman lengkap.',
     ],
 
-    
+
+
+    'announcementResource' => [
+        'announcementResourceModelLabel' => 'Pengumuman',
+        'announcementResourceNavigationGroup' => 'Konferensi',
+        'announcementResourceLabelTitle' => 'Judul',
+        'announcementResourceLabelAnnouncement' => 'Pengumuman',
+        'announcementResourceHelperTextAnnouncement' => 'Konten lengkap pengumuman.',
+        'announcementResourceLabelCheckBox' => 'Kirim email tentang ini ke pengguna yang berlangganan',
+        'announcementResourceLabelAuthor' => 'Penulis',
+        'announcementResourceLabelCommonlyUsedTags' => 'Tag yang sering digunakan',
+        'announcementResourceLabelH4' => 'Tidak ada tag',
+        'announcementResourceLabelFeaturedImage' => 'Gambar unggulan',
+        'announcementResourceLabelExpiresAt' => 'Kedaluwarsa pada',
+        'announcementResourceLabelSummary' => 'Ringkasan',
+    ],
+
+
+
     'pluginResource' => [
         'navigationGroupTitle' => 'Pengaturan',
         'pluginResourceLabelTitle' => 'Nama',
         'pluginResourceLabelAuthor' => 'Penulis',
         'pluginResourceLabelEnabled' => 'Aktif',
-        'pluginResourcegetNavigationLabel' => 'Plugin',
+        'pluginResourcegetNavigationLabels' => 'Plugin',
      ],
-    
+
     'informationSetting' => [
         'informationSettingLabelName' => 'Nama',
         'informationSettingLabelAcronym' => 'Singkatan',
@@ -624,7 +652,7 @@ return [
 
     'privacySetting' => [
         'labelPrivacyStatement' => 'Pernyataan Privasi',
-        'successNotificationTitleSaved!' => 'Tersimpan!',
+        'successNotificationTitleSaved' => 'Tersimpan!',
         'failureNotificationTitleDataCould' => 'Data tidak dapat disimpan.',
     ],
 
@@ -641,12 +669,13 @@ return [
         'infolistsVerticalTabsSetup' => 'Pengaturan',
         'infolistsVerticalTabsSidebar' => 'Sidebar',
         'infolistsVerticalTabsNavigationMenu' => 'Menu Navigasi',
-    ],  
+    ],
 
     'conferenceSidebarSetting' => [
         'notificationTitle' => 'Sidebar Diperbarui',
         'SetupSettingLabelAccessOptions' => 'Opsi Akses',
         'SetupSettingLabelDateNTime' => 'Tanggal & Waktu',
+        'SetupSettingLabelEmail' => 'Surel',
     ],
 
     'setupSetting' => [
@@ -698,6 +727,9 @@ return [
         'successNotificationTitleSaved' => 'Tersimpan',
         'labelAllowedFileTypes' => 'Jenis File yang Diizinkan',
         'helperTextAllowedFile' => 'Jenis file yang diizinkan untuk abstrak',
+        'contentThe' => 'Halaman ',
+        'contentIsNotOpenYet' => ' belum dibuka, Mulai sekarang atau jadwalkan pembukaan',
+
     ],
 
     'workflowPaymentSetting' => [
@@ -707,7 +739,7 @@ return [
         'labelPaymentMethod' => 'Metode Pembayaran',
         'labelSupportedCurrencies' => 'Mata Uang yang Didukung',
         'labelPaymentInstruction' => 'Instruksi Pembayaran',
-        
+
         'submissionPaymentItemTableLabelName' => 'Nama',
         'submissionPaymentItemTableLabelDescription' => 'Deskripsi',
         'submissionPaymentItemTableLabelFees' => 'Biaya',
@@ -818,16 +850,16 @@ return [
         'contentInformationyYouWillNeed' => ', Anda perlu menambahkan ',
         'contentInformationCrossrefAccountCredentials' => 'kredensial akun Crossref',
         'contentInformationIntoTheUsername' => ' ke dalam bidang username dan password di bawah ini.',
-    
+
         'contentInformationDependingOn' => ' Bergantung pada keanggotaan Crossref Anda, ada dua cara untuk memasukkan username dan password Anda:',
-    
+
         'contentInformatiIfYouAreUsing' => 'Jika Anda menggunakan akun organisasi, tambahkan ',
         'contentInformatiSharedUsernameAndPassword' => 'username dan password bersama',
-    
+
         'contentInformatiIfYouAreUsingA' => 'Jika Anda menggunakan ',
         'contentInformatiPersonalAccount' => 'akun pribadi',
         'contentInformatiContentInformatiPersonalAccount' => ', masukkan alamat email Anda dan peran dalam bidang username. Username akan terlihat seperti: email@example.com/role',
-    
+
         'contentInformatiIYouDoNotKnow' => 'Jika Anda tidak tahu atau tidak memiliki akses ke kredensial Crossref Anda, Anda dapat menghubungi ',
         'contentInformatiCrossrefSupport' => 'dukungan Crossref',
         'contentInformatiForAssistance' => ' untuk bantuan. Tanpa kredensial, Anda masih dapat mengekspor metadata ke format XML Crossref, tetapi Anda tidak dapat mendaftarkan DOI Anda dengan Crossref dari Leconfe.',
@@ -864,6 +896,7 @@ return [
         'modalHeadingSendEmailTo' => 'Kirim Email',
         'labelSubject' => 'Subjek',
         'labelTo' => 'Ke',
+        'labelMessage' => 'Pesan',
 
     ],
 
@@ -961,7 +994,7 @@ return [
         'homeConferencePartners' => 'Partner Konferensi',
         'homeToLeft' => 'Ke Kiri',
         'homeToRight' => 'Ke Kanan',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Saat ini tidak ada seri aktif, silakan buat seri terlebih dahulu.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Saat ini tidak ada seri aktif, silakan buat seri terlebih dahulu.',
 
         'loginEmail' => 'Email',
         'login' => 'Login',
@@ -1001,6 +1034,106 @@ return [
         'switchSeries' => 'Ganti Seri',
         'backtoConference' => 'Kembali ke Konferensi',
     ],
+
+    'permissionResource' => [
+        'getModelLabel' => 'Izin',
+        'labelContext' => 'Konteks',
+        'helperTextContext' => 'Konteks harus menggunakan StudlyCase',
+        'labelAction' => 'Aksi',
+        'helperTextActionMustBeCamelCase' => 'Aksi harus menggunakan camelCase',
+        'labelRoles' => 'Peran',
+        'labelName' => 'Nama',
+        'labelAssignedRoles' => 'Peran yang Ditugaskan',
+    ],
+
+    'selectLanguage' => [
+        'pilihanBahasa' => 'Pilihan Bahasa',
+        'pilihBahasa' => ' Pilih Bahasa',
+        'bahasaIndonesia' => 'Bahasa Indonesia',
+        'english' => 'English',
+        'albania' => 'Albania',
+        'simpanPilihanBahasa' => 'Simpan Pilihan Bahasa',
+    ],
+
+    'submissionWizard' => [
+        'sectionSubmissionDetails' => 'Detail Pengajuan',
+        'descriptionSubmissionDetails' => 'Mohon berikan detail berikut untuk membantu kami mengelola pengajuan Anda di sistem kami.',
+        'labelTitle' => 'Judul',
+        'labelKeywords' => 'Kata Kunci',
+        'labelAbstract' => 'Abstrak',
+        'sectionUploadFiles' => 'Unggah Berkas',
+        'descriptionUploadFiles' => 'Berikan file-file yang mungkin diperlukan tim editorial kami untuk mengevaluasi pengajuan Anda. Selain dari karya utama, Anda dapat mengirimkan dataset, pernyataan konflik kepentingan, atau berkas tambahan lainnya jika ini akan membantu editor kami.',
+        'labelAuthors' => 'Penulis',
+        'labelNewSubmission' => 'Pengajuan Baru',
+        'bodyNewSubmission' => 'Sebuah makalah baru telah diajukan yang memerlukan penugasan editor.',
+        'labelViewSubmission' => 'Lihat Pengajuan',
+    ],
+
+    'reviewerInvitationPage' => [
+        'labelAcceptRequest' => 'Terima Permintaan',
+        'successNotificationTitleRequestAccepted' => 'Permintaan Diterima',
+        'failureNotificationTitleFailedToSendNotification' => 'Gagal mengirim notifikasi ke penulis',
+        'labelDeclineRequest' => 'Tolak Permintaan',
+        'successNotificationTitleRequestDeclined' => 'Permintaan Ditolak',
+        'failureNotificationTitleRequestDeclined' => 'Gagal mengirim notifikasi ke penulis',
+        'headingRequestForReview' => 'Permintaan untuk Review',
+        'descriptionRequestForReview' => 'Anda telah dipilih sebagai reviewer potensial untuk pengajuan berikut. Berikut adalah gambaran pengajuan, serta jadwal waktu untuk review ini. Kami berharap Anda dapat berpartisipasi.',
+        'fieldsetSubmissionDetails' => 'Detail Pengajuan',
+        'labelTitle' => 'Judul',
+        'labelKeyword' => 'Kata Kunci',
+        'labelAbstract' => 'Abstrak',
+        'fieldsetReviewSchedule' => 'Jadwal Review',
+        'textEntryReviewStarAt' => 'Review Dimulai pada',
+        'textEntryReviewEndAt' => 'Review Berakhir pada',
+    ],
+
+    'reviewSubmissionPage' => [
+        'abortIfDeclined' => 'Anda telah menolak permintaan review ini',
+        'abortIfCanceled' => 'Permintaan review ini telah dibatalkan',
+        'getHeadingReview' => 'Review: ',
+        'contentThankYouForYourTime' => 'Terima kasih atas waktu dan usaha Anda dalam meninjau pengajuan ini. Review Anda akan digunakan untuk membantu editor membuat keputusan tentang pengajuan ini.',
+        'headingSubmissionDetails' => 'Detail Pengajuan',
+        'labelTitle' => 'Judul',
+        'labelKeywords' => 'Kata Kunci',
+        'labelAbstract' => 'Abstrak',
+        'actionViewGuidelines' => 'Lihat Pedoman',
+        'headingRecommendation' => 'Rekomendasi',
+        'headingReviewForm' => 'Formulir Review',
+        'labelReviewForAuthorAndEditor' => 'Review untuk Penulis dan Editor',
+        'labelReviewForEditor' => 'Review untuk Editor',
+        'successNotificationTitleReviewSubmittedSuccessfully' => 'Review berhasil disampaikan',
+        'labelReviewSubmitted' => 'Review Disampaikan',
+        'labelReview' => 'Review',
+    ],
+
+    'errorsBlade' => [
+        '401Unauthorized' => 'Tidak Diizinkan',
+        '401UnauthorizedMessage' => 'Akses ditolak, Anda perlu login atau memberikan kredensial yang valid',
+
+        '402PaymentRequired' => 'Pembayaran Diperlukan',
+        '402UnauthorizedMessage' => 'Permintaan tidak dapat diproses kecuali pembayaran telah dilakukan',
+
+        '403Forbidden' => 'Dilarang',
+        '403Message' => 'Akses ditolak, Anda tidak memiliki izin untuk mengakses halaman ini',
+
+        '404NotFound' => 'Tidak Ditemukan',
+        '404Message' => 'URL yang Anda cari tidak ditemukan',
+
+        '419NotFound' => 'Halaman Kadaluarsa',
+        '419Message' => 'Sesi telah kadaluarsa, silakan login kembali untuk melanjutkan',
+
+        '429TooManyRequest' => 'Terlalu Banyak Permintaan',
+        '429Message' => 'Permintaan ditolak karena terlalu banyak permintaan yang dibuat',
+
+        '500ServerError' => 'Kesalahan Server',
+        '500Message' => 'Terjadi kesalahan server. Silakan coba lagi nanti',
+
+        '503ServerError' => 'Layanan Tidak Tersedia',
+        '503Message' => 'Layanan tidak tersedia. Silakan coba lagi nanti',
+        'minimalHome' => 'Beranda',
+    ],
+
+
 
 
 ];

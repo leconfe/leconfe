@@ -43,18 +43,20 @@ class SubmissionWizardForm extends Component implements HasForms
                 Wizard\Step::make('Details')
                     ->schema([
                         Section::make([
-                            Section::make('Submission Details')
-                                ->description('Please provide the following details to help us manage your submission in our system.')
+                            Section::make(__('translation.submissionWizard.sectionSubmissionDetails'))
+                                ->description(__('translation.submissionWizard.descriptionSubmissionDetails'))
                                 ->aside()
                                 ->schema([
                                     TextInput::make('meta.title')
-                                        
+                                        ->label(__('translation.submissionWizard.labelTitle'))
                                         ->required(),
                                     SpatieTagsInput::make('keywords')
                                         ->placeholder('')
                                         ->model($this->record)
+                                        ->label(__('translation.submissionWizard.labelKeywords'))
                                         ->type('submissionKeywords'),
                                     RichEditor::make('meta.abstract')
+                                        ->label(__('translation.submissionWizard.labelAbstract'))
                                         ->required(),
                                 ]),
                         ]),
@@ -62,8 +64,8 @@ class SubmissionWizardForm extends Component implements HasForms
                 Wizard\Step::make('Upload Files')
                     ->schema([
                         Section::make([
-                            Section::make('Upload Files')
-                                ->description('Provide any files our editorial team may need to evaluate your submission. In addition to the main work, you may wish to submit data sets, conflict of interest statements, or other supplementary files if these will be helpful for our editors.')
+                            Section::make(__('translation.submissionWizard.sectionUploadFiles'))
+                                ->description(__('translation.submissionWizard.descriptionUploadFiles'))
                                 ->aside()
                                 ->schema([
                                     FileUpload::make('files')
@@ -75,7 +77,7 @@ class SubmissionWizardForm extends Component implements HasForms
                     ]),
                 Wizard\Step::make('Authors')
                     ->schema([
-                        Section::make('Authors')
+                        Section::make(__('translation.submissionWizard.labelAuthors'))
                             ->description()
                             ->aside()
                             ->schema([
@@ -104,12 +106,12 @@ class SubmissionWizardForm extends Component implements HasForms
         SubmissionUpdateAction::run($data, $this->record);
 
         Notification::make()
-            ->title('New Submission')
-            ->body('A new paper has been submitted to which an editor needs to be assigned. '.$this->record->getMeta('title'))
+            ->title(__('translation.submissionWizard.labelNewSubmission'))
+            ->body(__('translation.submissionWizard.bodyNewSubmission').$this->record->getMeta('title'))
             ->warning()
             ->actions([
                 Action::make('view')
-                    ->label('View Submission')
+                    ->label(__('translation.submissionWizard.labelViewSubmission'))
                     ->url(SubmissionResource::getUrl('view', $this->record)),
             ])
             ->sendToDatabase(auth()->user());

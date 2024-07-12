@@ -25,7 +25,7 @@ return [
         'helperRequireUsersToVerify' => 'Require users to verify their email address before they can log in.',
         'successNotificationTitleSaved' => 'Saved!',
         'failureNotificationTitleSaved' => 'Data could not be saved.',
-        
+
     ],
 
     'dashboard' => [
@@ -62,7 +62,7 @@ return [
         'placeholderEnterCustomDateFormat' => 'Enter a custom date format',
         'labeltime' => 'Time',
         'successNotificationTitle' => 'Saved!',
-        
+
     ],
 
     'errorReportSetting' => [
@@ -70,7 +70,7 @@ return [
         'descriptionSendingReportOfTechnicalProblems' => 'Sending report of technical problems helps us improve Leconfe.',
         'labelTonggleSendErrorReportToLeconfe' => 'Send error report to Leconfe',
         'successNotificationTitle' => 'Saved!',
-        
+
     ],
 
     'stageSchedule' => [
@@ -116,7 +116,7 @@ return [
         'modalheadingAddNavigationMenuItemChild' => 'Add Navigation Menu Item Child',
         'modalheadingEditNavigationMenuItem' => 'Edit Navigation Menu Item',
         'labeltab' => 'Open in new tab',
-    
+
     ],
 
     'plugin' => [
@@ -133,27 +133,27 @@ return [
         'getHeadingProfile' => 'Profile',
         'labelGivenName' => 'Given Name',
         'labelProfilePhoto' => 'Profile Photo',
-        'labelFamilyName' => 'Family name',
+        'labelFamilyName' => 'Family Name',
         'labelEmail' => 'Email',
         'labelPassword' => 'Password',
-        'labelPasswordConfirmation' => 'Password confirmation',
+        'labelPasswordConfirmation' => 'Password Confirmation',
         'labelExpertise' => 'Expertise',
         'labelAffiliation' => 'Affiliation',
-        'placeHolderUniversityOfJakarta' => 'University of Jakarta',
+        'placeholderUniversityofJakarta' => 'University of Jakarta',
         'labelCountry' => 'Country',
-        'placeHolderSelectaCountry' => 'Select a country',
+        'placeholderSelectaCountry' => 'Select a country',
         'labelPhone' => 'Phone',
         'helperPhone' => 'International format, e.g. +6281234567890',
         'titleScholarProfile' => 'Scholar Profile',
         'labelInformation' => 'Information',
         'labelNotifications' => 'Notifications',
         'labelNewAnnouncement' => 'New Announcement',
-        'descriptionTheseAreNotificationsWhenTheres' => "These are notifications when there's a new announcement send.",
-        'labelCheckBoxEnableNotification' => 'Enable Email Notification',
-        'labelRoles' => 'Roles',
+        'descriptionTheseAreNotificationsWhenTheres' => 'These are notifications when there’s a new announcement sent.',
+        'labelCheckBoxEnableNotification' => 'Enable Email Notifications',
         'titleSaved' => 'Saved!',
-        'titleFailedTSave.' => 'Failed to save.',
+        'titleFailedToSave' => 'Failed to save.',
     ],
+
 
     'setupSettingAdmin' => [
         'labelFavicon' => 'Favicon',
@@ -184,6 +184,7 @@ return [
 
     'conference' => [
         'getNavigationLabel' => 'Conference',
+        'labelOpenConference' => 'Open Conference',
         'labelName' => 'Name',
         'labelAcronym' => 'Acronym',
         'labelPath' => 'Path',
@@ -195,9 +196,9 @@ return [
 
     'submissions' => [
         'labelSubmission' => 'Submission',
-        'contentCallForAbstractStageIsClosed' => 'Call for abstract stage is closed.', 
-        'contentClickHere' => 'Click here', 
-        'contentToOpenIt' => 'to open it.', 
+        'contentCallForAbstractStageIsClosed' => 'Call for abstract stage is closed.',
+        'contentClickHere' => 'Click here',
+        'contentToOpenIt' => 'to open it.',
         'labelButtonSettings' => 'Settings',
         'labelButtonSubmissionIsNotOpen' => 'Submission is not open',
         'labelButtonSubmissionn' => 'Submissionn',
@@ -210,12 +211,12 @@ return [
         'createSubsAcceptingSubmissions' => 'This conference is not accepting submissions at this time.',
         'titlePrivacyConsent' => 'Privacy Consent',
         'checkboxYesIagreeToHaveMyData' => 'Yes, I agree to have my data collected and stored according to the privacy statement.*',
-        
+
         'completeSubsmissionBladeComplete' => 'Submission complete',
         'completeSubsmissionBladeText' => 'You have submitted your abstract, and an email has been sent to notify you. The manager will review your submission and send you another email once they are done.',
         'completeSubsmissionBladeGoTo' => 'Go to',
         'completeSubsmissionBladeSubmissionsPage' => 'Submissions Page',
-        'completeSubsmissionBladeCheck' => 'check the status of your submission.', 
+        'completeSubsmissionBladeCheck' => 'check the status of your submission.',
 
         'wizardDetailStepTitleSubmissionDetails' => 'Submission Details',
         'wizardDetailStepDescriptionPleaseHelpUs' => 'Please provide the following details to help us manage your submission in our system.',
@@ -240,7 +241,7 @@ return [
         'uploadFilesModalHeadingEditFile' => "Edit file",
         'uploadFilesModalHeadingRename' => "Rename",
         'uploadFilessuccessNotificationTitleFilesRenamed' => "File renamed successfully",
-        
+
         'authorStepContributors' => 'Contributors',
         'authorStepPleaseSubmission.' => 'Please provide information for all contributors involved in this submission.',
         'authorStepNewContributors' => 'New Contributors',
@@ -344,7 +345,7 @@ return [
         'activityLogListLabelActivityLog' => 'Activity Log',
         'activityLogListLabelCauserName' => 'Causer Name',
         'activityLogListLabelDescription' => 'Description',
-        
+
         'callforabstractThisSubmission' => 'This submission has been accepted. Now, we are waiting to next stage is open.',
         'callforabstractAssignAnEditor' => 'Assign an editor to enable the editorial decisions for this stage.',
         'callforabstractNoEditorAssigned' => 'No editor assigned to this submission.',
@@ -381,8 +382,11 @@ return [
         'presenterFilestableHeading' => 'Presenter Files',
 
         'submissionFilesTablesemptyStateHeading' => 'No Files',
+        'submissionResourceNoEditorAssigned' => 'No Editor Assigned',
+        'submissionResourcePendingWithdrawal' => 'Pending Withdrawal',
+        'submissionResourceSubmissionDetail' => 'Submission Detail',
 
-    ],  
+    ],
 
 
     'presenter' => [
@@ -402,7 +406,7 @@ return [
         'presenterResourceHelperTextThisNoteWill' => "This note will be sent to and seen by the presenter.",
         'presenterResourcesuccessNotificationTitleRejected' => "The presenter has been rejected.",
         'presenterResourcesuccessNotificationTitleApproved' => "The presenter has been approved..",
-        
+
         'managePresentersTabUnchecked' => 'Unchecked',
         'managePresentersTabApproved' => 'Approved',
         'managePresentersTabRejected' => 'Rejected',
@@ -452,7 +456,7 @@ return [
         'serieResourceLabelEndDate' => 'End Date',
         'serieResourceLabelPlaceHolderEndDate' => 'Enter the end date of the serie',
         'serieResourceSetAsCurrentSerie' => 'Set as current serie',
-        
+
     ],
 
     'seriesWidget' => [
@@ -465,13 +469,13 @@ return [
     ],
 
     'committeResource' => [
-        'getModelLabelCommittee' => 'Committee', 
-        'committeResourceLabelSelectExisting' => 'Select Existing Committee', 
-        'committeResourcePlaceHolderSelectExisting' => 'Select Committee', 
-        'committeResourceLabelRole' => 'Role', 
-        'committeResourcemodalHeadingRole' => 'Create Committee Role', 
+        'getModelLabelCommittee' => 'Committee',
+        'committeResourceLabelSelectExisting' => 'Select Existing Committee',
+        'committeResourcePlaceHolderSelectExisting' => 'Select Committee',
+        'committeResourceLabelRole' => 'Role',
+        'committeResourcemodalHeadingRole' => 'Create Committee Role',
         'committeResourceHeadingCommitteeTable' => 'Committee Table',
-        
+
         'listCommittesTabsCommittees' => 'Committees',
         'listCommittesTabsCommitteePositions' => 'Committee Positions',
         'listCommittesTabsCommitteeCannotDelete' => 'Cannot delete ',
@@ -530,11 +534,11 @@ return [
     ],
 
     'serieSetting' => [
-        'serieSettingTitleLabel' => 'Serie', 
+        'serieSettingTitleLabel' => 'Serie',
         'serieSettingGetNavigationGroup' => 'Settings',
         'serieSettingTabsInformation' => 'Information',
         'serieSettingTabsSponsor' => 'Sponsor',
-        
+
         'informationSettingLabelSerieTitle' => 'Serie Title',
         'informationSettingPlaceHolderEnterSerie' => 'Enter the title of the serie',
         'informationSettingLabelIssn' => 'ISSN',
@@ -557,7 +561,7 @@ return [
         'sponsorSettingHeadingSponsors' => 'Sponsors',
         'sponsorSettingLabelAddSponsor' => 'Add Sponsor',
         'sponsorSettingEmptyStateHeading' => 'No sponsors found',
-        
+
     ],
 
     'announcementResource' => [
@@ -572,6 +576,7 @@ return [
         'announcementResourceLabelH4' => 'No tags',
         'announcementResourceLabelFeaturedImage' => 'Featured image',
         'announcementResourceLabelExpiresAt' => 'Expires at',
+        'announcementResourceLabelSummary' => 'Summary',
     ],
 
     'topicResource' => [
@@ -586,20 +591,21 @@ return [
         'staticPageResourceLabelAuthor' => 'Author',
         'staticPageResourceLabelTags' => 'Tags',
         'staticPageResourceLabelPath' => 'Path',
-        'staticPageResourceLabelCommonlyUsedTags' => 'Commonly used tags',
-        'staticPageResourceH4NoTags' => 'No tags',
-        'staticPageResourceHtmlString' => 'Your page will be at :',
-        'staticPagehelperText' => 'The complete page content.',
+        'staticPageResourceLabelSlug' => 'Slug',
+        'staticPageResourceLabelCommonlyUsedTags' => 'Commonly Used Tags',
+        'staticPageResourceH4NoTags' => 'No Tags',
+        'staticPageResourceHtmlString' => 'Your page will be at:',
+        'staticPagehelperText' => 'Complete page content.',
     ],
 
     'pluginResource' => [
         'navigationGroupTitle' => 'Settings',
         'pluginResourceLabelTitle' => 'Name',
         'pluginResourceLabelAuthor' => 'Author',
-        'pluginResourceLabelEnabled ' => 'Enabled',
-        'pluginResourcegetNavigationLabel ' => 'Plugins',
+        'pluginResourceLabelEnabled' => 'Enabled',
+        'pluginResourcegetNavigationLabels' => 'Plugins',
     ],
-    
+
 
     'informationSetting' => [
         'informationSettingLabelName' => 'Name',
@@ -615,7 +621,7 @@ return [
         'informationSettingSuccessNotificationTitle' => 'Saved!',
         'informationSettingFailureNotificationTitle' => 'Data could not be saved.',
     ],
-    
+
 
     'conferenceSetting' => [
         'getNavigationLabelConferenceSettings' => 'Conference Settings',
@@ -629,7 +635,7 @@ return [
 
     'privacySetting' => [
         'labelPrivacyStatement' => 'Privacy Statement',
-        'successNotificationTitleSaved!' => 'Saved!',
+        'successNotificationTitleSaved' => 'Saved!',
         'failureNotificationTitleDataCould' => 'Data could not be saved.',
     ],
 
@@ -640,7 +646,7 @@ return [
         'infolistsVerticalTabsPrivacy' => 'Privacy',
         'additionalinFormationLabel' => 'Additional information',
     ],
-    
+
     'conferenceSettingsApprance' => [
         'tabsHeadingAppearance' => 'Appearance',
         'infolistsVerticalTabsSetup' => 'Setup',
@@ -652,6 +658,7 @@ return [
         'notificationTitle' => 'Sidebar Updated',
         'SetupSettingLabelAccessOptions' => 'Access Options',
         'SetupSettingLabelDateNTime' => 'Date & Time',
+        'SetupSettingLabelEmail' => 'E-Mail',
     ],
 
     'setupSetting' => [
@@ -660,7 +667,7 @@ return [
         'setupSettingSuccessNotificationTitle' => 'Saved!',
         'setupSettingFailureNotificationTitle' => 'Data could not be saved.',
     ],
-    
+
     'emailSetting' => [
         'successNotificationTitleEmailTemplateRestored' => 'Email template restored to default data.',
         'labelRestoreDefault' => 'Restore Default',
@@ -676,7 +683,7 @@ return [
         'successNotificationTitleSentToYourEmail' => 'Success sent test mail to your email.',
         'titleFailedToSendTestMail' => 'Failed to send test mail to your email.',
     ],
-    
+
 
     'workflow' => [
         'getModelLabelWorkflow' => 'Workflow',
@@ -698,12 +705,15 @@ return [
         'horizontalTabAuthorRoles' => 'Author Roles',
 
     ],
-    
+
     'workflowAbstractSetting' => [
-        'AbstractSetting' => 'Call for Abstract',
+        'abstractSetting' => 'Call for Abstract',
         'successNotificationTitleSaved' => 'Saved',
         'labelAllowedFileTypes' => 'Allowed File Types',
         'helperTextAllowedFile' => 'Allowed file types for abstracts',
+        'contentThe' => 'The ',
+        'contentIsNotOpenYet' => ' is not open yet, Start now or schedule opening',
+
 
     ],
 
@@ -714,7 +724,7 @@ return [
         'labelPaymentMethod' => 'Payment Method',
         'labelSupportedCurrencies' => 'Supported currencies',
         'labelPaymentInstruction' => 'Payment Instruction',
-        
+
         'submissionPaymentItemTableLabelName' => 'Name',
         'submissionPaymentItemTableLabelDescription' => 'Description',
         'submissionPaymentItemTableLabelFees' => 'Fees',
@@ -744,7 +754,7 @@ return [
         'labelReviewGuidelines' => 'Review guidelines',
         'labelCompetingInterests' => 'Competing interests',
         'titleSuccess' => 'Success!',
-        'bodyTheGuidelinesHaveBeenUpdated.' => 'The guidelines have been updated.',
+        'bodyTheGuidelinesHaveBeenUpdated' => 'The guidelines have been updated.',
     ],
 
     'editingSetting' => [
@@ -871,7 +881,8 @@ return [
         'modalHeadingSendEmailTo' => 'Send Email',
         'labelSubject' => 'Subject',
         'labelTo' => 'To',
-        
+        'labelMessage' => 'Message',
+
     ],
 
     'roleResource' => [
@@ -967,7 +978,7 @@ return [
         'homeConferencePartners' => 'Conference Partners',
         'homeToLeft' => 'To Left',
         'homeToRight' => 'To Right',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Currently no active serie, please create a serie first.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Currently no active serie, please create a serie first.',
 
         'loginEmail' => 'Email',
         'login' => 'Login',
@@ -1001,12 +1012,114 @@ return [
 
         'timeLines' => 'Event Timelines',
     ],
-    
+
     'sidebarNavStart' => [
         'current' => 'Current',
         'switchSeries' => 'Switch Series',
         'backtoConference' => 'Back to Conference',
+    ],
+
+    'permissionResource' => [
+        'getModelLabel' => 'Permission',
+        'labelContext' => 'Context',
+        'helperTextContext' => 'Context must be StudlyCase',
+        'labelAction' => 'Action',
+        'helperTextActionMustBeCamelCase' => 'Action must be camelCase',
+        'labelRoles' => 'Roles',
+        'labelName' => 'Name',
+        'labelAssignedRoles' => 'Assigned Roles',
+    ],
+
+    'selectLanguage' => [
+        'pilihanBahasa' => 'Language Selection',
+        'pilihBahasa' => ' Select Language',
+        'bahasaIndonesia' => 'Indonesian',
+        'english' => 'English',
+        'albania' => 'Albanian',
+        'simpanPilihanBahasa' => 'Save Language Selection',
+    ],
+
+    'submissionWizard' => [
+        'sectionSubmissionDetails' => 'Submission Details',
+        'descriptionSubmissionDetails' => 'Please provide the following details to help us manage your submission in our system.',
+        'labelTitle' => 'Title',
+        'labelKeywords' => 'Keywords',
+        'labelAbstract' => 'Abstract',
+        'sectionUploadFiles' => 'Upload Files',
+        'descriptionUploadFiles' => 'Provide any files our editorial team may need to evaluate your submission. In addition to the main work, you may wish to submit data sets, conflict of interest statements, or other supplementary files if these will be helpful for our editors.',
+        'labelAuthors' => 'Authors',
+        'labelNewSubmission' => 'New Submission',
+        'bodyNewSubmission' => 'A new paper has been submitted to which an editor needs to be assigned. ',
+        'labelViewSubmission' => 'View Submission',
+    ],
+
+    'reviewerInvitationPage' => [
+        'labelAcceptRequest' => 'Accept Request',
+        'successNotificationTitleRequestAccepted' => 'Request Accepted',
+        'failureNotificationTitleFailedToSendNotification' => 'Failed to send notification to author',
+        'labelDeclineRequest' => 'Decline Request',
+        'successNotificationTitleRequestDeclined' => 'Request Declined',
+        'failureNotificationTitleRequestDeclined' => 'Failed to send notification to author',
+        'headingRequestForReview' => 'Request for review',
+        'descriptionRequestForReview' => 'You have been selected as a potential reviewer of the following submission. Below is an overview of the submission, as well as the timeline for this review. We hope that you are able to participate',
+        'fieldsetSubmissionDetails' => 'Submission Details',
+        'labelTitle' => 'Title',
+        'labelKeyword' => 'Keyword',
+        'labelAbstract' => 'Abstract',
+        'fieldsetReviewSchedule' => 'Review Schedule',
+        'textEntryReviewStarAt' => 'Review Start at',
+        'textEntryReviewEndAt' => 'Review End at',
+    ],
+
+    'reviewSubmissionPage' => [
+        'abortIfDeclined' => 'You have declined this review request',
+        'abortIfCanceled' => 'This review request has been canceled',
+        'getHeadingReview' => 'Review: ',
+        'contentThankYouForYourTime' => 'Thank you for your time and effort in reviewing this submission. Your review will be used to help the editor make a decision on the submission.',
+        'headingSubmissionDetails' => 'Submission Details',
+        'labelTitle' => 'Title',
+        'labelKeywords' => 'Keywords',
+        'labelAbstract' => 'Abstract',
+        'actionViewGuidelines' => 'View Guidelines',
+        'headingRecommendation' => 'Recommendation',
+        'headingReviewForm' => 'Review Form',
+        'labelReviewForAuthorAndEditor' => 'Review for Author and Editor',
+        'labelReviewForEditor' => 'Review for Editor',
+        'successNotificationTitleReviewSubmittedSuccessfully' => 'Review submitted successfully',
+        'labelReviewSubmitted' => 'Review Submitted',
+        'labelReview' => 'Review',
+    ],
+
+    'errorsBlade' => [
+        '401Unauthorized' => 'Unauthorized',
+        '401UnauthorizedMessage' => 'Access is denied, you need to log in or provide valid credentials',
+
+        '402PaymentRequired' => 'Payment Required',
+        '402UnauthorizedMessage' => 'Requests cannot be processed unless payment has been made',
+
+        '403Forbidden' => 'Forbidden',
+        '403Message' => 'Access denied, you do not have permission to access this page',
+
+        '404NotFound' => 'Not Found',
+        '404Message' => 'The URL you are looking for was not found',
+
+        '419NotFound' => 'Page Expired',
+        '419Message' => 'The session has expired, please log back in to continue',
+
+        '429TooManyRequest' => 'Too Many Request',
+        '429Message' => 'The request was rejected because too many requests were made',
+
+        '500ServerError' => 'Server Error Request',
+        '500Message' => 'A server error occurred. Please try again later',
+
+        '503ServerError' => 'Service Unavailable',
+        '503Message' => 'Service not available. Please try again later',
+        'minimalHome' => 'Home',
+
     ]
+
+
+
 
 
 

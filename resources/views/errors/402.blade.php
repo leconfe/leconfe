@@ -2,6 +2,6 @@
 
 @php
     $code = '402';
-    $title = 'Payment Required';
-    $message = 'Requests cannot be processed unless payment has been made';
+    $title = __('translation.errorsBlade.402PaymentRequired');
+    $message = __('translation.errorsBlade.402UnauthorizedMessage');
 @endphp

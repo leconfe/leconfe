@@ -41,11 +41,6 @@ class Workflow extends Page implements HasForms, HasInfolists
         return __('translation.pluginResource.navigationGroupTitle');
     }
 
-    // public static function getModelLabel(): string
-    // {
-    //     return __('translation.workflow.getModelLabelWorkflow');
-    // }
-
     public static function getNavigationLabel(): string
     {
         return __('translation.workflow.getModelLabelWorkflow');

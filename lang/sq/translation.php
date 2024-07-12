@@ -17,7 +17,7 @@ return [
         'setAsCurrent' => 'Vendos si të tanishme',
         'checkConference' => 'Kontrollo Konferencën',
     ],
-  
+
     'accessSetting' => [
         'labelAllowRegistration' => 'Lejo Regjistrimin',
         'helperAllowPublictoRegisterOnTheSite' => 'Lejo publikun të regjistrohet në faqe.',
@@ -25,7 +25,7 @@ return [
         'helperRequireUsersToVerify' => 'Kërkoni nga përdoruesit të verifikojnë adresën e tyre të email-it para se të mund të hynë.',
         'successNotificationTitleSaved' => 'U Ruajt!',
         'failureNotificationTitleSaved' => 'Të dhënat nuk mund të ruhen.',
-        
+
     ],
 
     'dashboard' => [
@@ -62,7 +62,7 @@ return [
         'placeholderEnterCustomDateFormat' => 'Vendosni një format të personalizuar të dates',
         'labeltime' => 'Kohë',
         'successNotificationTitle' => 'U Ruajt!',
-        
+
     ],
 
     'errorReportSetting' => [
@@ -70,7 +70,7 @@ return [
         'descriptionSendingReportOfTechnicalProblems' => 'Dërgimi i raportit të problemeve teknike na ndihmon të përmirësojmë Leconfe.',
         'labelTonggleSendErrorReportToLeconfe' => 'Dërgo raportin e gabimeve tek Leconfe',
         'successNotificationTitle' => 'U Ruajt!',
-        
+
     ],
 
     'stageSchedule' => [
@@ -116,12 +116,12 @@ return [
         'modalheadingAddNavigationMenuItemChild' => 'Shto Artikull Menusës së Navigimit Fëmijë',
         'modalheadingEditNavigationMenuItem' => 'Redakto Artikull Menusës së Navigimit',
         'labeltab' => 'Hap në faqe të re',
-    
+
     ],
 
     'plugin' => [
         'labelAddnew' => 'Shto të re',
-        'modalHeadingAddNewPlugin' => 'Shto plugin të ri',
+        'modalheadingAddNewPlugin' => 'Shto plugin të ri',
         'tabsNameAll' => 'Të gjitha',
         'tabsNameDisabled' => 'Caktuar',
         'titleInstallFailed' => 'Instalimi dështoi',
@@ -130,29 +130,28 @@ return [
     ],
 
     'profile' => [
-        'getHeadingProfile' => 'Profili',
-        'labelGivenName' => 'Emri i Dhënë',
-        'labelProfilePhoto' => 'Foto Profili',
-        'labelFamilyName' => 'Emri i Familjes',
+        'getHeadingProfile' => 'Profil',
+        'labelGivenName' => 'Emri',
+        'labelProfilePhoto' => 'Foto e Profilit',
+        'labelFamilyName' => 'Mbiemri',
         'labelEmail' => 'Email',
-        'labelPassword' => 'Fjalëkalim',
-        'labelPasswordConfirmation' => 'Konfirmo Fjalëkalimin',
+        'labelPassword' => 'Fjalëkalimi',
+        'labelPasswordConfirmation' => 'Konfirmimi i Fjalëkalimit',
         'labelExpertise' => 'Ekspertiza',
-        'labelAffiliation' => 'Afiliimi',
-        'placeHolderUniversityOfJakarta' => 'Universiteti i Xhakartës',
+        'labelAffiliation' => 'Afilimi',
+        'placeholderUniversityofJakarta' => 'Universiteti i Xhakartës',
         'labelCountry' => 'Vendi',
-        'placeHolderSelectaCountry' => 'Zgjidhni një vend',
-        'labelPhone' => 'Telefoni',
+        'placeholderSelectaCountry' => 'Zgjidhni një vend',
+        'labelPhone' => 'Telefon',
         'helperPhone' => 'Formati ndërkombëtar, p.sh. +6281234567890',
-        'titleScholarProfile' => 'Profili i Shkencëtarit',
-        'labelInformation' => 'Informacioni',
-        'labelNotifications' => 'Njoftimet',
+        'titleScholarProfile' => 'Profili i Studiuesit',
+        'labelInformation' => 'Informacion',
+        'labelNotifications' => 'Njoftime',
         'labelNewAnnouncement' => 'Njoftim i Ri',
-        'descriptionTheseAreNotificationsWhenTheres' => 'Këto janë njoftimet kur ka një njoftim të ri të dërguar.',
+        'descriptionTheseAreNotificationsWhenTheres' => 'Këto janë njoftime kur dërgohet një njoftim i ri.',
         'labelCheckBoxEnableNotification' => 'Aktivizo Njoftimet me Email',
-        'labelRoles' => 'Roli/Rolet',
-        'titleSaved' => 'U Ruajt!',
-        'titleFailedTSave.' => 'Dështoi të ruhej.',
+        'titleSaved' => 'Ruajtur!',
+        'titleFailedToSave' => 'Dështoi ruajtja.',
     ],
 
     'setupSettingAdmin' => [
@@ -184,6 +183,7 @@ return [
 
     'conference' => [
         'getNavigationLabel' => 'Konferenca',
+        'labelOpenConference' => 'Konferenca e Hapur',
         'labelName' => 'Emri',
         'labelAcronym' => 'Akronimi',
         'labelPath' => 'Shtegu',
@@ -241,7 +241,7 @@ return [
         'uploadFilessuccessNotificationTitleFilesRenamed' => "Skedari u riemërua me sukses",
 
         'authorStepContributors' => 'Kontribuuesit',
-        'authorStepPleaseSubmission.' => 'Ju lutemi sigurohuni të siguroheni informacionin për të gjithë kontribuuesit e përfshirë në këtë dorëzim.',
+        'authorStepPleaseSubmission' => 'Ju lutemi sigurohuni të siguroheni informacionin për të gjithë kontribuuesit e përfshirë në këtë dorëzim.',
         'authorStepNewContributors' => 'Kontribuues të Rinj',
         'modalHeadingAddContributor' => 'Shtoni Kontribuues',
         'successNotificationTitlContributoradded' => 'Kontribuesi u shtua',
@@ -317,7 +317,7 @@ return [
         'viewSubMissionDetailTitleContributors' => 'Kontribuuesit',
         'viewSubMissionDetailTitlePresenters' => 'Prezantuesit',
         'viewSubMissionDetailTitleGalleys' => 'Gale',
-        'viewSubMissionDetailTitleProceeding' => 'Proceeding',
+        'viewSubMissionDetailTitleProceeding' => 'Procedurat',
         'viewSubMissionDetailTitleReferences' => 'Referencat',
         'viewSubMissionDetailTitlePresenterFiles' => 'Skedarët e Prezantuesit',
         'viewSubMissionFailureNotificationTitlesend' => 'Dështoi të dërgohej njoftimi',
@@ -341,7 +341,7 @@ return [
         'activityLogListLabelActivityLog' => 'Regjistri i Veprimtarisë',
         'activityLogListLabelCauserName' => 'Emri i Verësuesit',
         'activityLogListLabelDescription' => 'Përshkrim',
-        
+
         'callforabstractThisSubmission' => 'Ky dorëzim është pranuar. Tani, po presim që stadi i ardhshëm të hapet.',
         'callforabstractAssignAnEditor' => 'Caktoni një redaktor për të mundësuar vendimet redaktuese për këtë stadium.',
         'callforabstractNoEditorAssigned' => 'Asnjë redaktor nuk është caktuar për këtë dorëzim.',
@@ -364,7 +364,7 @@ return [
         'galleyListfailureNotificationTitleCreating' => 'Ka pasur një problem duke krijuar llojin e skedarit',
         'galleyListsuccessNotificationTitleCreating' => 'Lloji i skedarit u krijua me sukses',
 
-        'submmisionProceedingLabelProceeding' => 'Proceeding',
+        'submmisionProceedingLabelProceeding' => 'Procedurat',
         'submmisionProceedingGetStateUsing' => 'Ky dorëzim nuk është planifikuar për botim në një proceedings.',
         'submmisionProceedingLabelCoverImage' => 'Imazhi i Kapakut',
         'submmisionProceedingLabelPages' => 'Faqet',
@@ -378,6 +378,12 @@ return [
         'presenterFilestableHeading' => 'Skedarët e Prezantuesit',
 
         'submissionFilesTablesemptyStateHeading' => 'Asnjë Skedar',
+        'submissionResourceNoEditorAssigned' => 'Nuk Ka Redaktor të Caktuar',
+        'submissionResourcePendingWithdrawal' => 'Tërheqje e Pritshme',
+        'submissionResourceSubmissionDetail' => 'Detajet e Dorëzimit',
+
+
+
 
     ],
 
@@ -405,8 +411,8 @@ return [
     ],
 
     'proceeding' => [
-        'proceedingResourceTitle' => 'Proceeding',
-        'proceedingResourceTitleIdentification' => 'Proceeding',
+        'proceedingResourceTitle' => 'Procedura',
+        'proceedingResourceTitleIdentification' => 'Identifikimi i Procedurës',
         'proceedingResourceLabelVolume' => 'Volumi',
         'proceedingResourceLabelNumber' => 'Numri',
         'proceedingResourceLabelYear' => 'Viti',
@@ -524,11 +530,11 @@ return [
     ],
 
     'serieSetting' => [
-        'serieSettingTitleLabel' => 'Seria', 
+        'serieSettingTitleLabel' => 'Seria',
         'serieSettingGetNavigationGroup' => 'Cilësimet',
         'serieSettingTabsInformation' => 'Informacioni',
         'serieSettingTabsSponsor' => 'Sponsorët',
-        
+
         'informationSettingLabelSerieTitle' => 'Titulli i Serisë',
         'informationSettingPlaceHolderEnterSerie' => 'Shtoni titullin e serisë',
         'informationSettingLabelIssn' => 'ISSN',
@@ -559,13 +565,15 @@ return [
         'announcementResourceLabelTitle' => 'Titulli',
         'announcementResourceLabelAnnouncement' => 'Njoftimi',
         'announcementResourceHelperTextAnnouncement' => 'Përmbajtja e plotë e njoftimit.',
-        'announcementResourceLabelCheckBox' => 'Dërgoni email për këtë te përdoruesit e regjistruar',
+        'announcementResourceLabelCheckBox' => 'Dërgo email për këtë tek përdoruesit e abonuar',
         'announcementResourceLabelAuthor' => 'Autori',
-        'announcementResourceLabelCommonlyUsedTags' => 'Etiketa të përdorura shpesh',
-        'announcementResourceLabelH4' => 'Asnjë etiketë',
-        'announcementResourceLabelFeaturedImage' => 'Imazhi i veçuar',
+        'announcementResourceLabelCommonlyUsedTags' => 'Etiketat e përdorura shpesh',
+        'announcementResourceLabelH4' => 'Pa Etiketa',
+        'announcementResourceLabelFeaturedImage' => 'Imazhi kryesor',
         'announcementResourceLabelExpiresAt' => 'Skadon më',
+        'announcementResourceLabelSummary' => 'Përmbledhje',
     ],
+
 
     'topicResource' => [
         'topicResourceGetModelLabel' => 'Temë',
@@ -577,11 +585,12 @@ return [
         'staticPageResourceLabelTitle' => 'Titulli',
         'staticPageResourceLabelContent' => 'Përmbajtja',
         'staticPageResourceLabelAuthor' => 'Autori',
-        'staticPageResourceLabelTags' => 'Etiketa',
-        'staticPageResourceLabelPath' => 'Shtegu',
-        'staticPageResourceLabelCommonlyUsedTags' => 'Etiketat e përdorura shpesh',
-        'staticPageResourceH4NoTags' => 'Asnjë etiketë',
-        'staticPageResourceHtmlString' => 'Faqja juaj do të jetë te :',
+        'staticPageResourceLabelTags' => 'Etiketat',
+        'staticPageResourceLabelPath' => 'Rruga',
+        'staticPageResourceLabelSlug' => 'Slug',
+        'staticPageResourceLabelCommonlyUsedTags' => 'Etiketat e Përdorura Shpesh',
+        'staticPageResourceH4NoTags' => 'Pa Etiketa',
+        'staticPageResourceHtmlString' => 'Faqja juaj do të jetë në:',
         'staticPagehelperText' => 'Përmbajtja e plotë e faqes.',
     ],
 
@@ -589,8 +598,8 @@ return [
         'navigationGroupTitle' => 'Cilësimet',
         'pluginResourceLabelTitle' => 'Emri',
         'pluginResourceLabelAuthor' => 'Autori',
-        'pluginResourceLabelEnabled ' => 'Aktivizuar',
-        'pluginResourcegetNavigationLabel' => 'Shtojca',
+        'pluginResourceLabelEnabled' => 'Aktivizuar',
+        'pluginResourcegetNavigationLabels' => 'Shtojca',
     ],
 
     'informationSetting' => [
@@ -620,7 +629,7 @@ return [
 
     'privacySetting' => [
         'labelPrivacyStatement' => 'Deklarata e Privatësisë',
-        'successNotificationTitleSaved!' => 'Ruajtur!',
+        'successNotificationTitleSaved' => 'Ruajtur!',
         'failureNotificationTitleDataCould' => 'Të dhënat nuk mund të ruhen.',
     ],
 
@@ -643,6 +652,7 @@ return [
         'notificationTitle' => 'Sidebar-i është përditësuar',
         'SetupSettingLabelAccessOptions' => 'Opsionet e Hyrjes',
         'SetupSettingLabelDateNTime' => 'Data & Koha',
+        'SetupSettingLabelEmail' => 'Email',
     ],
 
     'setupSetting' => [
@@ -689,10 +699,13 @@ return [
     ],
 
     'workflowAbstractSetting' => [
-        'AbstractSetting' => 'Thirrje për Abstrakt',
+        'abstractSetting' => 'Thirrje për Abstrakt',
         'successNotificationTitleSaved' => 'Ruajtur',
         'labelAllowedFileTypes' => 'Llojet e Lejuara të Skedarëve',
         'helperTextAllowedFile' => 'Llojet e lejuara të skedarëve për abstraktet',
+        'contentThe' => 'Faqja ',
+        'contentIsNotOpenYet' => ' ende nuk është e hapur, Filloni tani ose planifikoni hapjen',
+
     ],
 
     'workflowPaymentSetting' => [
@@ -731,7 +744,7 @@ return [
         'labelReviewGuidelines' => 'Udhëzimet për Rishikim',
         'labelCompetingInterests' => 'Interesat Konkuruese',
         'titleSuccess' => 'Sukses!',
-        'bodyTheGuidelinesHaveBeenUpdated.' => 'Udhëzimet janë përditësuar.',
+        'bodyTheGuidelinesHaveBeenUpdated' => 'Udhëzimet janë përditësuar.',
     ],
 
     'editingSetting' => [
@@ -823,7 +836,7 @@ return [
         'contentInformatiIYouDoNotKnow' => 'Nëse nuk e dini ose nuk keni qasje në kredencialet tuaja Crossref, mund të kontaktoni ',
         'contentInformatiCrossrefSupport' => 'Mbështetje Crossref',
         'contentInformatiForAssistance' => ' për ndihmë. Pa kredenciale, mund të eksportoni metadata në formatin XML të Crossref, por nuk mund të regjistroni DOIs me Leconfe.',
-        
+
         'labelUsername' => 'Emri i Përdoruesit',
         'helperTextUsername' => 'Emri i përdoruesit Crossref që do të përdoret për autentifikimin e depozitave tuaja. Nëse po përdorni një llogari personale, ju lutemi shikoni këshillat më lart.',
         'labelPassword' => 'Fjalëkalimi',
@@ -856,6 +869,8 @@ return [
         'modalHeadingSendEmailTo' => 'Dërgo Email',
         'labelSubject' => 'Subjekti',
         'labelTo' => 'Për',
+        'labelMessage' => 'Mesazh',
+
     ],
 
     'roleResource' => [
@@ -950,7 +965,7 @@ return [
         'homeConferencePartners' => 'Partnerët e Konferencës',
         'homeToLeft' => 'Në të majtë',
         'homeToRight' => 'Në të djathtë',
-        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst.' => 'Tani nuk ka seri aktive, ju lutemi krijoni një seri të parë.',
+        'homeCurrentlyNoActiveSeriePleaseCreateASerieFirst' => 'Tani nuk ka seri aktive, ju lutemi krijoni një seri të parë.',
 
         'loginEmail' => 'Email',
         'login' => 'Hyrje',
@@ -989,7 +1004,106 @@ return [
         'current' => 'Aktual',
         'switchSeries' => 'Kalo Serinë',
         'backtoConference' => 'Kthehu tek Konferenca',
-    ]
+    ],
+
+    'permissionResource' => [
+        'getModelLabel' => 'Leje',
+        'labelContext' => 'Konteksti',
+        'helperTextContext' => 'Konteksti duhet të jetë StudlyCase',
+        'labelAction' => 'Veprimi',
+        'helperTextActionMustBeCamelCase' => 'Veprimi duhet të jetë camelCase',
+        'labelRoles' => 'Rrolet',
+        'labelName' => 'Emri',
+        'labelAssignedRoles' => 'Rrolet e Caktuara',
+    ],
+
+    'selectLanguage' => [
+        'pilihanBahasa' => 'Përzgjedhja e Gjuhës',
+        'pilihBahasa' => ' Zgjidhni Gjuhën',
+        'bahasaIndonesia' => 'Indoneziane',
+        'english' => 'Anglisht',
+        'albania' => 'Shqiptar',
+        'simpanPilihanBahasa' => 'Ruaj Përzgjedhjen e Gjuhës',
+    ],
+
+    'submissionWizard' => [
+        'sectionSubmissionDetails' => 'Detajet e Dorëzimit',
+        'descriptionSubmissionDetails' => 'Ju lutemi jepni detajet e mëposhtme për të na ndihmuar në menaxhimin e dorëzimit tuaj në sistem tonë.',
+        'labelTitle' => 'Titulli',
+        'labelKeywords' => 'Fjalët Kyçe',
+        'labelAbstract' => 'Abstrakti',
+        'sectionUploadFiles' => 'Ngarkoni Skedarët',
+        'descriptionUploadFiles' => 'Sigurohuni që të dërgoni çdo skedar që mund të ketë nevojë ekipi ynë redaktorial për të vlerësuar dorëzimin tuaj. Përveç punës kryesore, mund të dërgoni edhe sete të të dhënave, deklarata konflikti interesi, ose skedarë shtesë të tjerë nëse këto do të jenë të dobishme për redaktorët tanë.',
+        'labelAuthors' => 'Autorët',
+        'labelNewSubmission' => 'Dorëzim i Ri',
+        'bodyNewSubmission' => 'Një artikull i ri është dorëzuar dhe duhet të caktohet një redaktor.',
+        'labelViewSubmission' => 'Shiko Dorëzimin',
+    ],
+
+    'reviewerInvitationPage' => [
+        'labelAcceptRequest' => 'Prano Kërkesën',
+        'successNotificationTitleRequestAccepted' => 'Kërkesa është Pranuar',
+        'failureNotificationTitleFailedToSendNotification' => 'Dështoi në dërgimin e njoftimit tek autor',
+        'labelDeclineRequest' => 'Refuzo Kërkesën',
+        'successNotificationTitleRequestDeclined' => 'Kërkesa është Refuzuar',
+        'failureNotificationTitleRequestDeclined' => 'Dështoi në dërgimin e njoftimit tek autor',
+        'headingRequestForReview' => 'Kërkesë për shqyrtim',
+        'descriptionRequestForReview' => 'Ju jeni zgjedhur si një shqyrtues potencial për dorëzimin vijues. Këtu është një pasqyrë e dorëzimit, si dhe afati kohor për këtë shqyrtim. Ne shpresojmë që ju të jeni në gjendje të pjesëmarrni.',
+        'fieldsetSubmissionDetails' => 'Detajet e Dorëzimit',
+        'labelTitle' => 'Titulli',
+        'labelKeyword' => 'Fjalë Kyçe',
+        'labelAbstract' => 'Abstrakti',
+        'fieldsetReviewSchedule' => 'Orari i Shqyrtimit',
+        'textEntryReviewStarAt' => 'Shqyrtimi Fillon në',
+        'textEntryReviewEndAt' => 'Shqyrtimi Përfundon në',
+    ],
+
+
+    'reviewSubmissionPage' => [
+        'abortIfDeclined' => 'Ju keni refuzuar këtë kërkesë për shqyrtim',
+        'abortIfCanceled' => 'Kjo kërkesë për shqyrtim është anuluar',
+        'getHeadingReview' => 'Shqyrtimi: ',
+        'contentThankYouForYourTime' => 'Ju falenderojmë për kohën dhe përpjekjet tuaja në shqyrtimin e këtij dorëzimi. Shqyrtimi juaj do të përdoret për të ndihmuar redaktorin të marrë një vendim për këtë dorëzim.',
+        'headingSubmissionDetails' => 'Detajet e Dorëzimit',
+        'labelTitle' => 'Titulli',
+        'labelKeywords' => 'Fjalë Kyçe',
+        'labelAbstract' => 'Abstrakti',
+        'actionViewGuidelines' => 'Shiko Udhëzimet',
+        'headingRecommendation' => 'Rekomandim',
+        'headingReviewForm' => 'Formulari i Shqyrtimit',
+        'labelReviewForAuthorAndEditor' => 'Shqyrtim për Autorin dhe Redaktorin',
+        'labelReviewForEditor' => 'Shqyrtim për Redaktorin',
+        'successNotificationTitleReviewSubmittedSuccessfully' => 'Shqyrtimi është dorëzuar me sukses',
+        'labelReviewSubmitted' => 'Shqyrtimi është Dorëzuar',
+        'labelReview' => 'Shqyrtim',
+    ],
+
+    'errorsBlade' => [
+        '401Unauthorized' => 'Epaautorizuar',
+        '401UnauthorizedMessage' => 'Qasja është e ndaluar, ju duhet të kyçeni ose të jepni kredenciale të vlefshme',
+
+        '402PaymentRequired' => 'Kërkohet Pagesa',
+        '402UnauthorizedMessage' => 'Kërkesat nuk mund të procesohen nëse nuk është bërë pagesa',
+
+        '403Forbidden' => 'Ndalohet',
+        '403Message' => 'Qasja është e ndaluar, ju nuk keni leje për të hyrë në këtë faqe',
+
+        '404NotFound' => 'Nuk U Gjet',
+        '404Message' => 'URL që po kërkoni nuk u gjet',
+
+        '419NotFound' => 'Faqja Ka Skaduar',
+        '419Message' => 'Sesi ka skaduar, ju lutemi kyçuni përsëri për të vazhduar',
+
+        '429TooManyRequest' => 'Të Shumta Kërkesa',
+        '429Message' => 'Kërkesa është refuzuar sepse janë bërë shumë kërkesa',
+
+        '500ServerError' => 'Gabim në Server',
+        '500Message' => 'Ka ndodhur një gabim në server. Ju lutemi provoni përsëri më vonë',
+
+        '503ServerError' => 'Shërbimi Jo i Mundur',
+        '503Message' => 'Shërbimi nuk është i disponueshëm. Ju lutemi provoni përsëri më vonë',
+        'minimalHome' => 'Faqja Kryesore',
+    ],
 
 
 

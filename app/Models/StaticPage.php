@@ -2,32 +2,43 @@
 
 namespace App\Models;
 
-use App\Models\Enums\ConferenceStatus;
-use App\Models\Enums\ContentType;
-use Illuminate\Database\Eloquent\Builder;
+use App\Frontend\Conference\Pages\StaticPage as PagesStaticPage;
+use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\BelongsToSerie;
+use Illuminate\Database\Eloquent\Model;
+use Plank\Metable\Metable;
 
-class StaticPage extends UserContent
+class StaticPage extends Model
 {
+    use BelongsToConference, BelongsToSerie, Metable;
+
+    protected $fillable = [
+        'title',
+        'slug',
+    ];
+
     protected static function booted(): void
     {
         parent::booted();
-
-        static::addGlobalScope('static_page', function (Builder $builder) {
-            $builder->where('content_type', ContentType::StaticPage->value);
-        });
     }
 
     public function getUrl(): string
     {
-        if (!$this->conference) {
-            return route('livewirePageGroup.website.pages.static-page', [
-                'staticPage' => $this->slug,
-            ]);
-        }
+        $routeName = app()->getCurrentSerieId() ? PagesStaticPage::getRouteName('series') : PagesStaticPage::getRouteName('conference');
 
-        return route('livewirePageGroup.conference.pages.static-page', [
-            'conference' => $this->conference->path,
+        return route($routeName, [
             'staticPage' => $this->slug,
         ]);
+    }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $query = $this->resolveRouteBindingQuery($this, $value, $field);
+
+        if(!app()->getCurrentSerieId()){
+            $query->where('serie_id', 0);
+        }
+        
+        return $query->firstOrFail();
     }
 }

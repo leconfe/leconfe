@@ -91,7 +91,7 @@ class PresenterList extends Component implements HasForms, HasTable
                 }
                 $presenter = Presenter::with(['meta'])->findOrFail($state);
 
-                $formData = [ 
+                $formData = [
                     'presenter_id' => $state,
                     'given_name' => $presenter->given_name,
                     'family_name' => $presenter->family_name,
@@ -124,7 +124,7 @@ class PresenterList extends Component implements HasForms, HasTable
             ->reorderable(
                 fn () => $this->viewOnly ? false : 'order_column'
             )
-            ->heading('Presenters')
+            ->heading(__('translation.presenter.presenterResourceLabelTitlePresenters'))
             ->query(
                 fn (): Builder => $this->getQuery()
             )
@@ -169,11 +169,11 @@ class PresenterList extends Component implements HasForms, HasTable
                     ->form($this->getPresenterFormSchema())
                     ->using(function (array $data, Action $action) {
                         $presenter = Presenter::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();
-                        
+
                         if (! $presenter) {
                             $presenter = PresenterCreateAction::run($this->submission, $data);
                         }
-                        
+
                         return $presenter;
                     })
                     ->hidden($this->viewOnly),

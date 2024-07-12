@@ -51,7 +51,7 @@ class UserResource extends Resource
    {
        return __('translation.userResource.getNavigationLabelUser');
    }
- 
+
     public static function getModelLabel(): string
    {
        return __('translation.userResource.getNavigationLabelUser');
@@ -331,7 +331,7 @@ class UserResource extends Resource
                                         ->required(),
                                 ]),
                             TinyEditor::make('message')
-                                ->label('Message')
+                                ->label(__('translation.userResource.labelMessage'))
                                 ->minHeight(500)
                                 ->required(),
                         ])

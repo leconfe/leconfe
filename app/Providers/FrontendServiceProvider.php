@@ -77,7 +77,7 @@ class FrontendServiceProvider extends ServiceProvider
     public function seriePageGroup(PageGroup $pageGroup): PageGroup
     {
         return $pageGroup
-            ->id('archive')
+            ->id('series')
             ->path('{conference:path}/series/{serie:path}')
             ->layout('frontend.website.components.layouts.app')
             ->bootUsing(function () {

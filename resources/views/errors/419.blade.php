@@ -2,7 +2,7 @@
 
 @php
     $code = '419';
-    $title = 'Page Expired';
-    $message = 'The session has expired, please log back in to continue';
+    $title = __('translation.errorsBlade.419NotFound');
+    $message = __('translation.errorsBlade.419Message');
 @endphp
 
