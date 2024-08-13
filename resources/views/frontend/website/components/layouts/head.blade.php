@@ -2,7 +2,7 @@
     'title' => null,
 ])
 
-<head>
+<head lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
     <title>{{ $title ? strip_tags($title) . ' - ' : null }}{{ $contextName ?? config('app.name') }}</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,8 +13,12 @@
 
     @if (isset($favicon) && !empty($favicon))
         <link rel="icon" type="image/x-icon" href="{{ $favicon }}" />
-    @else 
+    @else
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    @endif
+
+    @if (app()->getLocale() === 'ar')
+        <link rel="stylesheet" href="{{ asset('css/rtl/rtl.css') }}" />
     @endif
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
