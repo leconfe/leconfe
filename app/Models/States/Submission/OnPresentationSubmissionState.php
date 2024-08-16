@@ -27,7 +27,7 @@ class OnPresentationSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.send_to_editing'),
+            description: __('general.submission_send_to_editing'),
             event: 'submission-send-to-editing',
         )
             ->by(auth()->user())
@@ -45,7 +45,7 @@ class OnPresentationSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.declined')
+            description: __('general.submission_declined')
         )
             ->by(auth()->user())
             ->save();

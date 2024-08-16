@@ -27,7 +27,7 @@ class ParticipantAssignedMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $participant->submission,
-            description: __('general.log.email.sent', ['name' => 'Participant Assigned'])
+            description: __('general.email_sent', ['name' => 'Participant Assigned'])
         );
     }
 

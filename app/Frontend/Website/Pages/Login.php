@@ -43,7 +43,7 @@ class Login extends Page
         return route('filament.administration.home');
     }
 
-    public function getViewData() : array 
+    public function getViewData() : array
     {
         return [
             'registerUrl' => null,
@@ -63,7 +63,7 @@ class Login extends Page
         try {
             $this->rateLimit(5, 300);
         } catch (TooManyRequestsException $exception) {
-            $this->addError('email', __('general.auth.throttle', [
+            $this->addError('email', __('general.throttle_to_many_login_attempts', [
                 'seconds' => $exception->secondsUntilAvailable,
                 'minutes' => ceil($exception->secondsUntilAvailable / 60),
             ]));
@@ -78,7 +78,7 @@ class Login extends Page
             'password' => $this->password,
         ], $this->remember)) {
             throw ValidationException::withMessages([
-                'email' => __('general.auth.failed'),
+                'email' => __('general.failed_credentials'),
             ]);
         }
 

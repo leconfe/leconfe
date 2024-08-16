@@ -21,7 +21,7 @@ class ReviewerAcceptedInvitationMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
-            description: __('general.log.email.sent', ['name' => 'Reviewer Accepted Invitation']),
+            description: __('general.email_sent', ['name' => 'Reviewer Accepted Invitation']),
         );
     }
 

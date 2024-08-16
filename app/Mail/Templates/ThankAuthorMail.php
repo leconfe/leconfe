@@ -27,7 +27,7 @@ class ThankAuthorMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'Thank Author']),
+            description: __('general.email_sent', ['name' => 'Thank Author']),
         );
     }
 

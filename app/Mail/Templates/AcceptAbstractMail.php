@@ -27,7 +27,7 @@ class AcceptAbstractMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'Abstract Accepted']),
+            description: __('general.email_sent', ['name' => 'Abstract Accepted']),
         );
     }
 

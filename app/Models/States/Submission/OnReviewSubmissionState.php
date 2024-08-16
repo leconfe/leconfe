@@ -27,7 +27,7 @@ class OnReviewSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.send_to_presentation'),
+            description: __('general.submission_send_to_presentation'),
             event: 'submission-send-to-presentation',
         )
             ->by(auth()->user())
@@ -45,7 +45,7 @@ class OnReviewSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.declined'),
+            description: __('general.submission_declined'),
             event: 'submission-declined',
         )
             ->by(auth()->user())
@@ -64,7 +64,7 @@ class OnReviewSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.skip_review'),
+            description: __('general.submission_skip_review'),
             event: 'submission-skip-review',
         )
             ->by(auth()->user())
@@ -82,7 +82,7 @@ class OnReviewSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.revision_required'),
+            description: __('general.submission_revision_required'),
             event: 'submission-revision-required',
         )
             ->by(auth()->user())

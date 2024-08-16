@@ -27,7 +27,7 @@ class VerifyUserEmail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $user,
-            description: __('general.log.email.sent', ['name' => 'Verify user Email']),
+            description: __('general.email_sent', ['name' => 'Verify user Email']),
         );
     }
 

@@ -24,7 +24,7 @@ class NewSubmissionMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'New Submission']),
+            description: __('general.email_sent', ['name' => 'New Submission']),
         );
     }
 

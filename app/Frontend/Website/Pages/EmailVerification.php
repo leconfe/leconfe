@@ -46,7 +46,7 @@ class EmailVerification extends Page
         try {
             $this->rateLimit(1);
         } catch (TooManyRequestsException $exception) {
-            $this->addError('email', __('general.email.verification.throttle', [
+            $this->addError('email', __('general.throttle_please_try_again', [
                 'seconds' => $exception->secondsUntilAvailable,
             ]));
 

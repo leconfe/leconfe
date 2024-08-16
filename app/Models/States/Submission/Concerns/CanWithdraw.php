@@ -15,7 +15,7 @@ trait CanWithdraw
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.withdrawn')
+            description: __('general.submission_withdrawn')
         )
             ->by(auth()->user())
             ->save();

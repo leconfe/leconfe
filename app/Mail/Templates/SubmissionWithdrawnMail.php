@@ -18,7 +18,7 @@ class SubmissionWithdrawnMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'Submission Withdrawn']),
+            description: __('general.email_sent', ['name' => 'Submission Withdrawn']),
         );
     }
 

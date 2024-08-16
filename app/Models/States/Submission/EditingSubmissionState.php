@@ -29,7 +29,7 @@ class EditingSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.published')
+            description: __('general.submission_published')
         )
             ->by(auth()->user())
             ->save();
@@ -46,7 +46,7 @@ class EditingSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.declined')
+            description: __('general.submission_declined')
         )
             ->by(auth()->user())
             ->save();
@@ -64,7 +64,7 @@ class EditingSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.skip_review')
+            description: __('general.submission_skip_review')
         )
             ->by(auth()->user())
             ->save();

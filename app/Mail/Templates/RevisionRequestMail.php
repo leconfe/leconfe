@@ -24,7 +24,7 @@ class RevisionRequestMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'Revision Requested']),
+            description: __('general.email_sent', ['name' => 'Revision Requested']),
         );
     }
 

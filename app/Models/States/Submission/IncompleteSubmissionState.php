@@ -19,7 +19,7 @@ class IncompleteSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.created')
+            description: __('general.submission_created')
         )
             ->by(auth()->user())
             ->save();

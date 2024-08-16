@@ -24,7 +24,7 @@ class DeclineAbstractMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
-            description: __('general.log.email.sent', ['name' => 'Abstract Declined']),
+            description: __('general.email_sent', ['name' => 'Abstract Declined']),
         );
     }
 
@@ -43,7 +43,7 @@ class DeclineAbstractMail extends TemplateMailable
         return <<<'HTML'
             <p>Dear {{ name }},</p>
             <p>
-                This is automated notification from the Leconfe System to inform you that we have declined your submission with the following title.    
+                This is automated notification from the Leconfe System to inform you that we have declined your submission with the following title.
             </p>
             <table>
                 <tr>

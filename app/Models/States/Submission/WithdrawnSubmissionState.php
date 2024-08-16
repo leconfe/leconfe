@@ -23,12 +23,12 @@ class WithdrawnSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.log.submission.published'),
+            description: __('general.submission_published'),
             event: 'submission-published',
         )
             ->by(auth()->user())
             ->save();
-            
+
         Published::dispatch($this->submission);
     }
 }
