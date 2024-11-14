@@ -144,7 +144,7 @@ return [
     'enter_the_start_date_of_the_serie' => 'Enter the start date of the serie',
     'enter_the_end_date_of_the_serie' => 'Enter the end date of the serie',
     'publish' => 'Publish',
-    'set_as_current' => 'Set As Current Conference',
+    'set_as_current' => 'Set As Current',
     'set_as_draft' => 'Set as Draft',
 
     'move_to_archive' => 'Move To Archive',

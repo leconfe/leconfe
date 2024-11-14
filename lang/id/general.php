@@ -140,7 +140,7 @@ return [
     'enter_the_start_date_of_the_serie' => 'Masukkan tanggal mulai seri',
     'enter_the_end_date_of_the_serie' => 'Masukkan tanggal berakhir seri',
     'publish' => 'Terbitkan',
-    'set_as_current' => 'Jadikan Konferensi saat ini',
+    'set_as_current' => 'Jadikan saat ini',
     'set_as_draft' => 'Jadikan Draf',
     'move_to_archive' => 'Pindahkan ke Arsip',
     'move_to_trash' => 'Pindahkan ke Sampah',
