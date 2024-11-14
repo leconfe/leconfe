@@ -344,7 +344,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             SubmissionStatus::Queued => '<x-filament::badge color="primary" class="w-fit">'.__('general.queued').'</x-filament::badge>',
             SubmissionStatus::OnPayment => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_payment').'</x-filament::badge>',
             SubmissionStatus::OnReview => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_review').'</x-filament::badge>',
-            SubmissionStatus::Published => $this->record->proceeding->isPublished() ? '<x-filament::badge color="success" class="w-fit">'.__('general.published').'</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">'.__('general.scheduled').'</x-filament::badge>',
+            SubmissionStatus::Published => $this->record->proceeding?->isPublished() ? '<x-filament::badge color="success" class="w-fit">'.__('general.published').'</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">'.__('general.scheduled').'</x-filament::badge>',
             SubmissionStatus::Editing => '<x-filament::badge color="info" class="w-fit">'.__('general.editing').'</x-filament::badge>',
             SubmissionStatus::Declined => '<x-filament::badge color="danger" class="w-fit">'.__('general.declined').'</x-filament::badge>',
             SubmissionStatus::PaymentDeclined => '<x-filament::badge color="danger" class="w-fit">'.__('general.payment_declined').'</x-filament::badge>',
