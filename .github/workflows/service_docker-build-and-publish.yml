@@ -1,0 +1,54 @@
+on:
+  workflow_call:
+    inputs:
+      platforms:
+        type: string
+        default: 'linux/amd64,linux/arm/v7,linux/arm64/v8'
+      docker-tags:
+        required: true
+        type: string
+      dockerfile:
+        type: string
+        default: './dockerfile'
+      target:
+        type: string
+        default: 'release'
+
+jobs:
+  docker-publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+      
+      - name: Install PHP dependencies
+        run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Install JS dependencies
+        run: bun install
+      
+      - name: Build JS assets
+        run: bun run build
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: docker-build-action
+        uses: serversideup/github-action-docker-build@v4
+        with:
+          tags: "${{ inputs.docker-tags }}"
+          dockerfile: "${{ inputs.dockerfile }}"
+          registry-username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          registry-token: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          platforms: "${{ inputs.platforms }}"
+          target: "${{ inputs.target }}"

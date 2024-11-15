@@ -1,0 +1,16 @@
+name: Docker Publish (Release)
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  release:
+    uses: ./.github/workflows/service_docker-build-and-publish.yml
+    with:
+      docker-tags: "leconfe/leconfe:latest,leconfe/leconfe:${{ github.ref_name }}"
+      dockerfile: "./Dockerfile"
+    secrets: inherit
