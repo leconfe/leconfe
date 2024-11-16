@@ -46,7 +46,7 @@ class Proceeding extends Model implements HasMedia, Sortable
     protected static function booted(): void
     {
         static::deleting(function (Proceeding $proceeding) {
-            if($proceeding->submissions->isNotEmpty()){
+            if ($proceeding->submissions->isNotEmpty()) {
                 throw new \Exception('Could not delete proceeding with submissions, please remove submissions first.');
             }
         });
@@ -116,10 +116,10 @@ class Proceeding extends Model implements HasMedia, Sortable
 
     public function seriesTitle(): string
     {
-        return ($this->volume ? "Vol. {$this->volume}" : '') .
-            ($this->number ? " No. {$this->number}" : '') .
-            ($this->year ? " ({$this->year})" : '') .
-            ': ' . $this->title;
+        return ($this->volume ? "Vol. {$this->volume}" : '').
+            ($this->number ? " No. {$this->number}" : '').
+            ($this->year ? " ({$this->year})" : '').
+            ': '.$this->title;
     }
 
     public function getUrl(): string
