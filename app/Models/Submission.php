@@ -132,6 +132,7 @@ class Submission extends Model implements HasMedia, Sortable
 
     public function unassignProceeding()
     {
+        $this->status = SubmissionStatus::Editing;
         $this->proceeding()->dissociate();
         $this->save();
     }

@@ -138,7 +138,7 @@ return [
     'enter_the_start_date_of_the_serie' => 'أدخل تاريخ بدء السلسلة',
     'enter_the_end_date_of_the_serie' => 'أدخل تاريخ انتهاء السلسلة',
     'publish' => 'نشر',
-    'set_as_current' => 'تعيين كمؤتمر حالي',
+    'set_as_current' => 'تعيين كحالي',
     'set_as_draft' => 'تعيين كمسودة',
     'move_to_archive' => 'نقل إلى الأرشيف',
     'move_to_trash' => 'نقل إلى سلة المهملات',

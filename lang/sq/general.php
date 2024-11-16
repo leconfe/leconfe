@@ -139,7 +139,7 @@ return [
     'enter_the_start_date_of_the_serie' => 'Fut datën e fillimit të serisë',
     'enter_the_end_date_of_the_serie' => 'Fut datën e mbarimit të serisë',
     'publish' => 'Publiko',
-    'set_as_current' => 'Cakto si Konferencën Aktuale',
+    'set_as_current' => 'Cakto si aktual',
     'set_as_draft' => 'Cakto si Draft',
     'move_to_archive' => 'Shkarko në Arkiv',
     'move_to_trash' => 'Shkarko në Plehra',

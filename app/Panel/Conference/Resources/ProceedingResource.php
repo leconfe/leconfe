@@ -137,7 +137,16 @@ class ProceedingResource extends Resource
                         ->icon('heroicon-s-arrow-up-circle')
                         ->visible(fn (Proceeding $record) => $record->published && ! $record->current)
                         ->action(fn (Proceeding $record) => $record->setAsCurrent()),
-                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                        ->using(function(Proceeding $record, Tables\Actions\DeleteAction $action){
+                            try {
+                                $record->delete();
+                            } catch (\Throwable $th) {
+                                $action->failureNotificationTitle($th->getMessage());
+
+                                return false;
+                            }
+                        }),
                 ]),
             ]);
     }
