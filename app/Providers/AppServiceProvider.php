@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Actions\Leconfe\CheckLatestVersion;
-use App\Actions\System\StorageLinkValidate;
 use App\Application;
 use App\Classes\Setting;
 use App\Console\Kernel as ConsoleKernel;
@@ -91,8 +90,6 @@ class AppServiceProvider extends ServiceProvider
         $this->extendBlade();
         $this->detectConference();
         $this->handleEvent();
-
-        $this->handlePublicStorage();
     }
 
     protected function handleEvent()
@@ -105,11 +102,6 @@ class AppServiceProvider extends ServiceProvider
             }
         }));
         Event::subscribe(SubmissionEventSubscriber::class);
-    }
-
-    protected function handlePublicStorage()
-    {
-        StorageLinkValidate::dispatch();
     }
 
     protected function extendBlade(): void
