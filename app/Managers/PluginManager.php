@@ -198,7 +198,7 @@ class PluginManager
         $this->validatePlugin($pluginTempDisk->path($folderName));
 
         $fileSystem = new Filesystem;
-        $fileSystem->copyDirectory($pluginTempDisk->path($folderName), $this->getDisk()->path($folderName), true);
+        $fileSystem->copyDirectory($pluginTempDisk->path($folderName), $this->getDisk()->path($folderName));
         $fileSystem->delete($pluginTempDisk->path($folderName));
 
         try {
