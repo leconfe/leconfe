@@ -41,6 +41,11 @@ class PluginManagement extends Page implements HasForms, HasInfolists
         return __('general.plugin');
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('viewAny', Plugin::class);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
