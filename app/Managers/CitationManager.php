@@ -155,7 +155,7 @@ class CitationManager
         $citationData->abstract = strip_tags($paper->getMeta('abstract'));
         foreach ($paper->authors as $author) {
             $currentAuthor = new \stdClass;
-            $currentAuthor->family = $author->family_name;
+            $currentAuthor->family = $author->family_name ?: null;
             $currentAuthor->given = $author->given_name;
 
             $authorsGroups = app()->getCurrentConference()->getMeta('citation_contributor_authors') ?? [];
