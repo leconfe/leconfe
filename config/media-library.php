@@ -14,7 +14,7 @@ return [
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024 * 1024 * env('MAX_FILE_UPLOAD_SIZE', 10), // 10MB
+    'max_file_size' => 1024 * 1024 * env('MAX_FILE_UPLOAD_SIZE', 30), // 30MB
 
     'accepted_file_types' => explode(',', env('ACCEPTED_FILE_TYPES', 'image/*,.pdf,.doc,.docx,.zip,.xls,xlsx,.odt,.txt,.xml')),
 
