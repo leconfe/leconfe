@@ -130,11 +130,11 @@ class Proceeding extends Model implements HasMedia, Sortable
             $string .= " ({$this->year})";
         }
 
-        if(!empty($string)) {
+        if (! empty($string)) {
             $string .= ': ';
         }
 
-        return $string . $this->title;
+        return $string.$this->title;
     }
 
     public function getUrl(): string
