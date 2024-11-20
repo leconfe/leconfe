@@ -3,12 +3,12 @@
 namespace App\Panel\Conference\Resources;
 
 use App\Facades\Setting;
+use App\Forms\Components\TinyEditor;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
+use Stevebauman\Purify\Facades\Purify;
 
 class ProceedingResource extends Resource
 {
@@ -68,10 +69,11 @@ class ProceedingResource extends Resource
                 TextInput::make('title')
                     ->label(__('general.title'))
                     ->required(),
-                Textarea::make('description')
+                TinyEditor::make('description')
                     ->label(__('general.description'))
-                    ->nullable()
-                    ->autosize(),
+                    ->profile('basic')
+                    ->minHeight(300)
+                    ->dehydrateStateUsing(fn(?string $state) => Purify::clean($state)),
                 SpatieMediaLibraryFileUpload::make('cover')
                     ->label(__('general.cover'))
                     ->collection('cover')
@@ -96,13 +98,13 @@ class ProceedingResource extends Resource
                     ->counts('submissions'),
                 TextColumn::make('current')
                     ->label(__('general.current'))
-                    ->hidden(fn (Component $livewire) => $livewire->activeTab === 'future')
-                    ->state(fn (Proceeding $record) => $record->published && $record->current ? __('general.current') : '')
+                    ->hidden(fn(Component $livewire) => $livewire->activeTab === 'future')
+                    ->state(fn(Proceeding $record) => $record->published && $record->current ? __('general.current') : '')
                     ->badge(),
                 TextColumn::make('published_at')
                     ->label(__('general.published_at'))
                     ->sortable()
-                    ->hidden(fn (Component $livewire) => $livewire->activeTab === 'future')
+                    ->hidden(fn(Component $livewire) => $livewire->activeTab === 'future')
                     ->date(Setting::get('format_date')),
             ])
             ->filters([
@@ -115,28 +117,28 @@ class ProceedingResource extends Resource
                     Tables\Actions\Action::make('preview')
                         ->label(__('general.preview'))
                         ->icon('heroicon-o-eye')
-                        ->hidden(fn (Proceeding $record) => ! $record->published)
-                        ->url(fn (Proceeding $record) => route('livewirePageGroup.conference.pages.proceeding-detail', [$record->id]), true),
+                        ->hidden(fn(Proceeding $record) => ! $record->published)
+                        ->url(fn(Proceeding $record) => route('livewirePageGroup.conference.pages.proceeding-detail', [$record->id]), true),
                     Tables\Actions\Action::make('publish')
                         ->label(__('general.publish'))
                         ->requiresConfirmation()
                         ->color('success')
                         ->icon('heroicon-o-arrow-up-tray')
-                        ->hidden(fn (Proceeding $record) => $record->published)
-                        ->action(fn (Proceeding $record) => $record->publish()),
+                        ->hidden(fn(Proceeding $record) => $record->published)
+                        ->action(fn(Proceeding $record) => $record->publish()),
                     Tables\Actions\Action::make('unpublish')
                         ->label(__('general.unpublish'))
                         ->requiresConfirmation()
                         ->color('danger')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->hidden(fn (Proceeding $record) => ! $record->published)
-                        ->action(fn (Proceeding $record) => $record->unpublish()),
+                        ->hidden(fn(Proceeding $record) => ! $record->published)
+                        ->action(fn(Proceeding $record) => $record->unpublish()),
                     Tables\Actions\Action::make('set_as_current')
                         ->label(__('general.set_as_current'))
                         ->requiresConfirmation()
                         ->icon('heroicon-s-arrow-up-circle')
-                        ->visible(fn (Proceeding $record) => $record->published && ! $record->current)
-                        ->action(fn (Proceeding $record) => $record->setAsCurrent()),
+                        ->visible(fn(Proceeding $record) => $record->published && ! $record->current)
+                        ->action(fn(Proceeding $record) => $record->setAsCurrent()),
                     Tables\Actions\DeleteAction::make()
                         ->using(function (Proceeding $record, Tables\Actions\DeleteAction $action) {
                             try {

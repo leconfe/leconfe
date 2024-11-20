@@ -116,10 +116,25 @@ class Proceeding extends Model implements HasMedia, Sortable
 
     public function seriesTitle(): string
     {
-        return ($this->volume ? "Vol. {$this->volume}" : '').
-            ($this->number ? " No. {$this->number}" : '').
-            ($this->year ? " ({$this->year})" : '').
-            ': '.$this->title;
+        $string = '';
+
+        if ($this->volume) {
+            $string .= "Vol. {$this->volume}";
+        }
+
+        if ($this->number) {
+            $string .= " No. {$this->number}";
+        }
+
+        if ($this->year) {
+            $string .= " ({$this->year})";
+        }
+
+        if(!empty($string)) {
+            $string .= ': ';
+        }
+
+        return $string . $this->title;
     }
 
     public function getUrl(): string
