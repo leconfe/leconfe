@@ -156,7 +156,7 @@ class CitationManager
         foreach ($paper->authors as $author) {
             $currentAuthor = new \stdClass;
 
-            if(!empty($currentAuthor->family)){
+            if (! empty($currentAuthor->family)) {
                 $currentAuthor->family = $author->family_name ?: null;
                 $currentAuthor->given = $author->given_name;
             } else {
