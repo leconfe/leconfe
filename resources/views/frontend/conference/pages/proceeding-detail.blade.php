@@ -21,8 +21,8 @@
                     @endif
                     <div class="flex-1">
                         <div class="space-y-4">
-                            <div class="text-sm text-justify">
-                                {{ $proceeding->description }}
+                            <div class="user-content">
+                                {{ new Illuminate\Support\HtmlString($proceeding->description) }}
                             </div>
                             <div class="text-sm">
                                 <span class="font-semibold">Published: </span> {{ $proceeding->published_at ? $proceeding->published_at->format(Setting::get('format_date')) : '-' }}
