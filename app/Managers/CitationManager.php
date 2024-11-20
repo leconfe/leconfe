@@ -155,8 +155,13 @@ class CitationManager
         $citationData->abstract = strip_tags($paper->getMeta('abstract'));
         foreach ($paper->authors as $author) {
             $currentAuthor = new \stdClass;
-            $currentAuthor->family = $author->family_name ?: null;
-            $currentAuthor->given = $author->given_name;
+
+            if(!empty($currentAuthor->family)){
+                $currentAuthor->family = $author->family_name ?: null;
+                $currentAuthor->given = $author->given_name;
+            } else {
+                $currentAuthor->family = $author->given_name;
+            }
 
             $authorsGroups = app()->getCurrentConference()->getMeta('citation_contributor_authors') ?? [];
             $translatorsGroups = app()->getCurrentConference()->getMeta('citation_contributor_translators') ?? [];
@@ -181,6 +186,8 @@ class CitationManager
                     break;
             }
         }
+
+        // dd($citationData);
 
         $citationData->URL = $paper->getUrl();
         if ($paper->doi?->doi) {
