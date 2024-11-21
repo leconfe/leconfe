@@ -75,6 +75,11 @@ class PartnerTable extends Component implements HasForms, HasTable
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->form(fn (Form $form) => $this->form($form))
+                    ->mutateRecordDataUsing(function (Stakeholder $record, array $data): array {
+                        $data['meta']['url'] = $record->getMeta('url');
+
+                        return $data;
+                    })
                     ->using(fn (Stakeholder $record, array $data) => StakeholderUpdateAction::run($record, $data)),
                 DeleteAction::make(),
             ])
@@ -97,6 +102,12 @@ class PartnerTable extends Component implements HasForms, HasTable
                 TextInput::make('name')
                     ->label(__('general.name'))
                     ->required(),
+                TextInput::make('meta.url')
+                    ->label(__('general.url'))
+                    ->url()
+                    ->validationMessages([
+                        'url' => __('general.url_must_be_valid'),
+                    ]),
             ]);
     }
 }

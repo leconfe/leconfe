@@ -80,7 +80,12 @@ class SponsorTable extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->mutateFormDataUsing(function (array $data): array {
+                    ->mutateRecordDataUsing(function (Stakeholder $record, array $data): array {
+                        $data['meta']['url'] = $record->getMeta('url');
+
+                        return $data;
+                    })
+                    ->mutateFormDataUsing(function (Stakeholder $record, array $data): array {
                         $data['type'] = Stakeholder::TYPE_SPONSOR;
 
                         return $data;
@@ -108,6 +113,12 @@ class SponsorTable extends Component implements HasForms, HasTable
                 TextInput::make('name')
                     ->label(__('general.name'))
                     ->required(),
+                TextInput::make('meta.url')
+                    ->label(__('general.url'))
+                    ->url()
+                    ->validationMessages([
+                        'url' => __('general.url_must_be_valid'),
+                    ]),
                 Select::make('level_id')
                     ->label(__('general.level'))
                     ->relationship('level', 'name', fn ($query) => $query->sponsors()->orderBy('order_column', 'asc')),
