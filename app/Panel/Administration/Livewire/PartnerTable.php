@@ -45,7 +45,9 @@ class PartnerTable extends Component implements HasForms, HasTable
                 SpatieMediaLibraryImageColumn::make('logo')
                     ->collection('logo')
                     ->label(__('general.logo'))
-                    ->collection('logo'),
+                    ->collection('logo')
+                    ->url(fn (Stakeholder $record) => $record->getFirstMediaUrl('logo'))
+                    ->openUrlInNewTab(),
                 TextColumn::make('name')
                     ->label(__('general.name'))
                     ->description(fn (Stakeholder $record) => $record->description)
