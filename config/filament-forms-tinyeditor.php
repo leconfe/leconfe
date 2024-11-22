@@ -31,7 +31,7 @@ return [
         ],
 
         'advanced' => [
-            'plugins' => 'advlist autoresize codesample directionality emoticons fullscreen hr image imagetools link lists media table toc wordcount code',
+            'plugins' => 'advlist autoresize codesample directionality emoticons fullscreen hr image link lists media table toc wordcount code',
             'toolbar' => 'undo redo removeformat | formatselect fontsizeselect | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist | blockquote table hr | image link media | wordcount code',
             'upload_directory' => 'tinyeditor',
         ],
