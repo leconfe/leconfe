@@ -30,6 +30,7 @@ class PluginGalleryTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->queryStringIdentifier('gallery')
             ->query(PluginGallery::query())
             ->columns([
                 IndexColumn::make('no'),

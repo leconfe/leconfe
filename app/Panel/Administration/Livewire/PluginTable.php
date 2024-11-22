@@ -37,6 +37,7 @@ class PluginTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->queryStringIdentifier('plugin')
             ->query(Plugin::query()->hidden(false))
             ->columns([
                 IndexColumn::make('no'),
