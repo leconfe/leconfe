@@ -16,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Stakeholder extends Model implements HasMedia, Sortable
 {
-    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, SortableTrait, Metable;
+    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, Metable, SortableTrait;
 
     public const TYPE_SPONSOR = 1;
 
