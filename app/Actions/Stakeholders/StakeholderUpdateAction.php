@@ -10,12 +10,16 @@ class StakeholderUpdateAction
 {
     use AsAction;
 
-    public function handle(Stakeholder $stakeholder, array $data): Stakeholder
+    public function handle(Stakeholder $record, array $data): Stakeholder
     {
         try {
             DB::beginTransaction();
 
-            $stakeholder->update($data);
+            $record->update($data);
+
+            if ($meta = data_get($data, 'meta')) {
+                $record->setManyMeta($meta);
+            }
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -24,6 +28,6 @@ class StakeholderUpdateAction
             throw $th;
         }
 
-        return $stakeholder;
+        return $record;
     }
 }

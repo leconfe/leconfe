@@ -17,6 +17,10 @@ class StakeholderCreateAction
 
             $record = Stakeholder::create($data);
 
+            if ($meta = data_get($data, 'meta')) {
+                $record->setManyMeta($meta);
+            }
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();

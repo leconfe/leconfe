@@ -70,11 +70,7 @@
                                     @if(!$sponsor->getFirstMedia('logo'))
                                         @continue
                                     @endif
-                                    <div class="conference-sponsor">
-                                        <img class="conference-sponsor-logo max-h-32"
-                                                src="{{ $sponsor->getFirstMediaUrl('logo') }}"
-                                                alt="{{ $sponsor->name }}" />
-                                    </div>
+                                    <x-scheduledConference::conference-sponsor :sponsor="$sponsor" />
                                 @endforeach
                             </div>
                         </div>
@@ -87,11 +83,7 @@
                                     @if(!$sponsor->getFirstMedia('logo'))
                                         @continue
                                     @endif
-                                    <div class="conference-sponsor">
-                                        <img class="conference-sponsor-logo max-h-32"
-                                                src="{{ $sponsor->getFirstMediaUrl('logo') }}"
-                                                alt="{{ $sponsor->name }}" />
-                                    </div>
+                                    <x-scheduledConference::conference-sponsor :sponsor="$sponsor" />
                                 @endforeach
                             </div>
                         </div>
@@ -107,11 +99,7 @@
                         @if(!$partner->getFirstMedia('logo'))
                             @continue
                         @endif
-                        <div class="conference-partner">
-                            <img class="conference-partner-logo max-h-32"
-                                    src="{{ $partner->getFirstMediaUrl('logo') }}"
-                                    alt="{{ $partner->name }}" />
-                        </div>
+                        <x-scheduledConference::conference-partner :partner="$partner" />
                     @endforeach
                 </div>
             </section>
