@@ -6,7 +6,9 @@ use App\Actions\Committees\CommitteeCreateAction;
 use App\Actions\Committees\CommitteeDeleteAction;
 use App\Actions\Committees\CommitteeUpdateAction;
 use App\Models\Committee;
+use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages;
 use Filament\Forms;
@@ -61,11 +63,13 @@ class CommitteeResource extends Resource
             ->searchable()
             ->allowHtml()
             ->optionsLimit(10)
+            ->visible(fn (string $operation) => $operation === 'create')
             ->getSearchResultsUsing(
                 function (string $search, Select $component) {
                     $committees = static::getEloquentQuery()->pluck('email')->toArray();
 
                     return Committee::query()
+                        ->withoutGlobalScope(ScheduledConferenceScope::class)
                         ->with(['media', 'meta'])
                         ->limit($component->getOptionsLimit())
                         ->whereNotIn('email', $committees)
@@ -82,7 +86,10 @@ class CommitteeResource extends Resource
                 if (! $state) {
                     return;
                 }
-                $committee = Committee::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
+                $committee = Committee::query()
+                    ->withoutGlobalScope(ScheduledConferenceScope::class)
+                    ->with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
+
                 $role = CommitteeRoleResource::getEloquentQuery()->whereName($committee?->role?->name)->first();
 
                 $formData = [
@@ -149,8 +156,6 @@ class CommitteeResource extends Resource
 
     public static function renderSelectCommittee(Committee $committee): string
     {
-        $committee->load(['serie' => fn ($query) => $query->withoutGlobalScopes([ConferenceScope::class])]);
-
         return view('forms.select-contributor', ['contributor' => $committee])->render();
     }
 
