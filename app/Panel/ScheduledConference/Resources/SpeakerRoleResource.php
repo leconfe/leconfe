@@ -38,7 +38,7 @@ class SpeakerRoleResource extends Resource
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
                             ->where('scheduled_conference_id', app()->getCurrentScheduledConference()->getKey());
-                    }),
+                    }, ignoreRecord: true),
             ]);
     }
 
