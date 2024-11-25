@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Resources;
 use App\Actions\Speakers\SpeakerCreateAction;
 use App\Actions\Speakers\SpeakerDeleteAction;
 use App\Actions\Speakers\SpeakerUpdateAction;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Speaker;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\ScheduledConference\Resources\SpeakerResource\Pages;
@@ -51,59 +52,66 @@ class SpeakerResource extends Resource
         return __('general.speaker');
     }
 
-    public static function selectSpeakerField($form): Select
-    {
-        return Select::make('speaker_id')
-            ->label(__('general.select_existing_speaker'))
-            ->placeholder(__('general.select_speaker'))
-            ->preload()
-            ->native(false)
-            ->searchable()
-            ->allowHtml()
-            ->optionsLimit(10)
-            ->getSearchResultsUsing(
-                function (string $search, Select $component) {
-                    $speakers = static::getEloquentQuery()->pluck('email')->toArray();
-
-                    return Speaker::query()
-                        ->with(['media', 'meta'])
-                        ->limit($component->getOptionsLimit())
-                        ->whereNotIn('email', $speakers)
-                        ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
-                            ->orWhere('family_name', 'LIKE', "%{$search}%")
-                            ->orWhere('email', 'LIKE', "%{$search}%"))
-                        ->get()
-                        ->mapWithKeys(fn (Speaker $speaker) => [$speaker->getKey() => static::renderSelectSpeaker($speaker)])
-                        ->toArray();
-                }
-            )
-            ->live()
-            ->afterStateUpdated(function ($state) use ($form) {
-                if (! $state) {
-                    return;
-                }
-                $speaker = Speaker::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
-                $role = SpeakerRoleResource::getEloquentQuery()->whereName($speaker?->role?->name)->first();
-
-                $formData = [
-                    'speaker_id' => $state,
-                    'given_name' => $speaker->given_name,
-                    'family_name' => $speaker->family_name,
-                    'email' => $speaker->email,
-                    'speaker_role_id' => $role->id ?? null,
-                    'meta' => $speaker->getAllMeta(),
-                ];
-
-                return static::form($form)->fill($formData);
-            })
-            ->columnSpanFull();
-    }
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                static::selectSpeakerField($form),
+                Select::make('speaker_id')
+                    ->label(__('general.select_existing_speaker'))
+                    ->placeholder(__('general.select_speaker'))
+                    ->preload()
+                    ->native(false)
+                    ->searchable()
+                    ->allowHtml()
+                    ->optionsLimit(10)
+                    ->visible(fn(string $operation) => $operation === 'create')
+                    ->getSearchResultsUsing(
+                        function (string $search, Select $component) {
+                            $speakers = static::getEloquentQuery()->pluck('email')->toArray();
+
+                            return Speaker::query()
+                                ->withoutGlobalScope(ScheduledConferenceScope::class)
+                                ->whereIn('scheduled_conference_id', app()->getCurrentConference()->scheduledConferences()->pluck('id')->toArray())
+                                ->with(['media', 'meta'])
+                                ->limit($component->getOptionsLimit())
+                                ->whereNotIn('email', $speakers)
+                                ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('family_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('email', 'LIKE', "%{$search}%"))
+                                ->orderBy('created_at', 'desc')
+                                ->get()
+                                ->unique('email')
+                                ->mapWithKeys(fn(Speaker $speaker) => [$speaker->getKey() => static::renderSelectSpeaker($speaker)])
+                                ->toArray();
+                        }
+                    )
+                    ->live()
+                    ->afterStateUpdated(function (string $state, Select $component, $livewire) {
+                        if (! $state) {
+                            return;
+                        }
+
+                        $form = $component->getContainer();
+
+                        $speaker = Speaker::with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
+                        $role = SpeakerRoleResource::getEloquentQuery()->whereName($speaker?->role?->name)->first();
+
+                        $formData = [
+                            'speaker_id' => $state,
+                            'given_name' => $speaker->given_name,
+                            'family_name' => $speaker->family_name,
+                            'email' => $speaker->email,
+                            'speaker_role_id' => $role->id ?? null,
+                            'meta' => $speaker->getAllMeta(),
+                        ];
+
+                        if ($speaker->getFirstMedia('profile')) {
+                            $livewire->dispatch('update-profile-image', $speaker->getFirstMedia('profile')->getUrl());
+                        }
+
+                        return $form->fill($formData);
+                    })
+                    ->columnSpanFull(),
                 ...ContributorForm::generalFormField(app()->getCurrentScheduledConference()),
                 Forms\Components\Select::make('speaker_role_id')
                     ->label(__('general.role'))
@@ -120,7 +128,7 @@ class SpeakerResource extends Resource
                             ->required(),
                     ])
                     ->createOptionAction(
-                        fn (FormAction $action) => $action->color('primary')
+                        fn(FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
                             ->modalHeading(__('general.create_speaker_position'))
                             ->mutateFormDataUsing(function (array $data): array {
@@ -146,14 +154,10 @@ class SpeakerResource extends Resource
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')
                     ->modalWidth('2xl')
-                    ->using(fn (array $data) => SpeakerCreateAction::run($data)),
+                    ->using(fn(array $data) => SpeakerCreateAction::run($data)),
             ])
-            ->columns([
-                ...ContributorForm::generalTableColumns(),
-            ])
-            ->actions([
-                ...ContributorForm::tableActions(SpeakerUpdateAction::class, SpeakerDeleteAction::class),
-            ])
+            ->columns(ContributorForm::generalTableColumns())
+            ->actions(ContributorForm::tableActions(SpeakerUpdateAction::class, SpeakerDeleteAction::class))
             ->filters([
                 //
             ]);
