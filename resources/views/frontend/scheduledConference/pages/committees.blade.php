@@ -2,43 +2,53 @@
     <div class="mb-6">
         <x-website::breadcrumbs :breadcrumbs="$this->getBreadcrumbs()" />
     </div>
-    <div class="flex mb-5 space-x-4">
-        <h1 class="text-xl font-semibold min-w-fit">List Committee</h1>
-        <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
-    </div>
-    <div class="space-y-4">
-        @forelse ($committeeRoles as $role)
-            <div class="">
-                <h2 class="text-xl">{{ $role->name }}</h2>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach ($role->committees as $committee)
-                        <div class="card card-compact border">
-                            <div class="card-body">
-                                <div class="flex flex-col gap-4">
-                                    <div class="flex gap-x-2 items-center">
-                                        <div class="profile-image avatar">
-                                            <div class="w-14 h-14 rounded-full">
-                                                <img src="{{ $committee->getFilamentAvatarUrl() }}"
-                                                    alt="{{ $committee->fullName }}" />
+    <section class="flex flex-col gap-y-0">
+        <x-website::heading-title title="Committees" class="mb-5" tag="h1" />
+        <div class="cf-committees space-y-6">
+            @foreach ($committeeRoles as $role)
+                @if ($role->committees->isNotEmpty())
+                    <div class="space-y-4">
+                        <h3 class="text-lg">{{ $role->name }}</h3>
+                        <div class="cf-speaker-list grid gap-2 sm:grid-cols-2">
+                            @foreach ($role->committees as $committee)
+                                <div class="cf-committee flex items-center h-full gap-2">
+                                    <img class="cf-committee-img object-cover w-16 h-16 rounded-full aspect-square"
+                                        src="{{ $committee->getFilamentAvatarUrl() }}" alt="{{ $committee->fullName }}" />
+                                    <div class="cf-committee-information space-y-1">
+                                        <div class="cf-committee-name text-gray-900">
+                                            {{ $committee->fullName }}
+                                        </div>
+                                        @if ($committee->getMeta('affiliation'))
+                                            <div class="cf-committee-affiliation text-xs text-gray-700">
+                                                {{ $committee->getMeta('affiliation') }}</div>
+                                        @endif
+                                        @if ($committee->getMeta('scopus_url') || $committee->getMeta('google_scholar_url') || $committee->getMeta('orcid_url'))
+                                            <div class="cf-committee-scholar flex flex-wrap items-center gap-1">
+                                                @if ($committee->getMeta('orcid_url'))
+                                                    <a href="{{ $committee->getMeta('orcid_url') }}" target="_blank">
+                                                        <x-academicon-orcid class="orcid-logo" />
+                                                    </a>
+                                                @endif
+                                                @if ($committee->getMeta('google_scholar_url'))
+                                                    <a href="{{ $committee->getMeta('google_scholar_url') }}"
+                                                        target="_blank">
+                                                        <x-academicon-google-scholar class="google-scholar-logo" />
+                                                    </a>
+                                                @endif
+                                                @if ($committee->getMeta('scopus_url'))
+                                                    <a href="{{ $committee->getMeta('scopus_url') }}" target="_blank">
+                                                        <x-academicon-scopus class="scopus-logo" />
+                                                    </a>
+                                                @endif
                                             </div>
-                                        </div>
-                                        <div class="profile-description">
-                                            <p class="text-content">{{ $committee->fullName }}</p>
-                                            @if ($committee->hasMeta('affiliation'))
-                                                <span class="text-xs">{{ $committee->getMeta('affiliation') }}</span>
-                                            @endif
-                                        </div>
+                                        @endif
                                     </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        @empty
-            <div class="col-span-2 text-center text-gray-500">
-                No commiittees found.
-            </div>
-        @endforelse
-    </div>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+    </section>
 </x-website::layouts.main>

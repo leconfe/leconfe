@@ -143,3 +143,22 @@
 .table :where(th, td) {
     @apply p-0
 }
+
+
+.orcid-logo {
+	color: #A1C837;
+	height: 1.25rem;
+	width: 1.25rem;
+}
+
+.google-scholar-logo {
+	color: #4185F4;
+	height: 1.25rem;
+	width: 1.25rem;
+}
+
+.scopus-logo {
+	color: #e9711c;
+	height: 1.25rem;
+	width: 1.25rem;
+}
