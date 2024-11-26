@@ -6,7 +6,9 @@ use App\Actions\Committees\CommitteeCreateAction;
 use App\Actions\Committees\CommitteeDeleteAction;
 use App\Actions\Committees\CommitteeUpdateAction;
 use App\Models\Committee;
+use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages;
 use Filament\Forms;
@@ -51,59 +53,69 @@ class CommitteeResource extends Resource
         return __('general.committee');
     }
 
-    public static function selectCommitteeField($form): Select
-    {
-        return Select::make('committee_id')
-            ->label(__('general.select_existing_committee'))
-            ->placeholder(__('general.select_committee'))
-            ->preload()
-            ->native(false)
-            ->searchable()
-            ->allowHtml()
-            ->optionsLimit(10)
-            ->getSearchResultsUsing(
-                function (string $search, Select $component) {
-                    $committees = static::getEloquentQuery()->pluck('email')->toArray();
-
-                    return Committee::query()
-                        ->with(['media', 'meta'])
-                        ->limit($component->getOptionsLimit())
-                        ->whereNotIn('email', $committees)
-                        ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
-                            ->orWhere('family_name', 'LIKE', "%{$search}%")
-                            ->orWhere('email', 'LIKE', "%{$search}%"))
-                        ->get()
-                        ->mapWithKeys(fn (Committee $committee) => [$committee->getKey() => static::renderSelectCommittee($committee)])
-                        ->toArray();
-                }
-            )
-            ->live()
-            ->afterStateUpdated(function ($state) use ($form) {
-                if (! $state) {
-                    return;
-                }
-                $committee = Committee::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
-                $role = CommitteeRoleResource::getEloquentQuery()->whereName($committee?->role?->name)->first();
-
-                $formData = [
-                    'committee_id' => $state,
-                    'given_name' => $committee->given_name,
-                    'family_name' => $committee->family_name,
-                    'email' => $committee->email,
-                    'committee_role_id' => $role->id ?? null,
-                    'meta' => $committee->getAllMeta(),
-                ];
-
-                return static::form($form)->fill($formData);
-            })
-            ->columnSpanFull();
-    }
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                static::selectCommitteeField($form),
+                Select::make('committee_id')
+                    ->label(__('general.select_existing_committee'))
+                    ->placeholder(__('general.select_committee'))
+                    ->preload()
+                    ->native(false)
+                    ->searchable()
+                    ->allowHtml()
+                    ->optionsLimit(10)
+                    ->visible(fn(string $operation) => $operation === 'create')
+                    ->getSearchResultsUsing(
+                        function (string $search, Select $component) {
+                            $committees = static::getEloquentQuery()->pluck('email')->toArray();
+
+                            return Committee::query()
+                                ->withoutGlobalScope(ScheduledConferenceScope::class)
+                                ->whereIn('scheduled_conference_id', app()->getCurrentConference()->scheduledConferences()->pluck('id')->toArray())
+                                ->with(['media', 'meta'])
+                                ->limit($component->getOptionsLimit())
+                                ->whereNotIn('email', $committees)
+                                ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('family_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('email', 'LIKE', "%{$search}%"))
+                                ->orderBy('created_at', 'desc')
+                                ->get()
+                                ->unique('email')
+                                ->mapWithKeys(fn(Committee $committee) => [$committee->getKey() => static::renderSelectCommittee($committee)])
+                                ->toArray();
+                        }
+                    )
+                    ->live()
+                    ->afterStateUpdated(function (string $state, Select $component, $livewire) {
+                        if (! $state) {
+                            return;
+                        }
+
+                        $form = $component->getContainer();
+
+                        $committee = Committee::query()
+                            ->withoutGlobalScope(ScheduledConferenceScope::class)
+                            ->with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
+
+                        $role = CommitteeRoleResource::getEloquentQuery()->whereName($committee?->role?->name)->first();
+
+                        $formData = [
+                            'committee_id' => $state,
+                            'given_name' => $committee->given_name,
+                            'family_name' => $committee->family_name,
+                            'email' => $committee->email,
+                            'committee_role_id' => $role->id ?? null,
+                            'meta' => $committee->getAllMeta(),
+                        ];
+
+                        if($committee->getFirstMedia('profile')){
+                            $livewire->dispatch('update-profile-image', $committee->getFirstMedia('profile')->getUrl());
+                        }
+
+                        return $form->fill($formData);
+                    })
+                    ->columnSpanFull(),
                 ...ContributorForm::generalFormField(app()->getCurrentScheduledConference()),
                 Forms\Components\Select::make('committee_role_id')
                     ->label(__('general.role'))
@@ -114,9 +126,9 @@ class CommitteeResource extends Resource
                         titleAttribute: 'name',
                     )
                     ->preload()
-                    ->createOptionForm(fn ($form) => CommitteeRoleResource::form($form))
+                    ->createOptionForm(fn($form) => CommitteeRoleResource::form($form))
                     ->createOptionAction(
-                        fn (FormAction $action) => $action->color('primary')
+                        fn(FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
                             ->modalHeading(__('general.create_committee_role'))
                     )
@@ -136,21 +148,15 @@ class CommitteeResource extends Resource
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')
                     ->modalWidth('2xl')
-                    ->using(fn (array $data) => CommitteeCreateAction::run($data)),
+                    ->using(fn(array $data) => CommitteeCreateAction::run($data)),
             ])
-            ->columns([
-                ...ContributorForm::generalTableColumns(),
-            ])
-            ->actions([
-                ...ContributorForm::tableActions(CommitteeUpdateAction::class, CommitteeDeleteAction::class),
-            ])
+            ->columns(ContributorForm::generalTableColumns())
+            ->actions(ContributorForm::tableActions(CommitteeUpdateAction::class, CommitteeDeleteAction::class))
             ->filters([]);
     }
 
     public static function renderSelectCommittee(Committee $committee): string
     {
-        $committee->load(['serie' => fn ($query) => $query->withoutGlobalScopes([ConferenceScope::class])]);
-
         return view('forms.select-contributor', ['contributor' => $committee])->render();
     }
 
