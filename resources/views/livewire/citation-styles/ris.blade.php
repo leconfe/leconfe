@@ -1,6 +1,6 @@
 TY  - CPAPER
 @foreach ($citationData->author as $author)
-AU  - {{ $author->family }}, {{ $author->given }}
+AU  - {{ $author->family }} @if(isset($author->given)), {{ $author->given }} @endif
 @endforeach
 TI  - {{ $citationData->title }}
 PY  - {{ Carbon\Carbon::parse($citationData->issued->raw)->format('Y/m/d') }}
@@ -16,16 +16,16 @@ LA  - {{ $language }}
 @foreach ($citationData->keywords as $keyword)
 KW  - {{ $keyword }}
 @endforeach
-@if ($citationData->DOI)
+@if (isset($citationData->DOI))
 DO  - {{ $citationData->DOI }}
 UR  - https://doi.org/{{ $citationData->DOI }}
 @else
 UR  - {{ $citationData->URL }}
 @endif
-@if ($citationData->page)
+@if (isset($citationData->page))
 SP  - {{ $citationData->page }}
 @endif
-@if ($citationData->abstract)
+@if (isset($citationData->abstract))
 AB  - {{ str_replace(["\r\n", "\n"], "", $citationData->abstract) }}
 @endif
 ER  -

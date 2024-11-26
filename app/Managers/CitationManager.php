@@ -187,8 +187,6 @@ class CitationManager
             }
         }
 
-        // dd($citationData);
-
         $citationData->URL = $paper->getUrl();
         if ($paper->doi?->doi) {
             $citationData->DOI = $paper->doi->doi;
@@ -244,14 +242,14 @@ class CitationManager
                     return <<<HTML
                         <a href="https://doi.org/{$item->DOI}">{$renderedValue}</a>
                     HTML;
-
-                    return '<a href="https://doi.org/'.$item->DOI.'">'.$renderedValue.'</a>';
                 },
                 'affixes' => true,
             ],
             'URL' => [
                 'function' => function ($item, $renderedValue) {
-                    return '<a href="'.$item->URL.'">'.$renderedValue.'</a>';
+                    return <<<HTML
+                        <a href="https://doi.org/{$item->URL}">{$renderedValue}</a>
+                    HTML;
                 },
                 'affixes' => true,
             ],
