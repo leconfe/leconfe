@@ -46,7 +46,7 @@ class AuthorRoleResource extends Resource
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
                             ->where('conference_id', app()->getCurrentConference()->getKey());
-                    }),
+                    }, ignoreRecord: true),
             ]);
     }
 
