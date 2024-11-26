@@ -33,11 +33,11 @@
 
     @livewireStyles
     
+    @hook('Frontend::Views::Head')
+
     @if(isset($styleSheet) && !empty($styleSheet))
         <link rel="stylesheet" type="text/css" href="{{ $styleSheet }}" />
     @endif
-
-    @hook('Frontend::Views::Head')
 
     @production
         <x-livewire-handle-error />   
