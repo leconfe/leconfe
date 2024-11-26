@@ -187,8 +187,6 @@ class CitationManager
             }
         }
 
-        // dd($citationData);
-
         $citationData->URL = $paper->getUrl();
         if ($paper->doi?->doi) {
             $citationData->DOI = $paper->doi->doi;
