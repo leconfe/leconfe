@@ -29,7 +29,7 @@ class Register extends Page
     public $email = null;
 
     public $phone = null;
-    
+
     public $password = null;
 
     public $password_confirmation = null;
@@ -71,7 +71,7 @@ class Register extends Page
             ],
             'phone' => [
                 'nullable',
-                'phone:INTERNATIONAL'
+                'phone:INTERNATIONAL',
             ],
             'email' => [
                 'required',
@@ -103,7 +103,7 @@ class Register extends Page
 
     public function register()
     {
-        if(!app()->getCurrentScheduledConference()->getMeta('allow_registration')){
+        if (! app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
             abort(403);
         }
 
