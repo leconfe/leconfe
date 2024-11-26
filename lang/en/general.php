@@ -41,6 +41,7 @@ return [
     'family_name' => 'Family Name',
     'affiliation' => 'Affiliation',
     'country' => 'Country',
+    'default_register_country' => 'Default Register Country',
     'email' => 'Email',
     'password' => 'Password',
     'password_confirmation' => 'Password Confirmation',

@@ -68,6 +68,18 @@
 
                         <div class="gap-2 form-control sm:col-span-6">
                             <label class="label-text">
+                                {{ __('general.phone') }}
+                            </label>
+                            <input type="tel" class="input input-sm" wire:model="phone" />
+                            @error('phone')
+                                <div class="text-sm text-red-600">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            <p class="text-xs text-gray-500">{{ __('general.phone_format_international') }}</p>
+                        </div>
+                        <div class="gap-2 form-control sm:col-span-6">
+                            <label class="label-text">
                                 {{ __('general.email') }} <span class="text-red-500">*</span>
                             </label>
                             <input type="email" class="input input-sm" wire:model="email" />

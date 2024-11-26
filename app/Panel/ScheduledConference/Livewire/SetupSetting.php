@@ -15,6 +15,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Jackiedo\Timezonelist\Facades\Timezonelist;
 use Livewire\Component;
+use Squire\Models\Country;
 
 class SetupSetting extends Component implements HasForms
 {
@@ -50,6 +51,12 @@ class SetupSetting extends Component implements HasForms
                         CheckboxList::make('meta.allowed_self_assign_roles')
                             ->label('Allow User to self register as role')
                             ->options(UserRole::selfAssignedRoleNames()),
+                        Select::make('meta.default_register_country')
+                            ->label(__('general.default_register_country'))
+                            ->placeholder(__('general.select_a_country'))
+                            ->searchable()
+                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                            ->optionsLimit(250),
                         Select::make('meta.timezone')
                             ->options(Timezonelist::toArray(false))
                             ->selectablePlaceholder(false)

@@ -28,6 +28,8 @@ class Register extends Page
 
     public $email = null;
 
+    public $phone = null;
+    
     public $password = null;
 
     public $password_confirmation = null;
@@ -43,6 +45,8 @@ class Register extends Page
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
         }
+
+        $this->country = app()->getCurrentScheduledConference()->getMeta('default_register_country');
     }
 
     public function getTitle(): string|Htmlable
@@ -64,6 +68,10 @@ class Register extends Page
             ],
             'country' => [
                 'nullable',
+            ],
+            'phone' => [
+                'nullable',
+                'phone:INTERNATIONAL'
             ],
             'email' => [
                 'required',
@@ -95,6 +103,10 @@ class Register extends Page
 
     public function register()
     {
+        if(!app()->getCurrentScheduledConference()->getMeta('allow_registration')){
+            abort(403);
+        }
+
         try {
             $this->rateLimit(5, 300);
         } catch (TooManyRequestsException $exception) {
@@ -109,7 +121,7 @@ class Register extends Page
         $data = $this->validate();
         $user = UserCreateAction::run([
             ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
-            'meta' => Arr::only($data, ['affiliation', 'country']),
+            'meta' => Arr::only($data, ['affiliation', 'country', 'phone']),
         ]);
 
         if (app()->getCurrentConference()) {
