@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Sushi\Sushi;
 
 class PluginGallery extends Model
@@ -42,9 +43,15 @@ class PluginGallery extends Model
 
     public function fetch()
     {
-        $response = Http::acceptJson()->get(app()->getApiUrl('plugins'));
+        try {
+            $response = Http::acceptJson()->get(app()->getApiUrl('plugins'));
+    
+            if ($response->failed()) {
+                return [];
+            }
+        } catch (\Throwable $th) {
+            Log::error($th);
 
-        if ($response->failed()) {
             return [];
         }
 
