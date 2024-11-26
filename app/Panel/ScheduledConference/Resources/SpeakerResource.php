@@ -64,7 +64,7 @@ class SpeakerResource extends Resource
                     ->searchable()
                     ->allowHtml()
                     ->optionsLimit(10)
-                    ->visible(fn(string $operation) => $operation === 'create')
+                    ->visible(fn (string $operation) => $operation === 'create')
                     ->getSearchResultsUsing(
                         function (string $search, Select $component) {
                             $speakers = static::getEloquentQuery()->pluck('email')->toArray();
@@ -75,13 +75,13 @@ class SpeakerResource extends Resource
                                 ->with(['media', 'meta'])
                                 ->limit($component->getOptionsLimit())
                                 ->whereNotIn('email', $speakers)
-                                ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
                                     ->orWhere('family_name', 'LIKE', "%{$search}%")
                                     ->orWhere('email', 'LIKE', "%{$search}%"))
                                 ->orderBy('created_at', 'desc')
                                 ->get()
                                 ->unique('email')
-                                ->mapWithKeys(fn(Speaker $speaker) => [$speaker->getKey() => static::renderSelectSpeaker($speaker)])
+                                ->mapWithKeys(fn (Speaker $speaker) => [$speaker->getKey() => static::renderSelectSpeaker($speaker)])
                                 ->toArray();
                         }
                     )
@@ -93,7 +93,7 @@ class SpeakerResource extends Resource
 
                         $form = $component->getContainer();
 
-                        $speaker = Speaker::with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
+                        $speaker = Speaker::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
                         $role = SpeakerRoleResource::getEloquentQuery()->whereName($speaker?->role?->name)->first();
 
                         $formData = [
@@ -128,7 +128,7 @@ class SpeakerResource extends Resource
                             ->required(),
                     ])
                     ->createOptionAction(
-                        fn(FormAction $action) => $action->color('primary')
+                        fn (FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
                             ->modalHeading(__('general.create_speaker_position'))
                             ->mutateFormDataUsing(function (array $data): array {
@@ -154,7 +154,7 @@ class SpeakerResource extends Resource
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')
                     ->modalWidth('2xl')
-                    ->using(fn(array $data) => SpeakerCreateAction::run($data)),
+                    ->using(fn (array $data) => SpeakerCreateAction::run($data)),
             ])
             ->columns(ContributorForm::generalTableColumns())
             ->actions(ContributorForm::tableActions(SpeakerUpdateAction::class, SpeakerDeleteAction::class))

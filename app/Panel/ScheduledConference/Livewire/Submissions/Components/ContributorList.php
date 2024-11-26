@@ -64,13 +64,13 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                                 return Author::query()
                                     ->with(['media', 'meta'])
                                     ->whereNotIn('email', $authors)
-                                    ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                    ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
                                         ->orWhere('family_name', 'LIKE', "%{$search}%")
                                         ->orWhere('email', 'LIKE', "%{$search}%"))
                                     ->orderBy('created_at', 'desc')
                                     ->get()
                                     ->unique('email')
-                                    ->mapWithKeys(fn(Author $author) => [$author->getKey() => static::renderSelectAuthor($author)])
+                                    ->mapWithKeys(fn (Author $author) => [$author->getKey() => static::renderSelectAuthor($author)])
                                     ->toArray();
                             }
                         )
@@ -82,7 +82,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
                             $form = $component->getContainer();
 
-                            $author = Author::with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes()])->findOrFail($state);
+                            $author = Author::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
                             $role = AuthorRoleResource::getEloquentQuery()->whereName($author?->role?->name)->first();
 
                             $formData = [
@@ -94,10 +94,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                                 'meta' => $author->getAllMeta(),
                             ];
 
-                            if($author->getFirstMedia('profile')){
+                            if ($author->getFirstMedia('profile')) {
                                 $livewire->dispatch('update-profile-image', $author->getFirstMedia('profile')->getUrl());
                             }
-    
 
                             return $form->fill($formData);
                         })
@@ -108,9 +107,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             name: 'role',
                             titleAttribute: 'name',
                         )
-                        ->createOptionForm(fn($form) => AuthorRoleResource::form($form))
+                        ->createOptionForm(fn ($form) => AuthorRoleResource::form($form))
                         ->createOptionAction(
-                            fn(FormAction $action) => $action->color('primary')
+                            fn (FormAction $action) => $action->color('primary')
                                 ->modalWidth('xl')
                                 ->modalHeading(__('general.create_author_role'))
                         )
@@ -132,7 +131,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ->heading(__('general.contributors'))
             ->emptyStateDescription(__('general.no_contributors'))
             ->query(
-                fn(): Builder => $this->getQuery()
+                fn (): Builder => $this->getQuery()
             )
             ->actions([
                 ActionGroup::make([
@@ -144,9 +143,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             return $data;
                         })
                         ->form($this->getContributorFormSchema())
-                        ->using(fn(array $data, Author $record) => AuthorUpdateAction::run($data, $record)),
+                        ->using(fn (array $data, Author $record) => AuthorUpdateAction::run($data, $record)),
                     DeleteAction::make()
-                        ->using(fn(array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
+                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
                 ])
                     ->hidden($this->viewOnly),
             ])
@@ -177,7 +176,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->width(50)
                         ->height(50)
                         ->defaultImageUrl(
-                            fn(Model $record): string => $record->getFilamentAvatarUrl()
+                            fn (Model $record): string => $record->getFilamentAvatarUrl()
                         )
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
@@ -189,7 +188,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         TextColumn::make('affiliation')
                             ->size('xs')
                             ->getStateUsing(
-                                fn(Model $record) => $record->getMeta('affiliation')
+                                fn (Model $record) => $record->getMeta('affiliation')
                             )
                             ->icon('heroicon-o-building-library')
                             ->extraAttributes([

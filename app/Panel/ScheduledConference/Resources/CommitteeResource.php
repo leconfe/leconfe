@@ -6,8 +6,6 @@ use App\Actions\Committees\CommitteeCreateAction;
 use App\Actions\Committees\CommitteeDeleteAction;
 use App\Actions\Committees\CommitteeUpdateAction;
 use App\Models\Committee;
-use App\Models\ScheduledConference;
-use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages;
@@ -65,7 +63,7 @@ class CommitteeResource extends Resource
                     ->searchable()
                     ->allowHtml()
                     ->optionsLimit(10)
-                    ->visible(fn(string $operation) => $operation === 'create')
+                    ->visible(fn (string $operation) => $operation === 'create')
                     ->getSearchResultsUsing(
                         function (string $search, Select $component) {
                             $committees = static::getEloquentQuery()->pluck('email')->toArray();
@@ -76,13 +74,13 @@ class CommitteeResource extends Resource
                                 ->with(['media', 'meta'])
                                 ->limit($component->getOptionsLimit())
                                 ->whereNotIn('email', $committees)
-                                ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
                                     ->orWhere('family_name', 'LIKE', "%{$search}%")
                                     ->orWhere('email', 'LIKE', "%{$search}%"))
                                 ->orderBy('created_at', 'desc')
                                 ->get()
                                 ->unique('email')
-                                ->mapWithKeys(fn(Committee $committee) => [$committee->getKey() => static::renderSelectCommittee($committee)])
+                                ->mapWithKeys(fn (Committee $committee) => [$committee->getKey() => static::renderSelectCommittee($committee)])
                                 ->toArray();
                         }
                     )
@@ -96,7 +94,7 @@ class CommitteeResource extends Resource
 
                         $committee = Committee::query()
                             ->withoutGlobalScope(ScheduledConferenceScope::class)
-                            ->with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
+                            ->with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes(), 'media'])->findOrFail($state);
 
                         $role = CommitteeRoleResource::getEloquentQuery()->whereName($committee?->role?->name)->first();
 
@@ -109,7 +107,7 @@ class CommitteeResource extends Resource
                             'meta' => $committee->getAllMeta(),
                         ];
 
-                        if($committee->getFirstMedia('profile')){
+                        if ($committee->getFirstMedia('profile')) {
                             $livewire->dispatch('update-profile-image', $committee->getFirstMedia('profile')->getUrl());
                         }
 
@@ -126,9 +124,9 @@ class CommitteeResource extends Resource
                         titleAttribute: 'name',
                     )
                     ->preload()
-                    ->createOptionForm(fn($form) => CommitteeRoleResource::form($form))
+                    ->createOptionForm(fn ($form) => CommitteeRoleResource::form($form))
                     ->createOptionAction(
-                        fn(FormAction $action) => $action->color('primary')
+                        fn (FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')
                             ->modalHeading(__('general.create_committee_role'))
                     )
@@ -148,7 +146,7 @@ class CommitteeResource extends Resource
                 CreateAction::make()
                     ->icon('heroicon-o-user-plus')
                     ->modalWidth('2xl')
-                    ->using(fn(array $data) => CommitteeCreateAction::run($data)),
+                    ->using(fn (array $data) => CommitteeCreateAction::run($data)),
             ])
             ->columns(ContributorForm::generalTableColumns())
             ->actions(ContributorForm::tableActions(CommitteeUpdateAction::class, CommitteeDeleteAction::class))
