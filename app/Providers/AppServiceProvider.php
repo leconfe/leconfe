@@ -197,6 +197,7 @@ class AppServiceProvider extends ServiceProvider
         };
 
         // Create a temporary URL for a file in the local storage disk.
+        Storage::disk('local')->buildTemporaryUrlsUsing($callback);
         Storage::disk('private-files')->buildTemporaryUrlsUsing($callback);
     }
 
