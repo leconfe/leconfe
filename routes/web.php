@@ -34,15 +34,22 @@ Route::get('private/files/{uuid}', function ($uuid, Request $request) {
         ]);
 })->name('private.files');
 
-Route::get('local/temp/{path}', function (string $path, Request $request) {
+Route::get('download/{path}', function (string $path, Request $request) {
     abort_if(! $request->hasValidSignature(), 401);
 
-    $storage = Storage::disk('local');
+    try {
+        $storage = Storage::disk($request->query('disk', 'local'));
+    } catch (\Throwable $th) {
+        abort(404);
+    }
 
     abort_if(! $storage->exists($path), 404);
 
     return $storage->download($path);
-})->where('path', '.*')->name('local.temp');
+})->where('path', '.*')->name('download');
+// Route::name('download.')->prefix('download')->group(function (){
+// });
+
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();

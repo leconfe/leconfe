@@ -277,9 +277,9 @@ class PanelProvider extends ServiceProvider
         });
     }
 
-    protected static function configureFileUpload(FileUpload $fileUpload): void
+    protected static function configureFileUpload(FileUpload $fileUpload) : FileUpload
     {
-        $fileUpload
+        return $fileUpload
             ->imageResizeTargetWidth(2048)
             ->imageResizeTargetWidth(2048)
             ->imageResizeMode('contain')
