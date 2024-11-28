@@ -124,10 +124,10 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 						}
 						
 						$url = null;
-
 						try {
 							$url = $record?->getTemporaryUrl(
 								now()->addMinutes(5),
+								options: ['disk' => $record?->disk]
 							);
 						} catch (\Throwable $exception) {
 							// This driver does not support creating temporary URLs.
