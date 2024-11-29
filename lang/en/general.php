@@ -816,6 +816,7 @@ return [
     'registration_status' => 'Registration Status',
     'timelines' => 'Timelines',
     'downloads' => 'Downloads',
+    'download' => 'Download',
     'paper_date_published' => 'Date Published : :date',
     'how_to_cite' => 'How to Cite',
     'more_citation_formats' => 'More Citation Formats',
@@ -973,4 +974,7 @@ return [
     'publisher_library' => 'Publisher Library',
     'add_a_file' => 'Add a File',
     'allow_public_access' => 'Allow Public Access',
+    'publisher_library' => 'Publisher Library',
+    'no_publisher_library_available' => 'No publisher library available',
+    'view_page' => 'View Page',
 ];
