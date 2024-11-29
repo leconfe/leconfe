@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Classes\DOIGenerator;
+use App\Frontend\ScheduledConference\Pages\PublisherLibrary as PublisherLibraryPage;
 use App\Models\Enums\DOIStatus;
 use App\Models\ScheduledConference;
 use App\Tables\Columns\IndexColumn;
@@ -24,11 +25,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\UnableToCheckFileExistence;
 
 class PublisherLibrary extends Component implements HasForms, HasTable
 {
@@ -48,18 +51,27 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 			->columns([
 				IndexColumn::make('no'),
 				TextColumn::make('name')
-					->searchable(),
-				IconColumn::make('public_access')
+					->searchable()
+					->action(fn(Media $record) => $record),
+				ToggleColumn::make('public_access')
 					->getStateUsing(fn(Media $record) => $record->getCustomProperty('is_public'))
-					->boolean()
-					->trueIcon('heroicon-s-check')
-					->falseIcon('heroicon-o-x-mark'),
+					->updateStateUsing(function (Media $record, $state) {
+						$record->setCustomProperty('is_public', $state);
+						$record->save();
+					}),
 
 			])
 			->headerActions([
+				Action::make('view_page')
+					->label(__('general.view_page'))
+					->outlined()
+					->icon('heroicon-o-eye')
+					->url(route(PublisherLibraryPage::getRouteName('scheduledConference')))
+					->openUrlInNewTab(),
 				Action::make('add_a_file')
 					->label(__('general.add_a_file'))
 					->modalWidth(MaxWidth::ExtraLarge)
+					->icon('heroicon-o-plus')
 					->action(function (array $data) {
 						$currentScheduledConference = app()->getCurrentScheduledConference();
 						$currentScheduledConference->addMediaFromDisk($data['file_name'], 'local')
@@ -70,33 +82,47 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 					->form(fn($form) => $this->form($form)),
 			])
 			->actions([
-				EditAction::make()
-					->fillForm(function (Media $record, array $data): array {
-						$data['name'] = $record->name;
-						$data['file_name'] = [$record->file_name];
-						$data['custom']['is_public'] = $record->getCustomProperty('is_public');
-						return $data;
-					})
-					->modalWidth(MaxWidth::ExtraLarge)
-					->form(fn($form, $record) => $this->form($form))
-					->using(function (Media $record, $data) {
-						$currentScheduledConference = app()->getCurrentScheduledConference();
-						
-						if(Storage::disk('local')->exists($data['file_name'])){
-							$media = $currentScheduledConference->addMediaFromDisk($data['file_name'], 'local')
-								->usingName($data['name'])
-								->withCustomProperties($data['custom'])
-								->toMediaCollection('publisher-library', 'private-files');
-						}
+				ActionGroup::make([
+					EditAction::make()
+						->fillForm(function (Media $record, array $data): array {
+							$data['name'] = $record->name;
+							$data['file_name'] = [$record->file_name];
+							$data['custom']['is_public'] = $record->getCustomProperty('is_public');
+							return $data;
+						})
+						->modalWidth(MaxWidth::ExtraLarge)
+						->form(fn($form, $record) => $this->form($form))
+						->using(function (Media $record, $data) {
+							$currentScheduledConference = app()->getCurrentScheduledConference();
 
-						$record->delete();
+							if (Storage::disk('local')->exists($data['file_name'])) {
+								$media = $currentScheduledConference->addMediaFromDisk($data['file_name'], 'local')
+									->usingName($data['name'])
+									->withCustomProperties($data['custom'])
+									->toMediaCollection('publisher-library', 'private-files');
 
-						$media->uuid = $record->uuid;
-						$media->order_column = $record->order_column;
-						$media->created_at = $record->created_at;
-						$media->save();
-					}),
-				DeleteAction::make()
+								$record->delete();
+
+								$media->uuid = $record->uuid;
+								$media->order_column = $record->order_column;
+								$media->created_at = $record->created_at;
+								$media->save();
+							} else {
+								$record->name = $data['name'];
+								$record->setCustomProperty('is_public', $data['custom']['is_public']);
+								$record->save();
+							}
+						}),
+					Action::make('download')
+						->icon('heroicon-o-arrow-down-tray')
+						->color('primary')
+						->label(__('general.download'))
+						->action(fn(Media $record) => $record),
+					DeleteAction::make(),
+				]),
+			])
+			->bulkActions([
+				DeleteBulkAction::make(),
 			]);
 	}
 
@@ -118,11 +144,12 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 
 						$component->state([((string) Str::uuid()) => $record->file_name]);
 					})
+					->downloadable()
 					->getUploadedFileUsing(static function (BaseFileUpload $component, Media | null $record): ?array {
-						if(blank($record)) {
+						if (blank($record)) {
 							return null;
 						}
-						
+
 						$url = null;
 						try {
 							$url = $record?->getTemporaryUrl(
@@ -150,6 +177,6 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 
 	public function render()
 	{
-		return view('panel.conference.livewire.table');
+		return view('tables.table');
 	}
 }
