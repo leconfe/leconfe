@@ -5,6 +5,7 @@ namespace App\Frontend\ScheduledConference\Pages;
 use App\Actions\User\UserCreateAction;
 use App\Frontend\Website\Pages\Page;
 use App\Models\Enums\UserRole;
+use App\Panel\ScheduledConference\Pages\Dashboard;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Facades\Filament;
@@ -44,6 +45,7 @@ class Register extends Page
     {
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
+            return;
         }
 
         $this->country = app()->getCurrentScheduledConference()->getMeta('default_register_country');
@@ -98,7 +100,7 @@ class Register extends Page
 
     public function getRedirectUrl(): string
     {
-        return Filament::getPanel('scheduledConference')->getUrl();
+        return route(Dashboard::getRouteName('scheduledConference'));
     }
 
     public function register()
