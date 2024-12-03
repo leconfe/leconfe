@@ -21,7 +21,7 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
 
     public static function getWizardLabel(): string
     {
-        return __('general.upload_abstract');
+        return __('general.upload_files');
     }
 
     public function render()

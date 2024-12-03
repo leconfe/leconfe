@@ -394,7 +394,7 @@ return [
     'add_contributor' => 'Add Contributor',
     'contributor_added' => 'Contributor added',
     'abstract_files' => 'Abstract Files',
-
+    'submission_files' => 'Submission Files',
     'submission_complete' => 'Submission complete',
     'submission_payment' => 'Submission Payment',
     'enable_submission_payment' => 'Enable Submission Payment',
