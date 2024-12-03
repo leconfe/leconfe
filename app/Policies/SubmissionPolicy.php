@@ -149,9 +149,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:uploadAbstract')) {
-            return true;
-        }
+        return true;
     }
 
     public function uploadPresentation(User $user, Submission $submission)
