@@ -159,7 +159,7 @@ class SubmissionResource extends Resource
                     ->relationship('track', 'title')
                     ->multiple()
                     ->searchable()
-                    ->preload()
+                    ->preload(),
             ]);
     }
 

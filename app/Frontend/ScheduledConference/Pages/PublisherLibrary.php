@@ -4,8 +4,6 @@ namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Frontend\Website\Pages\Page;
 use App\Models\Media;
-use Illuminate\Routing\Route;
-use Rahmanramsi\LivewirePageGroup\PageGroup;
 
 class PublisherLibrary extends Page
 {
@@ -30,7 +28,7 @@ class PublisherLibrary extends Page
     protected function getViewData(): array
     {
         return [
-            'publisherLibraries' => app()->getCurrentScheduledConference()->getMedia('publisher-library')->filter(fn(Media $media) => $media->getCustomProperty('is_public')),
+            'publisherLibraries' => app()->getCurrentScheduledConference()->getMedia('publisher-library')->filter(fn (Media $media) => $media->getCustomProperty('is_public')),
         ];
     }
 }

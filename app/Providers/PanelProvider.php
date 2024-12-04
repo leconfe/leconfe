@@ -249,8 +249,8 @@ class PanelProvider extends ServiceProvider
 
     public static function setupFilamentComponent()
     {
-        SpatieMediaLibraryFileUpload::configureUsing(fn(SpatieMediaLibraryFileUpload $fileUpload) => static::configureFileUpload($fileUpload));
-        FileUpload::configureUsing(fn(FileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+        SpatieMediaLibraryFileUpload::configureUsing(fn (SpatieMediaLibraryFileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+        FileUpload::configureUsing(fn (FileUpload $fileUpload) => static::configureFileUpload($fileUpload));
 
         DatePicker::configureUsing(function (DatePicker $datePicker): void {
             $datePicker
@@ -277,7 +277,7 @@ class PanelProvider extends ServiceProvider
         });
     }
 
-    protected static function configureFileUpload(FileUpload $fileUpload) : FileUpload
+    protected static function configureFileUpload(FileUpload $fileUpload): FileUpload
     {
         return $fileUpload
             ->imageResizeTargetWidth(2048)
@@ -286,7 +286,7 @@ class PanelProvider extends ServiceProvider
             ->imageResizeUpscale(false)
             ->maxSize(config('media-library.max_file_size') / 1024)
             ->acceptedFileTypes(collect(config('media-library.accepted_file_types'))
-                ->map(fn($ext) => MimeType::fromExtension($ext) ?? $ext)
+                ->map(fn ($ext) => MimeType::fromExtension($ext) ?? $ext)
                 ->toArray());
     }
 }

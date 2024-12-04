@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap as SpatieSitemap;
 use Spatie\Sitemap\Tags\Url;
 
-class Sitemap extends Page 
+class Sitemap extends Page
 {
     public function __invoke()
     {
@@ -153,7 +153,7 @@ class Sitemap extends Page
                         ->setLastModificationDate($scheduledConference->updated_at)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_NEVER)
                 );
-    
+
                 $sitemap->add(
                     Url::create(route(ScheduledConferencePages\PublisherLibrary::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
                         ->setLastModificationDate($scheduledConference->updated_at)

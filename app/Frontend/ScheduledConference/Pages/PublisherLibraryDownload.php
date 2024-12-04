@@ -3,7 +3,6 @@
 namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Frontend\Website\Pages\Page;
-use App\Models\Media;
 use Illuminate\Support\Facades\Route;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
@@ -22,12 +21,12 @@ class PublisherLibraryDownload extends Page
 
         $mediaUuid = $currentRoute->parameter('media');
 
-        if(!$mediaUuid) {
+        if (! $mediaUuid) {
             abort(404);
         }
 
         $media = app()->getCurrentScheduledConference()->media()->where('uuid', $mediaUuid)->first();
-        if(!$media || !$media->getCustomProperty('is_public')) {
+        if (! $media || ! $media->getCustomProperty('is_public')) {
             abort(404);
         }
 

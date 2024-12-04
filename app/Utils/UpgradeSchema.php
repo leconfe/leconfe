@@ -3,10 +3,10 @@
 namespace App\Utils;
 
 use App\Utils\UpgradeSchemas\Upgrade110;
+use App\Utils\UpgradeSchemas\Upgrade120Beta1;
 use App\Utils\UpgradeSchemas\UpgradeBeta3;
 use App\Utils\UpgradeSchemas\UpgradeBeta4;
 use App\Utils\UpgradeSchemas\UpgradeBeta5;
-use App\Utils\UpgradeSchemas\Upgrade120Beta1;
 
 class UpgradeSchema
 {

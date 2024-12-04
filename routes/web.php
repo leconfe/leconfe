@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\LogoutController;
-use App\Models\Media;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +17,6 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-
 Route::get('download/{path}', function (string $path, Request $request) {
     abort_if(! $request->hasValidSignature(), 401);
 
@@ -32,7 +30,6 @@ Route::get('download/{path}', function (string $path, Request $request) {
 
     return $storage->download($path);
 })->where('path', '.*')->name('download');
-
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();

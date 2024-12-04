@@ -45,6 +45,7 @@ class Register extends Page
     {
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
+
             return;
         }
 
