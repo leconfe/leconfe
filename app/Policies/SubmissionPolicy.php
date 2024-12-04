@@ -149,9 +149,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:uploadAbstract')) {
-            return true;
-        }
+        return true;
     }
 
     public function uploadPresentation(User $user, Submission $submission)
@@ -357,14 +355,6 @@ class SubmissionPolicy
 
     public function editing(User $user, Submission $submission)
     {
-        if ($submission->stage != SubmissionStage::Editing) {
-            return false;
-        }
-
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
         if (in_array($submission->status, [SubmissionStatus::Published, SubmissionStatus::Declined, SubmissionStatus::Withdrawn])) {
             return false;
         }

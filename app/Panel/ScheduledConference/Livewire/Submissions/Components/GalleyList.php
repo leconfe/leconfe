@@ -157,10 +157,7 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                     TextColumn::make('label')
                         ->label(__('general.label'))
                         ->color('primary')
-                        ->url(
-                            fn (SubmissionGalley $galley) => $galley->getUrl(),
-                            true
-                        )
+                        ->action(fn (SubmissionGalley $galley) => $galley?->file?->media)
                         ->openUrlInNewTab(),
                 ]),
             ])

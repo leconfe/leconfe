@@ -12,7 +12,7 @@ class AbstractFiles extends SubmissionFilesTable
 
     public function __construct()
     {
-        $this->tableHeading = __('general.abstract_files');
+        $this->tableHeading = __('general.submission_files');
     }
 
     protected $listeners = [

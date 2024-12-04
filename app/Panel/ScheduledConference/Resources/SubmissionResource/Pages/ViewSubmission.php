@@ -390,8 +390,8 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                     })
                                     ->sticky()
                                     ->tabs([
-                                        Tab::make('Call for Abstract')
-                                            ->label(__('general.call_for_abstract'))
+                                        Tab::make('Submission')
+                                            ->label(__('general.submission'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 LivewireEntry::make('call-for-abstract')
