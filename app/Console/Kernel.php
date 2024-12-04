@@ -4,7 +4,7 @@ namespace App\Console;
 
 use App\Actions;
 use App\Actions\Metrics\MoveMetricLogToQueues;
-use App\Actions\Metrics\ProcessMetricTrackQueues;
+use App\Actions\Metrics\ProcessMetricLogQueues;
 use App\Actions\Submissions\RemoveDeletedDiscussion;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
         Actions\Leconfe\CheckLatestVersion::class,
         Actions\Leconfe\GetUpgradeActionHistory::class,
         Actions\Leconfe\Relink::class,
-        Actions\Metrics\ProcessMetricTrackQueues::class,
+        Actions\Metrics\ProcessMetricLogQueues::class,
         Actions\Metrics\MoveMetricLogToQueues::class,
 
     ];
@@ -39,6 +39,13 @@ class Kernel extends ConsoleKernel
         })
         ->monthly()
         ->name('Running Cleaner');
+
+        $schedule->call(function(){
+            MoveMetricLogToQueues::run();
+            ProcessMetricLogQueues::run();
+        })
+        ->daily()
+        ->name('Process metrics daily');
     }
 
     /**

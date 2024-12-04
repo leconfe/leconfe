@@ -10,7 +10,7 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\spin;
 
-class ProcessMetricTrackQueues
+class ProcessMetricLogQueues
 {
     use AsAction;
 
