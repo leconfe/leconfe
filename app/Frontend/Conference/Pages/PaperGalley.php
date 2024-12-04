@@ -3,6 +3,7 @@
 namespace App\Frontend\Conference\Pages;
 
 use App\Facades\Hook;
+use App\Facades\Metric;
 use App\Frontend\Website\Pages\Page;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Media;
@@ -33,6 +34,8 @@ class PaperGalley extends Page
 
         $returner = null;
 
+        Metric::log('galley_view', $galley);
+
         Hook::call('Frontend::PaperGalley', [$galley, &$returner]);
 
         if (! $returner) {
@@ -41,6 +44,7 @@ class PaperGalley extends Page
                 'galley' => $galley->id,
             ]);
         }
+
 
         return $returner;
     }

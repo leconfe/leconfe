@@ -2,6 +2,7 @@
 
 namespace App\Frontend\Conference\Pages;
 
+use App\Facades\Metric;
 use App\Frontend\Conference\Pages\Proceedings as PagesProceedings;
 use App\Frontend\Website\Pages\Page;
 use App\Models\Enums\SubmissionStatus;
@@ -26,6 +27,8 @@ class ProceedingDetail extends Page
     public function mount(Proceeding $proceeding)
     {
         abort_unless($this->canAccess(), 404);
+
+        Metric::track('proceeding_view', $proceeding);
     }
 
     public function canAccess(): bool

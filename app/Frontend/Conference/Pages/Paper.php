@@ -5,9 +5,12 @@ namespace App\Frontend\Conference\Pages;
 use App\Facades\Hook;
 use App\Facades\License;
 use App\Facades\MetaTag;
+use App\Facades\Metric;
 use App\Frontend\Website\Pages\Page;
 use App\Models\Submission;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
@@ -22,7 +25,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -38,6 +41,8 @@ class Paper extends Page
         }
 
         $this->addMetadata();
+
+        Metric::log('abstract_view', $this->paper);
     }
 
     public function getViewData(): array
@@ -113,12 +118,12 @@ class Paper extends Page
         });
 
         collect($this->paper->getMeta('keywords'))
-            ->each(fn ($keyword) => MetaTag::add('citation_keywords', $keyword));
+            ->each(fn($keyword) => MetaTag::add('citation_keywords', $keyword));
 
         collect(explode(PHP_EOL, $this->paper->getMeta('references')))
             ->filter()
             ->values()
-            ->each(fn ($reference) => MetaTag::add('citation_reference', $reference));
+            ->each(fn($reference) => MetaTag::add('citation_reference', $reference));
 
         MetaTag::add('og:title', e($this->paper->getMeta('title')));
         MetaTag::add('og:type', 'paper');
