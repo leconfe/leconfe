@@ -28,12 +28,11 @@ class ProceedingDetail extends Page
     {
         abort_unless($this->canAccess(), 404);
 
-        Metric::track('proceeding_view', $proceeding);
+        Metric::log('proceeding_view', $proceeding);
     }
 
     public function canAccess(): bool
     {
-
         return $this->proceeding->isPublished();
     }
 

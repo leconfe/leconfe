@@ -7,6 +7,9 @@ use App\Models\Submission;
 use Illuminate\Console\Command;
 use Lorisleiva\Actions\Concerns\AsAction;
 
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\spin;
+
 class ProcessMetricTrackQueues
 {
     use AsAction;
@@ -18,7 +21,10 @@ class ProcessMetricTrackQueues
 
     public function asCommand(Command $command): void
     {
-        $this->handle();
+        spin(
+            message: 'Processing metric track queues ...',
+            callback: fn () => $this->handle(),
+        );
     }
 
     public function getCommandSignature(): string

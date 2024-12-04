@@ -7,6 +7,8 @@ use App\Models\Submission;
 use Illuminate\Console\Command;
 use Lorisleiva\Actions\Concerns\AsAction;
 
+use function Laravel\Prompts\spin;
+
 class MoveMetricLogToQueues
 {
     use AsAction;
@@ -18,7 +20,10 @@ class MoveMetricLogToQueues
 
     public function asCommand(Command $command): void
     {
-        $command->info('Moving metric logs files to queues...');
+        spin(
+            message: 'Moving metric logs files to queues...',
+            callback: fn () => $this->handle(),
+        );
 
         $this->handle();
     }

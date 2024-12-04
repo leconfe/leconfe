@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('source');
             $table->foreignIdFor(Conference::class)->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(ScheduledConference::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('event');
             $table->morphs('model');
+            $table->date('date');
             $table->unsignedInteger('metric')->default(0);
             $table->timestamps();
 

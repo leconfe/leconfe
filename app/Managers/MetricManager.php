@@ -2,6 +2,8 @@
 
 namespace App\Managers;
 
+use App\Models\Metric;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,7 +79,13 @@ class MetricManager
 	{
 		$fullPath = $this->getDisk()->path($file);
 	
-		$uniques = [];
+		$source = basename($file);
+
+		Metric::purgeBySource($source);
+
+		$uniqueMetrics = collect();
+
+		$newMetrics = collect();
 
 		// Read line by line
 		$handle = fopen($fullPath, 'r');
@@ -87,21 +95,54 @@ class MetricManager
 					continue;
 				}
 				$data = collect(json_decode($line, true));
+
+				$date = Carbon::parse($data->get('time'));
+
 				$data->forget('time');
 
-				$uniqueId = md5($data->toJson());
+				$uniqueMetric = md5($data->toJson());
 
-				dd($data);
-				
-				
-				if(in_array($uniqueId, $uniques)) {
+				if($uniqueMetrics->contains($uniqueMetric)) {
 					continue;
 				}
 
-				$uniques[] = $uniqueId;
+				$uniqueMetrics->push($uniqueMetric);
+
+				$metric = $newMetrics->first(function(Metric $metric) use ($data) {
+					if($metric->event === $data->get('event') 
+						&& $metric->model_type === $data->get('model_type') 
+						&& $metric->model_id === $data->get('model_id')) {
+						return true;
+					}
+				}) ?? new Metric([
+					'source' => basename($file),
+					'event' => $data->get('event'),
+					'model_type' => $data->get('model_type'),
+					'model_id' => $data->get('model_id'),
+					'conference_id' => $data->get('conference'),
+					'scheduled_conference_id' => $data->get('scheduledConference'),
+					'date' => $date,
+				]);
+
+				$metric->metric += 1;
+
+				$newMetrics->push($metric);
 			}
 			fclose($handle);
 		}
+
+		// Batch Save with chunk
+		$newMetrics->chunk(100)->each(function($metrics) {
+			Metric::insert($metrics->toArray());
+		});
+
+		$this->moveFileToArchive($file);
+	}
+
+	public function moveFileToArchive(string $file)
+	{
+		$this->getDisk()->copy($file, $this->getMetricFolder('archives' . DIRECTORY_SEPARATOR . basename($file)));
+		$this->getDisk()->delete($file);
 	}
 
 	public function processLog(array $data)
