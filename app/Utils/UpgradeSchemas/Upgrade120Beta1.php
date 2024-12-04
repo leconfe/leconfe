@@ -6,7 +6,7 @@ use App\Models\Discussion;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Upgrade120 extends UpgradeBase
+class Upgrade120Beta1 extends UpgradeBase
 {
 	public function run(): void {
 		Discussion::query()
