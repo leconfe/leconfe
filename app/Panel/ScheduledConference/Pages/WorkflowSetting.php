@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Panel\Conference\Livewire\EmailSetting;
+use App\Panel\Conference\Livewire\PublisherLibrary;
 use App\Panel\ScheduledConference\Livewire\AuthorGuidance;
 use App\Panel\ScheduledConference\Livewire\AuthorRoleTable;
 use App\Panel\ScheduledConference\Livewire\ReviewGuidance;
@@ -112,6 +113,12 @@ class WorkflowSetting extends Page
                                                     ->livewire(ReviewGuidance::class),
                                             ]),
                                     ]),
+                            ]),
+                        Tabs\Tab::make('Publisher Library')
+                            ->label(__('general.publisher_library'))
+                            ->schema([
+                                LivewireEntry::make('publisher-library')
+                                    ->livewire(PublisherLibrary::class),
                             ]),
                         Tabs\Tab::make('Emails')
                             ->label(__('general.email'))

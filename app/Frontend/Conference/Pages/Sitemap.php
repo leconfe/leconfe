@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use Spatie\Sitemap\Sitemap as SpatieSitemap;
 use Spatie\Sitemap\Tags\Url;
 
-class Sitemap extends Page
+class Sitemap extends Page 
 {
     public function __invoke()
     {
@@ -24,8 +24,6 @@ class Sitemap extends Page
             Carbon::now()->addMinutes(30),
             fn () => $this->generateSitemap(),
         );
-
-        $sitemap = $this->generateSitemap();
 
         return response($sitemap->render(), 200, [
             'Content-Type' => 'application/xml',
@@ -152,6 +150,12 @@ class Sitemap extends Page
 
                 $sitemap->add(
                     Url::create(route(ScheduledConferencePages\Register::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
+                        ->setLastModificationDate($scheduledConference->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_NEVER)
+                );
+    
+                $sitemap->add(
+                    Url::create(route(ScheduledConferencePages\PublisherLibrary::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
                         ->setLastModificationDate($scheduledConference->updated_at)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_NEVER)
                 );

@@ -18,31 +18,21 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
-Route::get('private/files/{uuid}', function ($uuid, Request $request) {
-    $media = Media::findByUuid($uuid);
-
-    abort_if(! $media, 404);
-
-    return response()
-        ->download($media->getPath(), $media->file_name, [
-            'Content-Type' => $media->mime_type,
-            'Content-Length' => $media->size,
-        ]);
-})->name('private.files');
-
-Route::get('local/temp/{path}', function (string $path, Request $request) {
+Route::get('download/{path}', function (string $path, Request $request) {
     abort_if(! $request->hasValidSignature(), 401);
 
-    $storage = Storage::disk('local');
+    try {
+        $storage = Storage::disk($request->query('disk', 'local'));
+    } catch (\Throwable $th) {
+        abort(404);
+    }
 
     abort_if(! $storage->exists($path), 404);
 
     return $storage->download($path);
-})->where('path', '.*')->name('local.temp');
+})->where('path', '.*')->name('download');
+
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
