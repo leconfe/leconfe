@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use App\Actions;
+use App\Actions\Metrics\MoveMetricLogToQueues;
+use App\Actions\Metrics\ProcessMetricTrackQueues;
 use App\Actions\Submissions\RemoveDeletedDiscussion;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -22,6 +24,9 @@ class Kernel extends ConsoleKernel
         Actions\Leconfe\CheckLatestVersion::class,
         Actions\Leconfe\GetUpgradeActionHistory::class,
         Actions\Leconfe\Relink::class,
+        Actions\Metrics\ProcessMetricTrackQueues::class,
+        Actions\Metrics\MoveMetricLogToQueues::class,
+
     ];
 
     /**
@@ -32,12 +37,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             RemoveDeletedDiscussion::run();
-        })->cron(
-            sprintf(
-                '*/0 */0 */%d * *',
-                config('cleaner.day_interval')
-            )
-        )->name('Remove deleted discussions');
+        })
+        ->monthly()
+        ->name('Running Cleaner');
+
     }
 
     /**
