@@ -1,4 +1,5 @@
 name: Docker Publish (Release)
+
 on:
   workflow_dispatch:
   release:
@@ -8,6 +9,8 @@ jobs:
   release:
     uses: ./.github/workflows/service_docker-build-and-publish.yml
     with:
-      docker-tags: "leconfe/leconfe:latest,leconfe/leconfe:${{ github.ref_name }}"
+      docker-tags: >
+        ${{ github.ref_name == 'refs/tags/latest' && 'leconfe/leconfe:latest,' || '' }}
+        leconfe/leconfe:${{ github.ref_name }}
       dockerfile: "./Dockerfile"
     secrets: inherit
