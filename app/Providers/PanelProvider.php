@@ -29,6 +29,7 @@ use GuzzleHttp\Psr7\MimeType;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Livewire\Livewire;
 
 class PanelProvider extends ServiceProvider
@@ -38,6 +39,8 @@ class PanelProvider extends ServiceProvider
     public const PANEL_CONFERENCE = 'conference';
 
     public const PANEL_SCHEDULED_CONFERENCE = 'scheduledConference';
+
+    public static string $primaryColor = '#1c3569';
 
     public function scheduledConferencePanel(Panel $panel): Panel
     {
@@ -187,11 +190,14 @@ class PanelProvider extends ServiceProvider
             )
             ->viteTheme('resources/panel/css/panel.css')
             ->colors([
-                'primary' => Color::hex('#1c3569'),
+                'primary' => Color::hex(static::$primaryColor),
             ])
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->url(fn (): string => Profile::getUrl()),
+            ])
+            ->plugins([
+                FilamentApexChartsPlugin::make()
             ])
             ->darkMode(false)
             ->databaseNotifications()

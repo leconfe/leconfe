@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -323,5 +325,10 @@ class Submission extends Model implements HasMedia, Sortable
             ->keepOriginalImageFormat()
             ->width(500)
             ->height(500);
+    }
+
+    public function metrics() : MorphMany
+    {
+        return $this->morphMany(Metric::class, 'model');
     }
 }

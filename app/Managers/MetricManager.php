@@ -11,7 +11,7 @@ class MetricManager
 {
 	public function log(string $eventName, Model | null $model = null)
 	{
-		app()->terminating(function() use ($eventName, $model) {
+		app()->terminating(function () use ($eventName, $model) {
 			$request = request();
 
 			$data =  [
@@ -31,12 +31,12 @@ class MetricManager
 		});
 	}
 
-	protected function getLogFile() : string
+	protected function getLogFile(): string
 	{
 		return $this->getMetricFolder('logs' . DIRECTORY_SEPARATOR . now()->format('Y_m_d') . '.log');
 	}
 
-	protected function getMetricFolder(string $path) : string
+	protected function getMetricFolder(string $path): string
 	{
 		return 'metrics' . DIRECTORY_SEPARATOR . $path;
 	}
@@ -46,7 +46,7 @@ class MetricManager
 		$files = $this->getDisk()->files($this->getMetricFolder('logs'));
 		foreach ($files as $file) {
 
-			if($file === $this->getLogFile()){
+			if ($file === $this->getLogFile()) {
 				// Skip the current log file
 				continue;
 			}
@@ -56,12 +56,12 @@ class MetricManager
 		}
 	}
 
-	public function getFiles($path) : array 
+	public function getFiles($path): array
 	{
 		return $this->getDisk()->files($path);
 	}
 
-	public function getDisk() : \Illuminate\Contracts\Filesystem\Filesystem
+	public function getDisk(): \Illuminate\Contracts\Filesystem\Filesystem
 	{
 		return Storage::disk('private');
 	}
@@ -78,7 +78,7 @@ class MetricManager
 	public function processQueue(string $file)
 	{
 		$fullPath = $this->getDisk()->path($file);
-	
+
 		$source = basename($file);
 
 		Metric::purgeBySource($source);
@@ -91,7 +91,7 @@ class MetricManager
 		$handle = fopen($fullPath, 'r');
 		if ($handle) {
 			while (($line = fgets($handle)) !== false) {
-				if(json_validate($line) === false) {
+				if (json_validate($line) === false) {
 					continue;
 				}
 				$data = collect(json_decode($line, true));
@@ -102,27 +102,29 @@ class MetricManager
 
 				$uniqueMetric = md5($data->toJson());
 
-				if($uniqueMetrics->contains($uniqueMetric)) {
+				if ($uniqueMetrics->contains($uniqueMetric)) {
 					continue;
 				}
 
 				$uniqueMetrics->push($uniqueMetric);
 
-				$metric = $newMetrics->first(function(Metric $metric) use ($data) {
-					if($metric->event === $data->get('event') 
-						&& $metric->model_type === $data->get('model_type') 
-						&& $metric->model_id === $data->get('model_id')) {
+				$metric = $newMetrics->first(function (Metric $metric) use ($data) {
+					if (
+						$metric->event === $data->get('event')
+						&& $metric->model_type === $data->get('model_type')
+						&& $metric->model_id === $data->get('model_id')
+					) {
 						return true;
 					}
-				}) ?? new Metric([
+				}, new Metric([
 					'source' => basename($file),
 					'event' => $data->get('event'),
 					'model_type' => $data->get('model_type'),
 					'model_id' => $data->get('model_id'),
 					'conference_id' => $data->get('conference'),
 					'scheduled_conference_id' => $data->get('scheduledConference'),
-					'date' => $date,
-				]);
+					'log_at' => $date,
+				]));
 
 				$metric->metric += 1;
 
@@ -132,7 +134,7 @@ class MetricManager
 		}
 
 		// Batch Save with chunk
-		$newMetrics->chunk(100)->each(function($metrics) {
+		$newMetrics->chunk(100)->each(function ($metrics) {
 			Metric::insert($metrics->toArray());
 		});
 
@@ -143,16 +145,5 @@ class MetricManager
 	{
 		$this->getDisk()->copy($file, $this->getMetricFolder('archives' . DIRECTORY_SEPARATOR . basename($file)));
 		$this->getDisk()->delete($file);
-	}
-
-	public function processLog(array $data)
-	{
-		$data = collect($data);
-
-
-		$data->forget('time');
-
-
-		return md5($data->toJson());
 	}
 }

@@ -20,15 +20,15 @@ return new class extends Migration
             $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('event');
             $table->morphs('model');
-            $table->date('date');
+            $table->date('log_at');
             $table->unsignedInteger('metric')->default(0);
-            $table->timestamps();
 
-            // $table->index(['conference_id']);
-            // $table->index(['scheduled_conference_id']);
-            // $table->index(['submission_id']);
-            // $table->index(['submission_galley_id']);
-            // $table->unique(['scheduled_conference_id', 'submission_id', 'type']);
+            $table->index(['conference_id']);
+            $table->index(['scheduled_conference_id']);
+            $table->index(['event']);
+            $table->index(['log_at']);
+            
+            $table->unique(['conference_id', 'scheduled_conference_id', 'event', 'log_at', 'model_type', 'model_id'], 'metrics_cselmm_unique');
         });
     }
 

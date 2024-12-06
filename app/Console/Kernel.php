@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
             MoveMetricLogToQueues::run();
             ProcessMetricLogQueues::run();
         })
-        ->daily()
+        ->everyMinute()
         ->name('Process metrics daily');
     }
 

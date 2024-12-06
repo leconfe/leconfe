@@ -11,6 +11,7 @@ use App\Models\Committee;
 use App\Models\CommitteeRole;
 use App\Models\Conference;
 use App\Models\MailTemplate;
+use App\Models\Metric;
 use App\Models\NavigationMenu;
 use App\Models\PaymentManual;
 use App\Models\Proceeding;
@@ -151,6 +152,7 @@ class Application extends LaravelApplication
             MailTemplate::class,
             Stakeholder::class,
             StakeholderLevel::class,
+            Metric::class,
         ];
 
         foreach ($models as $model) {
@@ -180,6 +182,7 @@ class Application extends LaravelApplication
             RegistrationPayment::class,
             PaymentManual::class,
             Session::class,
+            Metric::class,
         ];
 
         foreach ($models as $model) {
