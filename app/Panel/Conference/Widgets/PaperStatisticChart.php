@@ -18,7 +18,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Reactive;
 
 class PaperStatisticChart extends ApexChartWidget
 {
@@ -45,19 +44,30 @@ class PaperStatisticChart extends ApexChartWidget
 
     protected function getOptions(): array
     {
+        //showing a loading indicator immediately after the page load
+        if (!$this->readyToLoad) {
+            return [];
+        }
+
         $dateStart = Carbon::parse(data_get($this->statistic, 'date_start'));
         $dateEnd = Carbon::parse(data_get($this->statistic, 'date_end'));
         $range = $dateStart->diffInDays($dateEnd);
         $proceedingIds = data_get($this->statistic, 'proceeding_ids') ?: Proceeding::pluck('id')->toArray();
-
-
+        $submissionIds = data_get($this->statistic, 'submission_ids');
         $abstractViewMetric = Trend::query(
             Metric::query()
                 ->where('model_type', Submission::class)
                 ->where('event', 'abstract_view')
                 ->whereIn(
                     'model_id',
-                    fn($query) => $query->select('id')->from('submissions')->whereIn('proceeding_id', $proceedingIds)
+                    fn($query) => $query
+                        ->select('id')
+                        ->from('submissions')
+                        ->when(
+                            !empty($submissionIds),
+                            fn($query) => $query->whereIn('id', $submissionIds),
+                            fn($query) => $query->whereIn('proceeding_id', $proceedingIds),
+                        )
                 )
         )
             ->between(
@@ -77,7 +87,14 @@ class PaperStatisticChart extends ApexChartWidget
                 ->where('event', 'galley_view')
                 ->whereIn(
                     'model_id',
-                    fn($query) => $query->select('id')->from('submission_galleys')->whereIn('submission_id', fn($query) => $query->select('id')->from('submissions')->whereIn('proceeding_id', $proceedingIds))
+                    fn($query) => $query->select('id')->from('submission_galleys')->whereIn(
+                        'submission_id',
+                        fn($query) => $query->select('id')->from('submissions')->when(
+                            !empty($submissionIds),
+                            fn($query) => $query->whereIn('id', $submissionIds),
+                            fn($query) => $query->whereIn('proceeding_id', $proceedingIds),
+                        )
+                    )
                 )
         )
             ->between(
@@ -98,9 +115,6 @@ class PaperStatisticChart extends ApexChartWidget
                 'curve' => 'smooth',
                 'width' => 3,
             ],
-            // 'markers' => [
-            //     'size' => 0.3,
-            // ],
             'chart' => [
                 'type' => 'line',
                 'height' => 400,

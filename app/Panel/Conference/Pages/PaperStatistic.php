@@ -27,6 +27,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Reactive;
@@ -67,20 +68,30 @@ class PaperStatistic extends Page implements HasForms, HasInfolists, HasActions,
 
     public function table(Table $table): Table
     {
+        $submissionIds = data_get($this->data, 'submission_ids');
+        $proceedingIds = data_get($this->data, 'proceeding_ids') ?: Proceeding::pluck('id')->toArray();
         return $table
             ->query(
                 Submission::query()
-                    ->with(['galleys', 'meta'])
-                    ->when(data_get($this->data, 'proceeding_ids'), fn($query) => $query->whereIn('proceeding_id', data_get($this->data, 'proceeding_ids')))
+                    ->with(['galleys', 'meta', 'authors.meta', 'conference'])
+                    ->when(
+                        !empty($submissionIds),
+                        fn($query) => $query->whereIn('id', $submissionIds),
+                        fn($query) => $query->whereIn('proceeding_id', $proceedingIds),
+                    )
                     ->withSum(['metrics as abstract_view' => fn($query) => $query->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')])], 'metric')
                     ->whereHas('metrics', fn($query) => $query->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')]))
             )
+            ->deferLoading()
             ->columns([
                 TextColumn::make('title')
                     ->label(__('general.title'))
+                    ->description(fn($record) => $record->authors->implode('fullName', ', '))
                     ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
                     ->wrap()
-                    ->size(TextColumnSize::ExtraSmall),
+                    ->color('primary')
+                    ->url(fn($record) => $record->getUrl())
+                    ->openUrlInNewTab(),
                 TextColumn::make('abstract_view')
                     ->label(__('general.abstract_view')),
                 TextColumn::make('galley_view')
@@ -135,6 +146,25 @@ class PaperStatistic extends Page implements HasForms, HasInfolists, HasActions,
                     ->multiple()
                     ->native(false)
                     ->reactive()
+                    ->afterStateUpdated(function(Set $set){
+                        $set('submission_ids', []);
+
+                        $this->updateStatistic();
+                    }),
+                Select::make('submission_ids')
+                    ->label(__('general.submissions'))
+                    ->multiple()
+                    ->searchable()
+                    ->reactive()
+                    ->getSearchResultsUsing(
+                        fn(Get $get, string $search) => Submission::with('meta')
+                            ->whereMeta('title', 'like', "%{$search}%")
+                            ->whereIn('proceeding_id', $get('proceeding_ids') ?: Proceeding::pluck('id')->toArray())
+                            ->whereHas('metrics', fn($query) => $query->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')]))
+                            ->get()
+                            ->mapWithKeys(fn(Submission $submission) => [$submission->getKey() => $submission->getMeta('title')])
+                            ->toArray()
+                    )
                     ->afterStateUpdated(fn() => $this->updateStatistic()),
                 Fieldset::make('Custom Range')
                     ->columns([
@@ -164,18 +194,12 @@ class PaperStatistic extends Page implements HasForms, HasInfolists, HasActions,
     public function updateStatistic()
     {
         $this->resetTable();
+
         $this->dispatch('statistic-updated', $this->data);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('update', App::getCurrentConference());
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            // ArticleStatisticChart::class
-        ];
     }
 }
