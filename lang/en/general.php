@@ -160,6 +160,7 @@ return [
     'trash' => 'Trash',
 
     'proceeding' => 'Proceeding',
+    'proceedings' => 'Proceedings',
     'identification' => 'Identification',
     'volume' => 'Volume',
     'number' => 'Number',
@@ -970,4 +971,10 @@ return [
     'allow_registration_helper' => 'Allow public to register on the conference.',
     'public_name' => 'Public Name',
     'public_name_helper' => 'Specify how you’d like to be addressed. You may also add salutations, middle names, and suffixes if desired.',
+    'abstract_view' => 'Abstract View',
+    'galley_view' => 'Galley View',
+    'paper_statistic_page_heading' => 'Paper Stats',
+    'paper_statistic_page_navigation' => 'Papers',
+    'statistics' => 'Statistics',
+
 ];

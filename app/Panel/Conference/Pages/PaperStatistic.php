@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Reactive;
 
-class ArticleStatistic extends Page implements HasForms, HasInfolists, HasActions, HasTable
+class PaperStatistic extends Page implements HasForms, HasInfolists, HasActions, HasTable
 {
     use InteractsWithForms, InteractsWithInfolists, InteractsWithActions, InteractsWithTable;
 
@@ -39,23 +39,23 @@ class ArticleStatistic extends Page implements HasForms, HasInfolists, HasAction
 
     protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
 
-    protected static string $view = 'panel.conference.pages.article-statistic';
+    protected static string $view = 'panel.conference.pages.paper-statistic';
 
     public ?array $data = [];
 
     public static function getNavigationLabel(): string
     {
-        return 'Articles';
+        return __('general.paper_statistic_page_navigation');
     }
 
     public function getHeading(): string|Htmlable
     {
-        return 'Article Stats';
+        return __('general.paper_statistic_page_heading');
     }
 
     public static function getNavigationGroup(): string
     {
-        return 'Statistic';
+        return __('general.statistics');
     }
 
     public function mount(): void
@@ -70,24 +70,25 @@ class ArticleStatistic extends Page implements HasForms, HasInfolists, HasAction
         return $table
             ->query(
                 Submission::query()
-                    ->with(['galleys'])
+                    ->with(['galleys', 'meta'])
                     ->when(data_get($this->data, 'proceeding_ids'), fn($query) => $query->whereIn('proceeding_id', data_get($this->data, 'proceeding_ids')))
                     ->withSum(['metrics as abstract_view' => fn($query) => $query->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')])], 'metric')
                     ->whereHas('metrics', fn($query) => $query->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')]))
             )
             ->columns([
                 TextColumn::make('title')
+                    ->label(__('general.title'))
                     ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
                     ->wrap()
                     ->size(TextColumnSize::ExtraSmall),
                 TextColumn::make('abstract_view')
-                    ->label('Abstract View'),
+                    ->label(__('general.abstract_view')),
                 TextColumn::make('galley_view')
-                    ->label('Galley View')
+                    ->label(__('general.galley_view'))
                     ->getStateUsing(
                         fn(Submission $record) => Metric::query()
                             ->where('model_type', SubmissionGalley::class)
-                            ->whereIn('model_id', $record->galleys->pluck('id'))
+                            ->whereIn('model_id', $record->galleys->pluck('id')->toArray())
                             ->whereBetween('log_at', [data_get($this->data, 'date_start'), data_get($this->data, 'date_end')])
                             ->sum('metric')
                     )
@@ -129,13 +130,17 @@ class ArticleStatistic extends Page implements HasForms, HasInfolists, HasAction
                     ->grow()
                     ->fullWidth(),
                 Select::make('proceeding_ids')
-                    ->label('Proceeding')
+                    ->label(__('general.proceedings'))
                     ->options(Proceeding::pluck('title', 'id'))
                     ->multiple()
                     ->native(false)
                     ->reactive()
                     ->afterStateUpdated(fn() => $this->updateStatistic()),
                 Fieldset::make('Custom Range')
+                    ->columns([
+                        'default' => 1,
+                        'lg' => 2,
+                    ])
                     ->schema([
                         DatePicker::make('date_start')
                             ->label('')

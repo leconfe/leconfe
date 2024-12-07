@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Widgets;
 
 use App\Models\Metric;
+use App\Models\Proceeding;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionGalley;
@@ -19,7 +20,7 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Reactive;
 
-class ArticleStatisticChart extends ApexChartWidget
+class PaperStatisticChart extends ApexChartWidget
 {
     protected static ?string $pollingInterval = null;
     /**
@@ -35,7 +36,7 @@ class ArticleStatisticChart extends ApexChartWidget
 
     public $statistic = [];
 
-    #[On('statistic-updated')] 
+    #[On('statistic-updated')]
     public function updateStatistic($data)
     {
         $this->statistic = $data;
@@ -46,18 +47,18 @@ class ArticleStatisticChart extends ApexChartWidget
     {
         $dateStart = Carbon::parse(data_get($this->statistic, 'date_start'));
         $dateEnd = Carbon::parse(data_get($this->statistic, 'date_end'));
-
         $range = $dateStart->diffInDays($dateEnd);
+        $proceedingIds = data_get($this->statistic, 'proceeding_ids') ?: Proceeding::pluck('id')->toArray();
+
 
         $abstractViewMetric = Trend::query(
             Metric::query()
                 ->where('model_type', Submission::class)
                 ->where('event', 'abstract_view')
-                ->when(data_get($this->statistic, 'proceeding_ids'), fn($query) => $query->whereIn('model_id', function($query){
-                   $query->select('id')
-                        ->from('submissions')
-                        ->whereIn('proceeding_id', data_get($this->statistic, 'proceeding_ids'));
-                }))
+                ->whereIn(
+                    'model_id',
+                    fn($query) => $query->select('id')->from('submissions')->whereIn('proceeding_id', $proceedingIds)
+                )
         )
             ->between(
                 start: $dateStart,
@@ -74,6 +75,10 @@ class ArticleStatisticChart extends ApexChartWidget
             Metric::query()
                 ->where('model_type', SubmissionGalley::class)
                 ->where('event', 'galley_view')
+                ->whereIn(
+                    'model_id',
+                    fn($query) => $query->select('id')->from('submission_galleys')->whereIn('submission_id', fn($query) => $query->select('id')->from('submissions')->whereIn('proceeding_id', $proceedingIds))
+                )
         )
             ->between(
                 start: $dateStart,
@@ -91,10 +96,11 @@ class ArticleStatisticChart extends ApexChartWidget
         return [
             'stroke' => [
                 'curve' => 'smooth',
+                'width' => 3,
             ],
-            'markers' => [
-                'size' => 1,
-            ],
+            // 'markers' => [
+            //     'size' => 0.3,
+            // ],
             'chart' => [
                 'type' => 'line',
                 'height' => 400,

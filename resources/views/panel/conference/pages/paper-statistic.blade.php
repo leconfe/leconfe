@@ -17,7 +17,7 @@
             </x-filament::dropdown>
         </div>
 
-        @livewire(App\Panel\Conference\Widgets\ArticleStatisticChart::class, ['statistic' => $this->data], key('article-statistic-chart'))
+        @livewire(App\Panel\Conference\Widgets\PaperStatisticChart::class, ['statistic' => $this->data], key('paper-statistic-chart'))
 
         {{ $this->table }}
     </div>
