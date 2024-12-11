@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as Model;
@@ -29,5 +30,10 @@ class Media extends Model
     public function submissionFiles(): HasMany
     {
         return $this->hasMany(SubmissionFile::class);
+    }
+
+    public function getTemporaryUrl(DateTimeInterface $expiration, string $conversionName = '', array $options = []): string
+    {
+        return parent::getTemporaryUrl($expiration, $conversionName, array_merge($options, ['disk' => $this->disk]));
     }
 }

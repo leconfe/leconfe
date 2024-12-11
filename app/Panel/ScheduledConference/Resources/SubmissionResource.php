@@ -155,6 +155,11 @@ class SubmissionResource extends Resource
                         SubmissionStatus::array()
                     )
                     ->searchable(),
+                SelectFilter::make('track')
+                    ->relationship('track', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 

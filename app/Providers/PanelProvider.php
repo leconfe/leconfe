@@ -16,6 +16,7 @@ use App\Panel\Administration\Pages\Profile;
 use App\Panel\Conference\Pages\Dashboard;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TimePicker;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -254,17 +255,9 @@ class PanelProvider extends ServiceProvider
 
     public static function setupFilamentComponent()
     {
-        SpatieMediaLibraryFileUpload::configureUsing(function (SpatieMediaLibraryFileUpload $fileUpload): void {
-            $fileUpload
-                ->imageResizeTargetWidth(2048)
-                ->imageResizeTargetWidth(2048)
-                ->imageResizeMode('contain')
-                ->imageResizeUpscale(false)
-                ->maxSize(config('media-library.max_file_size') / 1024)
-                ->acceptedFileTypes(collect(config('media-library.accepted_file_types'))
-                    ->map(fn ($ext) => MimeType::fromExtension($ext) ?? $ext)
-                    ->toArray());
-        });
+        SpatieMediaLibraryFileUpload::configureUsing(fn (SpatieMediaLibraryFileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+        FileUpload::configureUsing(fn (FileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+
         DatePicker::configureUsing(function (DatePicker $datePicker): void {
             $datePicker
                 ->native(false)
@@ -288,5 +281,18 @@ class PanelProvider extends ServiceProvider
                 ->setRemoveScriptHost(true)
                 ->toolbarSticky(false);
         });
+    }
+
+    protected static function configureFileUpload(FileUpload $fileUpload): FileUpload
+    {
+        return $fileUpload
+            ->imageResizeTargetWidth(2048)
+            ->imageResizeTargetWidth(2048)
+            ->imageResizeMode('contain')
+            ->imageResizeUpscale(false)
+            ->maxSize(config('media-library.max_file_size') / 1024)
+            ->acceptedFileTypes(collect(config('media-library.accepted_file_types'))
+                ->map(fn ($ext) => MimeType::fromExtension($ext) ?? $ext)
+                ->toArray());
     }
 }

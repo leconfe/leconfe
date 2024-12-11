@@ -37,7 +37,7 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
             ->modalWidth('xl')
             ->modalAlignment('center')
             ->requiresConfirmation()
-            ->modalHeading(__('general.submit_abstract'))
+            ->modalHeading(__('general.submit_submission'))
             ->modalDescription(function (): string {
                 return __('general.review_submission');
             })

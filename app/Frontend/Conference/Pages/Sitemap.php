@@ -25,8 +25,6 @@ class Sitemap extends Page
             fn () => $this->generateSitemap(),
         );
 
-        $sitemap = $this->generateSitemap();
-
         return response($sitemap->render(), 200, [
             'Content-Type' => 'application/xml',
         ]);
@@ -152,6 +150,12 @@ class Sitemap extends Page
 
                 $sitemap->add(
                     Url::create(route(ScheduledConferencePages\Register::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
+                        ->setLastModificationDate($scheduledConference->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_NEVER)
+                );
+
+                $sitemap->add(
+                    Url::create(route(ScheduledConferencePages\PublisherLibrary::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
                         ->setLastModificationDate($scheduledConference->updated_at)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_NEVER)
                 );

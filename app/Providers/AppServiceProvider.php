@@ -188,14 +188,17 @@ class AppServiceProvider extends ServiceProvider
 
     protected function setupStorage(): void
     {
-        // Create a temporary URL for a file in the local storage disk.
-        Storage::disk('local')->buildTemporaryUrlsUsing(function ($path, $expiration, $options) {
+        $callback = function ($path, $expiration, $options) {
             return URL::temporarySignedRoute(
-                'local.temp',
+                'download',
                 $expiration,
                 array_merge($options, ['path' => $path])
             );
-        });
+        };
+
+        // Create a temporary URL for a file in the local storage disk.
+        Storage::disk('local')->buildTemporaryUrlsUsing($callback);
+        Storage::disk('private-files')->buildTemporaryUrlsUsing($callback);
     }
 
     protected function detectConference(): void

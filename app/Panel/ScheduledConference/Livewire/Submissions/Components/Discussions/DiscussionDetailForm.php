@@ -41,13 +41,7 @@ class DiscussionDetailForm extends \Livewire\Component implements HasForms
 
         $discussion = $this->topic->discussions()->create($formData);
 
-        if (isset($formData['attachments'])) {
-            foreach ($formData['attachments'] as $media) {
-                $discussion->addMedia($media->getRealPath())
-                    ->usingName($media->getClientOriginalName())
-                    ->toMediaCollection('discussion-attachment', 'local');
-            }
-        }
+        $this->form->model($discussion)->saveRelationships();
 
         Notification::make('discussion-added')
             ->success()
