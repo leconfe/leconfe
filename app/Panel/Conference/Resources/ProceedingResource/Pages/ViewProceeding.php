@@ -99,19 +99,27 @@ class ViewProceeding extends Page implements HasForms, HasTable
             ->query(
                 Submission::query()
                     ->where('proceeding_id', $this->record->id)
-                    ->with('scheduledConference')
+                    ->with(['scheduledConference', 'meta'])
                     ->ordered()
             )
+            ->defaultGroup('track.title')
+            ->groupingSettingsHidden()
+            ->groups([
+                'track.title',
+            ])
             ->reorderable('proceeding_order_column')
             ->columns([
                 IndexColumn::make('no')
                     ->label('No.'),
                 TextColumn::make('title')
+                    ->wrap()
                     ->label(__('general.title'))
                     ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                     ->url(fn (Submission $record) => route('filament.scheduledConference.resources.submissions.view', ['record' => $record->id, 'serie' => $record->scheduledConference]))
                     ->searchable()
                     ->color('primary'),
+                TextColumn::make('pages')
+                    ->getStateUsing(fn (Submission $record) => $record->getMeta('article_pages')),
             ])
             ->filters([
                 // ...
