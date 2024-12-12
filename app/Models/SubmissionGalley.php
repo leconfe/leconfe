@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Frontend\Conference\Pages\PaperGalley;
+use App\Models\Concerns\HasMetrics;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class SubmissionGalley extends Model implements HasMedia, Sortable
 {
-    use Cachable, InteractsWithMedia, SortableTrait;
+    use Cachable, InteractsWithMedia, SortableTrait, HasMetrics;
 
     protected $table = 'submission_galleys';
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Frontend\Conference\Pages\Paper;
 use App\Models\Concerns\HasDOI;
+use App\Models\Concerns\HasMetrics;
 use App\Models\Concerns\HasTopics;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
@@ -42,7 +43,7 @@ use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait, HasMetrics;
 
     /**
      * The attributes that are mass assignable.
@@ -325,10 +326,5 @@ class Submission extends Model implements HasMedia, Sortable
             ->keepOriginalImageFormat()
             ->width(500)
             ->height(500);
-    }
-
-    public function metrics() : MorphMany
-    {
-        return $this->morphMany(Metric::class, 'model');
     }
 }
