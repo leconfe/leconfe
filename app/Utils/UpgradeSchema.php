@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Utils\UpgradeSchemas\Upgrade110;
 use App\Utils\UpgradeSchemas\Upgrade120Beta1;
+use App\Utils\UpgradeSchemas\Upgrade120Beta2;
 use App\Utils\UpgradeSchemas\UpgradeBeta3;
 use App\Utils\UpgradeSchemas\UpgradeBeta4;
 use App\Utils\UpgradeSchemas\UpgradeBeta5;
@@ -16,6 +17,7 @@ class UpgradeSchema
         '1.0.0-beta.5' => UpgradeBeta5::class,
         '1.1.0' => Upgrade110::class,
         '1.2.0-beta.1' => Upgrade120Beta1::class,
+        '1.2.0-beta.3' => Upgrade120Beta3::class,
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)
