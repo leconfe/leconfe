@@ -38,6 +38,18 @@
                                 </div>
                             @enderror
                         </div>
+                          <div class="gap-2 form-control sm:col-span-6">
+                            <label class="label-text">
+                                {{ __('general.public_name') }} <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="input input-sm" wire:model="public_name" />
+                            @error('public_name')
+                                <div class="text-sm text-red-600">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                             <p class="text-xs text-gray-500">{{ __('general.public_name_helper') }}</p>
+                        </div>
                         <div class="gap-2 form-control sm:col-span-3">
                             <label class="label-text">
                                 {{ __('general.affiliation') }}
