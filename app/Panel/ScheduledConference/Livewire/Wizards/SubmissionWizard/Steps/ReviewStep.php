@@ -2,9 +2,12 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps;
 
+use App\Actions\Submissions\SubmissionAssignParticipant;
 use App\Mail\Templates\ThankAuthorMail;
 use App\Models\Enums\UserRole;
+use App\Models\Role;
 use App\Models\Submission;
+use App\Models\Track;
 use App\Models\User;
 use App\Notifications\NewSubmission;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
@@ -55,6 +58,15 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                     User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
                         ->lazy()
                         ->each(fn ($user) => $user->notify(new NewSubmission($this->record)));
+
+                    $trackRole = Role::where('name', UserRole::TrackEditor)->first();
+
+                    User::with(['meta'])
+                        ->role(UserRole::TrackEditor)
+                        ->whereIn('id', $this->record->track->getMeta('track_editors'))
+                        ->lazy()
+                        ->each(fn($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
+
                 } catch (\Exception $e) {
                     $action->failureNotificationTitle(__('general.failed_send_notification'));
                     $action->failure();

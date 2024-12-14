@@ -978,4 +978,9 @@ return [
     'publisher_library' => 'Publisher Library',
     'no_publisher_library_available' => 'No publisher library available',
     'view_page' => 'View Page',
+    'abstract_word_count' => "Word Count",
+    'abstract_word_count_helper' => "Limit abstract word counts for this section (0 for no limit)",
+    'track_disable_checkbox' => 'Disable this track and do not allow new submissions to be made to it.',
+    'track_disable_checkbox_error' => "At least one track must be active.",
+    'track_editors' => "Track Editors",
 ];
