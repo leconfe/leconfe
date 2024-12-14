@@ -983,4 +983,5 @@ return [
     'track_disable_checkbox' => 'Disable this track and do not allow new submissions to be made to it.',
     'track_disable_checkbox_error' => "At least one track must be active.",
     'track_editors' => "Track Editors",
+    'do_not_require_abstracts' => "Do not require abstracts"
 ];

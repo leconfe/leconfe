@@ -80,7 +80,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                         TinyEditor::make('meta.abstract')
                             ->label(__('general.abstract'))
                             ->minHeight(300)
-                            ->required(),
+                            ->required(!$this->record?->track->getMeta('do_not_require_abstracts') ?? true),
                     ]),
             ]),
         ];
