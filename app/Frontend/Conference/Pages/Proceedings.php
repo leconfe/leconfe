@@ -3,7 +3,6 @@
 namespace App\Frontend\Conference\Pages;
 
 use App\Frontend\Website\Pages\Page;
-use App\Models\Enums\SubmissionStatus;
 use App\Models\Proceeding;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
