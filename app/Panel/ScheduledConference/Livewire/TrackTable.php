@@ -109,15 +109,15 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->label(__('general.track_policy'))
                     ->profile('basic'),
                 TextInput::make('meta.abstract_word_count')
-                    ->label(__('general.abstract_word_count'))
-                    ->helperText(__('general.abstract_word_count_helper'))
+                    ->label(__('general.track_abstract_word_count'))
+                    ->helperText(__('general.track_abstract_word_count_helper'))
                     ->numeric()
                     ->minValue(0)
                     ->default(0),
                 Checkbox::make('meta.do_not_require_abstracts')
-                    ->label(__('general.do_not_require_abstracts')),
+                    ->label(__('general.track_do_not_require_abstracts')),
                 Checkbox::make('meta.submit_only_for_editors')
-                    ->label(__('general.submit_only_for_editors')),
+                    ->label(__('general.track_submit_only_for_editors')),
                 Checkbox::make('meta.hide_author')
                     ->label(__('general.track_hide_author')),
                 CheckboxList::make('meta.track_editors')
