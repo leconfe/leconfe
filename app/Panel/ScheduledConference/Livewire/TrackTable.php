@@ -108,6 +108,12 @@ class TrackTable extends Component implements HasForms, HasTable
                 TinyEditor::make('meta.policy')
                     ->label(__('general.track_policy'))
                     ->profile('basic'),
+                TextInput::make('meta.abstract_word_count')
+                    ->label(__('general.abstract_word_count'))
+                    ->helperText(__('general.abstract_word_count_helper'))
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0),
                 Checkbox::make('meta.do_not_require_abstracts')
                     ->label(__('general.do_not_require_abstracts')),
                 CheckboxList::make('meta.track_editors')

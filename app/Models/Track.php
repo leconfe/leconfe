@@ -48,6 +48,7 @@ class Track extends Model implements Sortable
     {
         return [
             'do_not_require_abstract' => false,
+            'abstract_word_count' => 0,
         ];
     }
 }
