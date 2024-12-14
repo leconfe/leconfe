@@ -116,6 +116,8 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->default(0),
                 Checkbox::make('meta.do_not_require_abstracts')
                     ->label(__('general.do_not_require_abstracts')),
+                Checkbox::make('meta.submit_only_for_editors')
+                    ->label(__('general.submit_only_for_editors')),
                 CheckboxList::make('meta.track_editors')
                     ->label(__("general.track_editors"))
                     ->options(fn() => User::with(['meta'])->role(UserRole::TrackEditor)->get()->pluck('fullName', 'id'))
