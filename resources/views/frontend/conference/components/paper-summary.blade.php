@@ -1,4 +1,7 @@
-@props(['paper'])
+@props([
+    'paper',
+    'hideAuthor' => false,
+])
 
 <div class="paper-summary flex flex-col sm:flex-row gap-2 sm:gap-4">
     @if($paper->getFirstMediaUrl('cover'))
@@ -24,9 +27,11 @@
         @endif
         <div class="meta space-y-2">
             <div class="flex-1 flex gap-y-2 flex-wrap items-center justify-between">
-                <div class="authors text-sm text-gray-600">
-                    {{ $paper->authors->implode('fullName', ', ') }}
-                </div>
+                @if(!$hideAuthor && $paper->authors->isNotEmpty())
+                    <div class="authors text-sm text-gray-600">
+                        {{ $paper->authors->implode('fullName', ', ') }}
+                    </div>
+                @endif
                 @if($paper->getMeta('article_pages'))
                     <div class="flex justify-start sm:justify-end gap-x-1 text-sm text-gray-600">
                         <x-heroicon-o-document-text class="w-4 h-4 my-auto text-gray-600" />
