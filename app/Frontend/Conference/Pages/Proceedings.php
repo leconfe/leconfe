@@ -21,10 +21,7 @@ class Proceedings extends Page
     {
         $this->proceedings = Proceeding::query()
             ->published()
-            ->with([
-                'submissions' => fn ($query) => $query->status(SubmissionStatus::Published),
-            ])
-            ->orderBy('order_column')
+            ->ordered()
             ->get();
     }
 

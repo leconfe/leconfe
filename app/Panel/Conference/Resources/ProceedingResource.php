@@ -40,7 +40,7 @@ class ProceedingResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
-            ->orderBy('order_column')
+            ->ordered()
             ->withCount('submissions');
     }
 

@@ -55,14 +55,20 @@ class ProceedingDetail extends Page
     public function getViewData(): array
     {
         $tracks = Track::query()
-            ->orderBy('order_column')
-            ->with(['submissions' => fn ($query) => $query
-                ->where('proceeding_id', $this->proceeding->id)
-                ->where('status', SubmissionStatus::Published)
-                ->with(['authors', 'doi', 'galleys.file.media', 'meta'])])
-            ->whereHas('submissions', fn ($query) => $query
-                ->where('proceeding_id', $this->proceeding->id)
-                ->where('status', SubmissionStatus::Published))
+            ->ordered()
+            ->with([
+                'submissions' => fn($query) => $query
+                    ->ordered()
+                    ->where('proceeding_id', $this->proceeding->id)
+                    ->where('status', SubmissionStatus::Published)
+                    ->with(['authors', 'doi', 'galleys.file.media', 'meta'])
+            ])
+            ->whereHas(
+                'submissions',
+                fn($query) => $query
+                    ->where('proceeding_id', $this->proceeding->id)
+                    ->where('status', SubmissionStatus::Published)
+            )
             ->get();
 
         return [
