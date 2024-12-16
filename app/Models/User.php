@@ -79,12 +79,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     protected static function booted(): void
     {
         static::deleting(function (User $user) {
-            if($user->submissions->count() > 0){
+            if ($user->submissions->count() > 0) {
                 throw new Exception('User that has submission cannot be deleted.');
             }
         });
     }
-
 
     protected function fullName(): Attribute
     {
@@ -94,7 +93,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
                     return $publicName;
                 }
 
-                return Str::squish($this->given_name . ' ' . $this->family_name);
+                return Str::squish($this->given_name.' '.$this->family_name);
             },
         );
     }
@@ -182,10 +181,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         $name = str($this->fullName)
             ->trim()
             ->explode(' ')
-            ->map(fn(string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+            ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
             ->join(' ');
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827&font-size=0.33';
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=111827&font-size=0.33';
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -249,7 +248,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         }
 
         if ($model->exists) {
-            $currentRoles = $this->roles->map(fn($role) => $role->getKey())->toArray();
+            $currentRoles = $this->roles->map(fn ($role) => $role->getKey())->toArray();
 
             $this->roles()->attach(array_diff($roles, $currentRoles), $teamPivot);
             $model->unsetRelation('roles');

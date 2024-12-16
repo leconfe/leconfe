@@ -2,7 +2,6 @@
 
 namespace App\Panel\Conference\Resources\UserResource\Pages;
 
-use App\Actions\User\CreateParticipantFromUserAction;
 use App\Actions\User\UserDeleteAction;
 use App\Actions\User\UserUpdateAction;
 use App\Models\User;
@@ -16,24 +15,23 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
-    public function afterSave(): void
-    {
-    }
+    public function afterSave(): void {}
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()
-            ->using(function (?array $data, User $record, DeleteAction $action){
-                try {
-                    $user = UserDeleteAction::run($data, $record);
-                    return $user;
-                } catch (\Throwable $th) {
-                    $action->failureNotificationTitle($th->getMessage());
+                ->using(function (?array $data, User $record, DeleteAction $action) {
+                    try {
+                        $user = UserDeleteAction::run($data, $record);
 
-                    return false;
-                }
-            }),
+                        return $user;
+                    } catch (\Throwable $th) {
+                        $action->failureNotificationTitle($th->getMessage());
+
+                        return false;
+                    }
+                }),
         ];
     }
 

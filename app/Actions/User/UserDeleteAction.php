@@ -14,7 +14,7 @@ class UserDeleteAction
     {
         try {
             DB::beginTransaction();
-            
+
             $user->delete($data);
 
             DB::commit();

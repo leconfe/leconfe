@@ -264,9 +264,10 @@ class UserResource extends Resource
                     ->mutateRecordDataUsing(fn ($data, User $record) => array_merge($data, ['meta' => $record->getAllMeta()->toArray()]))
                     ->using(fn (array $data, User $record) => UserUpdateAction::run($data, $record)),
                 DeleteAction::make()
-                    ->using(function (?array $data, User $record, DeleteAction $action){
+                    ->using(function (?array $data, User $record, DeleteAction $action) {
                         try {
                             $user = UserDeleteAction::run($data, $record);
+
                             return $user;
                         } catch (\Throwable $th) {
                             $action->failureNotificationTitle($th->getMessage());

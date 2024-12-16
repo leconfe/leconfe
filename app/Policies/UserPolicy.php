@@ -62,7 +62,7 @@ class UserPolicy
             return true;
         }
 
-        if($model->hasRole(UserRole::Admin)){
+        if ($model->hasRole(UserRole::Admin)) {
             return false;
         }
 
