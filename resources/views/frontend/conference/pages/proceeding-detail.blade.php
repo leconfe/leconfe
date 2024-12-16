@@ -38,7 +38,7 @@
                         <x-website::heading-title :title="$track->title" class="track-title"/>
                         <div class="paper-summaries space-y-4">
                             @forelse($track->submissions as $paper)
-                                <x-conference::paper-summary :paper="$paper"/>  
+                                <x-conference::paper-summary :paper="$paper" :hideAuthor="$track->getMeta('hide_author')"/>  
                             @empty
                                 <div class="text-center text-gray-500">
                                     No paper found.

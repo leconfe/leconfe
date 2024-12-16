@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
+use App\Actions\Submissions\SubmissionAssignParticipant;
 use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ParticipantAssignedMail;
@@ -193,45 +194,10 @@ class ParticipantList extends Component implements HasForms, HasTable
                     ])
                     ->successNotificationTitle(__('general.participant_assigned'))
                     ->action(function (Action $action, array $data) {
-                        $submissionParticipant = $this->submission->participants()->create([
-                            'user_id' => $data['user_id'],
-                            'role_id' => $data['role_id'],
-                        ]);
 
+                        SubmissionAssignParticipant::run($this->submission, $data['user_id'], $data['role_id'], !$data['no-notification'], $data['subject'], $data['message'], auth()->user());
+                    
                         $this->dispatch('refreshSubmission');
-
-                        Log::make(
-                            name: 'submission',
-                            subject: $this->submission,
-                            description: __('general.participant_assigned', [
-                                'name' => $submissionParticipant->user->fullName,
-                                'role' => $submissionParticipant->role->name,
-                            ])
-                        )
-                            ->by(auth()->user())
-                            ->properties([
-                                'user_id' => $data['user_id'],
-                                'role_id' => $data['role_id'],
-                            ])
-                            ->save();
-
-                        if (! $data['no-notification']) {
-                            try {
-                                Mail::to($submissionParticipant->user->email)
-                                    ->send(
-                                        (new ParticipantAssignedMail($submissionParticipant))
-                                            ->contentUsing($data['message'])
-                                            ->subjectUsing($data['subject'])
-                                    );
-                            } catch (\Exception $e) {
-                                $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
-                                $action->failure();
-                            }
-                        }
-
-                        $submissionParticipant->user->notify(
-                            new ParticipantAssigned($this->submission)
-                        );
 
                         $action->success();
                     }),

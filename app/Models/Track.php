@@ -43,4 +43,14 @@ class Track extends Model implements Sortable
     {
         return $this->hasMany(Submission::class);
     }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'do_not_require_abstract' => false,
+            'abstract_word_count' => 0,
+            'submit_only_for_editors' => false,
+            'hide_author' => false,
+        ];
+    }
 }

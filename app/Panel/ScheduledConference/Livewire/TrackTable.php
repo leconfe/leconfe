@@ -5,8 +5,12 @@ namespace App\Panel\ScheduledConference\Livewire;
 use App\Actions\Tracks\TrackCreateAction;
 use App\Actions\Tracks\TrackUpdateAction;
 use App\Forms\Components\TinyEditor;
+use App\Models\Enums\UserRole;
 use App\Models\Track;
+use App\Models\User;
 use App\Tables\Columns\IndexColumn;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -17,6 +21,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -34,13 +39,22 @@ class TrackTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Track::query()->orderBy('order_column'))
+            ->deferLoading()
+            ->query(Track::with(['meta'])->orderBy('order_column'))
             ->heading(__('general.track'))
             ->columns([
                 IndexColumn::make('no')
                     ->label('No.'),
                 TextColumn::make('title')
                     ->label(__('general.title')),
+                TextColumn::make('editors')
+                    ->wrap()
+                    ->bulleted()
+                    ->listWithLineBreaks()
+                    ->getStateUsing(function($record){
+                        
+                        return !empty($record->getMeta('track_editors')) ? User::with(['meta'])->role(UserRole::TrackEditor)->whereIn('id', $record->getMeta('track_editors'))->get()->pluck('fullName', 'id') : [];
+                    })
             ])
             ->reorderable('order_column')
             ->headerActions([
@@ -94,6 +108,21 @@ class TrackTable extends Component implements HasForms, HasTable
                 TinyEditor::make('meta.policy')
                     ->label(__('general.track_policy'))
                     ->profile('basic'),
+                TextInput::make('meta.abstract_word_count')
+                    ->label(__('general.track_abstract_word_count'))
+                    ->helperText(__('general.track_abstract_word_count_helper'))
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0),
+                Checkbox::make('meta.do_not_require_abstracts')
+                    ->label(__('general.track_do_not_require_abstracts')),
+                Checkbox::make('meta.submit_only_for_editors')
+                    ->label(__('general.track_submit_only_for_editors')),
+                Checkbox::make('meta.hide_author')
+                    ->label(__('general.track_hide_author')),
+                CheckboxList::make('meta.track_editors')
+                    ->label(__("general.track_editors"))
+                    ->options(fn() => User::with(['meta'])->role(UserRole::TrackEditor)->get()->pluck('fullName', 'id'))
             ]);
     }
 }
