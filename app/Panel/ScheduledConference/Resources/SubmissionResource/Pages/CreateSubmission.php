@@ -66,8 +66,8 @@ class CreateSubmission extends Page implements HasForms
                 Placeholder::make('before_you_begin')
                     ->label(__('general.before_you_begin'))
                     ->extraAttributes(['class' => 'prose prose-sm max-w-none'])
-                    ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
-                    ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
+                    ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
+                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
                 TextInput::make('meta.title')
                     ->required(),
                 Radio::make('track_id')
@@ -75,7 +75,7 @@ class CreateSubmission extends Page implements HasForms
                     ->required()
                     ->visible(fn ($component) => count($component->getOptions()) > 1)
                     ->options(
-                        fn() => Track::query()
+                        fn () => Track::query()
                             ->active()
                             ->whereMeta('submit_only_for_editors', auth()->user()->hasRole([
                                 UserRole::Admin,
@@ -108,15 +108,15 @@ class CreateSubmission extends Page implements HasForms
 
                         return Track::find($get('track_id'))->title;
                     })
-                    ->content(fn(Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))->getMeta('policy')) : ''),
+                    ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))->getMeta('policy')) : ''),
                 Fieldset::make(__('general.submission_checklist'))
                     ->columns(1)
                     ->schema([
                         Placeholder::make('submission_checklist')
                             ->hiddenLabel()
                             ->extraAttributes(['class' => 'prose prose-sm'])
-                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_checklist') !== null)
-                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('submission_checklist'))),
+                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_checklist') !== null)
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('submission_checklist'))),
                         Checkbox::make('submissionRequirements')
                             ->required()
                             ->label(__('general.submission_meets_all_of_requirements')),

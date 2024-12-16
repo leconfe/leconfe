@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Submissions\SubmissionAssignParticipant;
-use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ParticipantAssignedMail;
 use App\Models\DefaultMailTemplate;
@@ -14,7 +13,6 @@ use App\Models\Submission;
 use App\Models\SubmissionParticipant;
 use App\Models\User;
 use App\Notifications\NewRegistration;
-use App\Notifications\ParticipantAssigned;
 use App\Panel\ScheduledConference\Resources\RegistrantResource\Pages\EnrollUser;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
@@ -195,8 +193,8 @@ class ParticipantList extends Component implements HasForms, HasTable
                     ->successNotificationTitle(__('general.participant_assigned'))
                     ->action(function (Action $action, array $data) {
 
-                        SubmissionAssignParticipant::run($this->submission, $data['user_id'], $data['role_id'], !$data['no-notification'], $data['subject'], $data['message'], auth()->user());
-                    
+                        SubmissionAssignParticipant::run($this->submission, $data['user_id'], $data['role_id'], ! $data['no-notification'], $data['subject'], $data['message'], auth()->user());
+
                         $this->dispatch('refreshSubmission');
 
                         $action->success();

@@ -21,7 +21,6 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -51,10 +50,10 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->wrap()
                     ->bulleted()
                     ->listWithLineBreaks()
-                    ->getStateUsing(function($record){
-                        
-                        return !empty($record->getMeta('track_editors')) ? User::with(['meta'])->role(UserRole::TrackEditor)->whereIn('id', $record->getMeta('track_editors'))->get()->pluck('fullName', 'id') : [];
-                    })
+                    ->getStateUsing(function ($record) {
+
+                        return ! empty($record->getMeta('track_editors')) ? User::with(['meta'])->role(UserRole::TrackEditor)->whereIn('id', $record->getMeta('track_editors'))->get()->pluck('fullName', 'id') : [];
+                    }),
             ])
             ->reorderable('order_column')
             ->headerActions([
@@ -121,8 +120,8 @@ class TrackTable extends Component implements HasForms, HasTable
                 Checkbox::make('meta.hide_author')
                     ->label(__('general.track_hide_author')),
                 CheckboxList::make('meta.track_editors')
-                    ->label(__("general.track_editors"))
-                    ->options(fn() => User::with(['meta'])->role(UserRole::TrackEditor)->get()->pluck('fullName', 'id'))
+                    ->label(__('general.track_editors'))
+                    ->options(fn () => User::with(['meta'])->role(UserRole::TrackEditor)->get()->pluck('fullName', 'id')),
             ]);
     }
 }
