@@ -66,6 +66,9 @@ class Register extends Page
             'family_name' => [
                 'nullable',
             ],
+            'public_name' => [
+                'nullable',
+            ],
             'affiliation' => [
                 'nullable',
             ],
@@ -124,7 +127,7 @@ class Register extends Page
         $data = $this->validate();
         $user = UserCreateAction::run([
             ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
-            'meta' => Arr::only($data, ['affiliation', 'country', 'phone']),
+            'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
         ]);
 
         if (app()->getCurrentConference()) {
