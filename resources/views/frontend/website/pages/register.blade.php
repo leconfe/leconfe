@@ -40,7 +40,7 @@
                         </div>
                           <div class="gap-2 form-control sm:col-span-6">
                             <label class="label-text">
-                                {{ __('general.public_name') }} <span class="text-red-500">*</span>
+                                {{ __('general.public_name') }}
                             </label>
                             <input type="text" class="input input-sm" wire:model="public_name" />
                             @error('public_name')
