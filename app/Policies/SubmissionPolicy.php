@@ -183,10 +183,6 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($submission->user_id !== $user->getKey()) {
-            return false;
-        }
-
         if ($user->can('Submission:uploadPaper')) {
             return true;
         }
