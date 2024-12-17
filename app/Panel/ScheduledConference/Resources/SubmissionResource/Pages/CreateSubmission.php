@@ -49,12 +49,12 @@ class CreateSubmission extends Page implements HasForms
         return [
             'isOpen' => Timeline::isSubmissionOpen() && Track::query()
                 ->active()
-                ->when(!auth()->user()->hasAnyRole([
+                ->when(! auth()->user()->hasAnyRole([
                     UserRole::Admin,
                     UserRole::ConferenceManager,
                     UserRole::ScheduledConferenceEditor,
                     UserRole::TrackEditor,
-                ]), fn($query) => $query->whereMeta('submit_only_for_editors', false))
+                ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
                 ->count(),
         ];
     }
