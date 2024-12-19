@@ -32,7 +32,7 @@ enum SubmissionStatus: string implements HasColor, HasLabel
             self::Declined, self::Withdrawn, self::PaymentDeclined => 'danger',
             self::OnReview, self::OnPayment => 'warning',
             self::Queued => 'primary',
-            self::Editing => 'info',
+            self::Editing, self::OnPresentation => 'info',
             self::Published => 'success',
             default => 'gray'
         };

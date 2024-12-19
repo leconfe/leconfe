@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -71,7 +72,11 @@ class SubmissionResource extends Resource
             })
             ->columns([
                 Split::make([
-                    IndexColumn::make('no'),
+                    TextColumn::make('id')
+                        ->grow(false)
+                        ->extraCellAttributes([
+                            'style' => 'width: 1px',
+                        ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
                             ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
@@ -88,7 +93,7 @@ class SubmissionResource extends Resource
                             ])
                             ->badge()
                             ->formatStateUsing(
-                                fn (Submission $record) => $record->status
+                                fn (Submission $record) => $record->status?->value
                             ),
 
                     ]),
