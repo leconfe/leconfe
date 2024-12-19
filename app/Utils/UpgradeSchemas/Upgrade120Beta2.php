@@ -9,7 +9,7 @@ class Upgrade120Beta2 extends UpgradeBase
 {
     public function run(): void
     {
-        foreach(Review::lazy() as $review){
+        foreach(Review::with(['meta'])->lazy() as $review){
             $review->setMeta('review_mode', Review::MODE_OPEN);
         }
     }
