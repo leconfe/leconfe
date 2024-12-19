@@ -18,15 +18,6 @@ class PaperFiles extends SubmissionFilesTable
 
     public function isViewOnly(): bool
     {
-        return ! auth()->user()->can('uploadPaper', $this->submission);
-    }
-
-    public function uploadFormSchema(): array
-    {
-        return [
-            Shout::make('information')
-                ->content(__('general.after_uploading_your_paper_system_will_send_notification')),
-            ...parent::uploadFormSchema(),
-        ];
+        return $this->viewOnly || ! auth()->user()->can('uploadPaper', $this->submission);
     }
 }

@@ -11,7 +11,9 @@ use App\Models\Review;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -162,43 +164,50 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     ->description('You have been selected as a potential reviewer of the following submission. Below is an overview of the submission, as well as the timeline for this review. We hope that you are able to participate')
                     ->schema([
                         Fieldset::make('Submission Details')
+                            ->columns(1)
                             ->schema([
                                 TextEntry::make('Title')
+                                    ->color('gray') 
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
-                                TextEntry::make('Keyword')
+                                TextEntry::make('Author')
+                                    ->color('gray')
+                                    ->visible(fn() => in_array($this->review->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->getStateUsing(fn(Submission $submission) => $submission->user?->fullName),
+                                TextEntry::make('Keywords')
+                                    ->color('gray')
                                     ->getStateUsing(function (Submission $submission) {
-                                        return $submission->tagsWithType('submissionKeywords')->pluck('name')->join(', ');
+                                        return $submission->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-';
                                     }),
                                 TextEntry::make('Abstract')
+                                    ->color('gray')
                                     ->html()
-                                    ->columnSpanFull()
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
+                                TextEntry::make('Review Mode')
+                                    ->color('gray')
+                                    ->getStateUsing(fn() => $this->review?->review_mode)
                             ]),
                         LivewireEntry::make('review-files')
-                            ->livewire(PaperFiles::class, [
-                                'submission' => $this->record,
-                                'viewOnly' => true,
+                            ->livewire(ReviewerAssignedFiles::class, [
+                                'record' => $this->review,
                             ]),
                         Fieldset::make('Review Schedule')
-                            ->columns(2)
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'xl' => 3,
+                            ])
                             ->schema([
-                                TextEntry::make('Review Start at')
+                                TextEntry::make("Editor's Request")
                                     ->getStateUsing(
-                                        fn (): string => app()
-                                            ->getCurrentConference()
-                                            ->getMeta(
-                                                'workflow.peer-review.start_at',
-                                                $this->review->date_assigned->addDays(1)->format(Setting::get('format_date'))
-                                            )
+                                        fn (): ?string => $this->review?->date_assigned?->format(Setting::get('format_date'))
                                     ),
-                                TextEntry::make('Review End at')
+                                TextEntry::make('Response Due Date')
                                     ->getStateUsing(
-                                        fn (): string => app()
-                                            ->getCurrentConference()
-                                            ->getMeta(
-                                                'workflow.peer-review.end_at',
-                                                $this->review->date_assigned->addDays(14)->format(Setting::get('format_date'))
-                                            )
+                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date')) 
+                                    ),
+                                TextEntry::make('Review Due Date')
+                                    ->getStateUsing(
+                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date')) 
                                     ),
                             ]),
                     ]),

@@ -51,6 +51,7 @@ class Track extends Model implements Sortable
             'abstract_word_count' => 0,
             'submit_only_for_editors' => false,
             'hide_author' => false,
+            'track_editors' => [],
         ];
     }
 }
