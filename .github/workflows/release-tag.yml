@@ -36,6 +36,8 @@ jobs:
       run: |
         mkdir -p ./release
         tar -czf ./release/leconfe.tar.gz \
+
+          --exclude='./.dockerdata' \
           --exclude='./release' \
           --exclude='./.git' \
           --exclude='./node_modules' \
