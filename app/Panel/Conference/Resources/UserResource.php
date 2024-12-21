@@ -36,6 +36,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
@@ -66,7 +67,6 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
-            ->where('id', '!=', auth()->id())
             ->with(['meta', 'media', 'bans']);
     }
 
@@ -159,12 +159,14 @@ class UserResource extends Resource
                                         titleAttribute: 'name',
                                         modifyQueryUsing: fn ($query) => $query->where('name', '!=', UserRole::Admin)
                                     )
-                                    ->saveRelationshipsUsing(function (Forms\Components\CheckboxList $component, ?array $state) {
+                                    ->saveRelationshipsUsing(function (Forms\Components\CheckboxList $component, ?array $state, User $record) {
+
                                         $roles = $state ? Role::whereIn('id', $state)->pluck('name')->toArray() : [];
 
                                         $roles = array_diff($roles, [UserRole::Admin->value]);
 
                                         $component->getModelInstance()->syncRoles($roles);
+                                        
                                     }),
                             ]),
                     ])
@@ -259,10 +261,7 @@ class UserResource extends Resource
             ->deferFilters()
             ->actions([
                 EditAction::make()
-                    ->modalWidth('full')
-                    ->hidden(fn (User $record) => $record->hasRole(UserRole::Admin))
-                    ->mutateRecordDataUsing(fn ($data, User $record) => array_merge($data, ['meta' => $record->getAllMeta()->toArray()]))
-                    ->using(fn (array $data, User $record) => UserUpdateAction::run($data, $record)),
+                    ->modalWidth('full'),
                 DeleteAction::make()
                     ->using(function (?array $data, User $record, DeleteAction $action) {
                         try {

@@ -47,6 +47,10 @@ class UserPolicy
             return true;
         }
 
+        if ($model->hasRole(UserRole::Admin)) {
+            return false;
+        }
+
         if ($user->can('User:update')) {
             return true;
         }
