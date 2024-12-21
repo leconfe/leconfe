@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files;
 
 use App\Constants\SubmissionFileCategory;
-use Awcodes\Shout\Components\Shout;
 
 class PaperFiles extends SubmissionFilesTable
 {

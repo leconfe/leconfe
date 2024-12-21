@@ -104,7 +104,7 @@ class Review extends Model implements HasMedia
     protected function reviewMode(): Attribute
     {
         return Attribute::make(
-            get: fn () => match((int)$this->getMeta('review_mode')){
+            get: fn () => match ((int) $this->getMeta('review_mode')) {
                 self::MODE_DOUBLE_ANONYMOUS => __('general.anonymous_author'),
                 self::MODE_ANONYMOUS => __('general.anonymous_disclosed_author'),
                 self::MODE_OPEN => __('general.open'),

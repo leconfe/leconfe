@@ -60,14 +60,13 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
 
                     $trackRole = Role::where('name', UserRole::TrackEditor)->first();
 
-                    if(!empty($this->record->track->getMeta('track_editors'))){
+                    if (! empty($this->record->track->getMeta('track_editors'))) {
                         User::with(['meta'])
                             ->role(UserRole::TrackEditor)
                             ->whereIn('id', $this->record->track->getMeta('track_editors'))
                             ->lazy()
                             ->each(fn ($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
                     }
-
 
                 } catch (\Exception $e) {
                     $action->failureNotificationTitle(__('general.failed_send_notification'));

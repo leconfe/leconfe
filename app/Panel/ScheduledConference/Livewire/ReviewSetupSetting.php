@@ -64,7 +64,7 @@ class ReviewSetupSetting extends Component implements HasForms
                 Actions::make([
                     Action::make('save')
                         ->label(__('general.save'))
-                        ->successNotificationTitle(__('general.saved')) 
+                        ->successNotificationTitle(__('general.saved'))
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();

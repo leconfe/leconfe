@@ -71,7 +71,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                 ->label(__('general.reviewer'))
                 ->placeholder(__('general.select_reviewer'))
                 ->allowHtml()
-                ->hidden(fn($record) => $record)
+                ->hidden(fn ($record) => $record)
                 ->preload()
                 ->required()
                 ->searchable()
@@ -109,7 +109,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                     return User::with('roles')
                         ->whereHas(
                             'roles',
-                            fn(Builder $query) => $query->whereName(UserRole::Reviewer->value)
+                            fn (Builder $query) => $query->whereName(UserRole::Reviewer->value)
                         )
                         ->whereNotIn('id', $component->record->reviews->pluck('user_id'))
                         ->where(function (Builder $query) use ($search) {
@@ -121,7 +121,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                         ->get()
                         ->lazy()
                         ->mapWithKeys(
-                            fn(User $user) => [
+                            fn (User $user) => [
                                 $user->getKey() => static::renderSelectParticipant($user),
                             ]
                         )
@@ -143,7 +143,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 $paper->getKey() => new HtmlString(
                                     Action::make($paper->media->file_name)
                                         ->label($paper->media->file_name)
-                                        ->url(fn() => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
+                                        ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                         ->link()
                                         ->toHtml()
                                 ),
@@ -161,7 +161,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                 }),
             Fieldset::make('Notification')
                 ->label(__('general.notification'))
-                ->hidden(fn($record) => $record)
+                ->hidden(fn ($record) => $record)
                 ->schema([
                     TextInput::make('subject')
                         ->label(__('general.subject'))
@@ -198,11 +198,11 @@ class ReviewerList extends Component implements HasForms, HasTable
     {
         return $table
             ->query(
-                fn(): Builder => $this->record->reviews()->getQuery()
+                fn (): Builder => $this->record->reviews()->getQuery()
                     ->when(
                         auth()->user()->is($this->record->user),
-                        fn($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
-                                        ->where('status', ReviewerStatus::ACCEPTED)
+                        fn ($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
+                            ->where('status', ReviewerStatus::ACCEPTED)
                     )
             )
             ->columns([
@@ -215,7 +215,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                         ->width(50)
                         ->height(50)
                         ->defaultImageUrl(
-                            fn(Review $record): string => $record->user->getFilamentAvatarUrl()
+                            fn (Review $record): string => $record->user->getFilamentAvatarUrl()
                         )
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
@@ -225,10 +225,10 @@ class ReviewerList extends Component implements HasForms, HasTable
                         TextColumn::make('user.fullName')
                             ->label(__('general.full_name'))
                             ->color(
-                                fn(Review $record): string => $record->status == ReviewerStatus::CANCELED ? 'danger' : 'primary'
+                                fn (Review $record): string => $record->status == ReviewerStatus::CANCELED ? 'danger' : 'primary'
                             )
                             ->description(
-                                fn(Review $record): string => $record->user->email
+                                fn (Review $record): string => $record->user->email
                             ),
                         TextColumn::make('status')
                             ->extraAttributes(['class' => 'mt-2'])
@@ -246,10 +246,10 @@ class ReviewerList extends Component implements HasForms, HasTable
                         ->label(__('general.recommendation'))
                         ->badge()
                         ->formatStateUsing(function ($state) {
-                            return __('general.recommend') . $state;
+                            return __('general.recommend').$state;
                         })
                         ->color(
-                            fn(Review $record): string => match ($record->recommendation) {
+                            fn (Review $record): string => match ($record->recommendation) {
                                 SubmissionStatusRecommendation::ACCEPT => 'primary',
                                 SubmissionStatusRecommendation::DECLINE => 'danger',
                                 default => 'warning'
@@ -262,7 +262,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                 Action::make('see-reviews')
                     ->hidden(
                         //No review is need to be seen.
-                        fn(Review $record): bool => is_null($record->date_completed)
+                        fn (Review $record): bool => is_null($record->date_completed)
                     )
                     ->modalWidth('2xl')
                     ->modalCancelActionLabel(__('general.close'))
@@ -273,35 +273,35 @@ class ReviewerList extends Component implements HasForms, HasTable
                             TextEntry::make('Reviewer')
                                 ->label(__('general.reviewer'))
                                 ->size('base')
-                                ->getStateUsing(fn(): string => $record->user->fullName . ' (' . $record->user->email . ')')
+                                ->getStateUsing(fn (): string => $record->user->fullName.' ('.$record->user->email.')')
                                 ->weight(FontWeight::Bold),
                             TextEntry::make('Recommendation')
                                 ->label(__('general.recommendation'))
                                 ->size('base')
                                 ->badge()
                                 ->color(
-                                    fn(): string => match ($record->recommendation) {
+                                    fn (): string => match ($record->recommendation) {
                                         SubmissionStatusRecommendation::ACCEPT => 'primary',
                                         SubmissionStatusRecommendation::DECLINE => 'danger',
                                         default => 'warning'
                                     }
                                 )
-                                ->getStateUsing(fn(): string => $record->recommendation),
+                                ->getStateUsing(fn (): string => $record->recommendation),
                             TextEntry::make('Review for Author and Editor')
                                 ->label(__('general.review_for_author_and_editor'))
                                 ->size('base')
                                 ->color('gray')
                                 ->html()
-                                ->getStateUsing(fn(): ?string => $record->review_author_editor ?? '-'),
+                                ->getStateUsing(fn (): ?string => $record->review_author_editor ?? '-'),
                             TextEntry::make('Review for Editor')
                                 ->label(__('general.review_for_editor'))
                                 ->hidden(
-                                    fn(): bool => $this->record->user->getKey() == auth()->id()
+                                    fn (): bool => $this->record->user->getKey() == auth()->id()
                                 )
                                 ->size('base')
                                 ->color('gray')
                                 ->html()
-                                ->getStateUsing(fn(): ?string => $record->review_editor ?? '-'),
+                                ->getStateUsing(fn (): ?string => $record->review_editor ?? '-'),
                             LivewireEntry::make('reviewer-files')
                                 ->livewire(ReviewerFiles::class, [
                                     'record' => $record,
@@ -311,11 +311,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                     }),
                 ActionGroup::make([
                     Action::make('edit-reviewer')
-                        ->hidden(fn(Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
+                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
                         ->visible(
-                            fn($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
+                            fn ($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
                         )
-                        ->authorize(fn() => auth()->user()->can('editReviewer', $this->record))
+                        ->authorize(fn () => auth()->user()->can('editReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-edit')
                         ->label(__('general.edit'))
@@ -325,14 +325,14 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     ->get()
                                     ->pluck('submission_file_id')
                                     ->toArray(),
-                                'meta'=> $record->getAllMeta(),
+                                'meta' => $record->getAllMeta(),
                             ]);
                         })
                         ->form(static::formReviewerSchema($this, true))
                         ->successNotificationTitle(__('general.reviewer_updated'))
                         ->action(function (Action $action, Review $record, array $data) {
                             $record->assignedFiles()->get()->each(
-                                fn(ReviewerAssignedFile $file) => $file->delete()
+                                fn (ReviewerAssignedFile $file) => $file->delete()
                             );
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
@@ -350,7 +350,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                             $action->success();
                         }),
                     Action::make('email-reviewer')
-                        ->authorize(fn() => auth()->user()->can('emailReviewer', $this->record))
+                        ->authorize(fn () => auth()->user()->can('emailReviewer', $this->record))
                         ->label(__('general.email_reviewer'))
                         ->icon('iconpark-sendemail')
                         ->modalSubmitActionLabel(__('general.send'))
@@ -384,11 +384,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Action::make('cancel-reviewer')
                         ->color('danger')
-                        ->authorize(fn() => auth()->user()->can('cancelReviewer', $this->record))
+                        ->authorize(fn () => auth()->user()->can('cancelReviewer', $this->record))
                         ->icon('iconpark-deletethree-o')
                         ->label(__('general.cancel_reviewer'))
                         ->hidden(
-                            fn(Review $record) => $record->status == ReviewerStatus::CANCELED || $record->confirmed()
+                            fn (Review $record) => $record->status == ReviewerStatus::CANCELED || $record->confirmed()
                         )
                         ->successNotificationTitle(__('general.reviewer_canceled'))
                         ->modalWidth('2xl')
@@ -408,18 +408,18 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     TextInput::make('email')
                                         ->label(__('general.email'))
                                         ->disabled()
-                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
                                         ->dehydrated(),
                                     TextInput::make('subject')
                                         ->label(__('general.subject'))
-                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
                                         ->required()
                                         ->columnSpanFull(),
                                     TinyEditor::make('message')
                                         ->label(__('general.message'))
                                         ->minHeight(300)
                                         ->profile('email')
-                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
                                         ->columnSpanFull(),
                                     Checkbox::make('do-not-notify-cancelation')
                                         ->reactive()
@@ -450,11 +450,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Action::make('reinstate-reviewer')
                         ->color('primary')
-                        ->authorize(fn() => auth()->user()->can('reinstateReviewer', $this->record))
+                        ->authorize(fn () => auth()->user()->can('reinstateReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-deletethree-o')
                         ->hidden(
-                            fn(Review $record) => $record->status != ReviewerStatus::CANCELED
+                            fn (Review $record) => $record->status != ReviewerStatus::CANCELED
                         )
                         ->label(__('general.reinstate_reviewer'))
                         ->successNotificationTitle(__('general.reviewer_reinstated'))
@@ -476,9 +476,9 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Impersonate::make()
                         ->grouped()
-                        ->hidden(fn(Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
+                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
                         ->visible(
-                            fn(Model $record): bool => $record->user->email !== auth()->user()->email && auth()->user()->canImpersonate()
+                            fn (Model $record): bool => $record->user->email !== auth()->user()->email && auth()->user()->canImpersonate()
                         )
                         ->label(__('general.login_as'))
                         ->icon('iconpark-login')
@@ -501,7 +501,7 @@ class ReviewerList extends Component implements HasForms, HasTable
             ->headerActions([
                 Action::make('add-reviewer')
                     ->mountUsing(function (Form $form): void {
-                        $mailTemplate = DefaultMailTemplate::where('mailable', ReviewerInvitationMail::class)->first();                        
+                        $mailTemplate = DefaultMailTemplate::where('mailable', ReviewerInvitationMail::class)->first();
 
                         $form->fill([
                             'subject' => $mailTemplate ? $mailTemplate->subject : '',
@@ -518,7 +518,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                     ->label(__('general.reviewer'))
                     ->modalHeading(__('general.assign_reviewer'))
                     ->modalWidth('2xl')
-                    ->authorize(fn() => auth()->user()->can('assignReviewer', $this->record))
+                    ->authorize(fn () => auth()->user()->can('assignReviewer', $this->record))
                     ->form(static::formReviewerSchema($this))
                     ->action(function (Action $action, array $data) {
                         if ($this->record->reviews()->where('user_id', $data['user_id'])->exists()) {

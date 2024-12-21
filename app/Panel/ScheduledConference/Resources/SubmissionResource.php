@@ -8,7 +8,6 @@ use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
-use App\Tables\Columns\IndexColumn;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\Layout\Split;

@@ -10,7 +10,6 @@ use App\Mail\Templates\ReviewerDeclinedInvitationMail;
 use App\Models\Review;
 use App\Models\Submission;
 use App\Models\User;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Carbon\Carbon;
@@ -167,12 +166,12 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                             ->columns(1)
                             ->schema([
                                 TextEntry::make('Title')
-                                    ->color('gray') 
+                                    ->color('gray')
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
                                 TextEntry::make('Author')
                                     ->color('gray')
-                                    ->visible(fn() => in_array($this->review->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
-                                    ->getStateUsing(fn(Submission $submission) => $submission->user?->fullName),
+                                    ->visible(fn () => in_array($this->review->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
                                 TextEntry::make('Keywords')
                                     ->color('gray')
                                     ->getStateUsing(function (Submission $submission) {
@@ -184,7 +183,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
                                 TextEntry::make('Review Mode')
                                     ->color('gray')
-                                    ->getStateUsing(fn() => $this->review?->review_mode)
+                                    ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
                         LivewireEntry::make('review-files')
                             ->livewire(ReviewerAssignedFiles::class, [
@@ -203,11 +202,11 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ),
                                 TextEntry::make('Response Due Date')
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date')) 
+                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date'))
                                     ),
                                 TextEntry::make('Review Due Date')
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date')) 
+                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date'))
                                     ),
                             ]),
                     ]),

@@ -4,7 +4,6 @@ namespace App\Panel\Conference\Resources;
 
 use App\Actions\User\UserDeleteAction;
 use App\Actions\User\UserMailAction;
-use App\Actions\User\UserUpdateAction;
 use App\Facades\Setting;
 use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
@@ -36,7 +35,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
@@ -166,7 +164,7 @@ class UserResource extends Resource
                                         $roles = array_diff($roles, [UserRole::Admin->value]);
 
                                         $component->getModelInstance()->syncRoles($roles);
-                                        
+
                                     }),
                             ]),
                     ])
