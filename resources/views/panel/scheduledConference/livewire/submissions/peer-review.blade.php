@@ -58,6 +58,7 @@
 
                     <div @class([
                         'flex flex-col gap-4 col-span-4',
+                        'hidden' => !$user->can('makePeerReviewDecision', $submission),
                         'hidden' => !($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) || in_array($submission->status, [
                             SubmissionStatus::Queued, 
                             SubmissionStatus::Published,

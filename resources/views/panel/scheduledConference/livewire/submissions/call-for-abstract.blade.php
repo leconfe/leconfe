@@ -35,12 +35,12 @@
 
                 <div @class([
                     'space-y-4',
-                    'hidden' => !($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) || in_array($submission->status, [SubmissionStatus::Published])
+                    'hidden' => !$user->can('makeAbstractDecision', $submission)
                 ]) x-show="!decision">
-                    @if ($user->can('acceptAbstract', $submission) && ! in_array($this->submission->status, [SubmissionStatus::OnPayment, SubmissionStatus::OnReview, SubmissionStatus::PaymentDeclined, SubmissionStatus::Editing, SubmissionStatus::OnPresentation]))
+                    @if (!in_array($this->submission->status, [SubmissionStatus::OnPayment, SubmissionStatus::OnReview, SubmissionStatus::PaymentDeclined, SubmissionStatus::Editing, SubmissionStatus::OnPresentation]))
                         {{ $this->acceptAction() }}
                     @endif
-                    @if ($user->can('declineAbstract', $submission) && ! in_array($this->submission->status, [SubmissionStatus::Declined]))
+                    @if (!in_array($this->submission->status, [SubmissionStatus::Declined]))
                         {{ $this->declineAction() }}
                     @endif
                 </div>

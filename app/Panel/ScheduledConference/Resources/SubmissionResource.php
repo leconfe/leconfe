@@ -73,6 +73,7 @@ class SubmissionResource extends Resource
                 Split::make([
                     TextColumn::make('id')
                         ->grow(false)
+                        ->searchable()
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
                         ]),

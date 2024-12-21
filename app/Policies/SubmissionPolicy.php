@@ -31,7 +31,7 @@ class SubmissionPolicy
         if ($submission->participants->where('user_id', $user->getKey())->isNotEmpty()) {
             return true;
         }
-
+        
         if ($user->can('Submission:view')) {
             return true;
         }
@@ -136,16 +136,15 @@ class SubmissionPolicy
 
     public function uploadAbstract(User $user, Submission $submission)
     {
+        if(!$submission->isParticipant($user)){
+            return false;
+        }
+
         if (in_array($submission->status, [SubmissionStatus::Declined, SubmissionStatus::Withdrawn, SubmissionStatus::Published])) {
             return false;
         }
 
         if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
-        // Cannot upload an abstract if it has not been accepted yet.
-        if ($submission->stage == SubmissionStage::CallforAbstract) {
             return false;
         }
 
@@ -267,17 +266,35 @@ class SubmissionPolicy
         }
     }
 
-    public function acceptAbstract(User $user, Submission $submission)
+    public function makeAbstractDecision(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published])) {
+        if(in_array($submission->status, [SubmissionStatus::Published])){
             return false;
         }
 
-        if (filled($submission->withdrawn_reason)) {
+        if($submission->isParticipantEditor($user)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function makePeerReviewDecision(User $user, Submission $submission)
+    {
+        if(in_array($submission->status, [
+            SubmissionStatus::Queued, 
+            SubmissionStatus::Published,
+            SubmissionStatus::OnPayment,
+            SubmissionStatus::PaymentDeclined,
+        ])){
             return false;
         }
 
-        if ($user->can('Submission:acceptAbstract')) {
+        if($submission->isParticipantEditor($user)){
+            return true;
+        }
+
+        if ($user->can('Submission:makePeerReviewDecision')) {
             return true;
         }
     }
@@ -340,6 +357,10 @@ class SubmissionPolicy
 
     public function assignParticipant(User $user, Submission $submission)
     {
+        if($submission->isParticipantEditor($user)){
+            return true;
+        }
+
         if (filled($submission->withdrawn_reason)) {
             return false;
         }
@@ -476,6 +497,13 @@ class SubmissionPolicy
         }
 
         if ($user->can('Submission:preview')) {
+            return true;
+        }
+    }
+
+    public function submitAs(User $user)
+    {
+        if($user->can('Submission:submitAs')){
             return true;
         }
     }

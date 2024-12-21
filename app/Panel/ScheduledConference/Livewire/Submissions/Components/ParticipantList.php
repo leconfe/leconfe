@@ -118,6 +118,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                     ->label('Role')
                                     ->options(function () {
                                         return app()->getCurrentConference()->roles()->whereIn('name', [
+                                            UserRole::ConferenceManager,
                                             UserRole::ScheduledConferenceEditor,
                                             UserRole::TrackEditor,
                                             UserRole::Author,
@@ -194,6 +195,8 @@ class ParticipantList extends Component implements HasForms, HasTable
                     ->action(function (Action $action, array $data) {
 
                         SubmissionAssignParticipant::run($this->submission, $data['user_id'], $data['role_id'], ! $data['no-notification'], $data['subject'], $data['message'], auth()->user());
+
+                        $this->submission->touch();
 
                         $this->dispatch('refreshSubmission');
 

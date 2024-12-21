@@ -101,13 +101,6 @@ class Submission extends Model implements HasMedia, Sortable
             $submission->reviews->each->delete();
             $submission->media->each->delete();
         });
-
-        static::created(function (Submission $submission) {
-            $submission->participants()->create([
-                'user_id' => $submission->user_id,
-                'role_id' => Role::withoutGlobalScopes()->where('conference_id', $submission->conference_id)->where('name', UserRole::Author->value)->first()->getKey(),
-            ]);
-        });
     }
 
     public function proceeding(): BelongsTo
@@ -190,7 +183,7 @@ class Submission extends Model implements HasMedia, Sortable
     public function editors()
     {
         return $this->participants()
-            ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor]));
+            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
     }
 
     public function isPublishedOnExternal()
@@ -217,33 +210,19 @@ class Submission extends Model implements HasMedia, Sortable
 
     public function isParticipantEditor(User $user): bool
     {
-        $isParticipantEditor = $this->editors()
+        return $this->editors
             ->where('user_id', $user->getKey())
-            ->limit(1)
-            ->first();
-
-        if (! $isParticipantEditor) {
-            return false;
-        }
-
-        return true;
+            ->count() > 0;
     }
 
     public function isParticipantAuthor(User $user): bool
     {
-        $isParticipantAuthor = $this->participants()
-            ->whereHas('role', function (Builder $query) {
-                $query->where('name', UserRole::Author->value);
-            })
-            ->where('user_id', $user->getKey())
-            ->limit(1)
-            ->first();
-
-        if (! $isParticipantAuthor) {
-            return false;
-        }
-
-        return true;
+        return $this->participants
+            ->filter(
+                fn(SubmissionParticipant $submissionParticipant)
+                => $submissionParticipant->role->name == UserRole::Author->value && $submissionParticipant->user_id == $user->getKey()
+            )
+            ->count() > 0;
     }
 
     public function scopePublished(Builder $query)
@@ -323,5 +302,19 @@ class Submission extends Model implements HasMedia, Sortable
             ->keepOriginalImageFormat()
             ->width(500)
             ->height(500);
+    }
+
+    public function isParticipant(User $user): bool
+    {
+        return $this->participants()
+            ->where('user_id', $user->getKey())
+            ->exists();
+    }
+
+    public function getParticipantRole(User $user): ?Role
+    {
+        return $this->participants()
+            ->where('user_id', $user->getKey())
+            ->first()?->role;
     }
 }

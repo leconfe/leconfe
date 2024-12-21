@@ -986,4 +986,5 @@ return [
     'track_do_not_require_abstracts' => 'Do not require abstracts',
     'track_submit_only_for_editors' => 'Items can only be submitted by Editors and Track Editors',
     'track_hide_author' => 'Omit author names for track items from proceeding table of contents.',
+    'submit_as' => 'Submit As',
 ];

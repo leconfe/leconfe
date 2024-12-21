@@ -5,8 +5,11 @@ namespace App\Observers;
 use App\Actions\Authors\AuthorRolePopulateDefaultDataAction;
 use App\Actions\Roles\RolePopulateConferenceAction;
 use App\Models\Conference;
+use App\Models\Enums\UserRole;
 use App\Models\NavigationMenu;
 use App\Models\NavigationMenuItem;
+use App\Models\Role;
+use App\Models\User;
 
 class ConferenceObserver
 {
@@ -109,6 +112,12 @@ class ConferenceObserver
         ]);
 
         RolePopulateConferenceAction::run($conference);
+
+        
+        $conferenceManager = Role::withoutGlobalScopes()->where('name', UserRole::ConferenceManager)->where('conference_id', $conference->getKey())->first();
+        if($conferenceManager && auth()->id()) {
+            $conferenceManager->users()->attach(auth()->id(), ['conference_id' => $conference->getKey()]);  
+        }
     }
 
     /**
