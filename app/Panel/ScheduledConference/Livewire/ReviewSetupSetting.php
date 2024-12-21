@@ -42,26 +42,29 @@ class ReviewSetupSetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        // Radio::make('meta.review_mode')
-                        //     ->label(__('general.review_mode'))
-                        //     ->options(Review::getModeOptions()),
+                        Radio::make('meta.review_mode')
+                            ->label(__('general.review_mode'))
+                            ->options(Review::getModeOptions()),
                         TextInput::make('meta.review_invitation_response_deadline')
+                            ->required()
                             ->label(__('general.default_response_deadline'))
                             ->helperText(__('general.deadline_reviewers_invitations'))
                             ->numeric()
                             ->minValue(1)
                             ->suffix(__('general.days')),
                         TextInput::make('meta.review_completion_deadline')
+                            ->required()
                             ->label(__('general.default_completion_deadline'))
                             ->helperText(__('general.default_completing_deadline'))
                             ->numeric()
                             ->minValue(1)
+                            ->afterOrEqual('meta.review_invitation_response_deadline')
                             ->suffix(__('general.days')),
                     ]),
                 Actions::make([
                     Action::make('save')
                         ->label(__('general.save'))
-                        ->successNotificationTitle(__('general.saved'))
+                        ->successNotificationTitle(__('general.saved')) 
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();

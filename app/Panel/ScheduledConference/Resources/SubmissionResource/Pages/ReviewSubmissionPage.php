@@ -83,13 +83,17 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 InfolistSection::make()
                     ->heading('Submission Details')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(1)
                             ->schema([
                                 TextEntry::make('Title')
                                     ->color('gray')
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->getMeta('title')
                                     ),
+                                TextEntry::make('Author')
+                                    ->color('gray')
+                                    ->visible(fn() => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->getStateUsing(fn(Submission $submission) => $submission->user?->fullName),
                                 TextEntry::make('Keywords')
                                     ->color('gray')
                                     ->getStateUsing(
@@ -98,10 +102,11 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('Abstract')
                                     ->color('gray')
                                     ->html()
-                                    ->columnSpanFull()
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->getMeta('abstract')
                                     ),
+                                TextEntry::make('Review Mode')
+                                    ->getStateUsing(fn() => $this->review?->review_mode)
                             ]),
                     ]),
             ]);

@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Review extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, Metable;
 
     public const MODE_DOUBLE_ANONYMOUS = 1;
 
@@ -96,6 +98,24 @@ class Review extends Model implements HasMedia
             self::MODE_DOUBLE_ANONYMOUS => __('general.anonymous_author'),
             self::MODE_ANONYMOUS => __('general.anonymous_disclosed_author'),
             self::MODE_OPEN => __('general.open'),
+        ];
+    }
+
+    protected function reviewMode(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => match((int)$this->getMeta('review_mode')){
+                self::MODE_DOUBLE_ANONYMOUS => __('general.anonymous_author'),
+                self::MODE_ANONYMOUS => __('general.anonymous_disclosed_author'),
+                self::MODE_OPEN => __('general.open'),
+            },
+        );
+    }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'review_mode' => Review::MODE_DOUBLE_ANONYMOUS,
         ];
     }
 }
