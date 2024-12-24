@@ -11,6 +11,7 @@ use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\Review;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
@@ -172,7 +173,7 @@ class PeerReview extends Component implements HasActions, HasForms
     {
         return Action::make('requestRevisionAction')
             ->authorize('requestRevision', $this->submission)
-            ->hidden(fn (): bool => $this->submission->revision_required)
+            ->hidden(fn(): bool => $this->submission->revision_required)
             ->icon('lineawesome-list-alt-solid')
             ->outlined()
             ->color(Color::Orange)
@@ -262,15 +263,16 @@ class PeerReview extends Component implements HasActions, HasForms
 
     public function render()
     {
-        $user = auth()->user();
-
+        if($this->submission->status->isBefore(SubmissionStatus::OnReview)){
+            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated',);
+        }
         return view('panel.scheduledConference.livewire.submissions.peer-review', [
-            'submissionDecision' => ($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) &&
-                in_array($this->submission->status, [
-                    SubmissionStatus::Editing,
-                    SubmissionStatus::Declined,
-                    SubmissionStatus::OnPresentation,
-                ]),
+            'showReview' => ($this->submission->isParticipantAuthor(auth()->user()) && $this->submission->reviews->filter(fn($review) => $review->getMeta('review_mode') == Review::MODE_OPEN)->count()) || auth()->user()->can('actAsEditor', $this->submission),
+            'submissionDecision' => in_array($this->submission->status, [
+                SubmissionStatus::Editing,
+                SubmissionStatus::Declined,
+                SubmissionStatus::OnPresentation,
+            ]),
         ]);
     }
 }

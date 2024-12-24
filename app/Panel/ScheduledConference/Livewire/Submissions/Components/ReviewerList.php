@@ -200,7 +200,7 @@ class ReviewerList extends Component implements HasForms, HasTable
             ->query(
                 fn (): Builder => $this->record->reviews()->getQuery()
                     ->when(
-                        auth()->user()->is($this->record->user),
+                        $this->record->isParticipantAuthor(auth()->user()),
                         fn ($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
                             ->where('status', ReviewerStatus::ACCEPTED)
                     )

@@ -8,14 +8,20 @@
 @endphp
 
 <div class="space-y-6">
-    <div class="grid grid-cols-12 gap-4">
+    <div @class([
+        'gap-4',
+        'grid grid-cols-12' => $user->can('actAsEditor', $submission),
+    ])>
         <div class="col-span-8 space-y-4">
             {{-- Papers --}}
             @livewire(Components\Files\PaperFiles::class, ['submission' => $submission])
 
             {{-- Reviewer List --}}
-            @livewire(Components\ReviewerList::class, ['record' => $submission])
+            @if($showReview)
+                @livewire(Components\ReviewerList::class, ['record' => $submission])
+            @endif
 
+            {{-- Reviews --}}
             {{-- Revision Files --}}
             @livewire(Components\Files\RevisionFiles::class, ['submission' => $submission])
 
@@ -23,6 +29,7 @@
             @livewire(Components\Discussions\DiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::PeerReview, 'lazy' => true])
         </div>
 
+        @can('actAsEditor', $submission)
         <div class="flex flex-col self-start col-span-4 gap-3" x-data="{ decision: @js($submissionDecision) }">
             @if($submission->stage != SubmissionStage::CallforAbstract)
                 @if ($submission->revision_required)
@@ -37,52 +44,51 @@
                     <div class="px-4 py-3.5 text-base text-white rounded-lg border-2 border-primary-700 bg-primary-500">
                         {{ $user->can('assignParticipant', $submission) ? 'Assign an editor to enable the editorial decisions for this stage.' : 'No editor assigned to this submission.' }}
                     </div>
-                @else
+                @endif
 
-                    @if($submissionDecision)
-                        <div class="px-6 py-5 space-y-3 overflow-hidden bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10">
-                            <div class="text-base">
-                                @if ($submission->status == SubmissionStatus::Declined)
-                                    {{ __('general.submission_declined') }}
-                                @elseif ($submission->skipped_review)
-                                    {{ __('general.review_skipped') }}
-                                @else
-                                    {{ __('general.submission_accepted') }}
-                                @endif
-                            </div>
-                            <button class="text-sm underline text-primary-500"
-                                @@click="decision = !decision" x-text="decision ? 'Change Decision' : 'Cancel'"
-                            ></button>
+                @if($submissionDecision)
+                    <div class="px-6 py-5 space-y-3 overflow-hidden bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10">
+                        <div class="text-base">
+                            @if ($submission->status == SubmissionStatus::Declined)
+                                {{ __('general.submission_declined') }}
+                            @elseif ($submission->skipped_review)
+                                {{ __('general.review_skipped') }}
+                            @else
+                                {{ __('general.submission_accepted') }}
+                            @endif
                         </div>
-                    @endif
-
-                    <div @class([
-                        'flex flex-col gap-4 col-span-4',
-                        'hidden' => !$user->can('makePeerReviewDecision', $submission),
-                        'hidden' => !($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) || in_array($submission->status, [
-                            SubmissionStatus::Queued, 
-                            SubmissionStatus::Published,
-                            SubmissionStatus::OnPayment,
-                            SubmissionStatus::PaymentDeclined,
-                        ]),
-                    ]) x-show="!decision">
-                        @if ($user->can('skipReview', $submission) && ! $submission->skipped_review)
-                            {{ $this->skipReviewAction() }}
-                        @endif
-                        @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
-                            {{ $this->requestRevisionAction() }}
-                        @endif
-                        @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))
-                            {{ $this->acceptSubmissionAction() }}
-                        @endif
-                        @if ($user->can('declinePaper', $submission) && ! in_array($submission->status, [SubmissionStatus::Declined]))
-                            {{ $this->declineSubmissionAction() }}
-                        @endif
+                        <button class="text-sm underline text-primary-500"
+                            @@click="decision = !decision" x-text="decision ? 'Change Decision' : 'Cancel'"
+                        ></button>
                     </div>
                 @endif
+                
+                <div @class([
+                    'flex flex-col gap-4 col-span-4',
+                    'hidden' => in_array($submission->status, [
+                        SubmissionStatus::Queued, 
+                        SubmissionStatus::Published,
+                        SubmissionStatus::OnPayment,
+                        SubmissionStatus::PaymentDeclined,
+                    ]),
+                ]) x-show="!decision">
+                    @if ($user->can('skipReview', $submission) && ! $submission->skipped_review)
+                        {{ $this->skipReviewAction() }}
+                    @endif
+                    @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
+                        {{ $this->requestRevisionAction() }}
+                    @endif
+                    @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))
+                        {{ $this->acceptSubmissionAction() }}
+                    @endif
+                    @if ($user->can('declinePaper', $submission) && ! in_array($submission->status, [SubmissionStatus::Declined]))
+                        {{ $this->declineSubmissionAction() }}
+                    @endif
+                </div>
             @endif
             @livewire(Components\ParticipantList::class, ['submission' => $submission, 'lazy' => true])
         </div>
+        @endcan
 
     </div>
     <x-filament-actions::modals />

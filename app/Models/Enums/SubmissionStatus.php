@@ -26,6 +26,37 @@ enum SubmissionStatus: string implements HasColor, HasLabel
         return $this->name;
     }
 
+    public function getOrder(): int
+    {
+        return match ($this) {
+            self::Incomplete => 1,
+            self::Queued => 2,
+            self::OnReview => 3,
+            self::OnPayment => 4,
+            self::OnPresentation => 5,
+            self::Editing => 6,
+            self::Published => 7,
+            self::PaymentDeclined => 8,
+            self::Declined => 9,
+            self::Withdrawn => 10,
+        };
+    }
+
+    public function isBefore(SubmissionStatus $status): bool
+    {
+        return $this->getOrder() < $status->getOrder();
+    }
+
+    public function isAfter(SubmissionStatus $status): bool
+    {
+        return $this->getOrder() > $status->getOrder();
+    }
+
+    public function isFinal(): bool
+    {
+        return in_array($this, [self::Published, self::PaymentDeclined, self::Declined, self::Withdrawn]);
+    }
+
     public function getColor(): string|array|null
     {
         return match ($this) {

@@ -26,11 +26,16 @@ class Upgrade120Beta2 extends UpgradeBase
             ->whereIn('name', [
                 'Submission:acceptAbstract',
                 'Submission:declineAbstract',
+                'Submission:publish',
+                'Submission:unpublish',
+                'Submission:assignReviewer',
+                'Submission:editReviewer',
+                'Submission:cancelReviewer',
+                'Submission:emailReviewer',
             ])
             ->delete();
 
         collect([
-            'Submission:declineAbstract',
             'Submission:submitAs',
         ])->each(fn ($name) => Permission::firstOrCreate([
             'name' => $name,

@@ -31,7 +31,7 @@ class SubmissionPolicy
         if ($submission->participants->where('user_id', $user->getKey())->isNotEmpty()) {
             return true;
         }
-        
+
         if ($user->can('Submission:view')) {
             return true;
         }
@@ -70,9 +70,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:assignReviewer')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function editReviewer(User $user, Submission $submission)
@@ -81,9 +79,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:editReviewer')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function cancelReviewer(User $user, Submission $submission)
@@ -92,9 +88,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:cancelReviewer')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function emailReviewer(User $user, Submission $submission)
@@ -103,9 +97,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:emailReviewer')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function reinstateReviewer(User $user, Submission $submission)
@@ -121,30 +113,29 @@ class SubmissionPolicy
 
     public function declinePaper(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued, SubmissionStatus::Declined])) {
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued, SubmissionStatus::Declined])) {
             return false;
         }
 
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
 
-        if ($user->can('Submission:declinePaper')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function uploadAbstract(User $user, Submission $submission)
     {
-        if(!$submission->isParticipant($user)){
-            return false;
-        }
-
         if (in_array($submission->status, [SubmissionStatus::Declined, SubmissionStatus::Withdrawn, SubmissionStatus::Published])) {
             return false;
         }
 
         if (filled($submission->withdrawn_reason)) {
+            return false;
+        }
+
+        if($user->can('submitAs', Submission::class)){
+            return true;
+        }
+
+        if (!$submission->isParticipant($user)) {
             return false;
         }
 
@@ -204,17 +195,11 @@ class SubmissionPolicy
 
     public function acceptPaper(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPresentation, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPresentation, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
-        if ($user->can('Submission:acceptPaper')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function declinePayment(User $user, Submission $submission)
@@ -251,54 +236,6 @@ class SubmissionPolicy
         }
     }
 
-    public function declineAbstract(User $user, Submission $submission)
-    {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published])) {
-            return false;
-        }
-
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
-        if ($user->can('Submission:declineAbstract')) {
-            return true;
-        }
-    }
-
-    public function makeAbstractDecision(User $user, Submission $submission)
-    {
-        if(in_array($submission->status, [SubmissionStatus::Published])){
-            return false;
-        }
-
-        if($submission->isParticipantEditor($user)){
-            return true;
-        }
-
-        return false;
-    }
-
-    public function makePeerReviewDecision(User $user, Submission $submission)
-    {
-        if(in_array($submission->status, [
-            SubmissionStatus::Queued, 
-            SubmissionStatus::Published,
-            SubmissionStatus::OnPayment,
-            SubmissionStatus::PaymentDeclined,
-        ])){
-            return false;
-        }
-
-        if($submission->isParticipantEditor($user)){
-            return true;
-        }
-
-        if ($user->can('Submission:makePeerReviewDecision')) {
-            return true;
-        }
-    }
-
     public function review(User $user, Submission $submission)
     {
         if (! in_array($submission->stage, [SubmissionStage::PeerReview, SubmissionStage::Presentation, SubmissionStage::Editing, SubmissionStage::Proceeding])) {
@@ -316,32 +253,20 @@ class SubmissionPolicy
 
     public function requestRevision(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
-        if ($user->can('Submission:requestRevision')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function skipReview(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
-        if (filled($submission->withdrawn_reason)) {
-            return false;
-        }
-
-        if ($user->can('Submission:skipReview')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function sendToEditing(User $user, Submission $submission)
@@ -357,17 +282,11 @@ class SubmissionPolicy
 
     public function assignParticipant(User $user, Submission $submission)
     {
-        if($submission->isParticipantEditor($user)){
-            return true;
-        }
-
-        if (filled($submission->withdrawn_reason)) {
+        if($submission->status === SubmissionStatus::Withdrawn){
             return false;
         }
 
-        if ($user->can('Submission:assignParticipant')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function editing(User $user, Submission $submission)
@@ -376,9 +295,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:editing')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function withdraw(User $user, Submission $submission)
@@ -427,9 +344,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:unpublish')) {
-            return true;
-        }
+        return $user->can('acAsEditor', $submission);
     }
 
     public function publish(User $user, Submission $submission)
@@ -442,9 +357,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if ($user->can('Submission:publish')) {
-            return true;
-        }
+        return $user->can('actAsEditor', $submission);
     }
 
     public function cancelRegistration(User $user, Submission $submission)
@@ -489,7 +402,7 @@ class SubmissionPolicy
     public function preview(User $user, Submission $submission)
     {
         $editorIds = $submission->participants()
-            ->whereHas('role', fn (Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor]))
+            ->whereHas('role', fn(Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor]))
             ->pluck('user_id');
 
         if (in_array($user->getKey(), $editorIds->toArray())) {
@@ -503,8 +416,18 @@ class SubmissionPolicy
 
     public function submitAs(User $user)
     {
-        if($user->can('Submission:submitAs')){
+        if ($user->can('Submission:submitAs')) {
             return true;
         }
+
+        return false;
+    }
+
+    public function actAsEditor(User $user, Submission $submission) {
+        if($user->can('submitAs', Submission::class) && !$submission->isParticipantAuthor($user)){
+            return true;
+        }
+
+        return $submission->isParticipantEditor($user);
     }
 }

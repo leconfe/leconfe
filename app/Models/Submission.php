@@ -217,11 +217,9 @@ class Submission extends Model implements HasMedia, Sortable
 
     public function isParticipantAuthor(User $user): bool
     {
-        return $this->participants
-            ->filter(
-                fn(SubmissionParticipant $submissionParticipant)
-                => $submissionParticipant->role->name == UserRole::Author->value && $submissionParticipant->user_id == $user->getKey()
-            )
+        return $this->participants()
+            ->where('user_id', $user->getKey())
+            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::Author]))
             ->count() > 0;
     }
 
