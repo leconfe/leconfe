@@ -65,19 +65,19 @@ class Registrations extends Page
             ->schema([
                 InfolistsVerticalTabs\Tabs::make()
                     ->schema([
-                        InfolistsVerticalTabs\Tab::make('Type')
-                            ->label(__('general.type'))
-                            ->icon('heroicon-o-list-bullet')
-                            ->schema([
-                                LivewireEntry::make('registrationType')
-                                    ->livewire(RegistrationTypeTable::class),
-                            ]),
                         InfolistsVerticalTabs\Tab::make('Settings')
                             ->label(__('general.settings'))
                             ->icon('heroicon-o-cog-6-tooth')
                             ->schema([
                                 LivewireEntry::make('registrationPolicy')
                                     ->livewire(RegistrationSetting::class),
+                            ]),
+                        InfolistsVerticalTabs\Tab::make('Type')
+                            ->label(__('general.type'))
+                            ->icon('heroicon-o-list-bullet')
+                            ->schema([
+                                LivewireEntry::make('registrationType')
+                                    ->livewire(RegistrationTypeTable::class),
                             ]),
                     ]),
             ]);

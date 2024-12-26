@@ -990,5 +990,7 @@ return [
     'submission_setting' => 'Submission Setting',
     'submission_setting.open_date' => 'Open Date',
     'submission_setting.close_date' => 'Close Date',
+    'registration_setting.open_date' => 'Open Date',
+    'registration_setting.close_date' => 'Close Date',
     'submission_setting.hide_from_timeline' => 'Hide from Timeline',
 ];
