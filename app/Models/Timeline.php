@@ -35,7 +35,6 @@ class Timeline extends Model
     ];
 
     protected $casts = [
-        'roles' => 'array',
         'date' => 'datetime',
         'hide' => 'boolean',
     ];
@@ -64,6 +63,11 @@ class Timeline extends Model
         }
 
         return false;
+    }
+
+    public function scopeType($query, $type) 
+    {
+        return $query->where('type', $type);
     }
 
     public static function isRegistrationOpen(): bool

@@ -987,4 +987,8 @@ return [
     'track_submit_only_for_editors' => 'Items can only be submitted by Editors and Track Editors',
     'track_hide_author' => 'Omit author names for track items from proceeding table of contents.',
     'submit_as' => 'Submit As',
+    'submission_setting' => 'Submission Setting',
+    'submission_setting.open_date' => 'Open Date',
+    'submission_setting.close_date' => 'Close Date',
+    'submission_setting.hide_from_timeline' => 'Hide from Timeline',
 ];

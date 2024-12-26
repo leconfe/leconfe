@@ -36,7 +36,7 @@ class AuthorGuidance extends Component implements HasForms
         return $form
             ->model(app()->getCurrentScheduledConference())
             ->schema([
-                Section::make()
+                Section::make(__('general.author_guidance'))
                     ->columns(1)
                     ->schema([
                         TinyEditor::make('meta.author_guidelines')
