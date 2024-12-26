@@ -12,8 +12,8 @@ enum SubmissionStatus: string implements HasColor, HasLabel
 
     case Incomplete = 'Incomplete';
     case Queued = 'Queued';
-    case OnPayment = 'On Payment';
     case OnReview = 'On Review';
+    case OnPayment = 'On Payment';
     case OnPresentation = 'On Presentation';
     case Editing = 'Editing';
     case Published = 'Published';
@@ -24,6 +24,37 @@ enum SubmissionStatus: string implements HasColor, HasLabel
     public function getLabel(): ?string
     {
         return $this->name;
+    }
+
+    public function getOrder(): int
+    {
+        return match ($this) {
+            self::Incomplete => 1,
+            self::Queued => 2,
+            self::OnReview => 3,
+            self::OnPayment => 4,
+            self::OnPresentation => 5,
+            self::Editing => 6,
+            self::Published => 7,
+            self::PaymentDeclined => 8,
+            self::Declined => 9,
+            self::Withdrawn => 10,
+        };
+    }
+
+    public function isBefore(SubmissionStatus $status): bool
+    {
+        return $this->getOrder() < $status->getOrder();
+    }
+
+    public function isAfter(SubmissionStatus $status): bool
+    {
+        return $this->getOrder() > $status->getOrder();
+    }
+
+    public function isFinal(): bool
+    {
+        return in_array($this, [self::Published, self::PaymentDeclined, self::Declined, self::Withdrawn]);
     }
 
     public function getColor(): string|array|null

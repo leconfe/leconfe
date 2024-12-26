@@ -44,7 +44,7 @@ class SubmissionResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['meta', 'user', 'reviews', 'participants'])->orderBy('updated_at', 'desc');
+        return parent::getEloquentQuery()->withCount('editors')->with(['meta', 'user', 'reviews', 'participants'])->orderBy('updated_at', 'desc');
     }
 
     public static function table(Table $table): Table
@@ -73,6 +73,7 @@ class SubmissionResource extends Resource
                 Split::make([
                     TextColumn::make('id')
                         ->grow(false)
+                        ->searchable()
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
                         ]),
@@ -105,7 +106,7 @@ class SubmissionResource extends Resource
                             ->color('warning')
                             ->getStateUsing(function (Submission $record) {
                                 $isEditorAssigned = $record->editors_count;
-
+                                
                                 if (! $isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
                                     return __('general.no_editor_assigned');
                                 }
@@ -148,10 +149,10 @@ class SubmissionResource extends Resource
                     ->url(fn (Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),
-                Tables\Actions\DeleteAction::make()
-                    ->authorize(
-                        fn (Submission $record) => auth()->user()->can('delete', $record)
-                    ),
+                Tables\Actions\Action::make('review')
+                    ->requiresConfirmation()
+                    ->action(fn(Submission $record) => dd($record)),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->filters([
                 SelectFilter::make('status')

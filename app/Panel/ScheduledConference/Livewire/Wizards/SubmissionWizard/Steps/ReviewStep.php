@@ -68,6 +68,8 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->each(fn ($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
                     }
 
+                    $this->record->touch();
+
                 } catch (\Exception $e) {
                     $action->failureNotificationTitle(__('general.failed_send_notification'));
                     $action->failure();

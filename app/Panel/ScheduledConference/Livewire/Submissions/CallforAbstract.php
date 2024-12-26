@@ -39,7 +39,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
         return Action::make('decline')
             ->outlined()
             ->color('danger')
-            ->authorize('declineAbstract', $this->submission)
+            ->authorize('actAsEditor', $this->submission)
             ->modalWidth('2xl')
             ->record($this->submission)
             ->modalHeading(__('general.confirmation'))
@@ -115,7 +115,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
         return Action::make('accept')
             ->modalHeading(__('general.confirmation'))
             ->modalSubmitActionLabel(fn () => $isPaymentRequired ? __('general.send_for_payment') : __('general.send_for_review'))
-            ->authorize('acceptAbstract', $this->submission)
+            ->authorize('actAsEditor', $this->submission)
             ->modalWidth('2xl')
             ->record($this->submission)
             ->successNotificationTitle('Accepted')
@@ -207,11 +207,8 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
     public function render()
     {
-        $user = auth()->user();
-
         return view('panel.scheduledConference.livewire.submissions.call-for-abstract', [
-            'submissionDecision' => ($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) &&
-            in_array($this->submission->status, [
+            'submissionDecision' => in_array($this->submission->status, [
                 SubmissionStatus::OnPayment,
                 SubmissionStatus::OnReview,
                 SubmissionStatus::Editing,

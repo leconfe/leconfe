@@ -60,11 +60,12 @@ class Presentation extends Component implements HasActions, HasForms
 
     public function render()
     {
-        $user = auth()->user();
+        if($this->submission->status->isBefore(SubmissionStatus::OnPresentation)){
+            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated',);
+        }
 
         return view('panel.scheduledConference.livewire.submissions.presentation', [
-            'submissionDecision' => ($user->hasAnyRole([UserRole::ConferenceManager, UserRole::Admin]) || $this->submission->isParticipantEditor($user)) &&
-            in_array($this->submission->status, [
+            'submissionDecision' => in_array($this->submission->status, [
                 SubmissionStatus::OnReview,
                 SubmissionStatus::Editing,
                 SubmissionStatus::Declined,
