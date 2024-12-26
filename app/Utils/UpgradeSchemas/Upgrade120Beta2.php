@@ -15,7 +15,7 @@ class Upgrade120Beta2 extends UpgradeBase
 
     protected function modifyReviews()
     {
-        foreach  (Review::with(['meta'])->lazy() as $review)  {
+        foreach (Review::with(['meta'])->lazy() as $review) {
             $review->setMeta('review_mode', Review::MODE_OPEN);
         }
     }

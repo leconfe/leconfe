@@ -4,8 +4,6 @@ namespace App\Panel\Administration\Resources;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
 use App\Models\Conference;
-use App\Models\Enums\UserRole;
-use App\Models\Role;
 use App\Panel\Administration\Resources\ConferenceResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\TextInput;

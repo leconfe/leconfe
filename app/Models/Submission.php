@@ -183,7 +183,7 @@ class Submission extends Model implements HasMedia, Sortable
     public function editors()
     {
         return $this->participants()
-            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
+            ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
     }
 
     public function isPublishedOnExternal()
@@ -219,7 +219,7 @@ class Submission extends Model implements HasMedia, Sortable
     {
         return $this->participants()
             ->where('user_id', $user->getKey())
-            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::Author]))
+            ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::Author]))
             ->count() > 0;
     }
 

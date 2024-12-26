@@ -31,14 +31,14 @@ class RegistrationSetting extends Component implements HasForms
             'hide_from_timeline' => Timeline::type(Timeline::TYPE_REGISTRATION_OPEN)->value('hide') || Timeline::type(Timeline::TYPE_REGISTRATION_CLOSE)->value('hide'),
             'meta' => [
                 'registration_policy' => app()->getCurrentScheduledConference()->getMeta('registration_policy'),
-            ]
+            ],
         ]);
     }
 
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(fn() => auth()->user()->cannot('RegistrationSetting:update'))
+            ->disabled(fn () => auth()->user()->cannot('RegistrationSetting:update'))
             ->schema([
                 Section::make()
                     ->schema([
@@ -66,7 +66,7 @@ class RegistrationSetting extends Component implements HasForms
                             try {
                                 DB::beginTransaction();
 
-                                if(data_get($formData, 'open_date')) {
+                                if (data_get($formData, 'open_date')) {
                                     Timeline::updateOrCreate([
                                         'type' => Timeline::TYPE_REGISTRATION_OPEN,
                                     ], [
@@ -78,7 +78,7 @@ class RegistrationSetting extends Component implements HasForms
                                     Timeline::type(Timeline::TYPE_REGISTRATION_OPEN)->delete();
                                 }
 
-                                if(data_get($formData, 'close_date')) {
+                                if (data_get($formData, 'close_date')) {
                                     Timeline::updateOrCreate([
                                         'type' => Timeline::TYPE_REGISTRATION_CLOSE,
                                     ], [

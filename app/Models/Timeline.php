@@ -65,7 +65,7 @@ class Timeline extends Model
         return false;
     }
 
-    public function scopeType($query, $type) 
+    public function scopeType($query, $type)
     {
         return $query->where('type', $type);
     }

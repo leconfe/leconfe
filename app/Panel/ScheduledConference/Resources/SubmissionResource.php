@@ -106,7 +106,7 @@ class SubmissionResource extends Resource
                             ->color('warning')
                             ->getStateUsing(function (Submission $record) {
                                 $isEditorAssigned = $record->editors_count;
-                                
+
                                 if (! $isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
                                     return __('general.no_editor_assigned');
                                 }
@@ -151,7 +151,7 @@ class SubmissionResource extends Resource
                     ])),
                 Tables\Actions\Action::make('review')
                     ->requiresConfirmation()
-                    ->action(fn(Submission $record) => dd($record)),
+                    ->action(fn (Submission $record) => dd($record)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->filters([

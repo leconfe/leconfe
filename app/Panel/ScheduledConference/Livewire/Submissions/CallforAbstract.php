@@ -7,7 +7,6 @@ use App\Mail\Templates\AcceptAbstractMail;
 use App\Mail\Templates\DeclineAbstractMail;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
-use App\Models\Enums\UserRole;
 use App\Models\Submission;
 use App\Notifications\AbstractAccepted;
 use App\Notifications\AbstractDeclined;

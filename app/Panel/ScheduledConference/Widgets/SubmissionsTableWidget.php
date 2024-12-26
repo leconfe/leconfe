@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Widgets;
 
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
-use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ManageSubmissions;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,8 +22,8 @@ class SubmissionsTableWidget extends BaseWidget
             ->heading(__('general.my_submissions'))
             ->query(
                 SubmissionResource::getEloquentQuery()
-                    ->whereHas('participants', fn(Builder $query) => $query->where('user_id', auth()->id()))
-                    ->orWhereHas('reviews', fn(Builder $query) => $query->where('user_id', auth()->id()))
+                    ->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
+                    ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()))
             );
     }
 }

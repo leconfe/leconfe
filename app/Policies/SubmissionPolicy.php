@@ -117,7 +117,6 @@ class SubmissionPolicy
             return false;
         }
 
-
         return $user->can('actAsEditor', $submission);
     }
 
@@ -131,11 +130,11 @@ class SubmissionPolicy
             return false;
         }
 
-        if($user->can('submitAs', Submission::class)){
+        if ($user->can('submitAs', Submission::class)) {
             return true;
         }
 
-        if (!$submission->isParticipant($user)) {
+        if (! $submission->isParticipant($user)) {
             return false;
         }
 
@@ -282,7 +281,7 @@ class SubmissionPolicy
 
     public function assignParticipant(User $user, Submission $submission)
     {
-        if($submission->status === SubmissionStatus::Withdrawn){
+        if ($submission->status === SubmissionStatus::Withdrawn) {
             return false;
         }
 
@@ -402,7 +401,7 @@ class SubmissionPolicy
     public function preview(User $user, Submission $submission)
     {
         $editorIds = $submission->participants()
-            ->whereHas('role', fn(Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor]))
+            ->whereHas('role', fn (Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor]))
             ->pluck('user_id');
 
         if (in_array($user->getKey(), $editorIds->toArray())) {
@@ -423,8 +422,9 @@ class SubmissionPolicy
         return false;
     }
 
-    public function actAsEditor(User $user, Submission $submission) {
-        if($user->can('submitAs', Submission::class) && !$submission->isParticipantAuthor($user)){
+    public function actAsEditor(User $user, Submission $submission)
+    {
+        if ($user->can('submitAs', Submission::class) && ! $submission->isParticipantAuthor($user)) {
             return true;
         }
 

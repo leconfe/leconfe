@@ -2,8 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
-use App\Forms\Components\TinyEditor;
 use App\Models\Timeline;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -63,8 +61,8 @@ class SubmissionSetting extends Component implements HasForms
                             $formData = $this->form->getState();
                             try {
                                 DB::beginTransaction();
-                                
-                                if(data_get($formData, 'open_date')) {
+
+                                if (data_get($formData, 'open_date')) {
                                     Timeline::updateOrCreate([
                                         'type' => Timeline::TYPE_SUBMISSION_OPEN,
                                     ], [
@@ -76,7 +74,7 @@ class SubmissionSetting extends Component implements HasForms
                                     Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->delete();
                                 }
 
-                                if(data_get($formData, 'close_date')) {
+                                if (data_get($formData, 'close_date')) {
                                     Timeline::updateOrCreate([
                                         'type' => Timeline::TYPE_SUBMISSION_CLOSE,
                                     ], [
@@ -87,7 +85,6 @@ class SubmissionSetting extends Component implements HasForms
                                 } else {
                                     Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->delete();
                                 }
-
 
                                 DB::commit();
                                 $action->sendSuccessNotification();

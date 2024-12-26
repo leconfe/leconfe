@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
 use App\Models\Enums\SubmissionStatus;
-use App\Models\Enums\UserRole;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
@@ -60,8 +59,8 @@ class Presentation extends Component implements HasActions, HasForms
 
     public function render()
     {
-        if($this->submission->status->isBefore(SubmissionStatus::OnPresentation)){
-            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated',);
+        if ($this->submission->status->isBefore(SubmissionStatus::OnPresentation)) {
+            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated');
         }
 
         return view('panel.scheduledConference.livewire.submissions.presentation', [
