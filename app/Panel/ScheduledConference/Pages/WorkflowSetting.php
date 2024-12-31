@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
+use App\Facades\Hook;
 use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Panel\Conference\Livewire\EmailSetting;
@@ -56,13 +57,13 @@ class WorkflowSetting extends Page
     {
         return $infolist
             ->schema([
-                Tabs::make()
+                Tabs::make('workflow')
                     ->contained(false)
                     ->tabs([
                         Tabs\Tab::make('Submission')
                             ->label(__('general.submissions'))
                             ->schema([
-                                InfolistsVerticalTabs\Tabs::make()
+                                InfolistsVerticalTabs\Tabs::make('workflow-submission')
                                     ->schema([
                                         InfolistsVerticalTabs\Tab::make('Submission')
                                             ->label(__('general.submission'))
@@ -105,7 +106,7 @@ class WorkflowSetting extends Page
                         Tabs\Tab::make('Review')
                             ->label(__('general.review'))
                             ->schema([
-                                InfolistsVerticalTabs\Tabs::make()
+                                InfolistsVerticalTabs\Tabs::make('workflow-review')
                                     ->schema([
                                         InfolistsVerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))

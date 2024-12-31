@@ -2,8 +2,10 @@
 
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
+use App\Actions\Review\ReviewUpdateAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionStatusRecommendation;
+use App\Facades\Hook;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ReviewCompleteMail;
 use App\Models\Review;
@@ -39,7 +41,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public ?Review $review;
 
-    public array $reviewData = [];
+    public array $formData = [];
 
     public ?string $recommendation = null;
 
@@ -58,17 +60,19 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             redirect(SubmissionResource::getUrl('reviewer-invitation', ['record' => $this->record]));
         }
 
-        $this->recommendation = $this->review->recommendation;
-
-        $this->reviewData = [
-            'review_author_editor' => $this->review->review_author_editor,
-            'review_editor' => $this->review->review_editor,
+        $formData = [
+            ...$this->review->attributesToArray(),
+            'meta' => $this->review->getAllMeta(),
         ];
+
+        Hook::call('ReviewSubmissionPage::Form::fill', [&$formData, $this]);
+
+        $this->form->fill($formData);
     }
 
     public function getHeading(): string|Htmlable
     {
-        return 'Review: '.$this->record->getMeta('title');
+        return 'Review: ' . $this->record->getMeta('title');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -76,10 +80,6 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
         return $infolist
             ->record($this->record)
             ->schema([
-                ShoutEntry::make('thank-you')
-                    ->visible(fn (): bool => $this->review->reviewSubmitted())
-                    ->type('success')
-                    ->content('Thank you for your time and effort in reviewing this submission. Your review will be used to help the editor make a decision on the submission.'),
                 InfolistSection::make()
                     ->heading('Submission Details')
                     ->schema([
@@ -88,36 +88,29 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('Title')
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('title')
+                                        fn(Submission $record): string => $record->getMeta('title')
                                     ),
                                 TextEntry::make('Author')
                                     ->color('gray')
-                                    ->visible(fn () => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
-                                    ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
+                                    ->visible(fn() => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->getStateUsing(fn(Submission $submission) => $submission->user?->fullName),
                                 TextEntry::make('Keywords')
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
+                                        fn(Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
                                     ),
                                 TextEntry::make('Abstract')
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('abstract')
+                                        fn(Submission $record): string => $record->getMeta('abstract')
                                     ),
                                 TextEntry::make('Review Mode')
-                                    ->getStateUsing(fn () => $this->review?->review_mode),
+                                    ->color('gray')
+                                    ->getStateUsing(fn() => $this->review?->review_mode),
                             ]),
                     ]),
             ]);
-    }
-
-    public function getForms(): array
-    {
-        return [
-            'reviewForm',
-            'recommendationForm',
-        ];
     }
 
     public function getHeaderActions(): array
@@ -127,82 +120,52 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 ->icon('heroicon-o-information-circle')
                 ->color('info')
                 ->action(
-                    fn () => $this->dispatch('show-guidelines')
+                    fn() => $this->dispatch('show-guidelines')
                 ),
         ];
     }
 
-    public function recommendationForm(Form $form): Form
+    public function form(Form $form): Form
     {
+        $form->statePath('formData')->disabled(fn() => $this->review->reviewSubmitted());
+
+        if (Hook::call('ReviewSubmissionPage::Form::form', [&$form, $this])) {
+            return $form;
+        }
+
         return $form
-            // ->disabled(fn (): bool => $this->review->reviewSubmitted())
             ->schema([
                 Section::make()
-                    ->heading('Recommendation')
+                    ->heading('Review Form')
                     ->schema([
+                        TinyEditor::make('meta.review_for_author_editor')
+                            ->minHeight(300)
+                            ->label('Review for Author and Editor'),
+                        TinyEditor::make('meta.review_for_editor')
+                            ->minHeight(300)
+                            ->label('Review for Editor'),
                         Select::make('recommendation')
                             ->required()
-                            ->label('')
-                            ->searchable()
+                            ->native(false)
                             ->options(SubmissionStatusRecommendation::list()),
                     ]),
             ]);
     }
 
-    public function reviewForm(Form $form): Form
+    public function submitReviewAction()
     {
-        return $form
-            ->disabled(
-                fn (): bool => $this->review->reviewSubmitted()
-            )
-            ->schema([
-                Section::make()
-                    ->heading('Review Form')
-                    ->schema([
-                        TinyEditor::make('reviewData.review_author_editor')
-                            ->minHeight(300)
-                            ->label('Review for Author and Editor'),
-                        TinyEditor::make('reviewData.review_editor')
-                            ->minHeight(300)
-                            ->label('Review for Editor'),
-
-                    ]),
-            ]);
-    }
-
-    private function validateAllForms()
-    {
-        foreach ($this->getForms() as $form) {
-            $this->{$form}->validate();
-        }
-    }
-
-    public function reviewAction()
-    {
-        return Action::make('reviewAction')
-            ->requiresConfirmation()
+        return Action::make('submitReviewAction')
             ->icon('lineawesome-check-circle-solid')
-            ->extraAttributes(['class' => 'w-full'], true)
-            ->outlined()
-            ->color(
-                fn (): string => ! is_null($this->review->recommendation) ? 'gray' : 'primary'
-            )
-            ->label(
-                fn (): string => ! is_null($this->review->recommendation) ? 'Review Submitted' : 'Review'
-            )
-            ->disabled(
-                fn (): bool => ! is_null($this->review->recommendation)
-            )
+            ->label('Submit Review')
+            ->requiresConfirmation()
+            ->hidden(fn() => $this->review->reviewSubmitted())
             ->successNotificationTitle('Review submitted successfully')
             ->action(function (Action $action) {
-                $this->validateAllForms();
+                $data = $this->form->getState();
+                $data['date_completed'] = now();
 
-                // Can't submitted twice
-                if ($this->review->recommendation === null) {
-                    $this->review->update([
-                        ...$this->reviewForm->getState()['reviewData'],
-                        'recommendation' => $this->recommendation,
-                    ]);
+                try {
+                    ReviewUpdateAction::run($this->review, $data);
 
                     $editors = $this->record->editors()
                         ->pluck('user_id')
@@ -214,6 +177,34 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                             new ReviewCompleteMail($this->review)
                         );
                     }
+                } catch (\Throwable $th) {
+                    $action->failureNotificationTitle($th->getMessage());
+                    $action->failure();
+
+                    throw $th;
+                }
+
+                $action->success();
+            });
+    }
+
+    public function saveForLaterAction()
+    {
+        return Action::make('saveForLaterAction')
+            ->label('Save for Later')
+            ->outlined()
+            ->hidden(fn() => $this->review->reviewSubmitted())
+            ->successNotificationTitle('Review saved')
+            ->action(function (Action $action) {
+                $data = $this->formData;
+
+                try {
+                    ReviewUpdateAction::run($this->review, $data);
+                } catch (\Throwable $th) {
+                    $action->failureNotificationTitle($th->getMessage());
+                    $action->failure();
+
+                    throw $th;
                 }
 
                 $action->success();

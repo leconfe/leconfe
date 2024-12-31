@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
+use App\Actions\Review\ReviewUpdateAction;
 use App\Constants\ReviewerStatus;
 use App\Facades\Setting;
 use App\Infolists\Components\LivewireEntry;
@@ -79,11 +80,10 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->requiresConfirmation()
             ->successNotificationTitle('Request Accepted')
             ->action(function (Action $action) {
-
                 try {
                     DB::beginTransaction();
 
-                    $this->review->update([
+                    ReviewUpdateAction::run($this->review, [
                         'date_confirmed' => now(),
                         'status' => ReviewerStatus::ACCEPTED,
                     ]);
@@ -133,7 +133,8 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->requiresConfirmation()
             ->successNotificationTitle('Request Declined')
             ->action(function (Action $action) {
-                $this->review->update([
+                
+                ReviewUpdateAction::run($this->review, [
                     'date_confirmed' => now(),
                     'status' => ReviewerStatus::DECLINED,
                 ]);

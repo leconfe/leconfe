@@ -64,9 +64,9 @@ class ReviewerList extends Component implements HasForms, HasTable
         $this->reviewerRole = Role::where('name', UserRole::Reviewer->value)->first();
     }
 
-    private static function formReviewerSchema(ReviewerList $component, bool $editMode = false): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form->schema([
             Select::make('user_id')
                 ->label(__('general.reviewer'))
                 ->placeholder(__('general.select_reviewer'))
@@ -75,65 +75,32 @@ class ReviewerList extends Component implements HasForms, HasTable
                 ->preload()
                 ->required()
                 ->searchable()
-                ->options(function ($state) use ($component, $editMode): array {
-                    return User::with('roles')
-                        ->whereHas('roles', function (Builder $query) use ($component) {
-                            $query->where('name', $component->reviewerRole->name);
-                        })
-                        ->when($editMode, function ($query) use ($component, $state) {
-                            $query->whereNotIn(
-                                'id',
-                                $component->record->reviews()
-                                    ->where('user_id', '!=', $state)
-                                    ->get()
-                                    ->pluck('user_id')
-                                    ->toArray()
-                            );
-                        })
-                        ->when(! $editMode, function ($query) use ($component) {
-                            $query->whereNotIn(
-                                'id',
-                                $component->record->reviews()
-                                    ->get()
-                                    ->pluck('user_id')
-                                    ->toArray()
-                            );
-                        })
-                        ->get()
-                        ->mapWithKeys(function (User $user) {
-                            return [$user->getKey() => static::renderSelectParticipant($user)];
-                        })
-                        ->toArray();
-                })
-                ->getSearchResultsUsing(function (Get $get, string $search) use ($component) {
+                ->getSearchResultsUsing(function (Get $get, string $search) {
                     return User::with('roles')
                         ->whereHas(
                             'roles',
                             fn (Builder $query) => $query->whereName(UserRole::Reviewer->value)
                         )
-                        ->whereNotIn('id', $component->record->reviews->pluck('user_id'))
+                        ->whereNotIn('id', $this->record->reviews->pluck('user_id'))
                         ->where(function (Builder $query) use ($search) {
                             $query->where('given_name', 'like', "%{$search}%")
                                 ->orWhere('family_name', 'like', "%{$search}%")
                                 ->orWhere('email', 'like', "%{$search}%");
                         })
                         ->limit(10)
-                        ->get()
                         ->lazy()
                         ->mapWithKeys(
-                            fn (User $user) => [
-                                $user->getKey() => static::renderSelectParticipant($user),
-                            ]
+                            fn (User $user) => [$user->getKey() => static::renderSelectParticipant($user)]
                         )
                         ->toArray();
                 }),
             CheckboxList::make('papers')
                 ->label(__('general.files_be_to_reviewer'))
                 ->hidden(
-                    ! $component->record->getMedia(SubmissionFileCategory::PAPER_FILES)->count()
+                    ! $this->record->getMedia(SubmissionFileCategory::PAPER_FILES)->count()
                 )
-                ->options(function () use ($component) {
-                    return $component->record
+                ->options(function () {
+                    return $this->record
                         ->submissionFiles()
                         ->with(['media'])
                         ->where('category', SubmissionFileCategory::PAPER_FILES)
@@ -150,8 +117,8 @@ class ReviewerList extends Component implements HasForms, HasTable
                             ];
                         });
                 })
-                ->descriptions(function () use ($component) {
-                    return $component->record
+                ->descriptions(function () {
+                    return $this->record
                         ->submissionFiles()
                         ->where('category', SubmissionFileCategory::PAPER_FILES)
                         ->get()
@@ -186,7 +153,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                 ->required()
                 ->label(__('general.review_mode'))
                 ->options(Review::getModeOptions()),
-        ];
+        ]);
     }
 
     public static function renderSelectParticipant(User $user): string
@@ -245,7 +212,12 @@ class ReviewerList extends Component implements HasForms, HasTable
                     TextColumn::make('recommendation')
                         ->label(__('general.recommendation'))
                         ->badge()
-                        ->formatStateUsing(function ($state) {
+                        ->formatStateUsing(function ($state, $record) {
+                            if(!$record->reviewSubmitted()){
+                                return '';
+                            }
+
+
                             return __('general.recommend').$state;
                         })
                         ->color(
@@ -260,10 +232,7 @@ class ReviewerList extends Component implements HasForms, HasTable
             ])
             ->actions([
                 Action::make('see-reviews')
-                    ->hidden(
-                        //No review is need to be seen.
-                        fn (Review $record): bool => is_null($record->date_completed)
-                    )
+                    ->visible(fn (Review $record): bool => $record->reviewSubmitted())
                     ->modalWidth('2xl')
                     ->modalCancelActionLabel(__('general.close'))
                     ->modalSubmitAction(false)
@@ -328,7 +297,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 'meta' => $record->getAllMeta(),
                             ]);
                         })
-                        ->form(static::formReviewerSchema($this, true))
+                        ->form(fn($form) => $this->form($form))
                         ->successNotificationTitle(__('general.reviewer_updated'))
                         ->action(function (Action $action, Review $record, array $data) {
                             $record->assignedFiles()->get()->each(
@@ -519,7 +488,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                     ->modalHeading(__('general.assign_reviewer'))
                     ->modalWidth('2xl')
                     ->authorize(fn () => auth()->user()->can('assignReviewer', $this->record))
-                    ->form(static::formReviewerSchema($this))
+                    ->form(fn($form) => $this->form($form))
                     ->action(function (Action $action, array $data) {
                         if ($this->record->reviews()->where('user_id', $data['user_id'])->exists()) {
                             $action->failureNotificationTitle(__('general.reviewer_already_assigned'));

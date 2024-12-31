@@ -33,7 +33,7 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
         return array_merge(static::getConferenceViewData(), parent::getVariables());
     }
 
-    public function buildViewData()
+    public function buildViewData(): array
     {
         return array_merge(static::getConferenceViewData(), parent::buildViewData());
     }

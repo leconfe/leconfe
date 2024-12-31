@@ -149,9 +149,6 @@ class SubmissionResource extends Resource
                     ->url(fn (Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),
-                Tables\Actions\Action::make('review')
-                    ->requiresConfirmation()
-                    ->action(fn (Submission $record) => dd($record)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->filters([

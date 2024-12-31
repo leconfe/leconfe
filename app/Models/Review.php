@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Review extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, Metable;
+    use HasFactory, InteractsWithMedia, Metable, Cachable;
 
     public const MODE_DOUBLE_ANONYMOUS = 1;
 
@@ -37,15 +38,6 @@ class Review extends Model implements HasMedia
         'review_author_editor',
         'review_editor',
     ];
-
-    protected static function booted(): void
-    {
-        static::saving(function (Model $record) {
-            if ($record->recommendation) {
-                $record->date_completed = now();
-            }
-        });
-    }
 
     public function reviewSubmitted(): bool
     {
