@@ -46,7 +46,7 @@ class Upgrade120Beta2 extends UpgradeBase
 
     protected function modifyTracks()
     {
-        Track::with(['meta'])->lazy()->each(function($track){
+        Track::with(['meta'])->lazy()->each(function ($track) {
             $track->setManyMeta($track->getAllMeta()->toArray());
         });
     }
