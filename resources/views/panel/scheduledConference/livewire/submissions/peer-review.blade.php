@@ -63,28 +63,30 @@
                     </div>
                 @endif
                 
-                <div @class([
-                    'flex flex-col gap-4 col-span-4',
-                    'hidden' => in_array($submission->status, [
-                        SubmissionStatus::Queued, 
-                        SubmissionStatus::Published,
-                        SubmissionStatus::OnPayment,
-                        SubmissionStatus::PaymentDeclined,
-                    ]),
-                ]) x-show="!decision">
-                    @if ($user->can('skipReview', $submission) && ! $submission->skipped_review)
-                        {{ $this->skipReviewAction() }}
-                    @endif
-                    @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
-                        {{ $this->requestRevisionAction() }}
-                    @endif
-                    @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))
-                        {{ $this->acceptSubmissionAction() }}
-                    @endif
-                    @if ($user->can('declinePaper', $submission) && ! in_array($submission->status, [SubmissionStatus::Declined]))
-                        {{ $this->declineSubmissionAction() }}
-                    @endif
-                </div>
+                @if(!$submission->getEditors()->isEmpty())
+                    <div @class([
+                        'flex flex-col gap-4 col-span-4',
+                        'hidden' => in_array($submission->status, [
+                            SubmissionStatus::Queued, 
+                            SubmissionStatus::Published,
+                            SubmissionStatus::OnPayment,
+                            SubmissionStatus::PaymentDeclined,
+                        ]),
+                    ]) x-show="!decision">
+                        @if ($user->can('skipReview', $submission) && ! $submission->skipped_review)
+                            {{ $this->skipReviewAction() }}
+                        @endif
+                        @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
+                            {{ $this->requestRevisionAction() }}
+                        @endif
+                        @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))
+                            {{ $this->acceptSubmissionAction() }}
+                        @endif
+                        @if ($user->can('declinePaper', $submission) && ! in_array($submission->status, [SubmissionStatus::Declined]))
+                            {{ $this->declineSubmissionAction() }}
+                        @endif
+                    </div>
+                @endif
             @endif
             @livewire(Components\ParticipantList::class, ['submission' => $submission, 'lazy' => true])
         </div>
