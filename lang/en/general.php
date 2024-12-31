@@ -993,4 +993,5 @@ return [
     'registration_setting.open_date' => 'Open Date',
     'registration_setting.close_date' => 'Close Date',
     'submission_setting.hide_from_timeline' => 'Hide from Timeline',
+    'files' => 'Files',
 ];
