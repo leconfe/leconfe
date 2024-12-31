@@ -54,7 +54,7 @@
                                 </li>
                                 <li class="w-full p-4 space-y-2 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.keywords') }}</div>
-                                    <div class="flex flex-wrap items-center gap-1 text-gray-700">
+                                    <div class="flex flex-wrap items-center gap-1 text-gray-500">
                                         @forelse ($this->record->tagsWithType('submissionKeywords')->pluck('name')->toArray() as $tag)
                                             <span @class([
                                                 'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm tracking-tight rounded-xl text-primary-700 bg-primary-500/10 whitespace-normal',
@@ -69,7 +69,7 @@
                                 </li>
                                 <li class="w-full p-4 border-gray-800 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.abstract') }}</div>
-                                    <div class="dark:text-gray-500">
+                                    <div class="text-gray-500">
                                         {!! $this->record->getMeta('abstract') !!}
                                     </div>
                                 </li>

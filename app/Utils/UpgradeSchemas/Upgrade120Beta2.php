@@ -4,6 +4,7 @@ namespace App\Utils\UpgradeSchemas;
 
 use App\Models\Permission;
 use App\Models\Review;
+use App\Models\Track;
 
 class Upgrade120Beta2 extends UpgradeBase
 {
@@ -11,6 +12,7 @@ class Upgrade120Beta2 extends UpgradeBase
     {
         $this->modifyReviews();
         $this->modifyPermissions();
+        $this->modifyTracks();
     }
 
     protected function modifyReviews()
@@ -40,5 +42,12 @@ class Upgrade120Beta2 extends UpgradeBase
         ])->each(fn ($name) => Permission::firstOrCreate([
             'name' => $name,
         ]));
+    }
+
+    protected function modifyTracks()
+    {
+        Track::with(['meta'])->lazy()->each(function ($track) {
+            $track->setManyMeta($track->getAllMeta()->toArray());
+        });
     }
 }

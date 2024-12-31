@@ -22,12 +22,6 @@ class ContributorsStep extends Component implements HasWizardStep
 
     public function nextStep()
     {
-        if (! $this->record->participants()->exists()) {
-            $this->addError('errors', __('general.must_add_one_author'));
-
-            return;
-        }
-
         $this->dispatch('refreshLivewire');
         $this->dispatch('refreshAbstractsFiles');
         $this->dispatch('next-wizard-step');

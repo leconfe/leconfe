@@ -30,7 +30,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(SubmissionFileType::query())
+            ->query(SubmissionFileType::withCount(['files']))
             ->defaultPaginationPageOption(10)
             ->heading(__('general.paper_components'))
             ->reorderable('order_column')
@@ -39,6 +39,8 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 TextColumn::make('name')
                     ->label(__('general.name'))
                     ->searchable(),
+                TextColumn::make('files_count')
+                    ->label(__('general.files')),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -50,7 +52,8 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->form(fn (Form $form) => $this->form($form)),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn (SubmissionFileType $record) => $record->files_count > 0),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
