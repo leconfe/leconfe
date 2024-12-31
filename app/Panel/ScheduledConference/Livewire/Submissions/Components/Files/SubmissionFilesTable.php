@@ -190,7 +190,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ]),
             DeleteAction::make()
                 ->authorize('deleteFile', $this->submission)
-                ->hidden(fn() => $this->isViewOnly()),
+                ->hidden(fn () => $this->isViewOnly()),
         ];
     }
 
