@@ -15,11 +15,13 @@ class TrackPopulateAction
         foreach ([
             'general' => 'General Track',
         ] as $abbr => $title) {
-            Track::firstOrCreate([
+            $track = Track::firstOrCreate([
                 'abbreviation' => $abbr,
                 'title' => $title,
                 'scheduled_conference_id' => $scheduledConference->id,
             ]);
+
+            $track->setManyMeta($track->getAllMeta()->toArray());
         }
     }
 }
