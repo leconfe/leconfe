@@ -7,14 +7,13 @@
 @php
     $user = auth()->user();
 @endphp
-
 <div class="space-y-6">
     <div @class([
         'gap-4',
         'grid grid-cols-12' => $user->can('actAsEditor', $submission),
     ])>
         <div class="col-span-8 space-y-4">
-            @livewire(Components\Files\AbstractFiles::class, ['submission' => $submission, 'category' => SubmissionFileCategory::SUPPLEMENTARY_FILES])
+            @livewire(Components\Files\AbstractFiles::class, ['submission' => $submission, 'category' => SubmissionFileCategory::SUPPLEMENTARY_FILES, 'viewOnly' => !$user->can('actAsEditor', $submission)])
 
             @livewire(Components\Discussions\DiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::CallforAbstract, 'lazy' => true])
         </div>
@@ -38,6 +37,7 @@
                             ></button>
                         </div>
                     @endif
+                    @if($submission->editors->isNotEmpty())
                     <div @class([
                         'space-y-4',
                     ]) x-show="!decision">
@@ -48,6 +48,7 @@
                             {{ $this->declineAction() }}
                         @endif
                     </div>
+                    @endif
                 </div>
             @endif
 

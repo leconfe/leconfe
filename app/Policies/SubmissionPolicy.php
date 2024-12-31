@@ -343,7 +343,7 @@ class SubmissionPolicy
             return false;
         }
 
-        return $user->can('acAsEditor', $submission);
+        return $user->can('actAsEditor', $submission);
     }
 
     public function publish(User $user, Submission $submission)
@@ -429,5 +429,18 @@ class SubmissionPolicy
         }
 
         return $submission->isParticipantEditor($user);
+    }
+
+    public function deleteFile(User $user, Submission $submission)
+    {
+        if (in_array($submission->status, [SubmissionStatus::Declined, SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+            return false;
+        }
+
+        if (filled($submission->withdrawn_reason)) {
+            return false;
+        }
+
+        return $user->can('actAsEditor', $submission);
     }
 }
