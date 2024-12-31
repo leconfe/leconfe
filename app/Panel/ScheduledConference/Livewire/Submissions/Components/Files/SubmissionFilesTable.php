@@ -6,7 +6,6 @@ use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -67,7 +66,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->icon('iconpark-download-o')
             ->label(__('general.download_all_files'))
             ->button()
-            ->hidden(fn (Table $table): bool => !$table->getQuery()->exists() || $this->isViewOnly())
+            ->hidden(fn (Table $table): bool => ! $table->getQuery()->exists() || $this->isViewOnly())
             ->color('gray')
             ->action(function (TableAction $action) {
                 $files = $this->submission->media()->where('collection_name', $this->category)->get();
