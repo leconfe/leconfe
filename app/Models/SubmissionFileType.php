@@ -18,7 +18,7 @@ class SubmissionFileType extends Model
         'scheduled_conference_id',
     ];
 
-    public function files() : HasMany
+    public function files(): HasMany
     {
         return $this->hasMany(SubmissionFile::class);
     }

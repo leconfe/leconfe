@@ -53,7 +53,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->form(fn (Form $form) => $this->form($form)),
                 DeleteAction::make()
-                    ->hidden(fn(SubmissionFileType $record) => $record->files_count > 0),
+                    ->hidden(fn (SubmissionFileType $record) => $record->files_count > 0),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
