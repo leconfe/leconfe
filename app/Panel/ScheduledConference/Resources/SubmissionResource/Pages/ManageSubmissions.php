@@ -75,7 +75,7 @@ class ManageSubmissions extends ManageRecords
 
     protected function tabUnassigned(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query->doesntHave('editors');
+        $modifyQuery = fn (Builder $query) => $query->doesntHave('editors')->where('status', '!=', SubmissionStatus::Incomplete);
 
         return Tab::make(__('general.unassigned'))
             ->modifyQueryUsing($modifyQuery)
