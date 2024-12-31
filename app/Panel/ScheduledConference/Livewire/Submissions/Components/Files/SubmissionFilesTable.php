@@ -67,7 +67,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->icon('iconpark-download-o')
             ->label(__('general.download_all_files'))
             ->button()
-            ->hidden(fn (): bool => $this->isViewOnly())
+            ->hidden(fn (Table $table): bool => !$table->getQuery()->exists() || $this->isViewOnly())
             ->color('gray')
             ->action(function (TableAction $action) {
                 $files = $this->submission->media()->where('collection_name', $this->category)->get();
@@ -85,24 +85,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             Select::make('type')
                 ->label(__('general.type'))
                 ->required()
-                ->options(
-                    fn () => SubmissionFileType::all()->pluck('name', 'id')->toArray()
-                )
-                ->searchable()
-                ->createOptionForm([
-                    TextInput::make('name')
-                        ->label(__('general.name'))
-                        ->required(),
-                ])
-                ->createOptionAction(function (FormAction $action) {
-                    $action->modalWidth('xl')
-                        ->failureNotificationTitle(__('general.problem_creating_file_type'))
-                        ->successNotificationTitle(__('general.file_type_created_successfulyy'));
-                })
-                ->createOptionUsing(function (array $data) {
-                    SubmissionFileType::create($data);
-                })
-                ->reactive(),
+                ->options(fn () => SubmissionFileType::all()->pluck('name', 'id')->toArray())
+                ->searchable(),
             SpatieMediaLibraryFileUpload::make('files')
                 ->required()
                 ->previewable(false)
