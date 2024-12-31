@@ -39,6 +39,7 @@ class PublisherLibrary extends Component implements HasForms, HasTable
             ->query(
                 Media::query()
                     ->where('model_type', ScheduledConference::class)
+                    ->where('model_id', app()->getCurrentScheduledConferenceId())
                     ->where('collection_name', 'publisher-library'),
             )
             ->defaultSort('order_column', 'asc')
