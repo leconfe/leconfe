@@ -9,6 +9,7 @@ use App\Console\Kernel as ConsoleKernel;
 use App\Events\UserLoggedIn;
 use App\Forms\Form;
 use App\Http\Kernel as HttpKernel;
+use App\Infolists\Infolist;
 use App\Listeners\SubmissionEventSubscriber;
 use App\Managers\MetaTagManager;
 use App\Managers\SidebarManager;
@@ -30,6 +31,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Filament\Forms\Form as FilamentForm;
+use Filament\Infolists\Infolist as FilamentInfolist;
 
 use function Illuminate\Events\queueable;
 
@@ -54,6 +56,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(FilamentForm::class, function ($app, $args) {
             return new Form(...$args);
+        });
+      
+        $this->app->bind(FilamentInfolist::class, function ($app, $args) {
+            return new Infolist(...$args);
         });
 
         // Use a custom URL generator to accomodate multi context.

@@ -34,7 +34,9 @@ class Review extends Model implements HasMedia
         'date_assigned',
         'date_confirmed',
         'date_completed',
+        'date_acknowledged',
         'quality',
+        'score',
         'review_author_editor',
         'review_editor',
     ];

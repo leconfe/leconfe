@@ -12,12 +12,12 @@ use App\Models\Review;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
-use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section as InfolistSection;
@@ -27,6 +27,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
@@ -127,13 +128,11 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function form(Form $form): Form
     {
-        $form->statePath('formData')->disabled(fn() => $this->review->reviewSubmitted());
-
-        if (Hook::call('ReviewSubmissionPage::Form::form', [&$form, $this])) {
-            return $form;
-        }
-
-        return $form
+         return $form
+            ->id('reviewSubmissionForm')
+            ->model($this->review)
+            ->statePath('formData')
+            ->disabled(fn() => $this->review->reviewSubmitted())
             ->schema([
                 Section::make()
                     ->heading('Review Form')
@@ -148,6 +147,14 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                             ->required()
                             ->native(false)
                             ->options(SubmissionStatusRecommendation::list()),
+                        TextInput::make('score')
+                            ->label('What is the overall score of this paper?')
+                            ->required()
+                            ->helperText('Score between 1-100')
+                            ->numeric()
+                            ->alphaNum()
+                            ->minValue(1)
+                            ->maxValue(100)
                     ]),
             ]);
     }
@@ -165,6 +172,8 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 $data['date_completed'] = now();
 
                 try {
+                    DB::beginTransaction();
+
                     ReviewUpdateAction::run($this->review, $data);
 
                     $editors = $this->record->editors()
@@ -172,19 +181,24 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                         ->toArray();
 
                     $editors = User::whereIn('id', $editors)->get();
+                    
                     if ($editors->count()) {
                         Mail::to($editors)->send(
                             new ReviewCompleteMail($this->review)
                         );
                     }
+                    
+                    $action->success();
+                    
+                    DB::commit();
                 } catch (\Throwable $th) {
+                    DB::rollBack();
+
                     $action->failureNotificationTitle($th->getMessage());
                     $action->failure();
-
-                    throw $th;
+                    return;
                 }
 
-                $action->success();
             });
     }
 

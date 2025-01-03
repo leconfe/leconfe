@@ -2,8 +2,9 @@
 
 namespace App\Forms;
 
-use App\Facades\Hook;
 use Closure;
+use App\Facades\Hook;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Concerns\HasId;
 
 class Form extends \Filament\Forms\Form 
@@ -16,7 +17,7 @@ class Form extends \Filament\Forms\Form
     public function components(array | Closure $components): static
     {
         if($this->getId()){
-            Hook::call('Forms::Form::components::' . Str::$this->getId(), [&$components, $this]);
+            Hook::call('Forms::Form::components::' . Str::camel($this->getId()), [&$components, $this]);
         }
 
         return parent::components($components);

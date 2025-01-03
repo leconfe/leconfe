@@ -27,7 +27,7 @@
                 {{ $this->form }}
             </form>
             
-            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerFiles::class, ['record' => $review])
+            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerFiles::class, ['record' => $review, 'viewOnly' => $review->reviewSubmitted()])
 
             @if(!$review->reviewSubmitted())
                 <div class="flex items-center gap-3">
