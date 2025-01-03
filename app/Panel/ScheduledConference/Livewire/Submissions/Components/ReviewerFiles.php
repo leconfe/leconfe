@@ -23,6 +23,13 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
 
     public Review $record;
 
+    public bool $viewOnly = false;
+
+    public function isViewOnly(): bool
+    {
+        return $this->viewOnly;
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -30,7 +37,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
             ->headerActions([
                 Action::make('download_all')
                     ->hidden(
-                        fn (): bool => $this->record->reviewSubmitted()
+                        fn (): bool => $this->isViewOnly()
                     )
                     ->icon('iconpark-download-o')
                     ->label('Download All Files')
@@ -44,7 +51,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
                 Action::make('upload')
                     ->label('Upload Files')
                     ->hidden(
-                        fn (): bool => $this->record->reviewSubmitted()
+                        fn (): bool => $this->isViewOnly()
                     )
                     ->icon('iconpark-upload')
                     ->form([
@@ -66,7 +73,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
             ->actions([
                 DeleteAction::make()
                     ->hidden(
-                        fn (): bool => $this->record->reviewSubmitted()
+                        fn (): bool => $this->isViewOnly()
                     ),
             ])
             ->query(

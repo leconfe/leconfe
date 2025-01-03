@@ -15,16 +15,29 @@
     }
 }
     ">
+    @if($review->reviewSubmitted())
+        <x-shout::shout type="success" color="success" icon="heroicon-o-check-circle">
+            Thank you for your time and effort in reviewing this submission. Your review will be used to help the editor make a decision on the submission.
+        </x-shout::shout>
+    @endif
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-8 space-y-4">
             @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles::class, ['record' => $review])
-            {{ $this->reviewForm }}
-            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerFiles::class, ['record' => $review])
+            <form>
+                {{ $this->form }}
+            </form>
+            
+            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerFiles::class, ['record' => $review, 'viewOnly' => $review->reviewSubmitted()])
+
+            @if(!$review->reviewSubmitted())
+                <div class="flex items-center gap-3">
+                    {{ $this->submitReviewAction() }}
+                    {{ $this->saveForLaterAction() }}
+                </div>
+            @endif
         </div>
         <div class="col-span-4 space-y-4 self-start sticky top-20">
             {{ $this->infolist }}
-            {{ $this->recommendationForm }}
-            {{ $this->reviewAction() }}
         </div>
     </div>
     <x-filament::modal id="guidelines" width="2xl" :close-by-clicking-away="false" >

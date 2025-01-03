@@ -83,7 +83,6 @@ class Submission extends Model implements HasMedia, Sortable
      */
     protected static function booted(): void
     {
-
         static::creating(function (Submission $submission) {
             $submission->user_id ??= Auth::id();
             $submission->conference_id ??= app()->getCurrentConferenceId();

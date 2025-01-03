@@ -55,7 +55,7 @@ body {
 }
 
 .fi-sidebar{
-    @apply lg:!bg-white lg:ring-1 lg:!shadow-xl dark:lg:!bg-gray-900
+    @apply lg:!bg-white lg:!shadow-xl dark:lg:!bg-gray-900
 }
 
 .fi-sidebar-header{

@@ -51,7 +51,6 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->bulleted()
                     ->listWithLineBreaks()
                     ->getStateUsing(function ($record) {
-
                         return ! empty($record->getMeta('track_editors')) ? User::with(['meta'])->role(UserRole::TrackEditor)->whereIn('id', $record->getMeta('track_editors'))->get()->pluck('fullName', 'id') : [];
                     }),
             ])

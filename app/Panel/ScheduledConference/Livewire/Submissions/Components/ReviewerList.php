@@ -2,11 +2,13 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
+use App\Actions\Review\ReviewUpdateAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
 use App\Constants\SubmissionStatusRecommendation;
 use App\Forms\Components\TinyEditor;
 use App\Infolists\Components\LivewireEntry;
+use App\Infolists\Infolist;
 use App\Mail\Templates\ReviewerCancelationMail;
 use App\Mail\Templates\ReviewerInvitationMail;
 use App\Models\DefaultMailTemplate;
@@ -19,12 +21,15 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Awcodes\Shout\Components\Shout;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -49,6 +54,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use Filament\Forms\Components\Livewire;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class ReviewerList extends Component implements HasForms, HasTable
 {
@@ -64,129 +72,98 @@ class ReviewerList extends Component implements HasForms, HasTable
         $this->reviewerRole = Role::where('name', UserRole::Reviewer->value)->first();
     }
 
-    private static function formReviewerSchema(ReviewerList $component, bool $editMode = false): array
+    public function form(Form $form): Form
     {
-        return [
-            Select::make('user_id')
-                ->label(__('general.reviewer'))
-                ->placeholder(__('general.select_reviewer'))
-                ->allowHtml()
-                ->hidden(fn ($record) => $record)
-                ->preload()
-                ->required()
-                ->searchable()
-                ->options(function ($state) use ($component, $editMode): array {
-                    return User::with('roles')
-                        ->whereHas('roles', function (Builder $query) use ($component) {
-                            $query->where('name', $component->reviewerRole->name);
-                        })
-                        ->when($editMode, function ($query) use ($component, $state) {
-                            $query->whereNotIn(
-                                'id',
-                                $component->record->reviews()
-                                    ->where('user_id', '!=', $state)
-                                    ->get()
-                                    ->pluck('user_id')
-                                    ->toArray()
-                            );
-                        })
-                        ->when(! $editMode, function ($query) use ($component) {
-                            $query->whereNotIn(
-                                'id',
-                                $component->record->reviews()
-                                    ->get()
-                                    ->pluck('user_id')
-                                    ->toArray()
-                            );
-                        })
-                        ->get()
-                        ->mapWithKeys(function (User $user) {
-                            return [$user->getKey() => static::renderSelectParticipant($user)];
-                        })
-                        ->toArray();
-                })
-                ->getSearchResultsUsing(function (Get $get, string $search) use ($component) {
-                    return User::with('roles')
-                        ->whereHas(
-                            'roles',
-                            fn (Builder $query) => $query->whereName(UserRole::Reviewer->value)
-                        )
-                        ->whereNotIn('id', $component->record->reviews->pluck('user_id'))
-                        ->where(function (Builder $query) use ($search) {
-                            $query->where('given_name', 'like', "%{$search}%")
-                                ->orWhere('family_name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        })
-                        ->limit(10)
-                        ->get()
-                        ->lazy()
-                        ->mapWithKeys(
-                            fn (User $user) => [
-                                $user->getKey() => static::renderSelectParticipant($user),
-                            ]
-                        )
-                        ->toArray();
-                }),
-            CheckboxList::make('papers')
-                ->label(__('general.files_be_to_reviewer'))
-                ->hidden(
-                    ! $component->record->getMedia(SubmissionFileCategory::PAPER_FILES)->count()
-                )
-                ->options(function () use ($component) {
-                    return $component->record
-                        ->submissionFiles()
-                        ->with(['media'])
-                        ->where('category', SubmissionFileCategory::PAPER_FILES)
-                        ->get()
-                        ->mapWithKeys(function (SubmissionFile $paper) {
-                            return [
-                                $paper->getKey() => new HtmlString(
-                                    Action::make($paper->media->file_name)
-                                        ->label($paper->media->file_name)
-                                        ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
-                                        ->link()
-                                        ->toHtml()
-                                ),
-                            ];
-                        });
-                })
-                ->descriptions(function () use ($component) {
-                    return $component->record
-                        ->submissionFiles()
-                        ->where('category', SubmissionFileCategory::PAPER_FILES)
-                        ->get()
-                        ->mapWithKeys(function (SubmissionFile $paper) {
-                            return [$paper->getKey() => $paper->type->name];
-                        });
-                }),
-            Fieldset::make('Notification')
-                ->label(__('general.notification'))
-                ->hidden(fn ($record) => $record)
-                ->schema([
-                    TextInput::make('subject')
-                        ->label(__('general.subject'))
-                        ->columnSpanFull(),
-                    TinyEditor::make('message')
-                        ->minHeight(300)
-                        ->profile('email')
-                        ->label(__('general.reviewer_invitation_message'))
-                        ->columnSpanFull(),
-                    Checkbox::make('no-invitation-notification')
-                        ->label(__('general.dont_send_notification'))
-                        ->columnSpanFull(),
-                ]),
-            Grid::make()
-                ->schema([
-                    DatePicker::make('meta.response_due_date')
-                        ->required(),
-                    DatePicker::make('meta.review_due_date')
-                        ->required(),
-                ]),
-            Radio::make('meta.review_mode')
-                ->required()
-                ->label(__('general.review_mode'))
-                ->options(Review::getModeOptions()),
-        ];
+        return $form
+            ->id('reviewerForm')
+            ->schema([
+                Select::make('user_id')
+                    ->label(__('general.reviewer'))
+                    ->placeholder(__('general.select_reviewer'))
+                    ->allowHtml()
+                    ->hidden(fn($record) => $record)
+                    ->preload()
+                    ->required()
+                    ->searchable()
+                    ->getSearchResultsUsing(function (Get $get, string $search) {
+                        return User::with('roles')
+                            ->whereHas(
+                                'roles',
+                                fn(Builder $query) => $query->whereName(UserRole::Reviewer->value)
+                            )
+                            ->whereNotIn('id', $this->record->reviews->pluck('user_id'))
+                            ->where(function (Builder $query) use ($search) {
+                                $query->where('given_name', 'like', "%{$search}%")
+                                    ->orWhere('family_name', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                            })
+                            ->limit(10)
+                            ->lazy()
+                            ->mapWithKeys(
+                                fn(User $user) => [$user->getKey() => static::renderSelectParticipant($user)]
+                            )
+                            ->toArray();
+                    }),
+                CheckboxList::make('papers')
+                    ->label(__('general.files_be_to_reviewer'))
+                    ->hidden(
+                        ! $this->record->getMedia(SubmissionFileCategory::PAPER_FILES)->count()
+                    )
+                    ->options(function () {
+                        return $this->record
+                            ->submissionFiles()
+                            ->with(['media'])
+                            ->where('category', SubmissionFileCategory::PAPER_FILES)
+                            ->get()
+                            ->mapWithKeys(function (SubmissionFile $paper) {
+                                return [
+                                    $paper->getKey() => new HtmlString(
+                                        Action::make($paper->media->file_name)
+                                            ->label($paper->media->file_name)
+                                            ->url(fn() => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
+                                            ->link()
+                                            ->toHtml()
+                                    ),
+                                ];
+                            });
+                    })
+                    ->descriptions(function () {
+                        return $this->record
+                            ->submissionFiles()
+                            ->where('category', SubmissionFileCategory::PAPER_FILES)
+                            ->get()
+                            ->mapWithKeys(function (SubmissionFile $paper) {
+                                return [$paper->getKey() => $paper->type->name];
+                            });
+                    }),
+                Fieldset::make('Notification')
+                    ->label(__('general.notification'))
+                    ->hidden(fn($record) => $record)
+                    ->schema([
+                        TextInput::make('subject')
+                            ->label(__('general.subject'))
+                            ->columnSpanFull(),
+                        TinyEditor::make('message')
+                            ->minHeight(300)
+                            ->profile('email')
+                            ->label(__('general.reviewer_invitation_message'))
+                            ->columnSpanFull(),
+                        Checkbox::make('no-invitation-notification')
+                            ->label(__('general.dont_send_notification'))
+                            ->columnSpanFull(),
+                    ]),
+                Grid::make()
+                    ->schema([
+                        DatePicker::make('meta.response_due_date')
+                            ->required(),
+                        DatePicker::make('meta.review_due_date')
+                            ->required(),
+                    ]),
+                Radio::make('meta.review_mode')
+                    ->required()
+                    ->label(__('general.review_mode'))
+                    ->options(Review::getModeOptions()),
+            ]);
     }
 
     public static function renderSelectParticipant(User $user): string
@@ -198,10 +175,10 @@ class ReviewerList extends Component implements HasForms, HasTable
     {
         return $table
             ->query(
-                fn (): Builder => $this->record->reviews()->getQuery()
+                fn(): Builder => $this->record->reviews()->getQuery()
                     ->when(
                         $this->record->isParticipantAuthor(auth()->user()),
-                        fn ($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
+                        fn($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
                             ->where('status', ReviewerStatus::ACCEPTED)
                     )
             )
@@ -215,7 +192,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                         ->width(50)
                         ->height(50)
                         ->defaultImageUrl(
-                            fn (Review $record): string => $record->user->getFilamentAvatarUrl()
+                            fn(Review $record): string => $record->user->getFilamentAvatarUrl()
                         )
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
@@ -225,10 +202,10 @@ class ReviewerList extends Component implements HasForms, HasTable
                         TextColumn::make('user.fullName')
                             ->label(__('general.full_name'))
                             ->color(
-                                fn (Review $record): string => $record->status == ReviewerStatus::CANCELED ? 'danger' : 'primary'
+                                fn(Review $record): string => $record->status == ReviewerStatus::CANCELED ? 'danger' : 'primary'
                             )
                             ->description(
-                                fn (Review $record): string => $record->user->email
+                                fn(Review $record): string => $record->user->email
                             ),
                         TextColumn::make('status')
                             ->extraAttributes(['class' => 'mt-2'])
@@ -245,11 +222,16 @@ class ReviewerList extends Component implements HasForms, HasTable
                     TextColumn::make('recommendation')
                         ->label(__('general.recommendation'))
                         ->badge()
-                        ->formatStateUsing(function ($state) {
-                            return __('general.recommend').$state;
+                        ->formatStateUsing(function ($state, $record) {
+                            if (!$record->reviewSubmitted()) {
+                                return '';
+                            }
+
+
+                            return __('general.recommend') . $state;
                         })
                         ->color(
-                            fn (Review $record): string => match ($record->recommendation) {
+                            fn(Review $record): string => match ($record->recommendation) {
                                 SubmissionStatusRecommendation::ACCEPT => 'primary',
                                 SubmissionStatusRecommendation::DECLINE => 'danger',
                                 default => 'warning'
@@ -259,63 +241,103 @@ class ReviewerList extends Component implements HasForms, HasTable
 
             ])
             ->actions([
-                Action::make('see-reviews')
-                    ->hidden(
-                        //No review is need to be seen.
-                        fn (Review $record): bool => is_null($record->date_completed)
-                    )
+                Action::make('read-review')
+                    ->visible(fn(Review $record): bool => $record->reviewSubmitted())
                     ->modalWidth('2xl')
-                    ->modalCancelActionLabel(__('general.close'))
-                    ->modalSubmitAction(false)
+                    ->modalSubmitActionLabel('Confirm')
+                    ->modalHeading(fn() => 'Review: ' . $this->record->getMeta('title'))
                     ->icon('lineawesome-eye')
-                    ->infolist(function (Review $record): array {
-                        return [
-                            TextEntry::make('Reviewer')
-                                ->label(__('general.reviewer'))
-                                ->size('base')
-                                ->getStateUsing(fn (): string => $record->user->fullName.' ('.$record->user->email.')')
-                                ->weight(FontWeight::Bold),
-                            TextEntry::make('Recommendation')
-                                ->label(__('general.recommendation'))
-                                ->size('base')
-                                ->badge()
-                                ->color(
-                                    fn (): string => match ($record->recommendation) {
-                                        SubmissionStatusRecommendation::ACCEPT => 'primary',
-                                        SubmissionStatusRecommendation::DECLINE => 'danger',
-                                        default => 'warning'
-                                    }
-                                )
-                                ->getStateUsing(fn (): string => $record->recommendation),
-                            TextEntry::make('Review for Author and Editor')
-                                ->label(__('general.review_for_author_and_editor'))
-                                ->size('base')
-                                ->color('gray')
-                                ->html()
-                                ->getStateUsing(fn (): ?string => $record->review_author_editor ?? '-'),
-                            TextEntry::make('Review for Editor')
-                                ->label(__('general.review_for_editor'))
-                                ->hidden(
-                                    fn (): bool => $this->record->user->getKey() == auth()->id()
-                                )
-                                ->size('base')
-                                ->color('gray')
-                                ->html()
-                                ->getStateUsing(fn (): ?string => $record->review_editor ?? '-'),
-                            LivewireEntry::make('reviewer-files')
-                                ->livewire(ReviewerFiles::class, [
+                    ->mountUsing(function (Review $record, Form $form) {
+                        $form->fill([
+                            ...$record->attributesToArray(),
+                            'meta' => $record->getAllMeta(),
+                        ]);
+                    })
+                    ->action(function (Review $record, array $data, Action $action) {
+                        try {
+                            DB::beginTransaction();
+
+                            $data['date_acknowledged'] = now();
+
+                            ReviewUpdateAction::run($record, Arr::only($data, ['date_acknowledged', 'recommendation', 'quality']));
+
+                            DB::commit();
+                        } catch (\Throwable $th) {
+                            DB::rollBack();
+                            $action->failureNotificationTitle($th->getMessage());
+                            $action->failure();
+
+                            return;
+                        }
+
+                        $action->success();
+                    })
+                    ->form(function (Form $form, Review $record) {
+                        return $form
+                            ->id('readReview')
+                            ->schema([
+                                Placeholder::make('')
+                                    ->extraAttributes(['class' => 'text-gray-500'])
+                                    ->content('Once this review has been read, press "Confirm" to indicate that the review process may proceed. If the reviewer has submitted their review elsewhere, you may upload the file below and then press "Confirm" to proceed.'),
+                                Shout::make('completed')
+                                    ->content(fn(Review $record) => 'Completed : ' . $record->date_completed),
+                                Shout::make('recommendation')
+                                    ->color(
+                                        fn(): string => match ($record->recommendation) {
+                                            SubmissionStatusRecommendation::ACCEPT => 'success',
+                                            SubmissionStatusRecommendation::DECLINE => 'danger',
+                                            default => 'warning'
+                                        }
+                                    )
+                                    ->content(fn(Review $record) => 'Recommendation : ' . $record->recommendation),
+                                Placeholder::make('reviewer')
+                                    ->content(fn(Review $record) => $record->user->fullName . ' (' . $record->user->email . ')'),
+                                Placeholder::make('score')
+                                    ->label('Paper Score')
+                                    ->hidden(fn(Review $record) => !$record->score)
+                                    ->content(fn(Review $record) => $record->score),
+
+                                Section::make('Reviewer Comments')
+                                    ->schema([
+                                        Placeholder::make('for_author_and_editor')
+                                            ->label('For Author and Editor')
+                                            ->extraAttributes(['class' => 'prose'])
+                                            ->content(fn($record) => $record->getMeta('review_for_author_editor') ? new HtmlString($record->getMeta('review_for_author_editor')) : '-'),
+                                        Placeholder::make('for_editor')
+                                            ->label('For Editor')
+                                            ->extraAttributes(['class' => 'prose'])
+                                            ->content(fn($record) => $record->getMeta('review_for_editor') ? new HtmlString($record->getMeta('review_for_editor')) : '-'),
+                                    ]),
+                                Livewire::make(ReviewerFiles::class, [
                                     'record' => $record,
-                                ])
-                                ->lazy(),
-                        ];
+                                    'viewOnly' => !!$record->date_acknowledged
+                                ])->lazy(),
+                                Select::make('recommendation')
+                                    ->required()
+                                    ->helperText('Set or adjust the reviewer recommendation.')
+                                    ->options(SubmissionStatusRecommendation::list()),
+                                Select::make('quality')
+                                    ->required()
+                                    ->native(false)
+                                    ->label('Reviewer Rating')
+                                    ->helperText('Rate the quality of the review provided. This rating is not shared with the reviewer.')
+                                    ->options(
+                                        collect([1, 2, 3, 4, 5])
+                                            ->mapWithKeys(fn($count) => [$count => view('components.star', ['count' => $count])->render()])
+                                            ->prepend('No Rating', 0)
+                                            ->toArray()
+
+                                    )
+                                    ->allowHtml()
+                            ]);
                     }),
                 ActionGroup::make([
                     Action::make('edit-reviewer')
-                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
+                        ->hidden(fn(Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
                         ->visible(
-                            fn ($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
+                            fn($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
                         )
-                        ->authorize(fn () => auth()->user()->can('editReviewer', $this->record))
+                        ->authorize(fn() => auth()->user()->can('editReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-edit')
                         ->label(__('general.edit'))
@@ -328,11 +350,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 'meta' => $record->getAllMeta(),
                             ]);
                         })
-                        ->form(static::formReviewerSchema($this, true))
+                        ->form(fn($form) => $this->form($form))
                         ->successNotificationTitle(__('general.reviewer_updated'))
                         ->action(function (Action $action, Review $record, array $data) {
                             $record->assignedFiles()->get()->each(
-                                fn (ReviewerAssignedFile $file) => $file->delete()
+                                fn(ReviewerAssignedFile $file) => $file->delete()
                             );
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
@@ -350,7 +372,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                             $action->success();
                         }),
                     Action::make('email-reviewer')
-                        ->authorize(fn () => auth()->user()->can('emailReviewer', $this->record))
+                        ->authorize(fn() => auth()->user()->can('emailReviewer', $this->record))
                         ->label(__('general.email_reviewer'))
                         ->icon('iconpark-sendemail')
                         ->modalSubmitActionLabel(__('general.send'))
@@ -384,11 +406,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Action::make('cancel-reviewer')
                         ->color('danger')
-                        ->authorize(fn () => auth()->user()->can('cancelReviewer', $this->record))
+                        ->authorize(fn() => auth()->user()->can('cancelReviewer', $this->record))
                         ->icon('iconpark-deletethree-o')
                         ->label(__('general.cancel_reviewer'))
                         ->hidden(
-                            fn (Review $record) => $record->status == ReviewerStatus::CANCELED || $record->confirmed()
+                            fn(Review $record) => $record->status == ReviewerStatus::CANCELED || $record->confirmed()
                         )
                         ->successNotificationTitle(__('general.reviewer_canceled'))
                         ->modalWidth('2xl')
@@ -408,18 +430,18 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     TextInput::make('email')
                                         ->label(__('general.email'))
                                         ->disabled()
-                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
                                         ->dehydrated(),
                                     TextInput::make('subject')
                                         ->label(__('general.subject'))
-                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
                                         ->required()
                                         ->columnSpanFull(),
                                     TinyEditor::make('message')
                                         ->label(__('general.message'))
                                         ->minHeight(300)
                                         ->profile('email')
-                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->hidden(fn(Get $get) => $get('do-not-notify-cancelation'))
                                         ->columnSpanFull(),
                                     Checkbox::make('do-not-notify-cancelation')
                                         ->reactive()
@@ -450,11 +472,11 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Action::make('reinstate-reviewer')
                         ->color('primary')
-                        ->authorize(fn () => auth()->user()->can('reinstateReviewer', $this->record))
+                        ->authorize(fn() => auth()->user()->can('reinstateReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-deletethree-o')
                         ->hidden(
-                            fn (Review $record) => $record->status != ReviewerStatus::CANCELED
+                            fn(Review $record) => $record->status != ReviewerStatus::CANCELED
                         )
                         ->label(__('general.reinstate_reviewer'))
                         ->successNotificationTitle(__('general.reviewer_reinstated'))
@@ -476,9 +498,9 @@ class ReviewerList extends Component implements HasForms, HasTable
                         }),
                     Impersonate::make()
                         ->grouped()
-                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
+                        ->hidden(fn(Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
                         ->visible(
-                            fn (Model $record): bool => $record->user->email !== auth()->user()->email && auth()->user()->canImpersonate()
+                            fn(Model $record): bool => $record->user->email !== auth()->user()->email && auth()->user()->canImpersonate()
                         )
                         ->label(__('general.login_as'))
                         ->icon('iconpark-login')
@@ -518,8 +540,8 @@ class ReviewerList extends Component implements HasForms, HasTable
                     ->label(__('general.reviewer'))
                     ->modalHeading(__('general.assign_reviewer'))
                     ->modalWidth('2xl')
-                    ->authorize(fn () => auth()->user()->can('assignReviewer', $this->record))
-                    ->form(static::formReviewerSchema($this))
+                    ->authorize(fn() => auth()->user()->can('assignReviewer', $this->record))
+                    ->form(fn($form) => $this->form($form))
                     ->action(function (Action $action, array $data) {
                         if ($this->record->reviews()->where('user_id', $data['user_id'])->exists()) {
                             $action->failureNotificationTitle(__('general.reviewer_already_assigned'));

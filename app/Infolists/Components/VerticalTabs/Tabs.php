@@ -3,6 +3,8 @@
 namespace App\Infolists\Components\VerticalTabs;
 
 use Closure;
+use App\Facades\Hook;
+use Illuminate\Support\Str;
 use Filament\Infolists\Components\Tabs as ComponentsTabs;
 
 class Tabs extends ComponentsTabs
@@ -59,5 +61,16 @@ class Tabs extends ComponentsTabs
     public function isSticky(): bool
     {
         return $this->sticky;
+    }
+
+    public function childComponents(array | Closure $components): static
+    {
+        $id = Str::slug($this->label);
+
+        Hook::call('VerticalTabs::Tabs::childComponents', [$id, &$components, $this]);
+
+        $this->childComponents = $components;
+
+        return $this;
     }
 }
