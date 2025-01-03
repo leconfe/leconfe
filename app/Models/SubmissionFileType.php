@@ -7,9 +7,10 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
-class SubmissionFileType extends Model
+class SubmissionFileType extends Model implements Sortable
 {
     use BelongsToScheduledConference, Cachable, HasFactory, SortableTrait;
 
