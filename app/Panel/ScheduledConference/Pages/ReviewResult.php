@@ -13,6 +13,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewResult extends Page implements HasTable, HasForms
 {
@@ -23,6 +25,16 @@ class ReviewResult extends Page implements HasTable, HasForms
     protected static string $view = 'panel.scheduled-conference.pages.review-result';
 
     protected static ?int $navigationSort = 99;
+
+    public function mount(): void
+    {
+        $this->authorize('update', App::getCurrentScheduledConference());
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('update', App::getCurrentScheduledConference());
+    }
 
     public static function getNavigationGroup(): string
     {
