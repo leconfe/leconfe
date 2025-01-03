@@ -5,7 +5,6 @@ namespace App\Panel\ScheduledConference\Resources;
 use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
-use App\Models\Enums\UserRole;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use Filament\Resources\Resource;
@@ -48,7 +47,7 @@ class SubmissionResource extends Resource
             ->withCount([
                 'editors',
                 'reviews',
-                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed')
+                'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
             ])
             ->with(['meta', 'user', 'reviews', 'participants'])
             ->orderBy('updated_at', 'desc');
@@ -93,7 +92,7 @@ class SubmissionResource extends Resource
                             ->searchable(query: function (Builder $query, string $search): Builder {
                                 return $query
                                     ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
                             }),
                         Tables\Columns\TextColumn::make('status')
                             ->extraAttributes([
@@ -125,9 +124,9 @@ class SubmissionResource extends Resource
                             ->extraCellAttributes([
                                 'style' => 'width: 1px',
                             ])
-                            ->getStateUsing(fn($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
+                            ->getStateUsing(fn ($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
                                 'reviews_count' => $record->reviews_count,
-                                'completed_reviews_count' => $record->completed_reviews_count
+                                'completed_reviews_count' => $record->completed_reviews_count,
                             ]) : ''),
                         Tables\Columns\TextColumn::make('reviewed')
                             ->badge()
