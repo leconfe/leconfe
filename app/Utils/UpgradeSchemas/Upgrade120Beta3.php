@@ -44,7 +44,7 @@ class Upgrade120Beta3 extends UpgradeBase
 
         collect([
             'Submission:submitAs',
-        ])->each(fn($name) => Permission::firstOrCreate([
+        ])->each(fn ($name) => Permission::firstOrCreate([
             'name' => $name,
         ]));
     }
@@ -59,14 +59,14 @@ class Upgrade120Beta3 extends UpgradeBase
     protected function updateReviewTable()
     {
         Schema::table('reviews', function (Blueprint $table) {
-            
+
             if (! Schema::hasColumn('reviews', 'score')) {
                 $table->unsignedInteger('score')->nullable()->after('quality');
             }
-            if (!Schema::hasColumn('reviews', 'date_acknowledged')) {
+            if (! Schema::hasColumn('reviews', 'date_acknowledged')) {
                 $table->timestamp('date_acknowledged')->nullable()->after('date_completed');
             }
-            
+
             $table->removeColumn('review_for_author_editor');
             $table->removeColumn('review_editor');
         });

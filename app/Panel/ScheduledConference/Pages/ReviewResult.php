@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -16,9 +15,9 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
-class ReviewResult extends Page implements HasTable, HasForms
+class ReviewResult extends Page implements HasForms, HasTable
 {
-    use InteractsWithTable, InteractsWithForms;
+    use InteractsWithForms, InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-eye';
 
@@ -52,14 +51,14 @@ class ReviewResult extends Page implements HasTable, HasForms
                         SubmissionStatus::OnPresentation,
                         SubmissionStatus::Editing,
                         SubmissionStatus::Published,
-                        SubmissionStatus::Declined
+                        SubmissionStatus::Declined,
                     ])
-                    ->whereHas('reviews', fn($query) => $query->whereNotNull('date_completed'))
+                    ->whereHas('reviews', fn ($query) => $query->whereNotNull('date_completed'))
                     ->withCount([
                         'reviews',
-                        'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed')
+                        'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
                     ])
-                    ->withAvg(['reviews' => fn($query) => $query->whereNotNull('date_completed')], 'score'),
+                    ->withAvg(['reviews' => fn ($query) => $query->whereNotNull('date_completed')], 'score'),
             )
             ->defaultSort('reviews_avg_score', 'desc')
             ->columns([
@@ -69,20 +68,20 @@ class ReviewResult extends Page implements HasTable, HasForms
                     ])
                     ->sortable()
                     ->label('Score')
-                    ->searchable(query: fn($query, $search) => $query->whereMeta('title', 'like', "%$search%"))
+                    ->searchable(query: fn ($query, $search) => $query->whereMeta('title', 'like', "%$search%"))
                     ->numeric(maxDecimalPlaces: 2),
                 TextColumn::make('reviews')
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])
-                    ->getStateUsing(fn($record) => $record->completed_reviews_count . ' / ' . $record->reviews_count),
+                    ->getStateUsing(fn ($record) => $record->completed_reviews_count.' / '.$record->reviews_count),
                 TextColumn::make('id')
-                    ->label("ID"),
+                    ->label('ID'),
                 TextColumn::make('title')
-                    ->getStateUsing(fn($record) => $record->getMeta('title'))
+                    ->getStateUsing(fn ($record) => $record->getMeta('title'))
                     ->color('primary')
                     ->openUrlInNewTab()
-                    ->url(fn($record) => SubmissionResource::getUrl('view', ['record' => $record]))
+                    ->url(fn ($record) => SubmissionResource::getUrl('view', ['record' => $record]))
                     ->wrap(),
                 TextColumn::make('status')
                     ->extraAttributes([

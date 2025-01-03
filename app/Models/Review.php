@@ -12,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Review extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, Metable, Cachable;
+    use Cachable, HasFactory, InteractsWithMedia, Metable;
 
     public const MODE_DOUBLE_ANONYMOUS = 1;
 

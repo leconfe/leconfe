@@ -10,7 +10,7 @@ class Tab extends ComponentsTab
 {
     protected string $view = 'infolists.components.vertical-tabs.tab';
 
-    public function childComponents(array | Closure $components): static
+    public function childComponents(array|Closure $components): static
     {
         $id = $this->id;
 

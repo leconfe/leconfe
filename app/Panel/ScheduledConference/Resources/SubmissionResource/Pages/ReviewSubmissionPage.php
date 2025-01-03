@@ -73,7 +73,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return 'Review: ' . $this->record->getMeta('title');
+        return 'Review: '.$this->record->getMeta('title');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -89,26 +89,26 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('Title')
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn(Submission $record): string => $record->getMeta('title')
+                                        fn (Submission $record): string => $record->getMeta('title')
                                     ),
                                 TextEntry::make('Author')
                                     ->color('gray')
-                                    ->visible(fn() => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
-                                    ->getStateUsing(fn(Submission $submission) => $submission->user?->fullName),
+                                    ->visible(fn () => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
                                 TextEntry::make('Keywords')
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn(Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
+                                        fn (Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
                                     ),
                                 TextEntry::make('Abstract')
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(
-                                        fn(Submission $record): string => $record->getMeta('abstract')
+                                        fn (Submission $record): string => $record->getMeta('abstract')
                                     ),
                                 TextEntry::make('Review Mode')
                                     ->color('gray')
-                                    ->getStateUsing(fn() => $this->review?->review_mode),
+                                    ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
                     ]),
             ]);
@@ -121,18 +121,18 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 ->icon('heroicon-o-information-circle')
                 ->color('info')
                 ->action(
-                    fn() => $this->dispatch('show-guidelines')
+                    fn () => $this->dispatch('show-guidelines')
                 ),
         ];
     }
 
     public function form(Form $form): Form
     {
-         return $form
+        return $form
             ->id('reviewSubmissionForm')
             ->model($this->review)
             ->statePath('formData')
-            ->disabled(fn() => $this->review->reviewSubmitted())
+            ->disabled(fn () => $this->review->reviewSubmitted())
             ->schema([
                 Section::make()
                     ->heading('Review Form')
@@ -154,7 +154,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                             ->numeric()
                             ->alphaNum()
                             ->minValue(1)
-                            ->maxValue(100)
+                            ->maxValue(100),
                     ]),
             ]);
     }
@@ -165,7 +165,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->icon('lineawesome-check-circle-solid')
             ->label('Submit Review')
             ->requiresConfirmation()
-            ->hidden(fn() => $this->review->reviewSubmitted())
+            ->hidden(fn () => $this->review->reviewSubmitted())
             ->successNotificationTitle('Review submitted successfully')
             ->action(function (Action $action) {
                 $data = $this->form->getState();
@@ -181,21 +181,22 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                         ->toArray();
 
                     $editors = User::whereIn('id', $editors)->get();
-                    
+
                     if ($editors->count()) {
                         Mail::to($editors)->send(
                             new ReviewCompleteMail($this->review)
                         );
                     }
-                    
+
                     $action->success();
-                    
+
                     DB::commit();
                 } catch (\Throwable $th) {
                     DB::rollBack();
 
                     $action->failureNotificationTitle($th->getMessage());
                     $action->failure();
+
                     return;
                 }
 
@@ -207,7 +208,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
         return Action::make('saveForLaterAction')
             ->label('Save for Later')
             ->outlined()
-            ->hidden(fn() => $this->review->reviewSubmitted())
+            ->hidden(fn () => $this->review->reviewSubmitted())
             ->successNotificationTitle('Review saved')
             ->action(function (Action $action) {
                 $data = $this->formData;

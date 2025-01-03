@@ -2,10 +2,10 @@
 
 namespace App\Infolists\Components\VerticalTabs;
 
-use Closure;
 use App\Facades\Hook;
-use Illuminate\Support\Str;
+use Closure;
 use Filament\Infolists\Components\Tabs as ComponentsTabs;
+use Illuminate\Support\Str;
 
 class Tabs extends ComponentsTabs
 {
@@ -63,7 +63,7 @@ class Tabs extends ComponentsTabs
         return $this->sticky;
     }
 
-    public function childComponents(array | Closure $components): static
+    public function childComponents(array|Closure $components): static
     {
         $id = Str::slug($this->label);
 

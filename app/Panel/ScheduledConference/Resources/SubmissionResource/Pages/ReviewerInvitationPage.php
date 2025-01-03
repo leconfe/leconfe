@@ -133,7 +133,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->requiresConfirmation()
             ->successNotificationTitle('Request Declined')
             ->action(function (Action $action) {
-                
+
                 ReviewUpdateAction::run($this->review, [
                     'date_confirmed' => now(),
                     'status' => ReviewerStatus::DECLINED,

@@ -16,7 +16,8 @@ use App\Managers\SidebarManager;
 use App\Models\Conference;
 use App\Models\ScheduledConference;
 use App\Routing\CustomUrlGenerator;
-use Filament\Facades\Filament;
+use Filament\Forms\Form as FilamentForm;
+use Filament\Infolists\Infolist as FilamentInfolist;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Client\Factory as Http;
@@ -30,8 +31,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-use Filament\Forms\Form as FilamentForm;
-use Filament\Infolists\Infolist as FilamentInfolist;
 
 use function Illuminate\Events\queueable;
 
@@ -57,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FilamentForm::class, function ($app, $args) {
             return new Form(...$args);
         });
-      
+
         $this->app->bind(FilamentInfolist::class, function ($app, $args) {
             return new Infolist(...$args);
         });
