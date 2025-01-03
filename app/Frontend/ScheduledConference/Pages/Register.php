@@ -23,6 +23,8 @@ class Register extends Page
 
     public $family_name = null;
 
+    public $public_name = null;
+
     public $affiliation = null;
 
     public $country = null;
