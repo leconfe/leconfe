@@ -24,6 +24,7 @@ class Announcements extends Page
         return [
             'announcements' => Announcement::query()
                 ->where('expires_at', '>', now()->startOfDay())
+                ->orWhereNull('expires_at')
                 ->orderBy('created_at', 'desc')
                 ->with('meta')
                 ->get(),
