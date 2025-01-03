@@ -21,7 +21,7 @@ class ReviewResult extends Page implements HasForms, HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-eye';
 
-    protected static string $view = 'panel.scheduled-conference.pages.review-result';
+    protected static string $view = 'panel.scheduledConference.pages.review-result';
 
     protected static ?int $navigationSort = 99;
 

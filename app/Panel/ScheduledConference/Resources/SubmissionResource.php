@@ -44,7 +44,14 @@ class SubmissionResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withCount('editors')->with(['meta', 'user', 'reviews', 'participants'])->orderBy('updated_at', 'desc');
+        return parent::getEloquentQuery()
+            ->withCount([
+                'editors',
+                'reviews',
+                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed')
+            ])
+            ->with(['meta', 'user', 'reviews', 'participants'])
+            ->orderBy('updated_at', 'desc');
     }
 
     public static function table(Table $table): Table
@@ -96,13 +103,15 @@ class SubmissionResource extends Resource
                             ->formatStateUsing(
                                 fn (Submission $record) => $record->status?->value
                             ),
-
                     ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('editor-assigned-badges')
                             ->badge()
                             ->extraAttributes([
                                 'class' => 'mt-2',
+                            ])
+                            ->extraCellAttributes([
+                                'style' => 'width: 1px',
                             ])
                             ->color('warning')
                             ->getStateUsing(function (Submission $record) {
@@ -112,10 +121,17 @@ class SubmissionResource extends Resource
                                     return __('general.no_editor_assigned');
                                 }
                             }),
+                        Tables\Columns\TextColumn::make('reviews')
+                            ->extraCellAttributes([
+                                'style' => 'width: 1px',
+                            ])
+                            ->getStateUsing(fn($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
+                                'reviews_count' => $record->reviews_count,
+                                'completed_reviews_count' => $record->completed_reviews_count
+                            ]) : ''),
                         Tables\Columns\TextColumn::make('reviewed')
                             ->badge()
                             ->color('success')
-                            // ->hidden(fn() => !auth()->user()->hasRole(UserRole::Reviewer))
                             ->getStateUsing(function (Submission $record) {
                                 $review = $record->reviews->where('user_id', auth()->id())->first();
                                 if (! $review) {
