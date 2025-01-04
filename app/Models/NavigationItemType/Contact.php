@@ -14,7 +14,7 @@ class Contact extends BaseNavigationItemType
 
     public static function getLabel(): string
     {
-        return __("general.contact");
+        return __('general.contact');
     }
 
     public static function getIsDisplayed(NavigationMenuItem $navigationMenuItem): bool
