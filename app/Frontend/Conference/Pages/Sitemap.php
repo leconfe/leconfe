@@ -124,6 +124,15 @@ class Sitemap extends Page
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
                 );
 
+                
+                $sitemap->add(
+                    Url::create(route(ScheduledConferencePages\Contact::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
+                        ->setLastModificationDate($scheduledConference->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+                );
+
+
+
                 $sitemap->add(
                     Url::create(route(ScheduledConferencePages\EditorialTeam::getRouteName('scheduledConference'), ['serie' => $scheduledConference]))
                         ->setLastModificationDate($scheduledConference->updated_at)

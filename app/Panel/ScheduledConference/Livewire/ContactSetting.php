@@ -3,9 +3,11 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -57,6 +59,8 @@ class ContactSetting extends Component implements HasForms
                                     ->type('tel'),
                                 TextInput::make('meta.principal_contact_affiliation')
                                     ->label(__('general.affiliation')),
+                                Textarea::make('meta.mailing_address')
+                                    ->label(__('general.mailing_address'))
                             ]),
 
                         Section::make(__('general.technical_support_contact'))

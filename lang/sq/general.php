@@ -413,7 +413,7 @@ return [
     'contact' => 'Kontakt',
     'scheduled_conference_setting' => 'Cilësimi i Konferencës të Programuar',
     'principal_contact' => 'Kontakti Kryesor',
-    'principal_contact_description' => 'Futni detajet e kontaktit, zakonisht për një redaktim kryesor, redaktim menaxhimi ose pozita të stafit administrativ, të cilat mund të shfaqen në faqen tuaj të aksesueshme publikisht.',
+    'principal_contact_description' => 'Futni detajet e kontaktit, zakonisht për kryetarin e konferencës, komitetin organizues ose ekipin mbështetës administrativ, të cilat mund të shfaqen në faqen tuaj të konferencës të aksesueshme publikisht.',
     'technical_support_contact' => 'Kontakt për Mbështetje Teknike',
     'a_contact_person_who_can_assist_editors' => 'Një person kontakti që mund të ndihmojë redaktorët, autorët dhe rishikuesit me ndonjë problem që kanë në dorëzimin, redaktimin, rishikimin ose botimin e materialeve.',
 

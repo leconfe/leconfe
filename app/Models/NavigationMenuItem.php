@@ -59,6 +59,7 @@ class NavigationMenuItem extends Model implements Sortable
         return [
             'remote-url' => NavigationItemType\RemoteUrl::class,
             'about' => NavigationItemType\About::class,
+            'contact' => NavigationItemType\Contact::class,
             'announcements' => NavigationItemType\Announcements::class,
             'dashboard' => NavigationItemType\Dashboard::class,
             'home' => NavigationItemType\Home::class,
