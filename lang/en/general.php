@@ -423,8 +423,8 @@ return [
     'masthead' => 'Masthead',
     'contact' => 'Contact',
     'scheduled_conference_setting' => 'Scheduled Conference Setting',
-    'principal_contact' => 'Principal Contact',
-    'principal_contact_description' => 'Enter contact details, typically for a principal editorship, managing editorship, or administrative staff position, which can be displayed on your publicly accessible website.',
+    'principal_contact' => 'Chair Contact',
+    'principal_contact_description' => 'Enter contact details, typically for a conference chair, organizing committee, or administrative support team, which can be displayed on your publicly accessible conference website.',
     'technical_support_contact' => 'Technical Support Contact',
     'a_contact_person_who_can_assist_editors' => 'A contact person who can assist editors, authors and reviewers with any problems they have submitting, editing, reviewing or publishing material.',
 
@@ -994,4 +994,5 @@ return [
     'registration_setting.close_date' => 'Close Date',
     'submission_setting.hide_from_timeline' => 'Hide from Timeline',
     'files' => 'Files',
+    'mailing_address' => 'Mailing Address',
 ];
