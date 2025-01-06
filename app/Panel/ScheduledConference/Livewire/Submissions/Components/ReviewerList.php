@@ -323,6 +323,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                             ->content(fn ($record) => $record->getMeta('review_for_author_editor') ? new HtmlString($record->getMeta('review_for_author_editor')) : '-'),
                                         Placeholder::make('for_editor')
                                             ->label('For Editor')
+                                            ->visible(fn() => auth()->user()->can('actAsEditor', $this->record))
                                             ->extraAttributes(['class' => 'prose'])
                                             ->content(fn ($record) => $record->getMeta('review_for_editor') ? new HtmlString($record->getMeta('review_for_editor')) : '-'),
                                     ]),
