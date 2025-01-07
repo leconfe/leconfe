@@ -60,6 +60,8 @@ class StaticPageResource extends Resource
                 TextInput::make('slug')
                     ->label(__('general.slug'))
                     ->alphaDash()
+                    ->required()
+                    ->helperText(__('general.slug_helper'))
                     ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
                         return $rule
                             ->where('conference_id', app()->getCurrentConference()?->getKey() ?? 0)
