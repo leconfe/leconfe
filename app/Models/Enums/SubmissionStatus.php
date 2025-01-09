@@ -37,8 +37,8 @@ enum SubmissionStatus: string implements HasColor, HasLabel
             self::Editing => 6,
             self::Published => 7,
             self::PaymentDeclined => 8,
-            self::Declined => 9,
-            self::Withdrawn => 10,
+            self::Declined => -90,
+            self::Withdrawn => -80,
         };
     }
 
