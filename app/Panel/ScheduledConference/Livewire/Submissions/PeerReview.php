@@ -267,7 +267,6 @@ class PeerReview extends Component implements HasActions, HasForms
         }
 
         return view('panel.scheduledConference.livewire.submissions.peer-review', [
-            'showReview' => ($this->submission->isParticipantAuthor(auth()->user()) && $this->submission->reviews->filter(fn ($review) => $review->getMeta('review_mode') == Review::MODE_OPEN)->count()) || auth()->user()->can('actAsEditor', $this->submission),
             'submissionDecision' => in_array($this->submission->status, [
                 SubmissionStatus::Editing,
                 SubmissionStatus::Declined,
