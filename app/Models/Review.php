@@ -95,7 +95,7 @@ class Review extends Model implements HasMedia
         ];
     }
 
-    protected function reviewMode(): Attribute
+    public function reviewMode(): Attribute
     {
         return Attribute::make(
             get: fn () => match ((int) $this->getMeta('review_mode')) {
