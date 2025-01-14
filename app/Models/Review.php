@@ -106,6 +106,16 @@ class Review extends Model implements HasMedia
         );
     }
 
+    public function isShowAuthor()
+    {
+        return in_array($this->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]);
+    }
+
+    public function isOpenReview()
+    {
+        return $this->getMeta('review_mode') == Review::MODE_OPEN || $this->getMeta('open_review_for_author');
+    }
+
     protected function getAllDefaultMeta(): array
     {
         return [

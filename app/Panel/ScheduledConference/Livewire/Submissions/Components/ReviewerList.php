@@ -44,7 +44,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Arr;
@@ -172,7 +172,10 @@ class ReviewerList extends Component implements HasForms, HasTable
                 Radio::make('meta.review_mode')
                     ->required()
                     ->label(__('general.review_mode'))
-                    ->options(Review::getModeOptions()),
+                    ->options(Review::getModeOptions())
+                    ->reactive(),
+                Checkbox::make('meta.open_review_for_author')
+                    ->visible(fn(Get $get) => in_array($get('meta.review_mode'), [Review::MODE_DOUBLE_ANONYMOUS, Review::MODE_ANONYMOUS])),
             ]);
     }
 
@@ -188,31 +191,38 @@ class ReviewerList extends Component implements HasForms, HasTable
                 fn (): Builder => $this->record->reviews()->getQuery()
                     ->when(
                         $this->record->isParticipantAuthor(auth()->user()),
-                        fn ($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
-                            ->where('status', ReviewerStatus::ACCEPTED)
+                        fn ($query) => $query
+                            ->whereNotNull('date_completed')
+                            ->where(function($query){
+                                $query->whereHas('meta', function (Builder $q){
+                                    $q->where('key', 'review_mode');
+                                    $q->where('value', Review::MODE_OPEN);
+                                });
+                                $query->orWhereHas('meta', function (Builder $q){
+                                    $q->where('key', 'open_review_for_author');
+                                    $q->where('value', true);
+                                });
+                            })
                     )
             )
             ->columns([
                 Split::make([
-                    SpatieMediaLibraryImageColumn::make('user.profile')
-                        ->label(__('general.profile'))
-                        ->grow(false)
-                        ->collection('profile')
-                        ->conversion('avatar')
-                        ->width(50)
-                        ->height(50)
-                        ->defaultImageUrl(
-                            fn (Review $record): string => $record->user->getFilamentAvatarUrl()
-                        )
-                        ->extraCellAttributes([
-                            'style' => 'width: 1px',
-                        ])
-                        ->circular(),
                     Stack::make([
                         TextColumn::make('user.fullName')
                             ->label(__('general.full_name'))
                             ->color(
                                 fn (Review $record): string => $record->status == ReviewerStatus::CANCELED ? 'danger' : 'primary'
+                            )
+                            ->when(
+                                $this->record->isParticipantAuthor(auth()->user()),
+                                fn($action) => $action
+                                    ->getStateUsing(function(Review $record, \stdClass $rowLoop){
+                                        if($record->getMeta('review_mode') !== Review::MODE_OPEN){
+                                            return 'Reviewer ' . $rowLoop->iteration;
+                                        }
+
+                                        return $record->user->fullName;
+                                    })
                             )
                             ->description(
                                 fn (Review $record): string => $record->user->email
@@ -354,10 +364,6 @@ class ReviewerList extends Component implements HasForms, HasTable
                     }),
                 ActionGroup::make([
                     Action::make('edit-reviewer')
-                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
-                        ->visible(
-                            fn ($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
-                        )
                         ->authorize(fn () => auth()->user()->can('editReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-edit')
