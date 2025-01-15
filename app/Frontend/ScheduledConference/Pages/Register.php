@@ -98,7 +98,7 @@ class Register extends Page
         ];
 
         $rules['selfAssignRoles'] = [
-            'array',
+            'array', 'required',
         ];
 
         return $rules;
