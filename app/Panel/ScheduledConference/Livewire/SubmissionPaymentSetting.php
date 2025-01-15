@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Panel\ScheduledConference\Livewire\Payment;
+namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 
-class ManualPaymentSetting extends Component implements HasForms
+class SubmissionPaymentSetting extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -33,40 +32,32 @@ class ManualPaymentSetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        Toggle::make('meta.manual_payment_enabled'),
-                        TextInput::make('meta.manual_payment_name')
-                            ->label(__('general.name'))
-                            ->placeholder(__('general.input_name_payment_method'))
-                            ->required(),
-                        TinyEditor::make('meta.manual_payment_instructions')
-                            ->placeholder(__('general.input_payment_details'))
-                            ->helperText(__('general.add_instruction_here'))
-                            ->required(),
-                    ])
-                    ->disabled(fn () => auth()->user()->cannot('RegistrationSetting:update')),
+                        Toggle::make('meta.submission_payment')
+                            ->label(__('general.enable_submission_payment')),
+                        TinyEditor::make('meta.payment_policy')
+                            ->label(__('general.payment_policy'))
+                            ->profile('basic'),
+                    ]),
                 Actions::make([
-                    Action::make('save_changes')
-                        ->label(__('general.save_changes'))
+                    Action::make('save')
+                        ->label(__('general.save'))
                         ->successNotificationTitle(__('general.saved'))
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
 
                             try {
-
                                 ScheduledConferenceUpdateAction::run(app()->getCurrentScheduledConference(), $formData);
-
                             } catch (\Throwable $th) {
-
                                 $action->failure();
                                 throw $th;
                             }
 
                             $action->success();
-                        })
-                        ->authorize('RegistrationSetting:update'),
+                        }),
                 ]),
             ])
+            ->disabled(fn () => !auth()->user()->can('update', app()->getCurrentScheduledConference()))
             ->statePath('formData');
     }
 

@@ -73,9 +73,6 @@
                             SubmissionStatus::PaymentDeclined,
                         ]),
                     ]) x-show="!decision">
-                        @if ($user->can('skipReview', $submission) && ! $submission->skipped_review)
-                            {{ $this->skipReviewAction() }}
-                        @endif
                         @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
                             {{ $this->requestRevisionAction() }}
                         @endif

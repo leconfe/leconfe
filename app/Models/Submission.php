@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Frontend\Conference\Pages\Paper;
 use App\Models\Concerns\HasDOI;
+use App\Models\Concerns\HasPayment;
 use App\Models\Concerns\HasTopics;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +42,7 @@ use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait, HasPayment;
 
     /**
      * The attributes that are mass assignable.

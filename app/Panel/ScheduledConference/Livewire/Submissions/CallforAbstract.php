@@ -107,17 +107,36 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->icon('lineawesome-times-circle-solid');
     }
 
+    public function acceptAndSkipReview()
+    {
+        return Action::make('acceptAndSkipReview')
+            ->label(__('general.skip_review'))
+            ->icon('lineawesome-check-circle-solid')
+            ->color('gray')
+            ->outlined()
+            ->requiresConfirmation()
+            ->extraAttributes(['class' => 'w-full'])
+            ->action(function (Action $action) {
+                $this->submission->state()->acceptAndSkipReview();
+
+                $action->successRedirectUrl(
+                    SubmissionResource::getUrl('view', [
+                        'record' => $this->submission->getKey(),
+                    ])
+                );
+
+                $action->success();
+            });
+    }
+
     public function acceptAction()
     {
-        $isPaymentRequired = app()->getCurrentScheduledConference()->isSubmissionRequirePayment();
-
         return Action::make('accept')
-            ->modalHeading(__('general.confirmation'))
-            ->modalSubmitActionLabel(fn () => $isPaymentRequired ? __('general.send_for_payment') : __('general.send_for_review'))
+            ->label(__('general.send_for_review'))
             ->authorize('actAsEditor', $this->submission)
             ->modalWidth('2xl')
             ->record($this->submission)
-            ->successNotificationTitle('Accepted')
+            ->successNotificationTitle(__('general.send_for_review'))
             ->extraAttributes(['class' => 'w-full'])
             ->icon('lineawesome-check-circle-solid')
             ->mountUsing(function (Form $form): void {

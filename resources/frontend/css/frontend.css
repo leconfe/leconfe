@@ -140,9 +140,9 @@
     display: none;
 }
 
-.table :where(th, td) {
+/* .table :where(th, td) {
     @apply p-0
-}
+} */
 
 
 .orcid-logo {

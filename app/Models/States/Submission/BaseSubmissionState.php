@@ -54,7 +54,7 @@ class BaseSubmissionState implements SubmissionStateInterface
         throw new \Exception('Cannot decline');
     }
 
-    public function skipReview(): void
+    public function acceptAndSkipReview(): void
     {
         throw new \Exception('Cannot skip review');
     }
