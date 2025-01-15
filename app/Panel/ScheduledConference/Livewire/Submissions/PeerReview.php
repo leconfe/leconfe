@@ -10,7 +10,6 @@ use App\Mail\Templates\RevisionRequestMail;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
-use App\Models\Review;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;

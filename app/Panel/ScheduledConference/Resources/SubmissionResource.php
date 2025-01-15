@@ -88,7 +88,7 @@ class SubmissionResource extends Resource
                             ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->reviews->where('user_id', auth()->id())->first();
-                                if($review){
+                                if ($review) {
                                     return $review->isShowAuthor() ? $record->user->fullName : '';
                                 }
 
