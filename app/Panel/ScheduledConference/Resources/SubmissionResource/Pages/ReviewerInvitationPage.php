@@ -171,7 +171,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
                                 TextEntry::make('Author')
                                     ->color('gray')
-                                    ->visible(fn () => in_array($this->review->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
+                                    ->visible(fn () => $this->review->isShowAuthor())
                                     ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
                                 TextEntry::make('Keywords')
                                     ->color('gray')

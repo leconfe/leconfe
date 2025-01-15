@@ -17,9 +17,7 @@
             @livewire(Components\Files\PaperFiles::class, ['submission' => $submission])
 
             {{-- Reviewer List --}}
-            @if($showReview)
-                @livewire(Components\ReviewerList::class, ['record' => $submission])
-            @endif
+            @livewire(Components\ReviewerList::class, ['record' => $submission])
 
             {{-- Reviews --}}
             {{-- Revision Files --}}

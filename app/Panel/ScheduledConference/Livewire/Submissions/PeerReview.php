@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Enums\SubmissionStage;
 use Filament\Forms\Components\Select;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Contracts\HasForms;
 use App\Mail\Templates\AcceptPaperMail;
 use Filament\Forms\Components\Checkbox;
@@ -333,7 +338,6 @@ class PeerReview extends Component implements HasActions, HasForms
         }
 
         return view('panel.scheduledConference.livewire.submissions.peer-review', [
-            'showReview' => ($this->submission->isParticipantAuthor(auth()->user()) && $this->submission->reviews->filter(fn($review) => $review->getMeta('review_mode') == Review::MODE_OPEN)->count()) || auth()->user()->can('actAsEditor', $this->submission),
             'submissionDecision' => in_array($this->submission->status, [
                 SubmissionStatus::Editing,
                 SubmissionStatus::Declined,

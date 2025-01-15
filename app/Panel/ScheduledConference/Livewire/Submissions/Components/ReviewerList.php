@@ -10,7 +10,6 @@ use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ReviewerCancelationMail;
 use App\Mail\Templates\ReviewerInvitationMail;
 use App\Models\DefaultMailTemplate;
-use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\Review;
 use App\Models\ReviewerAssignedFile;
@@ -39,12 +38,11 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Arr;
@@ -172,7 +170,10 @@ class ReviewerList extends Component implements HasForms, HasTable
                 Radio::make('meta.review_mode')
                     ->required()
                     ->label(__('general.review_mode'))
-                    ->options(Review::getModeOptions()),
+                    ->options(Review::getModeOptions())
+                    ->reactive(),
+                Checkbox::make('meta.open_review_for_author')
+                    ->visible(fn (Get $get) => in_array($get('meta.review_mode'), [Review::MODE_DOUBLE_ANONYMOUS, Review::MODE_ANONYMOUS])),
             ]);
     }
 
@@ -188,26 +189,22 @@ class ReviewerList extends Component implements HasForms, HasTable
                 fn (): Builder => $this->record->reviews()->getQuery()
                     ->when(
                         $this->record->isParticipantAuthor(auth()->user()),
-                        fn ($query) => $query->whereMeta('review_mode', Review::MODE_OPEN)
-                            ->where('status', ReviewerStatus::ACCEPTED)
+                        fn ($query) => $query
+                            ->whereNotNull('date_completed')
+                            ->where(function ($query) {
+                                $query->whereHas('meta', function (Builder $q) {
+                                    $q->where('key', 'review_mode');
+                                    $q->where('value', Review::MODE_OPEN);
+                                });
+                                $query->orWhereHas('meta', function (Builder $q) {
+                                    $q->where('key', 'open_review_for_author');
+                                    $q->where('value', true);
+                                });
+                            })
                     )
             )
             ->columns([
                 Split::make([
-                    SpatieMediaLibraryImageColumn::make('user.profile')
-                        ->label(__('general.profile'))
-                        ->grow(false)
-                        ->collection('profile')
-                        ->conversion('avatar')
-                        ->width(50)
-                        ->height(50)
-                        ->defaultImageUrl(
-                            fn (Review $record): string => $record->user->getFilamentAvatarUrl()
-                        )
-                        ->extraCellAttributes([
-                            'style' => 'width: 1px',
-                        ])
-                        ->circular(),
                     Stack::make([
                         TextColumn::make('user.fullName')
                             ->label(__('general.full_name'))
@@ -216,6 +213,18 @@ class ReviewerList extends Component implements HasForms, HasTable
                             )
                             ->description(
                                 fn (Review $record): string => $record->user->email
+                            )
+                            ->when(
+                                $this->record->isParticipantAuthor(auth()->user()),
+                                fn ($action) => $action
+                                    ->getStateUsing(function (Review $record, \stdClass $rowLoop) {
+                                        if ($record->getMeta('review_mode') != Review::MODE_OPEN) {
+                                            return 'Reviewer '.$rowLoop->iteration;
+                                        }
+
+                                        return $record->user->fullName;
+                                    })
+                                    ->description('')
                             ),
                         TextColumn::make('status')
                             ->extraAttributes(['class' => 'mt-2'])
@@ -290,12 +299,16 @@ class ReviewerList extends Component implements HasForms, HasTable
 
                         $action->success();
                     })
-                    ->form(function (Form $form, Review $record) {
-                        return $form
+                    ->form(
+                        fn (Form $form, Review $record) => $form
                             ->id('readReview')
                             ->schema([
                                 Placeholder::make('')
                                     ->extraAttributes(['class' => 'text-gray-500'])
+                                    ->when(
+                                        $this->record->isParticipantAuthor(auth()->user()),
+                                        fn ($component) => $component->hidden(),
+                                    )
                                     ->content('Once this review has been read, press "Confirm" to indicate that the review process may proceed. If the reviewer has submitted their review elsewhere, you may upload the file below and then press "Confirm" to proceed.'),
                                 Shout::make('completed')
                                     ->content(fn (Review $record) => 'Completed : '.$record->date_completed),
@@ -309,12 +322,15 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     )
                                     ->content(fn (Review $record) => 'Recommendation : '.$record->recommendation),
                                 Placeholder::make('reviewer')
+                                    ->when(
+                                        $this->record->isParticipantAuthor(auth()->user()),
+                                        fn ($component) => $component->visible(fn (Review $record) => $record->getMeta('review_mode') == Review::MODE_OPEN),
+                                    )
                                     ->content(fn (Review $record) => $record->user->fullName.' ('.$record->user->email.')'),
                                 Placeholder::make('score')
                                     ->label('Paper Score')
                                     ->hidden(fn (Review $record) => ! $record->score)
                                     ->content(fn (Review $record) => $record->score),
-
                                 Section::make('Reviewer Comments')
                                     ->schema([
                                         Placeholder::make('for_author_and_editor')
@@ -350,14 +366,10 @@ class ReviewerList extends Component implements HasForms, HasTable
 
                                     )
                                     ->allowHtml(),
-                            ]);
-                    }),
+                            ])
+                    ),
                 ActionGroup::make([
                     Action::make('edit-reviewer')
-                        ->hidden(fn (Model $record) => in_array($record->status, [ReviewerStatus::DECLINED, ReviewerStatus::CANCELED]))
-                        ->visible(
-                            fn ($record): bool => $this->record->status == SubmissionStatus::OnReview && ! $record->recommendation
-                        )
                         ->authorize(fn () => auth()->user()->can('editReviewer', $this->record))
                         ->modalWidth('2xl')
                         ->icon('iconpark-edit')

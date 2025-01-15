@@ -87,6 +87,11 @@ class SubmissionResource extends Resource
                         Tables\Columns\TextColumn::make('title')
                             ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
+                                $review = $record->reviews->where('user_id', auth()->id())->first();
+                                if ($review) {
+                                    return $review->isShowAuthor() ? $record->user->fullName : '';
+                                }
+
                                 return $record->user->fullName;
                             })
                             ->searchable(query: function (Builder $query, string $search): Builder {
