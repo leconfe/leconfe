@@ -32,7 +32,7 @@ class ManageSubmissions extends ManageRecords
                 ->label(__('general.create'))
                 ->button()
                 ->disabled(
-                    fn (): bool => ! Timeline::isSubmissionOpen()
+                    fn(): bool => ! Timeline::isSubmissionOpen()
                 )
                 ->url(static::$resource::getUrl('create'))
                 ->icon('heroicon-o-plus')
@@ -64,27 +64,27 @@ class ManageSubmissions extends ManageRecords
 
     protected function tabMyQueue(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query
-            ->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
-            ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()));
+        $modifyQuery = fn(Builder $query) => $query
+            ->whereHas('participants', fn(Builder $query) => $query->where('user_id', auth()->id()))
+            ->orWhereHas('reviews', fn(Builder $query) => $query->where('user_id', auth()->id()));
 
         return Tab::make(__('general.my_queue'))
             ->modifyQueryUsing($modifyQuery)
-            ->badge(fn () => $modifyQuery(static::getResource()::getEloquentQuery())->count());
+            ->badge(fn() => $modifyQuery(static::getResource()::getEloquentQuery())->count());
     }
 
     protected function tabUnassigned(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query->doesntHave('editors')->where('status', '!=', SubmissionStatus::Incomplete);
+        $modifyQuery = fn(Builder $query) => $query->doesntHave('editors')->where('status', '!=', SubmissionStatus::Incomplete);
 
         return Tab::make(__('general.unassigned'))
             ->modifyQueryUsing($modifyQuery)
-            ->badge(fn () => $modifyQuery(static::getResource()::getEloquentQuery())->count());
+            ->badge(fn() => $modifyQuery(static::getResource()::getEloquentQuery())->count());
     }
 
     protected function tabActive(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query->has('editors')->whereIn('status', [
+        $modifyQuery = fn(Builder $query) => $query->has('editors')->whereIn('status', [
             SubmissionStatus::Queued,
             SubmissionStatus::OnReview,
             SubmissionStatus::OnPayment,
@@ -94,20 +94,24 @@ class ManageSubmissions extends ManageRecords
 
         return Tab::make(__('general.active'))
             ->modifyQueryUsing($modifyQuery)
-            ->badge(fn () => $modifyQuery(static::getResource()::getEloquentQuery())->count());
+            ->badge(fn() => $modifyQuery(static::getResource()::getEloquentQuery())->count());
     }
 
     protected function tabArchived(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query->whereIn('status', [
+        $modifyQuery = fn(Builder $query) => $query->whereIn('status', [
             SubmissionStatus::Published,
             SubmissionStatus::Withdrawn,
             SubmissionStatus::Declined,
             SubmissionStatus::PaymentDeclined,
-        ]);
+        ])->when(
+            !auth()->user()->can('submitAs', Submission::class),
+            fn(Builder $query) => $query->whereHas('participants', fn(Builder $query) => $query->where('user_id', auth()->id()))
+                ->orWhereHas('reviews', fn(Builder $query) => $query->where('user_id', auth()->id()))
+        );
 
         return Tab::make(__('general.archived'))
             ->modifyQueryUsing($modifyQuery)
-            ->badge(fn () => $modifyQuery(static::getResource()::getEloquentQuery())->count());
+            ->badge(fn() => $modifyQuery(static::getResource()::getEloquentQuery())->count());
     }
 }
