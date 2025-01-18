@@ -2,10 +2,7 @@
 
 namespace App\Mail\Templates;
 
-use App\Classes\Log;
-use App\Frontend\ScheduledConference\Pages\Payment;
-use App\Models\PaymentQueue;
-use App\Models\Submission;
+use App\Models\Payment;
 
 class PaymentRequiredMail extends TemplateMailable
 {
@@ -18,18 +15,23 @@ class PaymentRequiredMail extends TemplateMailable
     public string $type;
     
     public string $description;
+    
+    public string $fee;
 
-    public function __construct(PaymentQueue $paymentQueue)
+
+    public function __construct(Payment $payment)
     {
-        $this->title = $paymentQueue->getMeta('title');
+        $this->title = $payment->getMeta('title');
 
-        $this->paymentLink = $paymentQueue->getPaymentUrl();
+        $this->paymentLink = $payment->getPaymentUrl();
 
-        $this->scheduledConferenceTitle = $paymentQueue->scheduledConference->title;
+        $this->scheduledConferenceTitle = $payment->scheduledConference->title;
 
-        $this->type = $paymentQueue->getPaymentType();
+        $this->type = $payment->getPaymentType();
 
-        $this->description = $paymentQueue->getMeta('description') ?? '-';
+        $this->description = $payment->getMeta('description') ?? '-';
+
+        $this->fee = $payment->getFormattedFee();
     }
 
     public static function getDefaultSubject(): string
@@ -51,6 +53,11 @@ class PaymentRequiredMail extends TemplateMailable
                     <td style="width:100px;">Payment Type</td>
                     <td>:</td>
                     <td>{{ type }}</td>
+                </tr>
+                <tr>
+                    <td style="width:100px;">Fee</td>
+                    <td>:</td>
+                    <td>{{ fee }}</td>
                 </tr>
                 <tr>
                     <td style="width:100px;">Description</td>

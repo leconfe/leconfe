@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Frontend\ScheduledConference\Pages\Payment;
 use App\Mail\Templates\PaymentRequiredMail;
+use App\Models\Payment;
 use App\Models\PaymentQueue;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -18,7 +18,8 @@ class PaymentRequired extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public PaymentQueue $paymentQueue)
+    public function __construct(
+        public Payment $payment)
     {
         //
     }
@@ -38,7 +39,7 @@ class PaymentRequired extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable)
     {
-        return (new PaymentRequiredMail($this->paymentQueue))
+        return (new PaymentRequiredMail($this->payment))
             ->to($notifiable);
     }
 
@@ -48,10 +49,10 @@ class PaymentRequired extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('primary')
             ->title('Payment Required')
-            ->body("Title: " . $this->paymentQueue->getMeta('title'))
+            ->body("Title: " . $this->payment->getMeta('title'))
             ->actions([
                 Action::make('new-submission')
-                    ->url($this->paymentQueue->getPaymentUrl())
+                    ->url($this->payment->getPaymentUrl())
                     ->label('Pay')
 					->openUrlInNewTab()
                     ->markAsRead(),

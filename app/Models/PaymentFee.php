@@ -7,6 +7,7 @@ use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -44,6 +45,11 @@ class PaymentFee extends Model implements Sortable
     public function scopeActive($query, $active = true): Builder
     {
         return $query->where('is_active', $active);
+    }
+
+    public function formItems() : HasMany
+    {
+        return $this->hasMany(PaymentFeeFormItem::class);
     }
     
 }

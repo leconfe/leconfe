@@ -5,7 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
 use App\Models\Enums\PaymentType;
-use App\Models\PaymentCompleted;
+use App\Models\Payment;
 use Filament\Tables;
 use Livewire\Component;
 use Filament\Forms\Form;
@@ -32,6 +32,7 @@ use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -53,10 +54,9 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
 
     public function getTableQuery(): Builder
     {
-        return PaymentCompleted::query()
+        return Payment::query()
             ->type(PaymentManager::TYPE_SUBMISSION_FEE)
             ->with(['model.conference', 'user']);
-
     }
 
     public function table(Table $table): Table
@@ -65,18 +65,39 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
             ->query($this->getTableQuery())
             ->columns([
                 IndexColumn::make('No'),
-                TextColumn::make('user')
-                    ->getStateUsing(fn(PaymentCompleted $record) => $record->user?->fullName ?? '-')
-                    ->wrap(),
                 TextColumn::make('title')
                     ->color('primary')
-                    ->url(fn(PaymentCompleted $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
-                    ->getStateUsing(fn(PaymentCompleted $record) => $record->model?->getMeta('title') ?? '-')
+                    ->url(fn(Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
+                    ->getStateUsing(fn(Payment $record) => $record->model?->getMeta('title') ?? '-')
                     ->wrap(),
+                TextColumn::make('user.fullName')
+                    ->searchable(
+                        query: fn($query, $search) => $query
+                            ->whereHas(
+                                'user',
+                                fn($query) => $query->whereMeta('public_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('given_name', 'LIKE', "%{$search}%")
+                                    ->orWhere('family_name', 'LIKE', "%{$search}%")
+                            )
+                    ),
+
                 TextColumn::make('amount')
-                    ->getStateUsing(fn(PaymentCompleted $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
-                TextColumn::make('payment_method')
-                    ->wrap()
+                    ->getStateUsing(fn(Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
+                // TextColumn::make('payment_method')
+                //     ->wrap()
+                TextColumn::make('paid_at')
+                    ->dateTime(),
+
+            ])
+            ->actions([
+                // ActionGroup::make([
+                //     Action::make('detail')
+                //         ->button(),
+                //     Action::make('set_as_paid')
+                //         ->requiresConfirmation()
+                //         ->color('success')
+                //         ->action(fn(Payment $record) => $record),
+                // ]),
             ]);
     }
 

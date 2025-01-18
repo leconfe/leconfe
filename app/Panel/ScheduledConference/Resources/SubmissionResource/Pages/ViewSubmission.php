@@ -41,8 +41,10 @@ use App\Notifications\SubmissionWithdrawRequested;
 use App\Actions\Submissions\AcceptWithdrawalAction;
 use App\Actions\Submissions\CancelWithdrawalAction;
 use App\Actions\Submissions\RequestWithdrawalAction;
+use App\Facades\Setting;
 use App\Infolists\Components\VerticalTabs\Tab as Tab;
 use App\Infolists\Components\VerticalTabs\Tabs as Tabs;
+use App\Models\PaymentFeeFormItem;
 use App\Notifications\PaymentRequired;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
@@ -61,7 +63,10 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Components\ActivityLogLis
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\PermissionsAndDisclosure;
+use Awcodes\Shout\Components\Shout;
 use Filament\Actions\StaticAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Set;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
 
@@ -101,132 +106,143 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     {
         return [
             Action::make('payment')
-                ->icon('heroicon-o-information-circle')
-                ->modalWidth(MaxWidth::Medium)
+                ->modalWidth(MaxWidth::Large)
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel(__('general.close'))
-                ->visible(fn() => $this->record->paymentCompleted)
-                ->infolist(fn(Infolist $infolist) => $infolist
-                    ->record($this->record->paymentCompleted)
-                    ->schema([
-                        TextEntry::make('transaction_amount')
-                            ->label("Transaction Amount")
-                            ->size(TextEntrySize::Large)
-                            ->getStateUsing(fn($record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
-                        TextEntry::make('description')
-                            ->visible(fn($record) => $record->getMeta('description'))
-                            ->getStateUsing(fn($record) => $record->getMeta('description')),
-                        TextEntry::make('status')
-                            ->badge()
-                            ->state('Paid')
-                    ])),
+                ->visible(fn() => $this->record->payment?->payment_method)
+                ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
+                ->mountUsing(function (Form $form) {
+                    if (!$this->record->payment) return;
+
+                    $form->fill([
+                        ...$this->record->payment->attributesToArray(),
+                        'meta' => $this->record->payment->getAllMeta()->toArray(),
+                    ]);
+                })
+                ->form(function (Form $form) {
+                    return $form
+                        ->id('paymentConfirmation')
+                        ->disabled()
+                        ->model($this->record->payment)
+                        ->schema([
+                            Shout::make('policy')
+                                ->icon(fn() => null)
+                                ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()?->getMeta('submission_payment_policy')))
+                                ->visible(app()->getCurrentScheduledConference()?->getMeta('submission_payment_policy') ?? false),
+                            Placeholder::make('title')
+                                ->content($this->record?->payment->getMeta('title')),
+                            Placeholder::make('type')
+                                ->content($this->record?->payment->getPaymentType()),
+                            Placeholder::make('amount')
+                                ->content($this->record?->payment->getFormattedFee())
+                                ->extraAttributes([
+                                    'style' => 'font-size:1rem;',
+                                ]),
+                            Placeholder::make('paid_at')
+                                ->visible($this->record?->payment->paid_at ? true : false)
+                                ->content($this->record?->payment->paid_at?->format(Setting::get('format_date').' '.Setting::get('format_time')))
+                                ->extraAttributes([
+                                    'style' => 'font-size:1rem;',
+                                ]),
+                            Placeholder::make('description')
+                                ->content($this->record?->payment->getMeta('description'))
+                                ->visible($this->record?->payment->getMeta('description') ?? false),
+                            ...$this->record->payment?->fee?->formItems?->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
+                            Radio::make('payment_method')
+                                ->required()
+                                ->reactive()
+                                ->options(PaymentManager::get()->getPaymentMethodOptions())
+                        ]);
+                }),
             Action::make('charge_payment')
                 ->label('Charge Payment')
-                ->visible(fn() => !$this->record->paymentCompleted)
+                ->visible(fn() => !$this->record->payment)
                 ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
                 ->icon('heroicon-o-banknotes')
                 ->modalWidth(MaxWidth::Large)
                 ->form(function (Form $form) {
-                    return $form->schema([
-                        Radio::make('payment_fee')
-                            ->required()
-                            ->options(
-                                fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)->active()->get()
-                                    ->mapWithKeys(function ($record) {
-                                        return [
-                                            $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')'
-                                        ];
-                                    })
-                                    ->put('custom', 'Custom')
-                                    ->put('waive', 'Waive')
-                            )
-                            ->reactive(),
-                        Grid::make(1)
-                            ->visible(fn(Get $get) => $get('payment_fee') == 'custom')
-                            ->schema([
-                                Grid::make()
-                                    ->schema([
-                                        Select::make('currency')
-                                            ->label(__('general.currency'))
-                                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                                            ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
-                                                ->mapWithKeys(function (?Currency $value, int $key) {
-                                                    $currencyCode = Str::upper($value->id);
-                                                    $currencyName = $value->name;
+                    return $form
+                        ->model($this->record->payment)
+                        ->schema([
+                            Radio::make('payment_fee_id')
+                                ->required()
+                                ->options(
+                                    fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                        ->active()
+                                        ->get()
+                                        ->mapWithKeys(function ($record) {
+                                            return [
+                                                $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')'
+                                            ];
+                                        })
+                                )
+                                ->afterStateUpdated(function (Set $set, $state) {
+                                    if (!$state) return;
 
-                                                    return [$value->id => "($currencyCode) $currencyName"];
-                                                }))
-                                            ->searchable()
-                                            ->required(),
-                                        TextInput::make('amount')
-                                            ->label('Amount')
-                                            ->numeric()
-                                            ->required()
-                                            ->minValue(1),
-                                    ]),
-                                Textarea::make('payment_description'),
-                            ]),
-                        Checkbox::make('mark_payment_as_completed'),
-                    ]);
+                                    $paymentFee = PaymentFee::find($state);
+                                    $set('currency', $paymentFee->currency);
+                                    $set('amount', $paymentFee->amount);
+                                    $set('description', $paymentFee->getMeta('description'));
+                                })
+                                ->reactive(),
+                            Grid::make(1)
+                                ->visible(fn(Get $get) => $get('payment_fee_id'))
+                                ->schema([
+                                    Grid::make()
+                                        ->schema([
+                                            Select::make('currency')
+                                                ->label(__('general.currency'))
+                                                ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                                ->options(
+                                                    fn() => Currency::query()->orderBy('code_numeric', 'asc')
+                                                        ->get()
+                                                        ->mapWithKeys(function (?Currency $value, int $key) {
+                                                            $currencyCode = Str::upper($value->id);
+                                                            $currencyName = $value->name;
+
+                                                            return [$value->id => "($currencyCode) $currencyName"];
+                                                        })
+                                                )
+                                                ->searchable()
+                                                ->required(),
+                                            TextInput::make('amount')
+                                                ->label('Amount')
+                                                ->numeric()
+                                                ->required()
+                                                ->minValue(0),
+                                        ]),
+                                    Textarea::make('description'),
+                                ]),
+                            Checkbox::make('mark_payment_as_completed'),
+                        ]);
                 })
                 ->successNotificationTitle('Payment fee sent to user')
                 ->action(function (Action $action, array $data) {
                     $paymentManager = PaymentManager::get();
 
-                    $paymentFeeId = data_get($data, 'payment_fee');
+                    $paymentFeeId = data_get($data, 'payment_fee_id');
 
-                    switch ($data['payment_fee']) {
-                        case 'waive':
-                            if ($this->record->paymentCompleted && !$this->record->paymentCompleted->amount) {
-                                break;
-                            }
-
-                            if ($this->record->paymentCompleted) {
-                                $this->record->paymentCompleted->delete();
-                            }
-
-                            $data['amount'] = 0;
-                            $data['currency'] = '';
-
-                            break;
-                        case 'custom':
-                            if ($this->record->paymentCompleted) {
-                                $this->record->paymentCompleted->delete();
-                            }
-                            break;
-
-                        default:
-                            if ($this->record->paymentCompleted) {
-                                $this->record->paymentCompleted->delete();
-                            }
-
-                            $paymentFee = PaymentFee::find($paymentFeeId);
-
-                            $data['amount'] = $paymentFee->amount;
-                            $data['currency'] = $paymentFee->currency;
-                            $data['payment_description'] = $paymentFee->getMeta('description');
-                            break;
+                    if ($this->record->paymentCompleted) {
+                        $this->record->paymentCompleted->delete();
                     }
 
-                    $this->record->paymentQueue()->delete();
+                    $paymentFee = PaymentFee::find($paymentFeeId);
 
                     $paymentQueue = $paymentManager->queue(
-                        $this->record->getMeta('title'),
-                        PaymentManager::TYPE_SUBMISSION_FEE,
-                        $this->record->user,
                         $this->record,
+                        $paymentFee,
+                        $this->record->user,
+                        PaymentManager::TYPE_SUBMISSION_FEE,
+                        $this->record->getMeta('title'),
+                        $data['description'],
                         $data['amount'],
                         $data['currency'],
-                        $data['payment_description'],
                     );
 
                     if ($data['mark_payment_as_completed']) {
                         $paymentManager->fulfillQueued(
                             $paymentQueue,
-                            match ($data['payment_fee']) {
-                                'waive' => "Waive",
-                                default => "Manual",
-                            },
+                            'Manual',
                             auth()->id()
                         );
                     } else {

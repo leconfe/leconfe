@@ -2,7 +2,11 @@
 
 namespace App\Managers;
 
+use App\Facades\Hook;
+use App\Interfaces\HasPayment;
+use App\Models\Payment;
 use App\Models\PaymentCompleted;
+use App\Models\PaymentFee;
 use App\Models\PaymentQueue;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -21,13 +25,27 @@ class PaymentManager
 		return app(self::class);
 	}
 
-	public function queue(string $title, int $type, User $user, Model $model, float $amount, string $currency, ?string $description = null, Carbon $expiredAt = null)
-	{
-		$paymentQueue = new PaymentQueue([
+	public function queue(
+		Model & HasPayment $model,
+		PaymentFee $paymentFee,
+		User $user,
+		int $type,
+		string $title,
+		?string $description = null,
+		float $amount = null,
+		?string $currency = null,
+		Carbon $expiredAt = null,
+	) {
+		
+		$paymentQueue = new Payment([
+			'user_id' => $user->getKey(),
 			'type' => $type,
 			'model_type' => $model::class,
 			'model_id' => $model->getKey(),
+			'payment_fee_id' => $paymentFee->getKey(),
 			'expired_at' => $expiredAt,
+			'amount' => $amount ?? $paymentFee->amount,
+			'currency' => $currency ?? $paymentFee->currency,
 		]);
 
 		$paymentQueue->save();
@@ -41,13 +59,11 @@ class PaymentManager
 		$paymentQueue->setManyMeta([
 			'title' => $title,
 			'user_id' => $user->getKey(),
-			'amount' => $amount,
-			'currency' => $currency,
 			'request_url' => $requestUrl,
 			'description' => $description,
 		]);
 
-		Lottery::odds(1, 20)->winner(fn() => PaymentQueue::deleteExpired());
+		Lottery::odds(1, 20)->winner(fn() => Payment::deleteExpired());
 
 		return $paymentQueue;
 	}
@@ -61,27 +77,25 @@ class PaymentManager
 		};
 	}
 
-	public function fulfillQueued(PaymentQueue $paymentQueue, string $paymentMethod, ?int $userId = null)
+	public function fulfillQueued(Payment $payment, string $paymentMethod, ?int $userId = null)
 	{
-		$paymentCompleted = new PaymentCompleted([
-			'type' => $paymentQueue->type,
-			'model_type' => $paymentQueue->model_type,
-			'model_id' => $paymentQueue->model_id,
-			'user_id' => $userId ?? $paymentQueue->getMeta('user_id'),
-			'amount' => $paymentQueue->getMeta('amount'),
-			'currency' => $paymentQueue->getMeta('currency'),
+		$payment->update([
+			'paid_at' => now(),
 			'payment_method' => $paymentMethod,
 		]);
 
-		$paymentCompleted->save();
-
-		$paymentCompleted->setManyMeta([
-			'title' => $paymentQueue->getMeta('title'),
-			'description' => $paymentQueue->getMeta('description'),
-		]);
-
-		$paymentQueue->delete();
+		$payment->setMeta('paid_by', $userId);
 
 		return true;
 	}
+
+	public function getPaymentMethodOptions()
+	{
+		$options = [];
+
+		Hook::call('PaymentManager::getPaymentMethodOptions', [&$options]);
+
+		return $options;
+	}
+
 }

@@ -3,14 +3,12 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
-use App\Models\Enums\PaymentType;
-use Filament\Tables;
+use App\Infolists\Components\LivewireEntry;
 use Livewire\Component;
 use Filament\Forms\Form;
 use App\Models\PaymentFee;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
@@ -29,11 +27,14 @@ use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ToggleColumn;
+use Illuminate\Support\Facades\DB;
 use Squire\Models\Currency;
 
 class PaymentFeeTable extends Component implements HasForms, HasTable
@@ -51,7 +52,10 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
 
     public function getTableQuery(): Builder
     {
-        return PaymentFee::type($this->paymentType)->ordered();
+        return PaymentFee::query()
+            ->with(['formItems'])
+            ->type($this->paymentType)
+            ->ordered();
     }
 
     public function table(Table $table): Table
@@ -73,7 +77,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         return $description;
                     }),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn(Model $record) => money($record->amount, $record->currency, true)),
+                    ->getStateUsing(fn(Model $record) => money($record->amount, $record->currency, true)->formatWithoutZeroes()),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
             ])
@@ -114,7 +118,57 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
 
                             return $record;
                         }),
-                    DeleteAction::make(),
+                    Action::make('items')
+                        ->label('Form Items')
+                        ->modalWidth(MaxWidth::TwoExtraLarge)
+                        ->icon('heroicon-m-list-bullet')
+                        ->modalCancelAction(false)
+                        ->modalSubmitAction(false)
+                        ->modalHeading(false)
+                        ->infolist(fn($record) => [
+                            LivewireEntry::make('form-items')
+                                ->livewire(PaymentFeeFormItemTable::class, ['record' => $record]),
+                        ]),
+                    Action::make('copy')
+                        ->label('Copy')
+                        ->requiresConfirmation()
+                        ->icon('heroicon-m-clipboard-document-check')
+                        ->action(function (PaymentFee $record) {
+                            try {
+                                DB::beginTransaction();
+
+                                $newRecord = $record->replicate();
+                                $newRecord->is_active = false;
+                                $newRecord->save();
+                                $newRecord->setManyMeta($record->getAllMeta()->toArray());
+
+                                foreach ($record->formItems as $related) {
+                                    $newRelated = $related->replicate();
+                                    $newRelated->payment_fee_id = $newRecord->id; // Update foreign key
+                                    $newRelated->save();
+
+                                    $newRelated->setManyMeta($related->getAllMeta()->toArray());
+                                }
+
+                                DB::commit();
+                            } catch (\Throwable $th) {
+                                DB::rollBack();
+
+                                throw $th;
+                            }
+                        }),
+                    Action::make('preview')
+                        ->icon('heroicon-m-eye')
+                        ->modalWidth(MaxWidth::TwoExtraLarge)
+                        // ->modalCancelAction(false)
+                        // ->modalSubmitAction(false)
+                        ->closeModalByClickingAway()
+                        ->visible(fn(PaymentFee $record) => $record->formItems->count())
+                        ->form(function (Form $form, PaymentFee $record) {
+                            return $form->schema($record->formItems->map(fn($item) => $item->getFormField())->toArray());
+                        }),
+                    DeleteAction::make()
+                        ->hidden(fn(PaymentFee $record) => $record->formItems->count()),
                 ]),
             ]);
     }

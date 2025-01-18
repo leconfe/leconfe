@@ -80,13 +80,13 @@ class Payments extends Page
                                                     ->livewire(SubmissionPaymentSetting::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('submission_fee_tab')
-                                            ->label("Payment Fees")
+                                            ->label("Fees")
                                             ->schema([
                                                 LivewireEntry::make('payment_fees')
                                                     ->livewire(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE]),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('submission_fee_payments_tab')
-                                            ->label("Submission Fee Payment")
+                                            ->label("Payments")
                                             ->schema([
                                                 LivewireEntry::make('payment_fees')
                                                     ->livewire(SubmissionPaymentFeeTable::class),
