@@ -63,12 +63,9 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Components\ActivityLogLis
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\PermissionsAndDisclosure;
-use Awcodes\Shout\Components\Shout;
-use Filament\Actions\StaticAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\TextEntry\TextEntrySize;
 
 class ViewSubmission extends Page implements HasForms, HasInfolists
 {
@@ -106,10 +103,10 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     {
         return [
             Action::make('payment')
+                ->visible(app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                 ->modalWidth(MaxWidth::Large)
-                ->modalSubmitAction(false)
                 ->modalCancelActionLabel(__('general.close'))
-                ->visible(fn() => $this->record->payment?->payment_method)
+                ->visible(fn() => $this->record->payment)
                 ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
                 ->mountUsing(function (Form $form) {
                     if (!$this->record->payment) return;
@@ -121,16 +118,8 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 })
                 ->form(function (Form $form) {
                     return $form
-                        ->id('paymentConfirmation')
-                        ->disabled()
                         ->model($this->record->payment)
                         ->schema([
-                            Shout::make('policy')
-                                ->icon(fn() => null)
-                                ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()?->getMeta('submission_payment_policy')))
-                                ->visible(app()->getCurrentScheduledConference()?->getMeta('submission_payment_policy') ?? false),
-                            Placeholder::make('title')
-                                ->content($this->record?->payment->getMeta('title')),
                             Placeholder::make('type')
                                 ->content($this->record?->payment->getPaymentType()),
                             Placeholder::make('amount')
@@ -138,25 +127,13 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 ->extraAttributes([
                                     'style' => 'font-size:1rem;',
                                 ]),
-                            Placeholder::make('paid_at')
-                                ->visible($this->record?->payment->paid_at ? true : false)
-                                ->content($this->record?->payment->paid_at?->format(Setting::get('format_date').' '.Setting::get('format_time')))
-                                ->extraAttributes([
-                                    'style' => 'font-size:1rem;',
-                                ]),
-                            Placeholder::make('description')
-                                ->content($this->record?->payment->getMeta('description'))
-                                ->visible($this->record?->payment->getMeta('description') ?? false),
-                            ...$this->record->payment?->fee?->formItems?->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
-                            Radio::make('payment_method')
-                                ->required()
-                                ->reactive()
-                                ->options(PaymentManager::get()->getPaymentMethodOptions())
+                            DatePicker::make('paid_at'),
                         ]);
-                }),
+                })
+                ->action(fn(array $data) => $this->record->payment->update([...$data, 'payment_method' => 'manual'])),
             Action::make('charge_payment')
                 ->label('Charge Payment')
-                ->visible(fn() => !$this->record->payment)
+                ->visible(fn() => !$this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                 ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
                 ->icon('heroicon-o-banknotes')
                 ->modalWidth(MaxWidth::Large)
@@ -165,6 +142,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         ->model($this->record->payment)
                         ->schema([
                             Radio::make('payment_fee_id')
+                                ->label('Payment Fee')
                                 ->required()
                                 ->options(
                                     fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
@@ -221,10 +199,6 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     $paymentManager = PaymentManager::get();
 
                     $paymentFeeId = data_get($data, 'payment_fee_id');
-
-                    if ($this->record->paymentCompleted) {
-                        $this->record->paymentCompleted->delete();
-                    }
 
                     $paymentFee = PaymentFee::find($paymentFeeId);
 

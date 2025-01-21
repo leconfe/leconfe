@@ -34,6 +34,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Squire\Models\Currency;
 
 class PeerReview extends Component implements HasActions, HasForms
@@ -151,45 +152,57 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->columnSpanFull(),
                     ]),
                 Grid::make()
-                    ->visible(fn() => !$this->submission->paymentCompleted() && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                    ->visible(fn() => !$this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
-                        Radio::make('payment_fee')
+                        Radio::make('payment_fee_id')
+                            ->label('Payment Fee')
                             ->required()
                             ->options(
-                                fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)->active()->get()
+                                fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
                                     ->mapWithKeys(function ($record) {
                                         return [
                                             $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')'
                                         ];
                                     })
-                                    ->put('custom', 'Custom')
-                                    ->put('waive', 'Waive')
                             )
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                if (!$state) return;
+
+                                $paymentFee = PaymentFee::find($state);
+                                $set('currency', $paymentFee->currency);
+                                $set('amount', $paymentFee->amount);
+                                $set('description', $paymentFee->getMeta('description'));
+                            })
                             ->reactive(),
                         Grid::make(1)
-                            ->visible(fn(Get $get) => $get('payment_fee') == 'custom')
+                            ->visible(fn(Get $get) => $get('payment_fee_id'))
                             ->schema([
                                 Grid::make()
                                     ->schema([
                                         Select::make('currency')
                                             ->label(__('general.currency'))
                                             ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                                            ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
-                                                ->mapWithKeys(function (?Currency $value, int $key) {
-                                                    $currencyCode = Str::upper($value->id);
-                                                    $currencyName = $value->name;
+                                            ->options(
+                                                fn() => Currency::query()->orderBy('code_numeric', 'asc')
+                                                    ->get()
+                                                    ->mapWithKeys(function (?Currency $value, int $key) {
+                                                        $currencyCode = Str::upper($value->id);
+                                                        $currencyName = $value->name;
 
-                                                    return [$value->id => "($currencyCode) $currencyName"];
-                                                }))
+                                                        return [$value->id => "($currencyCode) $currencyName"];
+                                                    })
+                                            )
                                             ->searchable()
                                             ->required(),
                                         TextInput::make('amount')
                                             ->label('Amount')
                                             ->numeric()
                                             ->required()
-                                            ->minValue(1),
+                                            ->minValue(0),
                                     ]),
-                                Textarea::make('payment_description'),
+                                Textarea::make('description'),
                             ]),
                     ]),
             ])
@@ -210,32 +223,22 @@ class PeerReview extends Component implements HasActions, HasForms
                     }
                 }
 
-                if (!$this->submission->paymentCompleted() && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
-                    $paymentFeeId = data_get($data, 'payment_fee');
-                    switch ($paymentFeeId) {
-                        case 'custom':
-                            break;
-                        case 'waive':
-                            break;
-                        default:
-                            $paymentFee = PaymentFee::find($paymentFeeId);
+                if (!$this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
+                    $paymentFeeId = data_get($data, 'payment_fee_id');
 
-                            $data['currency'] = $paymentFee->currency;
-                            $data['amount'] = $paymentFee->amount;
-                            $data['payment_description'] = $paymentFee->getMeta('description');
-                            break;
-                    }
-
+                    $paymentFee = PaymentFee::find($paymentFeeId);
 
                     $paymentManager = PaymentManager::get();
+
                     $paymentQueue = $paymentManager->queue(
-                        $this->submission->getMeta('title'),
-                        PaymentManager::TYPE_SUBMISSION_FEE,
-                        $this->submission->user,
                         $this->submission,
+                        $paymentFee,
+                        $this->submission->user,
+                        PaymentManager::TYPE_SUBMISSION_FEE,
+                        $this->submission->getMeta('title'),
+                        $data['description'],
                         $data['amount'],
                         $data['currency'],
-                        $data['payment_description'],
                     );
 
                     $this->submission->user->notify(new PaymentRequired($paymentQueue));

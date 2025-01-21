@@ -10,6 +10,7 @@ use Filament\Tables;
 use Livewire\Component;
 use Filament\Forms\Form;
 use App\Models\PaymentFee;
+use App\Models\PaymentFeeFormItem;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
@@ -29,9 +30,13 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Tables\Columns\IndexColumn;
+use Awcodes\Shout\Components\Shout;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
@@ -39,6 +44,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Columns\ToggleColumn;
+use Illuminate\Support\HtmlString;
 use Squire\Models\Currency;
 
 class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
@@ -67,7 +73,7 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
                 IndexColumn::make('No'),
                 TextColumn::make('title')
                     ->color('primary')
-                    ->url(fn(Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
+                    // ->url(fn(Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
                     ->getStateUsing(fn(Payment $record) => $record->model?->getMeta('title') ?? '-')
                     ->wrap(),
                 TextColumn::make('user.fullName')
@@ -83,21 +89,54 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
 
                 TextColumn::make('amount')
                     ->getStateUsing(fn(Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
-                // TextColumn::make('payment_method')
-                //     ->wrap()
                 TextColumn::make('paid_at')
-                    ->dateTime(),
+                    ->date(),
 
             ])
             ->actions([
-                // ActionGroup::make([
-                //     Action::make('detail')
-                //         ->button(),
-                //     Action::make('set_as_paid')
-                //         ->requiresConfirmation()
-                //         ->color('success')
-                //         ->action(fn(Payment $record) => $record),
-                // ]),
+                ActionGroup::make([
+                    Action::make('detail')
+                        ->mountUsing(function (Form $form, $record) {
+                            $form->fill([
+                                ...$record->attributesToArray(),
+                                'meta' => $record->getAllMeta()->toArray(),
+                            ]);
+                        })
+                        ->modalWidth(MaxWidth::Large)
+                        ->form(function (Form $form, Payment $record) {
+
+                            return $form
+                                ->id('paymentConfirmation')
+                                ->disabled()
+                                ->model($record)
+                                ->schema([
+                                    Placeholder::make('title')
+                                        ->content($record->getMeta('title')),
+                                    Placeholder::make('type')
+                                        ->content($record->getPaymentType()),
+                                    Placeholder::make('amount')
+                                        ->content($record->getFormattedFee())
+                                        ->extraAttributes([
+                                            'style' => 'font-size:1rem;',
+                                        ]),
+                                    Placeholder::make('paid_at')
+                                        ->visible($record->paid_at ? true : false)
+                                        ->content($record->paid_at?->format(Setting::get('format_date') . ' ' . Setting::get('format_time')))
+                                        ->extraAttributes([
+                                            'style' => 'font-size:1rem;',
+                                        ]),
+                                    Placeholder::make('description')
+                                        ->content($record->getMeta('description'))
+                                        ->visible($record->getMeta('description') ?? false),
+                                    ...$record->fee?->formItems?->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
+                                    Radio::make('payment_method')
+                                        ->required()
+                                        ->reactive()
+                                        ->options(PaymentManager::get()->getPaymentMethodOptions())
+                                ]);
+                        })
+                ]),
+
             ]);
     }
 

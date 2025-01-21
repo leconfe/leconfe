@@ -24,4 +24,5 @@
             </div>
         </main>
     </div>
+    <x-footer-platform-panel />
 </div>

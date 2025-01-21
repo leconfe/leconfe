@@ -102,6 +102,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
+                        ->hidden(fn(PaymentFee $record) => $record->formItems->count())
                         ->mutateRecordDataUsing(function (PaymentFee $record, array $data): array {
                             $data['meta'] = $record->getAllMeta();
 
@@ -120,6 +121,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         }),
                     Action::make('items')
                         ->label('Form Items')
+                        ->hidden(fn(PaymentFee $record) => $record->formItems->count())
                         ->modalWidth(MaxWidth::TwoExtraLarge)
                         ->icon('heroicon-m-list-bullet')
                         ->modalCancelAction(false)
