@@ -107,30 +107,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->modalWidth(MaxWidth::Large)
                 ->modalCancelActionLabel(__('general.close'))
                 ->visible(fn() => $this->record->payment)
-                ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
-                ->mountUsing(function (Form $form) {
-                    if (!$this->record->payment) return;
-
-                    $form->fill([
-                        ...$this->record->payment->attributesToArray(),
-                        'meta' => $this->record->payment->getAllMeta()->toArray(),
-                    ]);
-                })
-                ->form(function (Form $form) {
-                    return $form
-                        ->model($this->record->payment)
-                        ->schema([
-                            Placeholder::make('type')
-                                ->content($this->record?->payment->getPaymentType()),
-                            Placeholder::make('amount')
-                                ->content($this->record?->payment->getFormattedFee())
-                                ->extraAttributes([
-                                    'style' => 'font-size:1rem;',
-                                ]),
-                            DatePicker::make('paid_at'),
-                        ]);
-                })
-                ->action(fn(array $data) => $this->record->payment->update([...$data, 'payment_method' => 'manual'])),
+                ->authorize(fn() => $this->record->isParticipantAuthor(auth()->user()))
+                ->url(fn() => $this->record->payment->getPaymentUrl())
+                ->hidden(fn() => $this->record->payment?->isPaid()),
             Action::make('charge_payment')
                 ->label('Charge Payment')
                 ->visible(fn() => !$this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
@@ -191,7 +170,6 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                         ]),
                                     Textarea::make('description'),
                                 ]),
-                            Checkbox::make('mark_payment_as_completed'),
                         ]);
                 })
                 ->successNotificationTitle('Payment fee sent to user')
@@ -213,15 +191,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         $data['currency'],
                     );
 
-                    if ($data['mark_payment_as_completed']) {
-                        $paymentManager->fulfillQueued(
-                            $paymentQueue,
-                            'Manual',
-                            auth()->id()
-                        );
-                    } else {
-                        $this->record->user->notify(new PaymentRequired($paymentQueue));
-                    }
+                    $this->record->user->notify(new PaymentRequired($paymentQueue));
 
                     $action->success();
                 }),

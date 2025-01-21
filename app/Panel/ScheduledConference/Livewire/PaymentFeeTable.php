@@ -3,7 +3,9 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
+use App\Frontend\ScheduledConference\Pages\ParticipantForm;
 use App\Infolists\Components\LivewireEntry;
+use App\Managers\PaymentManager;
 use Livewire\Component;
 use Filament\Forms\Form;
 use App\Models\PaymentFee;
@@ -35,6 +37,8 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Squire\Models\Currency;
 
 class PaymentFeeTable extends Component implements HasForms, HasTable
@@ -53,7 +57,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
     public function getTableQuery(): Builder
     {
         return PaymentFee::query()
-            ->with(['formItems'])
+            ->with(['formItems', 'payments'])
             ->type($this->paymentType)
             ->ordered();
     }
@@ -101,8 +105,19 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('copy_payment_link')
+                        ->visible($this->paymentType === PaymentManager::TYPE_PARTICIPANT_FEE)
+                        ->icon('heroicon-m-clipboard')
+                        ->extraAttributes(fn ($record) => [
+                            'x-data' => '',
+                            'x-on:click' => new HtmlString(
+                                'window.navigator.clipboard.writeText('. Js::from(route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()])) .');'
+                            ),
+                        ])
+                        ->action(fn($action) => $action->success())
+                        ->successNotificationTitle('Link copied'),
                     EditAction::make()
-                        ->hidden(fn(PaymentFee $record) => $record->formItems->count())
+                        ->hidden(fn(PaymentFee $record) => $record->payments->count())
                         ->mutateRecordDataUsing(function (PaymentFee $record, array $data): array {
                             $data['meta'] = $record->getAllMeta();
 
@@ -121,7 +136,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         }),
                     Action::make('items')
                         ->label('Form Items')
-                        ->hidden(fn(PaymentFee $record) => $record->formItems->count())
+                        ->hidden(fn(PaymentFee $record) => $record->payments->count())
                         ->modalWidth(MaxWidth::TwoExtraLarge)
                         ->icon('heroicon-m-list-bullet')
                         ->modalCancelAction(false)
@@ -170,7 +185,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                             return $form->schema($record->formItems->map(fn($item) => $item->getFormField())->toArray());
                         }),
                     DeleteAction::make()
-                        ->hidden(fn(PaymentFee $record) => $record->formItems->count()),
+                        ->hidden(fn(PaymentFee $record) => $record->payments->count()),
                 ]),
             ]);
     }

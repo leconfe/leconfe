@@ -60,6 +60,7 @@ class Payment extends Model implements HasMedia
     public static function deleteExpired()
     {
         return self::query()
+            ->whereNull('paid_at')
             ->whereNotNull('expired_date')
             ->where('expired_date', '<', now())
             ->delete();
@@ -67,10 +68,11 @@ class Payment extends Model implements HasMedia
 
     public function scopePaid(Builder $query, $isPaid = true)
     {
-        $operator = $isPaid ? '<>' : 'IS NULL';
-        $value = $isPaid ? '' : null;
+        if($isPaid){
+            return $query->whereNotNull('paid_at');
+        }
 
-        return $query->where('paid_at', $operator, $value);
+        return $query->whereNull('paid_at');
     }
 
     public function scopeExpired(Builder $query, $isExpired = true)
@@ -82,6 +84,10 @@ class Payment extends Model implements HasMedia
 
     public function isExpired(): bool
     {
+        if(!$this->paid_at){
+            return false;
+        }
+
         if (!$this->expired_at) {
             return false;
         }

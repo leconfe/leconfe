@@ -5,9 +5,12 @@ namespace App\Classes;
 use App\Facades\Hook;
 use App\Forms\Form;
 use App\Models\Payment;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
 class ManualPaymentPlugin extends Plugin
 {
@@ -24,31 +27,52 @@ class ManualPaymentPlugin extends Plugin
                 return false;
             });
 
-            Hook::add('Forms::Form::components::paymentConfirmation', function ($hookName, array &$components, Form $form) {
+            Hook::add('Forms::Form::components::paymentForm', function ($hookName, array &$components, Form $form) {
 
-                $components[] = SpatieMediaLibraryFileUpload::make('payment_proof')
-                    ->label('Payment Proof')
+                $components[] = Grid::make(1)
                     ->visible(fn(Get $get) => $get('payment_method') == 'manual')
-                    ->required()
-                    ->downloadable()
-                    ->collection('manual_payment_proof');
+                    ->schema([
+                        Placeholder::make('manual_payment_instructions')
+                            ->label('Payment Instructions')
+                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
+                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
+                        SpatieMediaLibraryFileUpload::make('payment_proof')
+                            ->label('Payment Proof')
+                            ->required()
+                            ->downloadable()
+                            ->collection('manual_payment_proof')
+                    ]);
+
+                return false;
+            });
+            Hook::add('Forms::Form::components::submissionPayment', function ($hookName, array &$components, Form $form) {
+
+                $components[] = Grid::make(1)
+                    ->visible(fn(Get $get) => $get('payment_method') == 'manual')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('payment_proof')
+                            ->label('Payment Proof')
+                            ->required()
+                            ->downloadable()
+                            ->collection('manual_payment_proof')
+                    ])
+                    ->disabled();
 
                 return false;
             });
 
-            Hook::add('Frontend::PaymentForm::submit', function($hookName, Payment $payment, array &$data, string &$requestUrl){
-                
-                if($data['payment_method'] == 'manual'){
+            Hook::add('Frontend::Payment::handleRequestUrl', function ($hookName, Payment $payment, array &$data, string &$requestUrl) {
+
+                if ($data['payment_method'] == 'manual') {
                     Notification::make()
                         ->title('Submit successfully')
                         ->success()
                         ->send();
                 }
-                
-                
+
+
                 return false;
             });
-
         }
     }
 

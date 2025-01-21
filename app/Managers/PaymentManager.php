@@ -3,6 +3,7 @@
 namespace App\Managers;
 
 use App\Facades\Hook;
+use App\Frontend\ScheduledConference\Pages\ParticipantSuccessRegister;
 use App\Interfaces\HasPayment;
 use App\Models\Payment;
 use App\Models\PaymentCompleted;
@@ -18,7 +19,7 @@ use Illuminate\Support\Lottery;
 class PaymentManager
 {
 	public const TYPE_SUBMISSION_FEE = 1;
-	public const TYPE_ATTENDANCE_FEE = 2;
+	public const TYPE_PARTICIPANT_FEE = 2;
 
 	public static function get(): PaymentManager
 	{
@@ -28,7 +29,7 @@ class PaymentManager
 	public function queue(
 		Model & HasPayment $model,
 		PaymentFee $paymentFee,
-		User $user,
+		?User $user,
 		int $type,
 		string $title,
 		?string $description = null,
@@ -38,7 +39,7 @@ class PaymentManager
 	) {
 		
 		$paymentQueue = new Payment([
-			'user_id' => $user->getKey(),
+			'user_id' => $user?->getKey(),
 			'type' => $type,
 			'model_type' => $model::class,
 			'model_id' => $model->getKey(),
@@ -52,13 +53,13 @@ class PaymentManager
 
 		$requestUrl = match ($type) {
 			self::TYPE_SUBMISSION_FEE => SubmissionResource::getUrl('view', ['record' => $model]),
-			self::TYPE_ATTENDANCE_FEE => "", //TODO add link for attendance
-			default => throw new Exception('Invalid payment type'),
+			self::TYPE_PARTICIPANT_FEE => route(ParticipantSuccessRegister::getRouteName('scheduledConference')), //TODO add link for attendance
+			default => url('/'),
 		};
 
 		$paymentQueue->setManyMeta([
 			'title' => $title,
-			'user_id' => $user->getKey(),
+			'user_id' => $user?->getKey(),
 			'request_url' => $requestUrl,
 			'description' => $description,
 		]);
@@ -72,7 +73,7 @@ class PaymentManager
 	{
 		return match ($type) {
 			self::TYPE_SUBMISSION_FEE => "Submission Fee",
-			self::TYPE_ATTENDANCE_FEE => "Attendance Fee",
+			self::TYPE_PARTICIPANT_FEE => "Participant Fee",
 			default => null,
 		};
 	}

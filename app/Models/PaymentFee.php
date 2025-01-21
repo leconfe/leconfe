@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,4 +53,18 @@ class PaymentFee extends Model implements Sortable
         return $this->hasMany(PaymentFeeFormItem::class);
     }
     
+    public function getPaymentType()
+    {
+        return PaymentManager::get()->getPaymentTypeName($this->type);
+    }
+
+    public function getFormattedFee()
+    {
+        return money($this->amount, $this->currency, true)->formatWithoutZeroes();
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

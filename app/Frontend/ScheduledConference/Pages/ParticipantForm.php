@@ -6,59 +6,56 @@ use App\Facades\Hook;
 use App\Forms\Form;
 use App\Frontend\Website\Pages\Page;
 use App\Managers\PaymentManager;
+use App\Models\Participant;
 use App\Models\Payment;
+use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
 use Awcodes\Shout\Components\Shout;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
-class PaymentForm extends Page implements HasForms, HasActions
+class ParticipantForm extends Page implements HasForms, HasActions
 {
     use InteractsWithForms, InteractsWithActions;
 
-    protected static string $view = 'frontend.scheduledConference.pages.payment-form';
+    protected static string $view = 'frontend.scheduledConference.pages.participant-form';
 
     protected static string $layout = 'filament-panels::components.layout.base';
 
-    public Payment $payment;
+    public PaymentFee $paymentFee;
 
     /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
 
-    public function mount(Payment $payment)
+    public function mount(PaymentFee $paymentFee)
     {
-        if($payment->isPaid()){
-            abort('403', 'Payment fee already paid');
-        }
-
-        if ($payment->isExpired()) {
-            $payment->delete();
-
-            abort('403', 'Payment is expired');
+        if($paymentFee->type !== PaymentManager::TYPE_PARTICIPANT_FEE){
+            abort('403', 'Invalid payment fee type');
         }
 
         $this->form->fill([
-            ...$this->payment->attributesToArray(),
-            'meta' => $this->payment->getAllMeta()->toArray(),
+            
         ]);
-
-
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __('general.payment');
+        return "Participant Registration";
     }
 
     public static function getLayout(): string
@@ -66,11 +63,13 @@ class PaymentForm extends Page implements HasForms, HasActions
         return static::$layout;
     }
 
-    public function getBreadcrumbs(): array
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getViewData(): array
     {
         return [
-            route(Home::getRouteName()) => __('general.home'),
-            __('general.payment'),
+           
         ];
     }
 
@@ -81,24 +80,35 @@ class PaymentForm extends Page implements HasForms, HasActions
         return $form
             ->id('paymentForm')
             ->statePath('data')
-            ->model($this->payment)
+            ->model(Participant::class)
             ->schema([
-                Shout::make('policy')
-                    ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()?->getMeta('payment_policy')))
-                    ->visible(app()->getCurrentScheduledConference()?->getMeta('payment_policy') ?? false),
-                Placeholder::make('title')
-                    ->content($this->payment->getMeta('title')),
+                Placeholder::make('name')
+                    ->content($this->paymentFee->name),
                 Placeholder::make('type')
-                    ->content($this->payment->getPaymentType()),
+                    ->content($this->paymentFee->getPaymentType()),
                 Placeholder::make('amount')
-                    ->content($this->payment->getFormattedFee())
+                    ->content($this->paymentFee->getFormattedFee())
                     ->extraAttributes([
                         'style' => 'font-size:1rem;',
                     ]),
                 Placeholder::make('description')
-                    ->content($this->payment->getMeta('description'))
-                    ->visible($this->payment->getMeta('description') ?? false),
-                ...$this->payment?->fee?->formItems?->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
+                    ->content($this->paymentFee->getMeta('description'))
+                    ->visible($this->paymentFee->getMeta('description') ?? false),
+                Grid::make()
+                    ->schema([
+                        TextInput::make('given_name')
+                            ->label(__('general.given_name'))
+                            ->required(),
+                        TextInput::make('family_name')
+                            ->label(__('general.family_name')),
+                        ]),
+                TextInput::make('public_name')
+                    ->label(__('general.public_name')),
+                TextInput::make('email')
+                    ->email()
+                    ->label(__('general.email'))
+                    ->required(),
+                ...$this->paymentFee->formItems->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
                 Radio::make('payment_method')
                     ->required()
                     ->reactive()
@@ -119,20 +129,32 @@ class PaymentForm extends Page implements HasForms, HasActions
         $data = $this->form->getState();
 
         try {
-            $this->payment->update($data);
+            DB::beginTransaction();
 
-            $this->form->model($this->payment)->saveRelationships();
+            $participant = new Participant();
+            $participant->fill(Arr::only($data, ['given_name', 'family_name', 'email']));
+            $participant->save();
+
+            $this->form->model($participant)->saveRelationships();
+
+            $paymentManager = PaymentManager::get();
+            $payment = $paymentManager->queue($participant, $this->paymentFee, auth()->user(), PaymentManager::TYPE_PARTICIPANT_FEE, $this->paymentFee->name, $this->paymentFee->getMeta('description'));
+            $payment->payment_method = $data['payment_method'];
+            $payment->save();
 
             if($meta = data_get($data, 'meta')){
-                $this->payment->setManyMeta($meta);
+                $payment->setManyMeta($meta);
             }
 
-            $requestUrl = $this->payment->getMeta('request_url');
+            $requestUrl = $payment->getMeta('request_url');
 
-            Hook::call('Frontend::Payment::handleRequestUrl', [$this->payment, &$data, &$requestUrl]);
+            Hook::call('Frontend::Payment::handleRequestUrl', [$payment, &$data, &$requestUrl]);
+
+            DB::commit();
 
             return redirect()->to($requestUrl);
         } catch (\Throwable $th) {
+            DB::rollBack();
             throw $th;
         }
     }
@@ -140,7 +162,7 @@ class PaymentForm extends Page implements HasForms, HasActions
     public static function routes(PageGroup $pageGroup): void
     {
         $slug = static::getSlug();
-        Route::get("/{$slug}/{payment}", static::class)
+        Route::get("/{$slug}/{paymentFee}", static::class)
             ->middleware(static::getRouteMiddleware($pageGroup))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($pageGroup))
             ->name((string) str($slug)->replace('/', '.'));

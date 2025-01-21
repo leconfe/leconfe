@@ -51,7 +51,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(PaymentFee::class)->constrained();
             $table->unsignedInteger('type');
-            $table->morphs('model');
+            $table->nullableMorphs('model');
             $table->double('amount');
             $table->string('currency');
             $table->string('payment_method')->nullable();

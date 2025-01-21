@@ -34,7 +34,7 @@ class SubmissionPaymentSetting extends Component implements HasForms
                     ->schema([
                         Toggle::make('meta.submission_payment')
                             ->label(__('general.enable_submission_payment')),
-                        TinyEditor::make('meta.submission_payment_policy')
+                        TinyEditor::make('meta.payment_policy')
                             ->label(__('general.payment_policy'))
                     ]),
                 Actions::make([
