@@ -186,6 +186,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         $this->record->user,
                         PaymentManager::TYPE_SUBMISSION_FEE,
                         $this->record->getMeta('title'),
+                        SubmissionResource::getUrl('view', ['record' => $this->record]),
                         $data['description'],
                         $data['amount'],
                         $data['currency'],

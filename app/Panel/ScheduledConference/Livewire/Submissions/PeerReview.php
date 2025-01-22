@@ -236,6 +236,7 @@ class PeerReview extends Component implements HasActions, HasForms
                         $this->submission->user,
                         PaymentManager::TYPE_SUBMISSION_FEE,
                         $this->submission->getMeta('title'),
+                        SubmissionResource::getUrl('view', ['record' => $this->submission]),
                         $data['description'],
                         $data['amount'],
                         $data['currency'],

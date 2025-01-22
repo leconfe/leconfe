@@ -44,13 +44,11 @@ class ParticipantForm extends Page implements HasForms, HasActions
 
     public function mount(PaymentFee $paymentFee)
     {
-        if($paymentFee->type !== PaymentManager::TYPE_PARTICIPANT_FEE){
+        if ($paymentFee->type !== PaymentManager::TYPE_PARTICIPANT_FEE) {
             abort('403', 'Invalid payment fee type');
         }
 
-        $this->form->fill([
-            
-        ]);
+        $this->form->fill([]);
     }
 
     public function getTitle(): string|Htmlable
@@ -68,15 +66,13 @@ class ParticipantForm extends Page implements HasForms, HasActions
      */
     protected function getViewData(): array
     {
-        return [
-           
-        ];
+        return [];
     }
 
     public function form(Form $form): Form
     {
         $paymentManager = PaymentManager::get();
-        
+
         return $form
             ->id('paymentForm')
             ->statePath('data')
@@ -101,7 +97,7 @@ class ParticipantForm extends Page implements HasForms, HasActions
                             ->required(),
                         TextInput::make('family_name')
                             ->label(__('general.family_name')),
-                        ]),
+                    ]),
                 TextInput::make('public_name')
                     ->label(__('general.public_name')),
                 TextInput::make('email')
@@ -138,11 +134,19 @@ class ParticipantForm extends Page implements HasForms, HasActions
             $this->form->model($participant)->saveRelationships();
 
             $paymentManager = PaymentManager::get();
-            $payment = $paymentManager->queue($participant, $this->paymentFee, auth()->user(), PaymentManager::TYPE_PARTICIPANT_FEE, $this->paymentFee->name, $this->paymentFee->getMeta('description'));
+            $payment = $paymentManager->queue(
+                $participant,
+                $this->paymentFee,
+                auth()->user(),
+                PaymentManager::TYPE_PARTICIPANT_FEE,
+                $this->paymentFee->name,
+                route(ParticipantRegistrationSuccess::getRouteName('scheduledConference'), ['participant' => $participant->uuid]),
+                $this->paymentFee->getMeta('description')
+            );
             $payment->payment_method = $data['payment_method'];
             $payment->save();
 
-            if($meta = data_get($data, 'meta')){
+            if ($meta = data_get($data, 'meta')) {
                 $payment->setManyMeta($meta);
             }
 

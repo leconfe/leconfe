@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();            
             $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('given_name');

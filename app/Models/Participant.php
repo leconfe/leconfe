@@ -25,6 +25,16 @@ class Participant extends Model implements HasPayment, HasMedia
         'email',
     ];
 
+      /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Participant $record) {
+            $record->uuid ??= Str::orderedUuid();
+        });
+    }
+
     protected function fullName(): Attribute
     {
         return Attribute::make(

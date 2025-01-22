@@ -3,16 +3,13 @@
 namespace App\Managers;
 
 use App\Facades\Hook;
-use App\Frontend\ScheduledConference\Pages\ParticipantSuccessRegister;
+use App\Frontend\ScheduledConference\Pages\ParticipantRegistrationSuccess;
 use App\Interfaces\HasPayment;
 use App\Models\Payment;
-use App\Models\PaymentCompleted;
 use App\Models\PaymentFee;
-use App\Models\PaymentQueue;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Lottery;
 
@@ -32,6 +29,7 @@ class PaymentManager
 		?User $user,
 		int $type,
 		string $title,
+		string $requestUrl,
 		?string $description = null,
 		float $amount = null,
 		?string $currency = null,
@@ -50,12 +48,6 @@ class PaymentManager
 		]);
 
 		$paymentQueue->save();
-
-		$requestUrl = match ($type) {
-			self::TYPE_SUBMISSION_FEE => SubmissionResource::getUrl('view', ['record' => $model]),
-			self::TYPE_PARTICIPANT_FEE => route(ParticipantSuccessRegister::getRouteName('scheduledConference')), //TODO add link for attendance
-			default => url('/'),
-		};
 
 		$paymentQueue->setManyMeta([
 			'title' => $title,
