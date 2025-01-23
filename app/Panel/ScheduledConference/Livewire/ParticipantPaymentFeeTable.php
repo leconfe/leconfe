@@ -84,6 +84,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                 Action::make('mail')
                     ->label("Send Email")
                     ->icon('heroicon-o-envelope')
+                    ->visible(fn() => $this->getTableQuery()->count())
                     ->form(function (Form $form) {
                         return $form->schema([
                             TextInput::make('subject')

@@ -27,6 +27,8 @@ class Upgrade120Beta4 extends UpgradeBase
         $this->migrateRegistrationPayments();
 
         $this->removeNavigationItem();
+
+        // TODO : delete unused table like registration, etc.
     }
 
     protected function migrate(): void

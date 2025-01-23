@@ -12,13 +12,11 @@ class Dashboard extends BaseDashboard
 {
     public function mount()
     {
-        if (! auth()->user()->can('view', app()->getCurrentScheduledConference())) {
-            return redirect()->to(ManageSubmissions::getUrl());
-        }
+        return redirect()->to(ManageSubmissions::getUrl());
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('view', app()->getCurrentScheduledConference());
+        return false;
     }
 }
