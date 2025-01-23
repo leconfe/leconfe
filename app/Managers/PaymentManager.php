@@ -15,8 +15,8 @@ use Illuminate\Support\Lottery;
 
 class PaymentManager
 {
-	public const TYPE_SUBMISSION_FEE = 1;
-	public const TYPE_PARTICIPANT_FEE = 2;
+	public const TYPE_PARTICIPANT_FEE = 1;
+	public const TYPE_SUBMISSION_FEE = 2;
 
 	public static function get(): PaymentManager
 	{
@@ -51,7 +51,6 @@ class PaymentManager
 
 		$paymentQueue->setManyMeta([
 			'title' => $title,
-			'user_id' => $user?->getKey(),
 			'request_url' => $requestUrl,
 			'description' => $description,
 		]);
