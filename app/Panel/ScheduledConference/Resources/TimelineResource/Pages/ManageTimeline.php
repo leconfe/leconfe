@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 
-use App\Models\Session;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource;
 use Filament\Actions;

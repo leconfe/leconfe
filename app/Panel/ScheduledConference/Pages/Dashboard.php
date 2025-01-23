@@ -2,9 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Managers\PaymentManager;
-use App\Models\PaymentFee;
-use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ManageSubmissions;
 use Filament\Pages\Dashboard as BaseDashboard;
 

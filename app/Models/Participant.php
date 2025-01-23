@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Plank\Metable\Metable;
-use Illuminate\Support\Str;
 use App\Interfaces\HasPayment;
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\BelongsToScheduledConference;
 use App\Models\Concerns\InteractsWithPayment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Plank\Metable\Metable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Participant extends Model implements HasPayment, HasMedia
+class Participant extends Model implements HasMedia, HasPayment
 {
-    use HasFactory, Metable, InteractsWithPayment, InteractsWithMedia, BelongsToScheduledConference, BelongsToConference;
+    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, InteractsWithPayment, Metable;
 
     protected $fillable = [
         'given_name',
@@ -27,7 +27,7 @@ class Participant extends Model implements HasPayment, HasMedia
         'conference_id',
     ];
 
-      /**
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Mail\Templates\PaymentRequiredMail;
 use App\Models\Payment;
-use App\Models\PaymentQueue;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -49,12 +48,12 @@ class PaymentRequired extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('primary')
             ->title('Payment Required')
-            ->body("Title: " . $this->payment->getMeta('title'))
+            ->body('Title: '.$this->payment->getMeta('title'))
             ->actions([
                 Action::make('new-submission')
                     ->url($this->payment->getPaymentUrl())
                     ->label('Pay')
-					->openUrlInNewTab()
+                    ->openUrlInNewTab()
                     ->markAsRead(),
             ])
             ->getDatabaseMessage();

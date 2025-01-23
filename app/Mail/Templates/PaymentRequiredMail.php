@@ -13,11 +13,10 @@ class PaymentRequiredMail extends TemplateMailable
     public string $paymentLink;
 
     public string $type;
-    
-    public string $description;
-    
-    public string $fee;
 
+    public string $description;
+
+    public string $fee;
 
     public function __construct(Payment $payment)
     {

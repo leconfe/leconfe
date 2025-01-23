@@ -8,7 +8,6 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -36,7 +35,7 @@ class PaymentSetting extends Component implements HasForms
                         Checkbox::make('meta.submission_payment')
                             ->label(__('general.enable_submission_payment')),
                         TinyEditor::make('meta.payment_policy')
-                            ->label(__('general.payment_policy'))
+                            ->label(__('general.payment_policy')),
                     ]),
                 Actions::make([
                     Action::make('save')
@@ -57,7 +56,7 @@ class PaymentSetting extends Component implements HasForms
                         }),
                 ]),
             ])
-            ->disabled(fn () => !auth()->user()->can('update', app()->getCurrentScheduledConference()))
+            ->disabled(fn () => ! auth()->user()->can('update', app()->getCurrentScheduledConference()))
             ->statePath('formData');
     }
 

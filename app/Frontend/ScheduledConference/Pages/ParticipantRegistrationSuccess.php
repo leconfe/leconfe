@@ -4,7 +4,6 @@ namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Frontend\Website\Pages\Page;
 use App\Models\Participant;
-use App\Models\Payment;
 use Illuminate\Support\Facades\Route;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 

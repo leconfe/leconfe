@@ -2,39 +2,38 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
-use App\Models\Review;
-use Livewire\Component;
-use Filament\Forms\Form;
+use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Forms\Components\TinyEditor;
+use App\Mail\Templates\AcceptPaperMail;
+use App\Mail\Templates\DeclinePaperMail;
+use App\Mail\Templates\RevisionRequestMail;
+use App\Managers\PaymentManager;
+use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
-use Illuminate\Support\Str;
+use App\Notifications\PaymentRequired;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
-use App\Managers\PaymentManager;
-use Filament\Support\Colors\Color;
-use App\Models\DefaultMailTemplate;
-use Filament\Forms\Components\Grid;
-use App\Forms\Components\TinyEditor;
-use Filament\Forms\Components\Radio;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Enums\SubmissionStage;
-use Filament\Forms\Components\Select;
-use App\Models\Enums\SubmissionStatus;
-use Filament\Forms\Contracts\HasForms;
-use App\Mail\Templates\AcceptPaperMail;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use App\Mail\Templates\DeclinePaperMail;
-use Filament\Forms\Components\TextInput;
-use Filament\Actions\Contracts\HasActions;
-use App\Mail\Templates\RevisionRequestMail;
-use Filament\Forms\Concerns\InteractsWithForms;
-use App\Actions\Submissions\SubmissionUpdateAction;
-use App\Notifications\PaymentRequired;
-use Filament\Actions\Concerns\InteractsWithActions;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Livewire\Component;
 use Squire\Models\Currency;
 
 class PeerReview extends Component implements HasActions, HasForms
@@ -152,23 +151,25 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->columnSpanFull(),
                     ]),
                 Grid::make()
-                    ->visible(fn() => !$this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                    ->visible(fn () => ! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
                             ->options(
-                                fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
                                     ->get()
                                     ->mapWithKeys(function ($record) {
                                         return [
-                                            $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')'
+                                            $record->getKey() => $record->name.' ('.money($record->amount, $record->currency, true)->formatWithoutZeroes().')',
                                         ];
                                     })
                             )
                             ->afterStateUpdated(function (Set $set, $state) {
-                                if (!$state) return;
+                                if (! $state) {
+                                    return;
+                                }
 
                                 $paymentFee = PaymentFee::find($state);
                                 $set('currency', $paymentFee->currency);
@@ -177,15 +178,15 @@ class PeerReview extends Component implements HasActions, HasForms
                             })
                             ->reactive(),
                         Grid::make(1)
-                            ->visible(fn(Get $get) => $get('payment_fee_id'))
+                            ->visible(fn (Get $get) => $get('payment_fee_id'))
                             ->schema([
                                 Grid::make()
                                     ->schema([
                                         Select::make('currency')
                                             ->label(__('general.currency'))
-                                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
                                             ->options(
-                                                fn() => Currency::query()->orderBy('code_numeric', 'asc')
+                                                fn () => Currency::query()->orderBy('code_numeric', 'asc')
                                                     ->get()
                                                     ->mapWithKeys(function (?Currency $value, int $key) {
                                                         $currencyCode = Str::upper($value->id);
@@ -223,7 +224,7 @@ class PeerReview extends Component implements HasActions, HasForms
                     }
                 }
 
-                if (!$this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
+                if (! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
                     $paymentFeeId = data_get($data, 'payment_fee_id');
 
                     $paymentFee = PaymentFee::find($paymentFeeId);
@@ -259,7 +260,7 @@ class PeerReview extends Component implements HasActions, HasForms
     {
         return Action::make('requestRevisionAction')
             ->authorize('requestRevision', $this->submission)
-            ->hidden(fn(): bool => $this->submission->revision_required)
+            ->hidden(fn (): bool => $this->submission->revision_required)
             ->icon('lineawesome-list-alt-solid')
             ->outlined()
             ->color(Color::Orange)

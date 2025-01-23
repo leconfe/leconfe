@@ -213,7 +213,7 @@ class PanelProvider extends ServiceProvider
 
         FilamentColor::register([
             'primary' => Color::hex('#1c3569'),
-        ]);        
+        ]);
     }
 
     /**

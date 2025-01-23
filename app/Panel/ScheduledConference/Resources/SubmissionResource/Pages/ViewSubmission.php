@@ -2,70 +2,64 @@
 
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use App\Models\PaymentFee;
-use Illuminate\Support\Str;
-use Squire\Models\Currency;
-use Filament\Actions\Action;
-use App\Models\Enums\UserRole;
-use App\Managers\PaymentManager;
-use Filament\Infolists\Infolist;
-use Filament\Actions\ActionGroup;
-use Filament\Resources\Pages\Page;
-use Illuminate\Support\HtmlString;
-use App\Models\DefaultMailTemplate;
-use Filament\Forms\Components\Grid;
-use App\Forms\Components\TinyEditor;
-use Filament\Forms\Components\Radio;
-use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Enums\SubmissionStage;
-use Filament\Forms\Components\Select;
-use App\Models\Enums\SubmissionStatus;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Awcodes\Shout\Components\ShoutEntry;
-use Filament\Forms\Components\TextInput;
-use App\Notifications\SubmissionWithdrawn;
-use Illuminate\Contracts\Support\Htmlable;
-use App\Infolists\Components\LivewireEntry;
-use Illuminate\View\Compilers\BladeCompiler;
-use App\Mail\Templates\PublishSubmissionMail;
-use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Forms\Concerns\InteractsWithForms;
-use App\Notifications\SubmissionWithdrawRequested;
 use App\Actions\Submissions\AcceptWithdrawalAction;
 use App\Actions\Submissions\CancelWithdrawalAction;
 use App\Actions\Submissions\RequestWithdrawalAction;
-use App\Facades\Setting;
+use App\Forms\Components\TinyEditor;
+use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs\Tab as Tab;
 use App\Infolists\Components\VerticalTabs\Tabs as Tabs;
-use App\Models\PaymentFeeFormItem;
+use App\Mail\Templates\PublishSubmissionMail;
+use App\Managers\PaymentManager;
+use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
+use App\Models\Enums\UserRole;
+use App\Models\PaymentFee;
+use App\Models\User;
 use App\Notifications\PaymentRequired;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Components\Tabs as HorizontalTabs;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
-use App\Panel\ScheduledConference\Livewire\Submissions\Editing;
-use App\Panel\ScheduledConference\Livewire\Submissions\Payment;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
-use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
-use App\Panel\ScheduledConference\Livewire\Submissions\Forms\Detail;
-use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
+use App\Notifications\SubmissionWithdrawn;
+use App\Notifications\SubmissionWithdrawRequested;
 use App\Panel\ScheduledConference\Livewire\Submissions\CallforAbstract;
-use App\Panel\ScheduledConference\Livewire\Submissions\Forms\References;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\GalleyList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ActivityLogList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\GalleyList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\PermissionsAndDisclosure;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
+use App\Panel\ScheduledConference\Livewire\Submissions\Editing;
+use App\Panel\ScheduledConference\Livewire\Submissions\Forms\Detail;
+use App\Panel\ScheduledConference\Livewire\Submissions\Forms\References;
+use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
+use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Awcodes\Shout\Components\ShoutEntry;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Tabs as HorizontalTabs;
+use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Illuminate\View\Compilers\BladeCompiler;
+use Squire\Models\Currency;
 
 class ViewSubmission extends Page implements HasForms, HasInfolists
 {
@@ -106,14 +100,14 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->visible(app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                 ->modalWidth(MaxWidth::Large)
                 ->modalCancelActionLabel(__('general.close'))
-                ->visible(fn() => $this->record->payment)
-                ->authorize(fn() => $this->record->isParticipantAuthor(auth()->user()))
-                ->url(fn() => $this->record->payment->getPaymentUrl())
-                ->hidden(fn() => $this->record->payment?->isPaid()),
+                ->visible(fn () => $this->record->payment)
+                ->authorize(fn () => $this->record->isParticipantAuthor(auth()->user()))
+                ->url(fn () => $this->record->payment->getPaymentUrl())
+                ->hidden(fn () => $this->record->payment?->isPaid()),
             Action::make('charge_payment')
                 ->label('Charge Payment')
-                ->visible(fn() => !$this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
-                ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
+                ->visible(fn () => ! $this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                ->authorize(fn () => auth()->user()->can('actAsEditor', $this->record))
                 ->icon('heroicon-o-banknotes')
                 ->modalWidth(MaxWidth::Large)
                 ->form(function (Form $form) {
@@ -124,17 +118,19 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 ->label('Payment Fee')
                                 ->required()
                                 ->options(
-                                    fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                         ->active()
                                         ->get()
                                         ->mapWithKeys(function ($record) {
                                             return [
-                                                $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')'
+                                                $record->getKey() => $record->name.' ('.money($record->amount, $record->currency, true)->formatWithoutZeroes().')',
                                             ];
                                         })
                                 )
                                 ->afterStateUpdated(function (Set $set, $state) {
-                                    if (!$state) return;
+                                    if (! $state) {
+                                        return;
+                                    }
 
                                     $paymentFee = PaymentFee::find($state);
                                     $set('currency', $paymentFee->currency);
@@ -143,15 +139,15 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 })
                                 ->reactive(),
                             Grid::make(1)
-                                ->visible(fn(Get $get) => $get('payment_fee_id'))
+                                ->visible(fn (Get $get) => $get('payment_fee_id'))
                                 ->schema([
                                     Grid::make()
                                         ->schema([
                                             Select::make('currency')
                                                 ->label(__('general.currency'))
-                                                ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                                ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
                                                 ->options(
-                                                    fn() => Currency::query()->orderBy('code_numeric', 'asc')
+                                                    fn () => Currency::query()->orderBy('code_numeric', 'asc')
                                                         ->get()
                                                         ->mapWithKeys(function (?Currency $value, int $key) {
                                                             $currencyCode = Str::upper($value->id);
@@ -197,11 +193,11 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     $action->success();
                 }),
             Action::make('pay_submission_fee')
-                ->label("Pay Submission Fee")
-                ->authorize(fn() => $this->record->isParticipantAuthor(auth()->user()))
+                ->label('Pay Submission Fee')
+                ->authorize(fn () => $this->record->isParticipantAuthor(auth()->user()))
                 ->icon('heroicon-o-credit-card')
-                ->visible(fn() => $this->record->paymentQueue)
-                ->url(fn() => $this->record->paymentQueue->getPaymentUrl()),
+                ->visible(fn () => $this->record->paymentQueue)
+                ->url(fn () => $this->record->paymentQueue->getPaymentUrl()),
             Action::make('view')
                 ->icon('heroicon-o-eye')
                 ->color('primary')
@@ -217,13 +213,13 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     }
                 })
                 ->visible(
-                    fn(): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
+                    fn (): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
                 ),
             Action::make('assign_proceeding')
                 ->label(__('general.publication'))
                 ->authorize('publish', $this->record)
                 ->modalHeading(__('general.assign_proceeding_for_publication'))
-                ->visible(fn() => ! $this->record->proceeding && $this->record->stage == SubmissionStage::Editing)
+                ->visible(fn () => ! $this->record->proceeding && $this->record->stage == SubmissionStage::Editing)
                 ->modalWidth(MaxWidth::ExtraLarge)
                 ->form(SubmissionProceeding::getFormAssignProceeding($this->record))
                 ->action(function (array $data) {
@@ -236,7 +232,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->color('primary')
                 ->label(__('general.publish_now'))
                 ->visible(
-                    fn(): bool => $this->record->proceeding ? true : false
+                    fn (): bool => $this->record->proceeding ? true : false
                 )
                 ->authorize('publish', $this->record)
                 ->successNotificationTitle(__('general.assign_proceeding_for_publication'))
@@ -292,7 +288,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     $action->success();
                 }),
             Action::make('unpublish')
-                ->label(fn() => $this->record->proceeding?->isPublished() ? __('general.unpublish') : __('general.unschedule'))
+                ->label(fn () => $this->record->proceeding?->isPublished() ? __('general.unpublish') : __('general.unschedule'))
                 ->icon('lineawesome-calendar-times-solid')
                 ->color('danger')
                 ->authorize('unpublish', $this->record)
@@ -333,11 +329,11 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         // Currently using admin, next is admin removed only managers
                         User::whereHas(
                             'roles',
-                            fn($query) => $query->whereIn('name', [UserRole::Admin->value, UserRole::ConferenceManager->value])
+                            fn ($query) => $query->whereIn('name', [UserRole::Admin->value, UserRole::ConferenceManager->value])
                         )
                             ->get()
                             ->each(
-                                fn($manager) => $manager->notify(new SubmissionWithdrawRequested($this->record))
+                                fn ($manager) => $manager->notify(new SubmissionWithdrawRequested($this->record))
                             );
 
                         $this
@@ -364,7 +360,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->color('danger')
                 ->extraAttributes(function (Action $action) {
                     if (filled($this->record->withdrawn_reason)) {
-                        $attributeValue = '$nextTick(() => { $wire.mountAction(\'' . $action->getName() . '\') })';
+                        $attributeValue = '$nextTick(() => { $wire.mountAction(\''.$action->getName().'\') })';
 
                         return [
                             'x-init' => new HtmlString($attributeValue),
@@ -387,7 +383,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ])
                 ->requiresConfirmation()
                 ->modalHeading(function () {
-                    return $this->record->user->fullName . __('general.requested_withdraw_this_submission');
+                    return $this->record->user->fullName.__('general.requested_withdraw_this_submission');
                 })
                 ->modalDescription(__('general.either_reject_request_or_accept'))
                 ->modalCancelActionLabel(__('general.ignore'))
@@ -429,7 +425,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             Action::make('activity-log')
                 ->label(__('general.activity_log'))
                 ->hidden(
-                    fn(): bool => $this->record->stage == SubmissionStage::Wizard
+                    fn (): bool => $this->record->stage == SubmissionStage::Wizard
                 )
                 ->outlined()
                 ->icon('lineawesome-history-solid')
@@ -455,15 +451,15 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
         $badgeHtml = '<div class="flex items-center gap-x-2">';
 
         $badgeHtml .= match ($this->record->status) {
-            SubmissionStatus::Incomplete => '<x-filament::badge color="gray" class="w-fit">' . __('general.incomplete') . '</x-filament::badge>',
-            SubmissionStatus::Queued => '<x-filament::badge color="primary" class="w-fit">' . __('general.queued') . '</x-filament::badge>',
-            SubmissionStatus::OnReview => '<x-filament::badge color="warning" class="w-fit">' . __('general.on_review') . '</x-filament::badge>',
-            SubmissionStatus::OnPresentation => '<x-filament::badge color="warning" class="w-fit">' . __('general.on_presentation') . '</x-filament::badge>',
-            SubmissionStatus::Published => $this->record->proceeding?->isPublished() ? '<x-filament::badge color="success" class="w-fit">' . __('general.published') . '</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">' . __('general.scheduled') . '</x-filament::badge>',
-            SubmissionStatus::Editing => '<x-filament::badge color="info" class="w-fit">' . __('general.editing') . '</x-filament::badge>',
-            SubmissionStatus::Declined => '<x-filament::badge color="danger" class="w-fit">' . __('general.declined') . '</x-filament::badge>',
-            SubmissionStatus::PaymentDeclined => '<x-filament::badge color="danger" class="w-fit">' . __('general.payment_declined') . '</x-filament::badge>',
-            SubmissionStatus::Withdrawn => '<x-filament::badge color="danger" class="w-fit">' . __('general.withdrawn') . '</x-filament::badge>',
+            SubmissionStatus::Incomplete => '<x-filament::badge color="gray" class="w-fit">'.__('general.incomplete').'</x-filament::badge>',
+            SubmissionStatus::Queued => '<x-filament::badge color="primary" class="w-fit">'.__('general.queued').'</x-filament::badge>',
+            SubmissionStatus::OnReview => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_review').'</x-filament::badge>',
+            SubmissionStatus::OnPresentation => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_presentation').'</x-filament::badge>',
+            SubmissionStatus::Published => $this->record->proceeding?->isPublished() ? '<x-filament::badge color="success" class="w-fit">'.__('general.published').'</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">'.__('general.scheduled').'</x-filament::badge>',
+            SubmissionStatus::Editing => '<x-filament::badge color="info" class="w-fit">'.__('general.editing').'</x-filament::badge>',
+            SubmissionStatus::Declined => '<x-filament::badge color="danger" class="w-fit">'.__('general.declined').'</x-filament::badge>',
+            SubmissionStatus::PaymentDeclined => '<x-filament::badge color="danger" class="w-fit">'.__('general.payment_declined').'</x-filament::badge>',
+            SubmissionStatus::Withdrawn => '<x-filament::badge color="danger" class="w-fit">'.__('general.withdrawn').'</x-filament::badge>',
             default => null,
         };
 
@@ -474,9 +470,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
         );
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string|Htmlable
     {
-        return new HtmlString('<span class="text-xl ">' . $this->record->getMeta('title') . '</span>');
+        return new HtmlString('<span class="text-xl ">'.$this->record->getMeta('title').'</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -551,7 +547,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                     ->type('warning')
                                     ->color('warning')
                                     ->visible(
-                                        fn(): bool => $this->record->isPublished()
+                                        fn (): bool => $this->record->isPublished()
                                     )
                                     ->content(__('general.cant_edit_submission_because_already_published')),
                                 Tabs::make()
@@ -619,7 +615,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             ]);
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         if ($this->record->stage == SubmissionStage::Wizard) {
             return __('general.submission_wizard');

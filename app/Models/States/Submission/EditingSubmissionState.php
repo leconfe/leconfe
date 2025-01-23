@@ -25,7 +25,7 @@ class EditingSubmissionState extends BaseSubmissionState
         ];
 
         $conference = app()->getCurrentConference();
-        //get authors name split by semicolon
+        // get authors name split by semicolon
         if (! $this->submission->getMeta('copyright_holder')) {
             $data['meta']['copyright_holder'] = $conference->getCopyrightHolderForSubmission($this->submission);
         }

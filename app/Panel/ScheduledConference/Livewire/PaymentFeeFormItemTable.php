@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Forms\Components\TinyEditor;
 use App\Forms\Form;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
@@ -23,8 +22,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use FormReview\Model\ReviewForm;
-use FormReview\Model\ReviewFormItem;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -59,8 +56,8 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                 Select::make('type')
                     ->required()
                     ->reactive()
-                    ->options(fn() => PaymentFeeFormItem::getOptions())
-                    ->rule(fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                    ->options(fn () => PaymentFeeFormItem::getOptions())
+                    ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) {
                         if (! array_key_exists($value, PaymentFeeFormItem::getOptions())) {
                             $fail('Option unavailable');
                         }
@@ -68,13 +65,13 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                     ->label('Item Type'),
                 TagsInput::make('meta.response_options')
                     ->placeholder('New Option')
-                    ->visible(fn(Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX]))
+                    ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX]))
                     ->reorderable()
                     ->requiredIf('type', [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])
                     ->validationMessages([
                         'required_if' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
                     ]),
-                
+
             ]);
     }
 
@@ -93,15 +90,15 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('#'),
                 TextColumn::make('name')
-                    ->getStateUsing(fn($record) => $record->getMeta('name')),
+                    ->getStateUsing(fn ($record) => $record->getMeta('name')),
             ])
             ->filters([
                 // ...
             ])
             ->headerActions([
                 Action::make('create')
-                    ->form(fn($form) => $this->form($form))
-                    ->hidden(fn() => $this->record->formItems->count())
+                    ->form(fn ($form) => $this->form($form))
+                    ->hidden(fn () => $this->record->formItems->count())
                     ->action(function (array $data, Action $action) {
                         try {
                             DB::beginTransaction();
@@ -129,13 +126,13 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 EditAction::make()
-                    ->hidden(fn() => $this->record->formItems->count())
+                    ->hidden(fn () => $this->record->formItems->count())
                     ->mutateRecordDataUsing(function (PaymentFeeFormItem $record, array $data): array {
                         $data['meta'] = $record->getAllMeta();
 
                         return $data;
                     })
-                    ->form(fn($form) => $this->form($form))
+                    ->form(fn ($form) => $this->form($form))
                     ->using(function (array $data, PaymentFeeFormItem $record, EditAction $action) {
                         try {
                             DB::beginTransaction();

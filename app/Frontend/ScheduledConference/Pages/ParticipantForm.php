@@ -7,10 +7,8 @@ use App\Forms\Form;
 use App\Frontend\Website\Pages\Page;
 use App\Managers\PaymentManager;
 use App\Models\Participant;
-use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
-use Awcodes\Shout\Components\Shout;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -24,12 +22,11 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\HtmlString;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
-class ParticipantForm extends Page implements HasForms, HasActions
+class ParticipantForm extends Page implements HasActions, HasForms
 {
-    use InteractsWithForms, InteractsWithActions;
+    use InteractsWithActions, InteractsWithForms;
 
     protected static string $view = 'frontend.scheduledConference.pages.participant-form';
 
@@ -53,7 +50,7 @@ class ParticipantForm extends Page implements HasForms, HasActions
 
     public function getTitle(): string|Htmlable
     {
-        return "Participant Registration";
+        return 'Participant Registration';
     }
 
     public static function getLayout(): string
@@ -104,11 +101,11 @@ class ParticipantForm extends Page implements HasForms, HasActions
                     ->email()
                     ->label(__('general.email'))
                     ->required(),
-                ...$this->paymentFee->formItems->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
+                ...$this->paymentFee->formItems->map(fn (PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
                 Radio::make('payment_method')
                     ->required()
                     ->reactive()
-                    ->options($paymentManager->getPaymentMethodOptions())
+                    ->options($paymentManager->getPaymentMethodOptions()),
             ]);
     }
 
@@ -127,7 +124,7 @@ class ParticipantForm extends Page implements HasForms, HasActions
         try {
             DB::beginTransaction();
 
-            $participant = new Participant();
+            $participant = new Participant;
             $participant->fill(Arr::only($data, ['given_name', 'family_name', 'email']));
             $participant->save();
 

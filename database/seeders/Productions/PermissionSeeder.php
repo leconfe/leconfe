@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
         try {
             PermissionPopulateAction::run();
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
         }
 
     }

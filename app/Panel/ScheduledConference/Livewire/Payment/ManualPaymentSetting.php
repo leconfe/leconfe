@@ -30,7 +30,7 @@ class ManualPaymentSetting extends Component implements HasForms
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(fn() => auth()->user()->cannot('update', app()->getCurrentScheduledConference()))
+            ->disabled(fn () => auth()->user()->cannot('update', app()->getCurrentScheduledConference()))
             ->schema([
                 Section::make()
                     ->schema([

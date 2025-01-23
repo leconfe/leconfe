@@ -8,15 +8,9 @@ use App\Models\NavigationMenuItem;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
-use App\Models\Permission;
 use App\Models\RegistrationType;
-use App\Models\Review;
-use App\Models\Track;
-use Filament\Navigation\NavigationItem;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class Upgrade120Beta4 extends UpgradeBase
 {
@@ -42,7 +36,7 @@ class Upgrade120Beta4 extends UpgradeBase
             DB::beginTransaction();
 
             RegistrationType::query()
-                ->with(['meta', 'scheduledConference.conference', 'registration' => fn($query) => $query->with(['user', 'registrationPayment'])])
+                ->with(['meta', 'scheduledConference.conference', 'registration' => fn ($query) => $query->with(['user', 'registrationPayment'])])
                 ->get()
                 ->each(function ($registrationType) {
                     $paymentFee = new PaymentFee([
@@ -94,7 +88,7 @@ class Upgrade120Beta4 extends UpgradeBase
                             ]);
 
                             if ($registration->registrationPayment->paid_at) {
-                                $payment->payment_method = "manual";
+                                $payment->payment_method = 'manual';
                                 $payment->paid_at = $registration->registrationPayment->paid_at;
                             }
 

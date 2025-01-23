@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -41,9 +40,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
 
-class Submission extends Model implements HasMedia, Sortable, HasPayment
+class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait, InteractsWithPayment;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
 
     /**
      * The attributes that are mass assignable.

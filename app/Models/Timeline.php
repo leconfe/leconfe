@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
-use App\Facades\Setting;
 use App\Models\Concerns\BelongsToScheduledConference;
-use Carbon\Carbon;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class Timeline extends Model
 {

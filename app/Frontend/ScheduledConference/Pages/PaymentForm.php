@@ -21,9 +21,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
-class PaymentForm extends Page implements HasForms, HasActions
+class PaymentForm extends Page implements HasActions, HasForms
 {
-    use InteractsWithForms, InteractsWithActions;
+    use InteractsWithActions, InteractsWithForms;
 
     protected static string $view = 'frontend.scheduledConference.pages.payment-form';
 
@@ -38,7 +38,7 @@ class PaymentForm extends Page implements HasForms, HasActions
 
     public function mount(Payment $payment)
     {
-        if($payment->isPaid()){
+        if ($payment->isPaid()) {
             abort('403', 'Payment fee already paid');
         }
 
@@ -52,7 +52,6 @@ class PaymentForm extends Page implements HasForms, HasActions
             ...$this->payment->attributesToArray(),
             'meta' => $this->payment->getAllMeta()->toArray(),
         ]);
-
 
     }
 
@@ -77,14 +76,14 @@ class PaymentForm extends Page implements HasForms, HasActions
     public function form(Form $form): Form
     {
         $paymentManager = PaymentManager::get();
-        
+
         return $form
             ->id('paymentForm')
             ->statePath('data')
             ->model($this->payment)
             ->schema([
                 Shout::make('policy')
-                    ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()?->getMeta('payment_policy')))
+                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()?->getMeta('payment_policy')))
                     ->visible(app()->getCurrentScheduledConference()?->getMeta('payment_policy') ?? false),
                 Placeholder::make('title')
                     ->content($this->payment->getMeta('title')),
@@ -98,11 +97,11 @@ class PaymentForm extends Page implements HasForms, HasActions
                 Placeholder::make('description')
                     ->content($this->payment->getMeta('description'))
                     ->visible($this->payment->getMeta('description') ?? false),
-                ...$this->payment?->fee?->formItems?->map(fn(PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
+                ...$this->payment?->fee?->formItems?->map(fn (PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
                 Radio::make('payment_method')
                     ->required()
                     ->reactive()
-                    ->options($paymentManager->getPaymentMethodOptions())
+                    ->options($paymentManager->getPaymentMethodOptions()),
             ]);
     }
 
@@ -123,7 +122,7 @@ class PaymentForm extends Page implements HasForms, HasActions
 
             $this->form->model($this->payment)->saveRelationships();
 
-            if($meta = data_get($data, 'meta')){
+            if ($meta = data_get($data, 'meta')) {
                 $this->payment->setManyMeta($meta);
             }
 

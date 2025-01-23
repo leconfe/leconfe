@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -18,7 +17,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Payment extends Model implements HasMedia
 {
-    use HasFactory, Metable, BelongsToScheduledConference, BelongsToConference, InteractsWithMedia;
+    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, Metable;
 
     protected $fillable = [
         'type',
@@ -70,7 +69,7 @@ class Payment extends Model implements HasMedia
 
     public function scopePaid(Builder $query, $isPaid = true)
     {
-        if($isPaid){
+        if ($isPaid) {
             return $query->whereNotNull('paid_at');
         }
 
@@ -86,11 +85,11 @@ class Payment extends Model implements HasMedia
 
     public function isExpired(): bool
     {
-        if(!$this->paid_at){
+        if (! $this->paid_at) {
             return false;
         }
 
-        if (!$this->expired_at) {
+        if (! $this->expired_at) {
             return false;
         }
 

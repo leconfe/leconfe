@@ -5,7 +5,6 @@ namespace App\Frontend\Website\Pages;
 use App\Facades\Hook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
-use Rahmanramsi\LivewirePageGroup\Facades\LivewirePageGroup;
 use Rahmanramsi\LivewirePageGroup\Pages\Page as BasePage;
 
 abstract class Page extends BasePage
@@ -30,5 +29,4 @@ abstract class Page extends BasePage
             ])
             ->title($this->getTitle());
     }
-
 }

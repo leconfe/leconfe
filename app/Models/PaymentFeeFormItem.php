@@ -89,7 +89,7 @@ class PaymentFeeFormItem extends Model implements Sortable
 
     protected function getFieldId(): string
     {
-        return 'meta.form_responses.' . $this->getKey();
+        return 'meta.form_responses.'.$this->getKey();
     }
 
     protected function fieldText(): TextInput

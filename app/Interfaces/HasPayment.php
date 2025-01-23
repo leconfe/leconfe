@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 interface HasPayment
 {
-	public function payment(): MorphOne;
+    public function payment(): MorphOne;
 }

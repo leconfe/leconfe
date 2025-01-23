@@ -15,7 +15,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class PaymentFee extends Model implements Sortable
 {
-    use HasFactory, Metable, BelongsToScheduledConference, BelongsToConference, SortableTrait;
+    use BelongsToConference, BelongsToScheduledConference, HasFactory, Metable, SortableTrait;
 
     protected $fillable = [
         'name',
@@ -31,7 +31,6 @@ class PaymentFee extends Model implements Sortable
         'scheduled_conference_id',
         'conference_id',
     ];
-
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -50,11 +49,11 @@ class PaymentFee extends Model implements Sortable
         return $query->where('is_active', $active);
     }
 
-    public function formItems() : HasMany
+    public function formItems(): HasMany
     {
         return $this->hasMany(PaymentFeeFormItem::class);
     }
-    
+
     public function getPaymentType()
     {
         return PaymentManager::get()->getPaymentTypeName($this->type);

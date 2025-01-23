@@ -35,7 +35,7 @@ class SubmissionPaymentSetting extends Component implements HasForms
                         Toggle::make('meta.submission_payment')
                             ->label(__('general.enable_submission_payment')),
                         TinyEditor::make('meta.payment_policy')
-                            ->label(__('general.payment_policy'))
+                            ->label(__('general.payment_policy')),
                     ]),
                 Actions::make([
                     Action::make('save')
@@ -56,7 +56,7 @@ class SubmissionPaymentSetting extends Component implements HasForms
                         }),
                 ]),
             ])
-            ->disabled(fn () => !auth()->user()->can('update', app()->getCurrentScheduledConference()))
+            ->disabled(fn () => ! auth()->user()->can('update', app()->getCurrentScheduledConference()))
             ->statePath('formData');
     }
 

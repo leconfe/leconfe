@@ -6,39 +6,36 @@ use App\Facades\Setting;
 use App\Frontend\ScheduledConference\Pages\ParticipantForm;
 use App\Infolists\Components\LivewireEntry;
 use App\Managers\PaymentManager;
-use Livewire\Component;
-use Filament\Forms\Form;
 use App\Models\PaymentFee;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\Unique;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
+use Livewire\Component;
 use Squire\Models\Currency;
 
 class PaymentFeeTable extends Component implements HasForms, HasTable
@@ -75,30 +72,28 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         $description .= $record->opened_at?->format(Setting::get('format_date'));
 
                         if ($record->opened_at && $record->closed_at) {
-                            $description .= ' - ' . $record->closed_at->format(Setting::get('format_date'));
+                            $description .= ' - '.$record->closed_at->format(Setting::get('format_date'));
                         }
 
                         return $description;
                     }),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn(Model $record) => money($record->amount, $record->currency, true)->formatWithoutZeroes()),
+                    ->getStateUsing(fn (Model $record) => money($record->amount, $record->currency, true)->formatWithoutZeroes()),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->form(fn(Form $form) => $this->form($form))
+                    ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {
                         $record = new PaymentFee;
                         $record->fill($data);
                         $record->type = $this->paymentType;
                         $record->save();
 
-
                         if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                             $record->setManyMeta($data['meta']);
                         }
-
 
                         return $record;
                     }),
@@ -111,19 +106,19 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         ->extraAttributes(fn ($record) => [
                             'x-data' => '',
                             'x-on:click' => new HtmlString(
-                                'window.navigator.clipboard.writeText('. Js::from(route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()])) .');'
+                                'window.navigator.clipboard.writeText('.Js::from(route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()])).');'
                             ),
                         ])
-                        ->action(fn($action) => $action->success())
+                        ->action(fn ($action) => $action->success())
                         ->successNotificationTitle('Link copied'),
                     EditAction::make()
-                        ->hidden(fn(PaymentFee $record) => $record->payments->count())
+                        ->hidden(fn (PaymentFee $record) => $record->payments->count())
                         ->mutateRecordDataUsing(function (PaymentFee $record, array $data): array {
                             $data['meta'] = $record->getAllMeta();
 
                             return $data;
                         })
-                        ->form(fn(Form $form) => $this->form($form))
+                        ->form(fn (Form $form) => $this->form($form))
                         ->using(function (PaymentFee $record, array $data) {
                             $record->update($data);
 
@@ -131,18 +126,17 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                                 $record->setManyMeta($data['meta']);
                             }
 
-
                             return $record;
                         }),
                     Action::make('items')
                         ->label('Form Items')
-                        ->hidden(fn(PaymentFee $record) => $record->payments->count())
+                        ->hidden(fn (PaymentFee $record) => $record->payments->count())
                         ->modalWidth(MaxWidth::TwoExtraLarge)
                         ->icon('heroicon-m-list-bullet')
                         ->modalCancelAction(false)
                         ->modalSubmitAction(false)
                         ->modalHeading(false)
-                        ->infolist(fn($record) => [
+                        ->infolist(fn ($record) => [
                             LivewireEntry::make('form-items')
                                 ->livewire(PaymentFeeFormItemTable::class, ['record' => $record]),
                         ]),
@@ -180,12 +174,12 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         // ->modalCancelAction(false)
                         // ->modalSubmitAction(false)
                         ->closeModalByClickingAway()
-                        ->visible(fn(PaymentFee $record) => $record->formItems->count())
+                        ->visible(fn (PaymentFee $record) => $record->formItems->count())
                         ->form(function (Form $form, PaymentFee $record) {
-                            return $form->schema($record->formItems->map(fn($item) => $item->getFormField())->toArray());
+                            return $form->schema($record->formItems->map(fn ($item) => $item->getFormField())->toArray());
                         }),
                     DeleteAction::make()
-                        ->hidden(fn(PaymentFee $record) => $record->payments->count()),
+                        ->hidden(fn (PaymentFee $record) => $record->payments->count()),
                 ]),
             ]);
     }
@@ -200,8 +194,8 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                             ->label(__('general.name'))
                             ->required()
                             ->unique(
-                                ignorable: fn() => $form->getRecord(),
-                                modifyRuleUsing: fn(Unique $rule) => $rule->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId()),
+                                ignorable: fn () => $form->getRecord(),
+                                modifyRuleUsing: fn (Unique $rule) => $rule->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId()),
                             ),
                         TextInput::make('limit')
                             ->label('Limit')
@@ -217,8 +211,8 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                     ->schema([
                         Select::make('currency')
                             ->label(__('general.currency'))
-                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                            ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
+                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                            ->options(fn () => Currency::query()->orderBy('code_numeric', 'asc')->get()
                                 ->mapWithKeys(function (?Currency $value, int $key) {
                                     $currencyCode = Str::upper($value->id);
                                     $currencyName = $value->name;

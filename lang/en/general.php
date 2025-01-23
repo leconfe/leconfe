@@ -398,7 +398,7 @@ return [
     'submission_complete' => 'Submission complete',
     'submission_payment' => 'Submission Payment',
     'enable_submission_payment' => 'Enable Submission Payment',
-    'enable_participant_payment' => "Enable Participant Payment",
+    'enable_participant_payment' => 'Enable Participant Payment',
     'turn_off_to_disable_submission_payment' => 'Turn off to disable submission payment process.',
     'submitted_submission' => 'You have submitted your submission, and an email has been sent to notify you. The manager will review your submission and send you another email once they are done.',
     'submit_submission' => 'Submit Submission',

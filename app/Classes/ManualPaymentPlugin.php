@@ -24,23 +24,24 @@ class ManualPaymentPlugin extends Plugin
         if (app()->getCurrentScheduledConference()?->getMeta('manual_payment_enabled')) {
             Hook::add('PaymentManager::getPaymentMethodOptions', function ($hookName, &$options) {
                 $options['manual'] = app()->getCurrentScheduledConference()->getMeta('manual_payment_name') ?? 'Manual Payment';
+
                 return false;
             });
 
             Hook::add('Forms::Form::components::paymentForm', function ($hookName, array &$components, Form $form) {
 
                 $components[] = Grid::make(1)
-                    ->visible(fn(Get $get) => $get('payment_method') == 'manual')
+                    ->visible(fn (Get $get) => $get('payment_method') == 'manual')
                     ->schema([
                         Placeholder::make('manual_payment_instructions')
                             ->label('Payment Instructions')
-                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
-                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
+                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
                             ->required()
                             ->downloadable()
-                            ->collection('manual_payment_proof')
+                            ->collection('manual_payment_proof'),
                     ]);
 
                 return false;
@@ -48,13 +49,13 @@ class ManualPaymentPlugin extends Plugin
             Hook::add('Forms::Form::components::submissionPayment', function ($hookName, array &$components, Form $form) {
 
                 $components[] = Grid::make(1)
-                    ->visible(fn(Get $get) => $get('payment_method') == 'manual')
+                    ->visible(fn (Get $get) => $get('payment_method') == 'manual')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
                             ->required()
                             ->downloadable()
-                            ->collection('manual_payment_proof')
+                            ->collection('manual_payment_proof'),
                     ])
                     ->disabled();
 
@@ -69,7 +70,6 @@ class ManualPaymentPlugin extends Plugin
                         ->success()
                         ->send();
                 }
-
 
                 return false;
             });
