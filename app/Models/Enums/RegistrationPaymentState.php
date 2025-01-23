@@ -7,6 +7,9 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
+/**
+ * @deprecated deprecated since version 1.2.0
+ */
 enum RegistrationPaymentState: string implements HasColor, HasLabel
 {
     use UsefulEnums;

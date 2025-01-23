@@ -55,8 +55,6 @@ class TimelineResource extends Resource
                 DatePicker::make('date')
                     ->label(__('general.date'))
                     ->required(),
-                Checkbox::make('require_attendance')
-                    ->helperText(__('general.by_turning_this_on_participants_only_need_attend_here')),
                 Select::make('type')
                     ->label(__('general.type'))
                     ->options(Timeline::getTypes())
@@ -80,45 +78,19 @@ class TimelineResource extends Resource
                 TextColumn::make('date')
                     ->label(__('general.date'))
                     ->dateTime(Setting::get('format_date'))
-                    ->description(fn (Model $record) => $record->getEarliestTime()->format(Setting::get('format_time')).' - '.$record->getLatestTime()->format(Setting::get('format_time')))
                     ->sortable(),
                 TextColumn::make('name')
                     ->label(__('general.name')),
-                TextColumn::make('sessions_count')
-                    ->label('Session')
-                    ->counts('sessions')
-                    ->badge()
-                    ->color(Color::Blue)
-                    ->alignCenter(),
-                ToggleColumn::make('require_attendance')
-                    ->alignCenter(),
                 ToggleColumn::make('hide')
                     ->label(__('general.hidden')),
             ])
-            ->recordUrl(fn (Model $record) => static::getUrl('session', ['record' => $record]))
             ->filters([
                 // ...
             ])
             ->actions([
                 EditAction::make()
-                    ->modalWidth(MaxWidth::ExtraLarge)
-                    ->model(Timeline::class)
-                    ->after(function (Model $record, array $data) {
-                        $date = Carbon::parse($data['date'], 'UTC');
-                        $timezone = app()->getCurrentScheduledConference()->getMeta('timezone');
-                        foreach ($record->sessions as $session) {
-                            $session->start_at = $session->start_at->copy()->setTimezone($timezone)->setDateFrom($date)->setTimezone('UTC');
-                            $session->end_at = $session->end_at->copy()->setTimezone($timezone)->setDateFrom($date)->setTimezone('UTC');
-                            $session->save();
-                        }
-                    }),
+                    ->modalWidth(MaxWidth::ExtraLarge),
                 ActionGroup::make([
-                    Action::make('session')
-                        ->label(__('general.details'))
-                        ->icon('heroicon-m-calendar-days')
-                        ->color(Color::Blue)
-                        ->url(fn (Model $record) => static::getUrl('session', ['record' => $record]))
-                        ->authorize(fn (Model $record) => auth()->user()->can('view', $record) && auth()->user()->can('viewAny', Session::class)),
                     DeleteAction::make(),
                 ]),
             ]);
@@ -135,8 +107,6 @@ class TimelineResource extends Resource
     {
         return [
             'index' => Pages\ManageTimeline::route('/'),
-            'all-session' => Pages\ListAllSession::route('/sessions'),
-            'session' => Pages\ListSession::route('/{record}/sessions'),
         ];
     }
 }

@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Plank\Metable\Metable;
 
+/**
+ * @deprecated deprecated since version 1.2.0
+ */
 class RegistrationPayment extends Model
 {
     use BelongsToScheduledConference, Cachable, HasFactory, Metable;

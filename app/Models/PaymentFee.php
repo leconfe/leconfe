@@ -28,6 +28,8 @@ class PaymentFee extends Model implements Sortable
         'order_column',
         'opened_at',
         'closed_at',
+        'scheduled_conference_id',
+        'conference_id',
     ];
 
 

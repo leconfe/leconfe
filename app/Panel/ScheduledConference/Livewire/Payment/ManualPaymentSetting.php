@@ -30,6 +30,7 @@ class ManualPaymentSetting extends Component implements HasForms
     public function form(Form $form): Form
     {
         return $form
+            ->disabled(fn() => auth()->user()->cannot('update', app()->getCurrentScheduledConference()))
             ->schema([
                 Section::make()
                     ->schema([
@@ -42,8 +43,7 @@ class ManualPaymentSetting extends Component implements HasForms
                             ->placeholder(__('general.input_payment_details'))
                             ->helperText(__('general.add_instruction_here'))
                             ->required(),
-                    ])
-                    ->disabled(fn () => auth()->user()->cannot('RegistrationSetting:update')),
+                    ]),
                 Actions::make([
                     Action::make('save_changes')
                         ->label(__('general.save_changes'))
@@ -63,8 +63,7 @@ class ManualPaymentSetting extends Component implements HasForms
                             }
 
                             $action->success();
-                        })
-                        ->authorize('RegistrationSetting:update'),
+                        }),
                 ]),
             ])
             ->statePath('formData');

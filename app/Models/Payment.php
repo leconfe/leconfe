@@ -31,6 +31,8 @@ class Payment extends Model implements HasMedia
         'payment_method',
         'expired_at',
         'paid_at',
+        'scheduled_conference_id',
+        'conference_id',
     ];
 
     protected $casts = [

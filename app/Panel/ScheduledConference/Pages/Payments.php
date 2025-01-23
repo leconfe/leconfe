@@ -6,13 +6,11 @@ use App\Facades\Hook;
 use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Managers\PaymentManager;
-use App\Models\Enums\PaymentType;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\Payment\ManualPaymentSetting;
 use App\Panel\ScheduledConference\Livewire\PaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\PaymentSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentFeeTable;
-use App\Panel\ScheduledConference\Livewire\SubmissionPaymentSetting;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -47,7 +45,7 @@ class Payments extends Page
 
     public static function canAccess(): bool
     {
-        return auth()->user()->can('PaymentSetting:viewAny');
+        return auth()->user()->can('update', app()->getCurrentScheduledConference());
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -79,12 +77,6 @@ class Payments extends Page
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->schema([
-                                        // InfolistsVerticalTabs\Tab::make('submission_payment_tab')
-                                        //     ->label("Settings")
-                                        //     ->schema([
-                                        //         LivewireEntry::make('submission_payment_settings')
-                                        //             ->livewire(SubmissionPaymentSetting::class),
-                                        //     ]),
                                         InfolistsVerticalTabs\Tab::make('submission_fee_tab')
                                             ->label("Fees")
                                             ->schema([

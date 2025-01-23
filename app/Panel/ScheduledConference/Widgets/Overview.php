@@ -54,28 +54,6 @@ class Overview extends BaseWidget
                         <a href="{{ App\Panel\ScheduledConference\Resources\SubmissionResource::getUrl('index') }}" style="color: rgb(59 130 246);"><x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="h-4 w-4 mx-1 inline-block"/></a>
                     </p>
                 BLADE))),
-            Stat::make(__('general.pending_registrations'), Registration::query()
-                ->whereHas('registrationPayment', function (Builder $query) {
-                    $query
-                        ->where('level', '!=', RegistrationType::LEVEL_AUTHOR)
-                        ->where('state', RegistrationPaymentState::Unpaid->value);
-                })
-                ->count())
-                ->description(new HtmlString(BladeCompiler::render(<<<BLADE
-                    <p>
-                        {{ __('general.total_pending_registration') }}
-                        <a href="{{ App\Panel\ScheduledConference\Resources\RegistrantResource::getUrl('index') }}" style="color: rgb(59 130 246);"><x-filament::icon icon="heroicon-m-arrow-top-right-on-square" class="h-4 w-4 mx-1 inline-block"/></a>
-                    </p>
-                BLADE))),
-            Stat::make(__('general.finished_registrations'), Registration::query()
-                ->where('created_at', '>=', now()->subMonth())
-                ->whereHas('registrationPayment', function (Builder $query) {
-                    $query
-                        ->where('level', '!=', RegistrationType::LEVEL_AUTHOR)
-                        ->where('state', RegistrationPaymentState::Paid->value);
-                })
-                ->count())
-                ->description(__('general.finished_registration_30_days')),
         ];
     }
 }

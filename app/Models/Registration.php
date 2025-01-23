@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @deprecated deprecated since version 1.2.0
+ */
 class Registration extends Model
 {
     use BelongsToScheduledConference, Cachable, HasFactory, SoftDeletes;
@@ -23,30 +26,6 @@ class Registration extends Model
     public function getState(): string
     {
         return $this->registrationPayment->state;
-    }
-
-    public function getAttendance(Timeline|Session $data): ?RegistrationAttendance
-    {
-        $attendance = RegistrationAttendance::where('registration_id', $this->id);
-
-        if ($data instanceof Timeline) {
-            $attendance = $attendance->where('timeline_id', $data->id);
-        }
-
-        if ($data instanceof Session) {
-            $attendance = $attendance->where('session_id', $data->id);
-        }
-
-        return $attendance->first();
-    }
-
-    public function isAttended(null|Timeline|Session $data): bool
-    {
-        if (! $this->getAttendance($data)) {
-            return false;
-        }
-
-        return true;
     }
 
     public function user(): BelongsTo
@@ -67,10 +46,5 @@ class Registration extends Model
     public function registrationPayment(): HasOne
     {
         return $this->hasOne(RegistrationPayment::class);
-    }
-
-    public function registrationAttendance(): HasMany
-    {
-        return $this->hasMany(RegistrationAttendance::class);
     }
 }

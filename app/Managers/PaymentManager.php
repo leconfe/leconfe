@@ -3,12 +3,10 @@
 namespace App\Managers;
 
 use App\Facades\Hook;
-use App\Frontend\ScheduledConference\Pages\ParticipantRegistrationSuccess;
 use App\Interfaces\HasPayment;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\User;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Lottery;

@@ -23,6 +23,8 @@ class Participant extends Model implements HasPayment, HasMedia
         'family_name',
         'public_name',
         'email',
+        'scheduled_conference_id',
+        'conference_id',
     ];
 
       /**
