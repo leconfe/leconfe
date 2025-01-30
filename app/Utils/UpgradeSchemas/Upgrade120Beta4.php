@@ -9,6 +9,7 @@ use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\RegistrationType;
+use App\Models\Scopes\ConferenceScope;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +37,11 @@ class Upgrade120Beta4 extends UpgradeBase
             DB::beginTransaction();
 
             RegistrationType::query()
-                ->with(['meta', 'scheduledConference.conference', 'registration' => fn ($query) => $query->with(['user', 'registrationPayment'])])
+                ->with([
+                    'meta',
+                    'scheduledConference.conference' => fn($query) => $query->withoutGlobalScope(ConferenceScope::class), 
+                    'registration' => fn($query) => $query->with(['user', 'registrationPayment'])
+                ])
                 ->get()
                 ->each(function ($registrationType) {
                     $paymentFee = new PaymentFee([
