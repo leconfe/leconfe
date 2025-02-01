@@ -39,7 +39,9 @@ class Upgrade120Beta4 extends UpgradeBase
             RegistrationType::query()
                 ->with([
                     'meta',
-                    'scheduledConference.conference' => fn($query) => $query->withoutGlobalScope(ConferenceScope::class), 
+                    'scheduledConference' => fn($query) => $query
+                        ->withoutGlobalScope(ConferenceScope::class)
+                        ->with(['conference']),
                     'registration' => fn($query) => $query->with(['user', 'registrationPayment'])
                 ])
                 ->get()
