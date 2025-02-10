@@ -68,14 +68,6 @@ class ScheduledConferenceObserver
                 'updated_at' => now(),
             ],
             [
-                'navigation_menu_id' => $primaryNavigationMenu->getKey(),
-                'label' => 'Participant Registration',
-                'type' => 'participant-registration',
-                'order_column' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'navigation_menu_id' => $userNavigationMenu->getKey(),
                 'label' => 'Login',
                 'type' => 'login',
