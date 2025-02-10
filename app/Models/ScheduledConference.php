@@ -29,7 +29,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_start',
         'date_end',
         'state',
-        'type',`
+        'type',
     ];
 
     protected $casts = [
