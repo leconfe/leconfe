@@ -39,6 +39,18 @@ class PaymentFee extends Model implements Sortable
         'closed_at' => 'date',
     ];
 
+     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (PaymentFee $paymentFee) {
+            $paymentFee->load('payments');
+
+            $paymentFee->payments->each->delete();
+        });
+    }
+
     public function scopeType($query, $type): Builder
     {
         return $query->where('type', $type);

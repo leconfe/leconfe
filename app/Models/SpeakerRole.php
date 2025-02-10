@@ -22,6 +22,16 @@ class SpeakerRole extends Model implements Sortable
         'name',
     ];
 
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (SpeakerRole $speakerRole) {
+            $speakerRole->speakers->each->delete();
+        });
+    }
+
     public function speakers(): HasMany
     {
         return $this->hasMany(Speaker::class);

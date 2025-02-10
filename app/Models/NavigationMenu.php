@@ -20,6 +20,16 @@ class NavigationMenu extends Model
         'scheduled_conference_id',
     ];
 
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (NavigationMenu $navigationMenu) {
+            $navigationMenu->items->each->delete();
+        });
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(NavigationMenuItem::class);
