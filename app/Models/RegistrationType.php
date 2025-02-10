@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Plank\Metable\Metable;
 
+/**
+ * @deprecated deprecated since version 1.2.0
+ */
 class RegistrationType extends Model
 {
     use BelongsToScheduledConference, Cachable, HasFactory, Metable;

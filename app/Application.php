@@ -12,16 +12,15 @@ use App\Models\CommitteeRole;
 use App\Models\Conference;
 use App\Models\MailTemplate;
 use App\Models\NavigationMenu;
-use App\Models\PaymentManual;
+use App\Models\Payment;
+use App\Models\PaymentFee;
 use App\Models\Proceeding;
 use App\Models\Registration;
-use App\Models\RegistrationAttendance;
 use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\ScheduledConferenceScope;
-use App\Models\Session;
 use App\Models\Site;
 use App\Models\SpeakerRole;
 use App\Models\Stakeholder;
@@ -38,7 +37,7 @@ use Illuminate\Support\Collection;
 
 class Application extends LaravelApplication
 {
-    public const APP_VERSION = '1.2.0-beta.3';
+    public const APP_VERSION = '1.2.0-beta.4';
 
     public const PHP_MIN_VERSION = '8.1';
 
@@ -176,10 +175,9 @@ class Application extends LaravelApplication
             StakeholderLevel::class,
             RegistrationType::class,
             Registration::class,
-            RegistrationAttendance::class,
             RegistrationPayment::class,
-            PaymentManual::class,
-            Session::class,
+            Payment::class,
+            PaymentFee::class,
         ];
 
         foreach ($models as $model) {

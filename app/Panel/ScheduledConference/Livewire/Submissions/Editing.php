@@ -16,7 +16,7 @@ class Editing extends \Livewire\Component
     public function render()
     {
         if ($this->submission->status->isBefore(SubmissionStatus::Editing)) {
-            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated');
+            return view('panel.scheduledConference.livewire.submissions.message', ['message' => 'Stage not initiated']);
         }
 
         return view('panel.scheduledConference.livewire.submissions.editing');

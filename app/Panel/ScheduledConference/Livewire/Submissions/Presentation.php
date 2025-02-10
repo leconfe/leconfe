@@ -60,7 +60,7 @@ class Presentation extends Component implements HasActions, HasForms
     public function render()
     {
         if ($this->submission->status->isBefore(SubmissionStatus::OnPresentation)) {
-            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated');
+            return view('panel.scheduledConference.livewire.submissions.message', ['message' => 'Stage not initiated']);
         }
 
         return view('panel.scheduledConference.livewire.submissions.presentation', [

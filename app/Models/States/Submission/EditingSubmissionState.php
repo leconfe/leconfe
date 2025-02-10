@@ -25,7 +25,7 @@ class EditingSubmissionState extends BaseSubmissionState
         ];
 
         $conference = app()->getCurrentConference();
-        //get authors name split by semicolon
+        // get authors name split by semicolon
         if (! $this->submission->getMeta('copyright_holder')) {
             $data['meta']['copyright_holder'] = $conference->getCopyrightHolderForSubmission($this->submission);
         }
@@ -63,24 +63,6 @@ class EditingSubmissionState extends BaseSubmissionState
             name: 'submission',
             subject: $this->submission,
             description: __('general.submission_declined')
-        )
-            ->by(auth()->user())
-            ->save();
-    }
-
-    public function skipReview(): void
-    {
-        SubmissionUpdateAction::run([
-            'skipped_review' => true,
-            'revision_required' => false,
-            'status' => SubmissionStatus::Editing,
-            'stage' => SubmissionStage::Editing,
-        ], $this->submission);
-
-        Log::make(
-            name: 'submission',
-            subject: $this->submission,
-            description: __('general.submission_skip_review')
         )
             ->by(auth()->user())
             ->save();

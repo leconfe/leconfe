@@ -24,7 +24,7 @@ interface SubmissionStateInterface
 
     public function withdraw(): void;
 
-    public function skipReview(): void;
+    public function acceptAndSkipReview(): void;
 
     public function requestRevision(): void;
 }

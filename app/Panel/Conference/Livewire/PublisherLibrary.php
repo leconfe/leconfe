@@ -131,7 +131,7 @@ class PublisherLibrary extends Component implements HasForms, HasTable
                     ->required(),
                 FileUpload::make('file_name')
                     ->disk('local')
-                    ->preserveFilenames()
+                    // ->preserveFilenames()
                     ->afterStateHydrated(static function (BaseFileUpload $component, ?Media $record): void {
                         if (blank($record)) {
                             $component->state([]);

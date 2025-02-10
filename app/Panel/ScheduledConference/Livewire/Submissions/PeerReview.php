@@ -7,23 +7,34 @@ use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclinePaperMail;
 use App\Mail\Templates\RevisionRequestMail;
+use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\PaymentFee;
 use App\Models\Submission;
+use App\Notifications\PaymentRequired;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Livewire\Component;
+use Squire\Models\Currency;
 
 class PeerReview extends Component implements HasActions, HasForms
 {
@@ -139,6 +150,62 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
                     ]),
+                Grid::make()
+                    ->visible(fn () => ! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                    ->schema([
+                        Radio::make('payment_fee_id')
+                            ->label('Payment Fee')
+                            ->required()
+                            ->options(
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
+                                    ->mapWithKeys(function ($record) {
+                                        return [
+                                            $record->getKey() => $record->name.' ('.money($record->amount, $record->currency, true)->formatWithoutZeroes().')',
+                                        ];
+                                    })
+                            )
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $paymentFee = PaymentFee::find($state);
+                                $set('currency', $paymentFee->currency);
+                                $set('amount', $paymentFee->amount);
+                                $set('description', $paymentFee->getMeta('description'));
+                            })
+                            ->reactive(),
+                        Grid::make(1)
+                            ->visible(fn (Get $get) => $get('payment_fee_id'))
+                            ->schema([
+                                Grid::make()
+                                    ->schema([
+                                        Select::make('currency')
+                                            ->label(__('general.currency'))
+                                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                            ->options(
+                                                fn () => Currency::query()->orderBy('code_numeric', 'asc')
+                                                    ->get()
+                                                    ->mapWithKeys(function (?Currency $value, int $key) {
+                                                        $currencyCode = Str::upper($value->id);
+                                                        $currencyName = $value->name;
+
+                                                        return [$value->id => "($currencyCode) $currencyName"];
+                                                    })
+                                            )
+                                            ->searchable()
+                                            ->required(),
+                                        TextInput::make('amount')
+                                            ->label('Amount')
+                                            ->numeric()
+                                            ->required()
+                                            ->minValue(0),
+                                    ]),
+                                Textarea::make('description'),
+                            ]),
+                    ]),
             ])
             ->action(function (Action $action, array $data) {
                 $this->submission->state()->sendToPresentation();
@@ -155,6 +222,28 @@ class PeerReview extends Component implements HasActions, HasForms
                         $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
                         $action->failure();
                     }
+                }
+
+                if (! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
+                    $paymentFeeId = data_get($data, 'payment_fee_id');
+
+                    $paymentFee = PaymentFee::find($paymentFeeId);
+
+                    $paymentManager = PaymentManager::get();
+
+                    $paymentQueue = $paymentManager->queue(
+                        $this->submission,
+                        $paymentFee,
+                        $this->submission->user,
+                        PaymentManager::TYPE_SUBMISSION_FEE,
+                        $this->submission->getMeta('title'),
+                        SubmissionResource::getUrl('view', ['record' => $this->submission]),
+                        $data['description'],
+                        $data['amount'],
+                        $data['currency'],
+                    );
+
+                    $this->submission->user->notify(new PaymentRequired($paymentQueue));
                 }
 
                 $action->successRedirectUrl(
@@ -238,31 +327,14 @@ class PeerReview extends Component implements HasActions, HasForms
             });
     }
 
-    public function skipReviewAction()
-    {
-        return Action::make('skipReviewAction')
-            ->label(__('general.skip_review'))
-            ->icon('lineawesome-check-circle-solid')
-            ->color('gray')
-            ->outlined()
-            ->successNotificationTitle(__('general.review_skipped'))
-            ->action(function (Action $action) {
-                $this->submission->state()->skipReview();
-
-                $action->successRedirectUrl(
-                    SubmissionResource::getUrl('view', [
-                        'record' => $this->submission->getKey(),
-                    ])
-                );
-
-                $action->success();
-            });
-    }
-
     public function render()
     {
         if ($this->submission->status->isBefore(SubmissionStatus::OnReview)) {
-            return view('panel.scheduledConference.livewire.submissions.stage-not-initiated');
+            return view('panel.scheduledConference.livewire.submissions.message', ['message' => 'Stage not initiated']);
+        }
+
+        if ($this->submission->skipped_review) {
+            return view('panel.scheduledConference.livewire.submissions.message', ['message' => __('general.review_skipped')]);
         }
 
         return view('panel.scheduledConference.livewire.submissions.peer-review', [

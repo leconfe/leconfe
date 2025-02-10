@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Frontend\Conference\Pages\Paper;
+use App\Interfaces\HasPayment;
 use App\Models\Concerns\HasDOI;
 use App\Models\Concerns\HasTopics;
+use App\Models\Concerns\InteractsWithPayment;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
@@ -38,9 +40,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
 
-class Submission extends Model implements HasMedia, Sortable
+class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
 
     /**
      * The attributes that are mass assignable.

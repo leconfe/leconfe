@@ -69,8 +69,6 @@ class NavigationMenuItem extends Model implements Sortable
             'profile' => NavigationItemType\Profile::class,
             'register' => NavigationItemType\Register::class,
             'search' => NavigationItemType\Search::class,
-            'participant-registration' => NavigationItemType\ParticipantRegistration::class,
-            'agenda' => NavigationItemType\Agenda::class,
         ];
     }
 

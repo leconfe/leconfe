@@ -8,12 +8,9 @@ use App\Mail\Templates\ParticipantAssignedMail;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
-use App\Models\RegistrationType;
 use App\Models\Submission;
 use App\Models\SubmissionParticipant;
 use App\Models\User;
-use App\Notifications\NewRegistration;
-use App\Panel\ScheduledConference\Resources\RegistrantResource\Pages\EnrollUser;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -270,62 +267,6 @@ class ParticipantList extends Component implements HasForms, HasTable
                                 $action->failureNotificationTitle(__('general.user_cant_impersonated'));
                                 $action->failure();
                             }
-                        }),
-                    Action::make('enroll_user')
-                        ->authorize('Registration:enroll')
-                        ->color('primary')
-                        ->icon('heroicon-o-user-plus')
-                        ->label(__('general.enroll_user'))
-                        ->visible(
-                            fn (SubmissionParticipant $record): bool => $this->enrollment &&
-                                ! $this->submission->registration &&
-                                $this->submission->isParticipantAuthor($record->user)
-                        )
-                        ->successNotificationTitle(__('general.saved'))
-                        ->form(fn (SubmissionParticipant $record) => EnrollUser::enrollForm($record->user, RegistrationType::LEVEL_AUTHOR))
-                        ->action(function (Action $action, SubmissionParticipant $record, array $data) {
-
-                            try {
-                                $registrationType = RegistrationType::find($data['registration_type_id'])->first();
-
-                                $registration = $this->submission->registration()->create([
-                                    'user_id' => $record->user->getKey(),
-                                    'registration_type_id' => $registrationType->getKey(),
-                                ]);
-
-                                $registration->registrationPayment()->create([
-                                    'name' => $registrationType->type,
-                                    'level' => $registrationType->level,
-                                    'description' => $registrationType->getMeta('description'),
-                                    'cost' => $registrationType->cost,
-                                    'currency' => $registrationType->currency,
-                                    'state' => $data['registrationPayment']['state'],
-                                    'paid_at' => $data['registrationPayment']['paid_at'] ?? null,
-                                ]);
-
-                                User::whereHas('roles', function ($query) {
-                                    $query->whereHas('permissions', function ($query) {
-                                        $query->where('name', 'Registration:notified');
-                                    });
-                                })->get()->each(function ($user) use ($registration) {
-                                    $user->notify(
-                                        new NewRegistration(
-                                            registration: $registration,
-                                        )
-                                    );
-                                });
-                            } catch (\Throwable $th) {
-                                $action->failure();
-                                throw $th;
-                            }
-
-                            $action->successRedirectUrl(
-                                SubmissionResource::getUrl('view', [
-                                    'record' => $this->submission->getKey(),
-                                ])
-                            );
-
-                            return $action->success();
                         }),
                     Action::make('remove-participant')
                         ->authorize('SubmissionParticipant:delete')

@@ -14,11 +14,9 @@ class QueuedSubmissionState extends BaseSubmissionState
 
     public function acceptAbstract(): void
     {
-        $isPaymentRequired = app()->getCurrentScheduledConference()->isSubmissionRequirePayment();
-
         SubmissionUpdateAction::run([
-            'stage' => $isPaymentRequired ? SubmissionStage::Payment : SubmissionStage::PeerReview,
-            'status' => $isPaymentRequired ? SubmissionStatus::OnPayment : SubmissionStatus::OnReview,
+            'stage' => SubmissionStage::PeerReview,
+            'status' => SubmissionStatus::OnReview,
         ], $this->submission);
 
         Log::make(
@@ -26,6 +24,25 @@ class QueuedSubmissionState extends BaseSubmissionState
             subject: $this->submission,
             description: __('general.submission_abstract_accepted'),
             event : 'submission-abstract-accepted',
+        )
+            ->by(auth()->user())
+            ->save();
+    }
+
+    public function acceptAndSkipReview(): void
+    {
+        SubmissionUpdateAction::run([
+            'skipped_review' => true,
+            'revision_required' => false,
+            'status' => SubmissionStatus::OnPresentation,
+            'stage' => SubmissionStage::Presentation,
+        ], $this->submission);
+
+        Log::make(
+            name: 'submission',
+            subject: $this->submission,
+            description: __('general.submission_accept_and_skip_review'),
+            event: 'submission-skip-review',
         )
             ->by(auth()->user())
             ->save();

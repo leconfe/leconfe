@@ -235,7 +235,7 @@ class CitationManager
             }
         }
 
-        //Clickable URL and DOI including affixes
+        // Clickable URL and DOI including affixes
         $additionalMarkup = [
             'DOI' => [
                 'function' => function ($item, $renderedValue) {

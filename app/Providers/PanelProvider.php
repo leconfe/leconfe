@@ -24,6 +24,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use GuzzleHttp\Psr7\MimeType;
@@ -45,7 +46,7 @@ class PanelProvider extends ServiceProvider
         $this->setupPanel($panel)
             ->id(static::PANEL_SCHEDULED_CONFERENCE)
             ->path('{conference:path}/scheduled/{serie:path}/panel')
-            ->bootUsing(fn () => static::setupFilamentComponent())
+            // ->bootUsing(fn () => static::setupFilamentComponent())
             ->homeUrl(fn () => app()->getCurrentScheduledConference()?->getHomeUrl())
             ->discoverResources(in: app_path('Panel/ScheduledConference/Resources'), for: 'App\\Panel\\ScheduledConference\\Resources')
             ->discoverPages(in: app_path('Panel/ScheduledConference/Pages'), for: 'App\\Panel\\ScheduledConference\\Pages')
@@ -87,7 +88,7 @@ class PanelProvider extends ServiceProvider
             ->id(static::PANEL_CONFERENCE)
             ->default()
             ->path('{conference:path}/panel')
-            ->bootUsing(fn () => static::setupFilamentComponent())
+            // ->bootUsing(fn () => static::setupFilamentComponent())
             ->homeUrl(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()]))
             ->discoverResources(in: app_path('Panel/Conference/Resources'), for: 'App\\Panel\\Conference\\Resources')
             ->discoverPages(in: app_path('Panel/Conference/Pages'), for: 'App\\Panel\\Conference\\Pages')
@@ -136,7 +137,7 @@ class PanelProvider extends ServiceProvider
             ->id(static::PANEL_ADMINISTRATION)
             ->path('administration')
             ->homeUrl(fn () => route('livewirePageGroup.website.pages.home'))
-            ->bootUsing(fn () => static::setupFilamentComponent())
+            // ->bootUsing(fn () => static::setupFilamentComponent())
             ->discoverResources(in: app_path('Panel/Administration/Resources'), for: 'App\\Panel\\Administration\\Resources')
             ->discoverPages(in: app_path('Panel/Administration/Pages'), for: 'App\\Panel\\Administration\\Pages')
             ->discoverWidgets(in: app_path('Panel/Administration/Widgets'), for: 'App\\Panel\\Administration\\Widgets')
@@ -187,9 +188,6 @@ class PanelProvider extends ServiceProvider
                 },
             )
             ->viteTheme('resources/panel/css/panel.css')
-            ->colors([
-                'primary' => Color::hex('#1c3569'),
-            ])
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->url(fn (): string => Profile::getUrl()),
@@ -212,6 +210,10 @@ class PanelProvider extends ServiceProvider
         Filament::registerPanel(
             fn (): Panel => $this->administrationPanel(Panel::make()),
         );
+
+        FilamentColor::register([
+            'primary' => Color::hex('#1c3569'),
+        ]);
     }
 
     /**
@@ -226,6 +228,8 @@ class PanelProvider extends ServiceProvider
         Livewire::setScriptRoute(function ($handle) {
             return Route::get(request()->getBaseUrl().'/livewire/livewire.js', $handle);
         });
+
+        static::setupFilamentComponent();
     }
 
     public static function getMiddleware(): array

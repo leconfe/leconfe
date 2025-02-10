@@ -66,24 +66,6 @@ class DeclinedSubmissionState extends BaseSubmissionState
             ->save();
     }
 
-    public function skipReview(): void
-    {
-        SubmissionUpdateAction::run([
-            'skipped_review' => true,
-            'revision_required' => false,
-            'status' => SubmissionStatus::Editing,
-            'stage' => SubmissionStage::Editing,
-        ], $this->submission);
-
-        Log::make(
-            name: 'submission',
-            subject: $this->submission,
-            description: __('general.submission_skip_review')
-        )
-            ->by(auth()->user())
-            ->save();
-    }
-
     public function requestRevision(): void
     {
         SubmissionUpdateAction::run([

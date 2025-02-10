@@ -8,6 +8,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -29,9 +30,11 @@ class ManualPaymentSetting extends Component implements HasForms
     public function form(Form $form): Form
     {
         return $form
+            ->disabled(fn () => auth()->user()->cannot('update', app()->getCurrentScheduledConference()))
             ->schema([
                 Section::make()
                     ->schema([
+                        Toggle::make('meta.manual_payment_enabled'),
                         TextInput::make('meta.manual_payment_name')
                             ->label(__('general.name'))
                             ->placeholder(__('general.input_name_payment_method'))
@@ -40,8 +43,7 @@ class ManualPaymentSetting extends Component implements HasForms
                             ->placeholder(__('general.input_payment_details'))
                             ->helperText(__('general.add_instruction_here'))
                             ->required(),
-                    ])
-                    ->disabled(fn () => auth()->user()->cannot('RegistrationSetting:update')),
+                    ]),
                 Actions::make([
                     Action::make('save_changes')
                         ->label(__('general.save_changes'))
@@ -61,8 +63,7 @@ class ManualPaymentSetting extends Component implements HasForms
                             }
 
                             $action->success();
-                        })
-                        ->authorize('RegistrationSetting:update'),
+                        }),
                 ]),
             ])
             ->statePath('formData');

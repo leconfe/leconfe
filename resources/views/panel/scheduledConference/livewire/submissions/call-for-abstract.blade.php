@@ -43,6 +43,7 @@
                     ]) x-show="!decision">
                         @if (!in_array($this->submission->status, [SubmissionStatus::OnPayment, SubmissionStatus::OnReview, SubmissionStatus::PaymentDeclined, SubmissionStatus::Editing, SubmissionStatus::OnPresentation]))
                             {{ $this->acceptAction() }}
+                            {{ $this->acceptAndSkipReview() }}
                         @endif
                         @if (!in_array($this->submission->status, [SubmissionStatus::Declined]))
                             {{ $this->declineAction() }}
