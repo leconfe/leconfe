@@ -39,7 +39,7 @@ class PaymentFee extends Model implements Sortable
         'closed_at' => 'date',
     ];
 
-     /**
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void

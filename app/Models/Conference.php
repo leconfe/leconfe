@@ -44,7 +44,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
      */
     protected $casts = [];
 
-      /**
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void

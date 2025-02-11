@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -73,7 +72,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                 ->lazy()
                 ->each
                 ->delete();
-      
+
             CommitteeRole::query()
                 ->with(['committees'])
                 ->withoutGlobalScopes()
@@ -118,10 +117,10 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                 ->lazy()
                 ->each
                 ->delete();
-            
+
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
