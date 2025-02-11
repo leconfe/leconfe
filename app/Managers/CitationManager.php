@@ -248,7 +248,7 @@ class CitationManager
             'URL' => [
                 'function' => function ($item, $renderedValue) {
                     return <<<HTML
-                        <a href="https://doi.org/{$item->URL}">{$renderedValue}</a>
+                        <a href="{$item->URL}">{$renderedValue}</a>
                     HTML;
                 },
                 'affixes' => true,
