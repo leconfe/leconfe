@@ -33,6 +33,13 @@ class StakeholderLevel extends Model implements HasMedia, Sortable
         'type' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (StakeholderLevel $stakeholderLevel) {
+            $stakeholderLevel->stakeholders->each->delete();
+        });
+    }
+
     public function scopeSponsors($query)
     {
         return $query->where('type', self::TYPE_SPONSOR);

@@ -22,6 +22,16 @@ class CommitteeRole extends Model implements Sortable
         'name',
     ];
 
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (CommitteeRole $committeeRole) {
+            $committeeRole->committees->each->delete();
+        });
+    }
+
     public function committees(): HasMany
     {
         return $this->hasMany(Committee::class);

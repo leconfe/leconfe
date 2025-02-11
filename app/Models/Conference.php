@@ -44,6 +44,50 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
      */
     protected $casts = [];
 
+      /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Conference $conference) {
+            ScheduledConference::query()
+                ->withoutGlobalScopes()
+                ->where('conference_id', $conference->getKey())
+                ->get()
+                ->each
+                ->forceDelete();
+
+            DOI::query()
+                ->withoutGlobalScopes()
+                ->where('conference_id', $conference->getKey())
+                ->get()
+                ->each
+                ->delete();
+
+            Role::query()
+                ->withoutGlobalScopes()
+                ->where('conference_id', $conference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            PluginSetting::query()
+                ->withoutGlobalScopes()
+                ->where('conference_id', $conference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            NavigationMenu::query()
+                ->with(['items'])
+                ->withoutGlobalScopes()
+                ->where('conference_id', $conference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+        });
+    }
+
     public function submission(): HasMany
     {
         return $this->hasMany(Submission::class);

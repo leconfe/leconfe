@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -55,6 +56,91 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                     ->where('id', '!=', $scheduledConference->id)
                     ->update(['state' => ScheduledConferenceState::Archived]);
             }
+        });
+
+        static::deleting(function (ScheduledConference $scheduledConference) {
+            Announcement::query()
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            SpeakerRole::query()
+                ->with(['speakers'])
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+      
+            CommitteeRole::query()
+                ->with(['committees'])
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            Submission::query()
+                ->with(['submissionFiles', 'authors', 'participants', 'reviews', 'media'])
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            PaymentFee::query()
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            Role::query()
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            PluginSetting::query()
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            NavigationMenu::query()
+                ->withoutGlobalScopes()
+                ->with(['items'])
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+            
+            StakeholderLevel::query()
+                ->withoutGlobalScopes()
+                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            Stakeholder::query()
+                ->withoutGlobalScopes()
+                ->whereNull('level_id')
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
+
+            Track::query()
+                ->withoutGlobalScopes()
+                ->where('scheduled_conference_id', $scheduledConference->getKey())
+                ->lazy()
+                ->each
+                ->delete();
         });
     }
 
