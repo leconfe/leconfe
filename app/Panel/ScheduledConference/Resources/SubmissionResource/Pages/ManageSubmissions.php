@@ -65,6 +65,10 @@ class ManageSubmissions extends ManageRecords
     protected function tabMyQueue(): Tab
     {
         $modifyQuery = fn (Builder $query) => $query
+            ->whereNotIn('status', [
+                SubmissionStatus::Published,
+                SubmissionStatus::Withdrawn,
+            ])
             ->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
             ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()));
 
@@ -75,7 +79,11 @@ class ManageSubmissions extends ManageRecords
 
     protected function tabUnassigned(): Tab
     {
-        $modifyQuery = fn (Builder $query) => $query->doesntHave('editors')->where('status', '!=', SubmissionStatus::Incomplete);
+        $modifyQuery = fn (Builder $query) => $query->doesntHave('editors')->whereNotIn('status', [
+            SubmissionStatus::Incomplete,
+            SubmissionStatus::Published,
+            SubmissionStatus::Withdrawn,
+        ]);
 
         return Tab::make(__('general.unassigned'))
             ->modifyQueryUsing($modifyQuery)

@@ -153,7 +153,7 @@ class SubmissionResource extends Resource
                             ])
                             ->color('danger')
                             ->getStateUsing(function (Submission $record) {
-                                if (filled($record->withdrawn_reason)) {
+                                if (filled($record->withdrawn_reason) && $record->status !== SubmissionStatus::Withdrawn) {
                                     return __('general.pending_withdrawal');
                                 }
                             }),
