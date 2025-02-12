@@ -26,6 +26,8 @@ class Login extends Page
 
     public function mount()
     {
+        // dd(url()->previous());
+
         if (auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
         }
@@ -90,6 +92,6 @@ class Login extends Page
 
         UserLoggedIn::dispatch($user);
 
-        $this->redirect($this->getRedirectUrl(), navigate: false);
+        $this->redirectIntended($this->getRedirectUrl(), navigate: false);
     }
 }
