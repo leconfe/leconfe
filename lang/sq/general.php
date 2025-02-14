@@ -940,6 +940,8 @@ return [
 
     'conference_redirect' => 'Përcjell Konferencën',
     'conference_redirect_hint' => 'Ridrejton kërkesat nga faqja kryesore e internetit në konferencën e specifikuar. I dobishëm për faqet individuale të konferencave.',
+    'scheduled_conference_redirect' => 'Ridrejtimi i Konferencës së Planifikuar',
+    'scheduled_conference_redirect_hint' => 'Ridrejton kërkesat e konferencës në konferencën e planifikuar të zgjedhur.',
     'current_conference' => 'Konferenca Aktual',
     'past_conference' => 'Konferenca e Kaluar',
     'upcoming_conference' => 'Konferenca e Ardhshme',

@@ -921,6 +921,8 @@ return [
 
     'conference_redirect' => 'Pengalihan Konferensi',
     'conference_redirect_hint' => 'Mengalihkan permintaan dari situs web utama ke konferensi yang ditentukan. Berguna untuk situs konferensi individual.',
+    'scheduled_conference_redirect' => 'Pengalihan Konferensi Terjadwal',
+    'scheduled_conference_redirect_hint' => 'Mengalihkan permintaan konferensi ke konferensi terjadwal yang dipilih.',
     'current_conference' => 'Konferensi Saat Ini',
     'past_conference' => 'Konferensi Sebelumnya',
     'upcoming_conference' => 'Konferensi Mendatang',
