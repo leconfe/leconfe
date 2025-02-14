@@ -962,7 +962,7 @@ return [
     'paper_external_url' => 'Paper External URL',
     'conference_redirect' => 'Conference Redirect',
     'conference_redirect_hint' => 'Redirects main website requests to the selected conference. Useful for single conference sites.',
-    'scheduled_conference_redirect' => "Scheduled Conference Redirect",
+    'scheduled_conference_redirect' => 'Scheduled Conference Redirect',
     'scheduled_conference_redirect_hint' => 'Redirects conference requests to the selected scheduled conference.',
     'current_conference' => 'Current Conference',
     'past_conference' => 'Past Conference',

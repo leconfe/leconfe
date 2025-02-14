@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Conference;
 use App\Models\ScheduledConference;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,7 +22,7 @@ class RedirectToScheduledConference
 
         $conference = app()->getCurrentConference();
 
-        if (!$conference || !$conference->getMeta('scheduled_conference_redirect')) {
+        if (! $conference || ! $conference->getMeta('scheduled_conference_redirect')) {
             return $next($request);
         }
 
