@@ -4,9 +4,11 @@ namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
+use App\Models\ScheduledConference;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -42,6 +44,10 @@ class SetupSetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
+                        Select::make('meta.scheduled_conference_redirect')
+                            ->label(__('general.scheduled_conference_redirect'))
+                            ->helperText(__('general.scheduled_conference_redirect_hint'))
+                            ->options(ScheduledConference::query()->pluck('title', 'id')),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->label(__('general.logo'))
                             ->collection('logo')

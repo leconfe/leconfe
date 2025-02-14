@@ -940,6 +940,8 @@ return [
 
     'conference_redirect' => 'إعادة توجيه المؤتمر',
     'conference_redirect_hint' => 'يعيد توجيه الطلبات من الموقع الرئيسي إلى المؤتمر المحدد. مفيد لمواقع المؤتمرات الفردية.',
+    'scheduled_conference_redirect' => 'إعادة توجيه المؤتمر المجدول',
+    'scheduled_conference_redirect_hint' => 'يعيد توجيه طلبات المؤتمر إلى المؤتمر المجدول المحدد.',
     'current_conference' => 'المؤتمر الحالي',
     'past_conference' => 'المؤتمر السابق',
     'upcoming_conference' => 'المؤتمر القادم',
