@@ -73,7 +73,6 @@ class ParticipantForm extends Page implements HasActions, HasForms
         return $form
             ->id('paymentForm')
             ->statePath('data')
-            ->model(Participant::class)
             ->schema([
                 Placeholder::make('name')
                     ->content($this->paymentFee->name),
@@ -128,8 +127,6 @@ class ParticipantForm extends Page implements HasActions, HasForms
             $participant->fill(Arr::only($data, ['given_name', 'family_name', 'email']));
             $participant->save();
 
-            $this->form->model($participant)->saveRelationships();
-
             $paymentManager = PaymentManager::get();
             $payment = $paymentManager->queue(
                 $participant,
@@ -142,6 +139,8 @@ class ParticipantForm extends Page implements HasActions, HasForms
             );
             $payment->payment_method = $data['payment_method'];
             $payment->save();
+
+            $this->form->model($payment)->saveRelationships();
 
             if ($meta = data_get($data, 'meta')) {
                 $payment->setManyMeta($meta);
