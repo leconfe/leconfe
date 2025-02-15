@@ -98,7 +98,6 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ->headerActions([
                 Action::make('create')
                     ->form(fn ($form) => $this->form($form))
-                    ->hidden(fn () => $this->record->formItems->count())
                     ->action(function (array $data, Action $action) {
                         try {
                             DB::beginTransaction();
