@@ -74,12 +74,16 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
                                     ->orWhere('given_name', 'LIKE', "%{$search}%")
                                     ->orWhere('family_name', 'LIKE', "%{$search}%")
                             )
-                    ),
+                    )
+                    ->toggleable(),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
+                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0)
+                    ->toggleable(),
                 TextColumn::make('paid_at')
-                    ->date(),
-
+                    ->date()
+                    ->toggleable(),
+                TextColumn::make('payment_method')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TernaryFilter::make('paid_at')

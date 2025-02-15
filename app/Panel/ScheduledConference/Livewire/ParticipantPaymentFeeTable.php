@@ -67,11 +67,16 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
                     ->label('Participant Fee')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
+                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0)
+                    ->toggleable(),
                 TextColumn::make('paid_at')
-                    ->date(),
+                    ->date()
+                    ->toggleable(),
+                TextColumn::make('payment_method')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 Action::make('mail')
