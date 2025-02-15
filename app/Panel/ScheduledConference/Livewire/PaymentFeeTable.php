@@ -34,7 +34,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Unique;
 use Livewire\Component;
 use Squire\Models\Currency;
 
@@ -101,7 +100,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ->actions([
                 ActionGroup::make([
                     Action::make('open_payment_link')
-                        ->url(fn($record) => route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()]))
+                        ->url(fn ($record) => route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()]))
                         ->icon('heroicon-o-link')
                         ->openUrlInNewTab(),
                     Action::make('copy_payment_link')

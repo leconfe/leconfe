@@ -133,7 +133,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ),
                 TernaryFilter::make('paid_at')
                     ->label('Paid')
-                    ->nullable()
+                    ->nullable(),
             ])
             ->actions([
                 ActionGroup::make([
