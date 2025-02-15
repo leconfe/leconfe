@@ -29,6 +29,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
@@ -65,11 +66,17 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
-                    ->label('Participant Fee'),
+                    ->label('Participant Fee')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0),
+                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0)
+                    ->toggleable(),
                 TextColumn::make('paid_at')
-                    ->date(),
+                    ->date()
+                    ->toggleable(),
+                TextColumn::make('payment_method')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 Action::make('mail')
@@ -124,12 +131,9 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->type(PaymentManager::TYPE_PARTICIPANT_FEE)
                             ->pluck('name', 'id')
                     ),
-                SelectFilter::make('paid_at')
-                    ->options([
-                        'paid' => 'Paid',
-                        'unpaid' => 'Unpaid',
-                    ])
-                    ->modifyQueryUsing(fn ($query, $data) => $query->when($data['value'], fn ($query, $value) => $query->paid($value === 'paid'))),
+                TernaryFilter::make('paid_at')
+                    ->label('Paid')
+                    ->nullable()
             ])
             ->actions([
                 ActionGroup::make([
