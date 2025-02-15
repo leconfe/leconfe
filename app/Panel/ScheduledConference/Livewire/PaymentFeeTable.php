@@ -100,6 +100,10 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('open_payment_link')
+                        ->url(fn($record) => route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()]))
+                        ->icon('heroicon-o-link')
+                        ->openUrlInNewTab(),
                     Action::make('copy_payment_link')
                         ->visible($this->paymentType === PaymentManager::TYPE_PARTICIPANT_FEE)
                         ->icon('heroicon-m-clipboard')
@@ -192,11 +196,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                     ->schema([
                         TextInput::make('name')
                             ->label(__('general.name'))
-                            ->required()
-                            ->unique(
-                                ignorable: fn () => $form->getRecord(),
-                                modifyRuleUsing: fn (Unique $rule) => $rule->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId()),
-                            ),
+                            ->required(),
                         TextInput::make('limit')
                             ->label('Limit')
                             ->placeholder('Enter 0 for no limit')

@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
 use App\Models\Payment;
+use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Tables\Columns\IndexColumn;
@@ -25,6 +26,8 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -53,6 +56,7 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            // ->heading('Submission Payments')
             ->query($this->getTableQuery())
             ->columns([
                 IndexColumn::make('No'),
@@ -76,6 +80,11 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
                 TextColumn::make('paid_at')
                     ->date(),
 
+            ])
+            ->filters([
+                TernaryFilter::make('paid_at')
+                    ->label('Paid')
+                    ->nullable()
             ])
             ->actions([
                 ActionGroup::make([
