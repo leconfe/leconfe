@@ -7,6 +7,9 @@ use App\Classes\Log;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 
+/**
+ * @deprecated
+ */
 class DeclinedPaymentSubmissionState extends BaseSubmissionState
 {
     public function approvePayment(): void

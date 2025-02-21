@@ -40,7 +40,6 @@ class OnPresentationSubmissionState extends BaseSubmissionState
     {
         SubmissionUpdateAction::run([
             'revision_required' => false,
-            'stage' => SubmissionStage::PeerReview,
             'status' => SubmissionStatus::Declined,
         ], $this->submission);
 
