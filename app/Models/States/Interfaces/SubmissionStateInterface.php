@@ -10,6 +10,9 @@ interface SubmissionStateInterface
 
     public function approvePayment(): void;
 
+    /**
+     * @deprecated
+     */
     public function declinePayment(): void;
 
     public function sendToEditing(): void;
