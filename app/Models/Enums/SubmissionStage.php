@@ -11,6 +11,9 @@ enum SubmissionStage: string implements HasLabel
 
     case Wizard = 'Wizard';
     case CallforAbstract = 'Call for Abstract';
+    /**
+     * @deprecated
+     */
     case Payment = 'Payment';
     case PeerReview = 'Peer Review';
     case Presentation = 'Presentation';

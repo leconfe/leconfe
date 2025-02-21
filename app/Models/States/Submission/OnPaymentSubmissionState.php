@@ -9,6 +9,9 @@ use App\Models\Enums\SubmissionStatus;
 use App\Models\States\Submission\Concerns\CanDeclinePayment;
 use App\Models\States\Submission\Concerns\CanWithdraw;
 
+/**
+ * @deprecated
+ */
 class OnPaymentSubmissionState extends BaseSubmissionState
 {
     use CanDeclinePayment;

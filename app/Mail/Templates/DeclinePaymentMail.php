@@ -6,6 +6,9 @@ use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Submission;
 
+/**
+ * @deprecated
+ */
 class DeclinePaymentMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
