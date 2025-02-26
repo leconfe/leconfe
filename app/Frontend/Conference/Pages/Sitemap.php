@@ -4,6 +4,7 @@ namespace App\Frontend\Conference\Pages;
 
 use App\Frontend\ScheduledConference\Pages as ScheduledConferencePages;
 use App\Frontend\Website\Pages\Page;
+use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Announcement;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Proceeding;
@@ -17,6 +18,10 @@ use Spatie\Sitemap\Tags\Url;
 
 class Sitemap extends Page
 {
+    protected static string|array $withoutRouteMiddleware = [
+        RedirectToScheduledConference::class,
+    ];
+
     public function __invoke()
     {
         $sitemap = Cache::remember(
