@@ -998,4 +998,5 @@ return [
     'files' => 'Files',
     'mailing_address' => 'Mailing Address',
     'slug_helper' => "Enter a unique URL-friendly identifier for this page. Use lowercase letters, numbers, dashes, and underscores only. For example, 'about-us' or 'contact-info'",
+    'system_information' => 'System Information',
 ];

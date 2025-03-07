@@ -946,4 +946,5 @@ return [
     'past_conference' => 'المؤتمر السابق',
     'upcoming_conference' => 'المؤتمر القادم',
     'view_current_event' => 'عرض الحدث الحالي',
+    'system_information' => 'معلومات النظام',
 ];

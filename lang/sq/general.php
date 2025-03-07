@@ -946,4 +946,5 @@ return [
     'past_conference' => 'Konferenca e Kaluar',
     'upcoming_conference' => 'Konferenca e Ardhshme',
     'view_current_event' => 'Shiko Ngjarjen Aktual',
+    'system_information' => 'Informacioni i Sistemit',
 ];
