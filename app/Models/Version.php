@@ -46,7 +46,6 @@ class Version extends Model
         return $version;
     }
 
-
     protected function major(): Attribute
     {
         return Attribute::make(
@@ -64,11 +63,11 @@ class Version extends Model
     protected function patch(): Attribute
     {
         return Attribute::make(
-            get: function (){
+            get: function () {
                 $version = explode('.', $this->version)[2];
 
-                if(array_key_exists(3, explode('.', $this->version))) {
-                    $version .= '.' . explode('.', $this->version)[3];
+                if (array_key_exists(3, explode('.', $this->version))) {
+                    $version .= '.'.explode('.', $this->version)[3];
                 }
 
                 return $version;
