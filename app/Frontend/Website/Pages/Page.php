@@ -17,8 +17,7 @@ abstract class Page extends BasePage
         $layoutData = $this->getLayoutData();
 
         $class = Str::replace('\\', '::', static::class);
-
-        if (Hook::call("$class::render", [$this, &$data, &$layout, &$view])) {
+        if (Hook::call("$class::render", [$this, &$data, &$layout, &$layoutData, &$view])) {
             return $view;
         }
 

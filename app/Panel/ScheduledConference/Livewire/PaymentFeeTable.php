@@ -100,11 +100,12 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ->actions([
                 ActionGroup::make([
                     Action::make('open_payment_link')
+                        ->visible(fn($record) => $record->is_active && $this->paymentType === PaymentManager::TYPE_PARTICIPANT_FEE)
                         ->url(fn ($record) => route(ParticipantForm::getRouteName('scheduledConference'), ['paymentFee' => $record->getKey()]))
                         ->icon('heroicon-o-link')
                         ->openUrlInNewTab(),
                     Action::make('copy_payment_link')
-                        ->visible($this->paymentType === PaymentManager::TYPE_PARTICIPANT_FEE)
+                        ->visible(fn($record) => $record->is_active && $this->paymentType === PaymentManager::TYPE_PARTICIPANT_FEE)
                         ->icon('heroicon-m-clipboard')
                         ->extraAttributes(fn ($record) => [
                             'x-data' => '',

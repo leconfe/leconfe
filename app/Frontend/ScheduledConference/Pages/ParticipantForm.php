@@ -41,7 +41,7 @@ class ParticipantForm extends Page implements HasActions, HasForms
 
     public function mount(PaymentFee $paymentFee)
     {
-        if ($paymentFee->type !== PaymentManager::TYPE_PARTICIPANT_FEE) {
+        if (!$paymentFee->is_active || $paymentFee->type !== PaymentManager::TYPE_PARTICIPANT_FEE) {
             abort('403', 'Invalid payment fee type');
         }
 

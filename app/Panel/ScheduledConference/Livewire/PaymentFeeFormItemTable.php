@@ -97,6 +97,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 Action::make('create')
+                    ->hidden(fn () => $this->record->payments->count())
                     ->form(fn ($form) => $this->form($form))
                     ->action(function (array $data, Action $action) {
                         try {
@@ -125,7 +126,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 EditAction::make()
-                    ->hidden(fn () => $this->record->formItems->count())
+                    ->hidden(fn () => $this->record->payments->count())
                     ->mutateRecordDataUsing(function (PaymentFeeFormItem $record, array $data): array {
                         $data['meta'] = $record->getAllMeta();
 
@@ -152,7 +153,8 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                             $action->failure();
                         }
                     }),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn () => $this->record->payments->count()),
             ])
             ->bulkActions([
                 // ...
