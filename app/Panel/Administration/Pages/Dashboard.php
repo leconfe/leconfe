@@ -117,6 +117,15 @@ class Dashboard extends Page implements HasInfolists
                                             $action->sendSuccessNotification();
                                         }),
                                 ]),
+                                Actions::make([
+                                    Action::make('system-information')
+                                        ->label(__('general.system_information'))
+                                        ->icon('heroicon-m-information-circle')
+                                        ->color('primary')
+                                        ->outlined()
+                                        ->extraAttributes(['class' => 'w-full'])
+                                        ->url(route(SystemInformation::getRouteName())),
+                                ]),
                             ]),
 
                     ]),

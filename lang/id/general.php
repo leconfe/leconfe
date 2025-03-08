@@ -927,4 +927,5 @@ return [
     'past_conference' => 'Konferensi Sebelumnya',
     'upcoming_conference' => 'Konferensi Mendatang',
     'view_current_event' => 'Lihat Acara Saat Ini',
+    'system_information' => 'Informasi Sistem',
 ];
