@@ -4,6 +4,7 @@ namespace App\Actions\Leconfe;
 
 use App\Models\Conference;
 use App\Models\ScheduledConference;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -17,7 +18,7 @@ class CheckLatestVersion
 
     public function handle()
     {
-        return Cache::remember('get_latest_version', now()->addDay(), fn () => $this->getLatestVersion());
+        return Cache::remember('get_latest_version', now()->endOfDay(), fn () => $this->getLatestVersion());
     }
 
     public static function isUpdateAvailable()
@@ -37,6 +38,8 @@ class CheckLatestVersion
                     'php_version' => phpversion(),
                     'total_scheduled_conferences' => ScheduledConference::count(),
                     'total_conferences' => Conference::count(),
+                    'newsletter' => app()->getSite()->getMeta('newsletter'),
+                    'admin_email' => User::withoutGlobalScopes()->first()?->email,
                 ],
             ]);
         })->get(app()->getApiUrl('checkversion'));

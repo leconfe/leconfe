@@ -47,6 +47,7 @@ class Site extends Model implements HasMedia
             'settings_languages' => ['en'],
             'page_footer' => view('frontend.examples.footer')->render(),
             'theme' => 'DefaultTheme',
+            'newsletter' => true,
         ];
     }
 }

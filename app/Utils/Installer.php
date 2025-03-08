@@ -28,6 +28,7 @@ class Installer
         try {
             $this->configureEnv();
             $this->configureMigration();
+            $this->configureSite();
             $this->configureAccount();
             $this->configureApplication();
             $this->configureOptimization();
@@ -164,6 +165,12 @@ class Installer
         }
 
         return $user;
+    }
+
+    private function configureSite()
+    {
+        $site = app()->getSite();
+        $site->setMeta('newsletter', $this->readParam('newsletter'));
     }
 
     private function removeEnvFile()
