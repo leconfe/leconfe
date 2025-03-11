@@ -30,6 +30,11 @@ class InstallAction
 
     public function asCommand(Command $command): void
     {
+        if(app()->isInstalled()){
+            error('Leconfe is already installed');
+            return;
+        }
+
         info('Welcome to leconfe installer.');
 
         $permissionChecker = app(PermissionChecker::class);
@@ -82,6 +87,14 @@ class InstallAction
                 error('Password confirmation does not match.');
             }
         }
+
+        $data['newsletter'] = confirm(
+            label: 'Subscribe to newsletter',
+            default: true,
+            yes: 'Yes',
+            no: 'No',
+            hint: 'Receive updates, tips, and important announcements'
+        );
 
         info('Application information');
         $data['url'] = text('What is your application url?', placeholder: 'http://localhost', required: true);

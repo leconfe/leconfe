@@ -148,6 +148,17 @@
                                         </div>
                                     @enderror
                                 </div>
+                                <div class="form-control sm:col-span-3 gap-2">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" value="1" wire:model='form.newsletter' class="checkbox checkbox-sm">
+                                        <div class="ms-2">
+                                            <label for="checked-checkbox" class="text-sm font-medium text-gray-900">Subscribe to newsletter</label>
+                                            <p class="text-gray-700"> 
+                                                Receive updates, tips, and important announcements
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

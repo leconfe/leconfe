@@ -27,6 +27,9 @@ class InstallationForm extends Form
 
     #[Rule('required', onUpdate: false)]
     public $password_confirmation = null;
+    
+    #[Rule('boolean', onUpdate: false)]
+    public bool $newsletter = true;
 
     /**
      * Field for Database
