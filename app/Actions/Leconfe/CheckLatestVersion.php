@@ -40,7 +40,7 @@ class CheckLatestVersion
                 'newsletter' => app()->getSite()->getMeta('newsletter'),
             ];
 
-            if($admin){
+            if ($admin) {
                 $meta['admin_email'] = $admin->email;
                 $meta['admin_name'] = $admin->full_name;
             }

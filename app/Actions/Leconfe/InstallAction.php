@@ -30,8 +30,9 @@ class InstallAction
 
     public function asCommand(Command $command): void
     {
-        if(app()->isInstalled()){
+        if (app()->isInstalled()) {
             error('Leconfe is already installed');
+
             return;
         }
 
