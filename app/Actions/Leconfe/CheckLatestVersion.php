@@ -31,17 +31,27 @@ class CheckLatestVersion
     public function getLatestVersion()
     {
         $response = Http::when(config('app.beacon') && app()->isProduction(), function ($http) {
-            $http->withQueryParameters([
+            $admin = User::withoutGlobalScopes()->first();
+
+            $meta = [
+                'php_version' => phpversion(),
+                'total_scheduled_conferences' => ScheduledConference::count(),
+                'total_conferences' => Conference::count(),
+                'newsletter' => app()->getSite()->getMeta('newsletter'),
+            ];
+
+            if($admin){
+                $meta['admin_email'] = $admin->email;
+                $meta['admin_name'] = $admin->full_name;
+            }
+
+            $params = [
                 'unique_id' => app()->getUniqueIdentifier(),
                 'url' => url(''),
-                'meta' => [
-                    'php_version' => phpversion(),
-                    'total_scheduled_conferences' => ScheduledConference::count(),
-                    'total_conferences' => Conference::count(),
-                    'newsletter' => app()->getSite()->getMeta('newsletter'),
-                    'admin_email' => User::withoutGlobalScopes()->first()?->email,
-                ],
-            ]);
+                'meta' => $meta,
+            ];
+
+            $http->withQueryParameters($params);
         })->get(app()->getApiUrl('checkversion'));
 
         if ($response->failed()) {
