@@ -947,4 +947,5 @@ return [
     'upcoming_conference' => 'Konferenca e Ardhshme',
     'view_current_event' => 'Shiko Ngjarjen Aktual',
     'system_information' => 'Informacioni i Sistemit',
+    'submission_file_uploaded_activity' => 'Skedari me emrin ":name", u ngarkua në kategorinë ":category" me id : :id.'
 ];

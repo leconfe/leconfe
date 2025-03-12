@@ -999,4 +999,6 @@ return [
     'mailing_address' => 'Mailing Address',
     'slug_helper' => "Enter a unique URL-friendly identifier for this page. Use lowercase letters, numbers, dashes, and underscores only. For example, 'about-us' or 'contact-info'",
     'system_information' => 'System Information',
+    'submission_file_uploaded_activity' => 'File with name ":name", was uploaded on category ":category" with id : :id.',
+    'submission_file_renamed_activity' => 'File with name ":oldName" and id : :id, on category ":category" renamed to ":newName"',
 ];
