@@ -230,6 +230,31 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ]),
             DeleteAction::make()
                 ->authorize('deleteFile', $this->submission)
+                ->using(function (SubmissionFile $record) {
+                    try {
+                        DB::beginTransaction();
+
+                        $record->delete();
+
+                        Log::make(
+                            name: 'submission',
+                            subject: $this->submission,
+                            description: __('general.submission_file_deleted_activity', [
+                                'id' => $record->getKey(),
+                                'name' => $record->media->file_name,
+                            ]),
+                            event: 'submission-file-deleted',
+                        )
+                            ->by(auth()->user())
+                            ->save();
+
+                        DB::commit();
+                    } catch (\Throwable $th) {
+                        DB::rollBack();
+
+                        throw $th;
+                    }
+                })
                 ->hidden(fn() => $this->isViewOnly()),
         ];
     }
