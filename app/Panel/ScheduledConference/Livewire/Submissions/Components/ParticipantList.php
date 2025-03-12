@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Submissions\SubmissionAssignParticipant;
+use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ParticipantAssignedMail;
 use App\Models\DefaultMailTemplate;
@@ -188,7 +189,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                     ->columnSpanFull(),
                             ]),
                     ])
-                    ->successNotificationTitle(__('general.participant_assigned'))
+                    ->successNotificationTitle(__('general.participant_assigned_notification'))
                     ->action(function (Action $action, array $data) {
 
                         SubmissionAssignParticipant::run($this->submission, $data['user_id'], $data['role_id'], ! $data['no-notification'], $data['subject'], $data['message'], auth()->user());
@@ -279,9 +280,21 @@ class ParticipantList extends Component implements HasForms, HasTable
                         )
                         ->label(__('general.remove'))
                         ->successNotificationTitle(__('general.participant_removed'))
-                        ->action(function (Action $action, Model $record) {
+                        ->action(function (Action $action, SubmissionParticipant $record) {
                             $record->delete();
                             $action->success();
+
+                            Log::make(
+                                name: 'submission',
+                                subject: $this->submission,
+                                description: __('general.participant_removed', [
+                                    'name' => $record->user->fullName,
+                                    'role' => $record->role->name,
+                                ]),
+                                event: 'participant-removed'
+                            )
+                                ->by(auth()->user())
+                                ->save();
 
                             $this->dispatch('refreshSubmission');
                         })

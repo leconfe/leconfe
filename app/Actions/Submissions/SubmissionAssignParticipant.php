@@ -31,7 +31,8 @@ class SubmissionAssignParticipant
                 description: __('general.participant_assigned', [
                     'name' => $submissionParticipant->user->fullName,
                     'role' => $submissionParticipant->role->name,
-                ])
+                ]),
+                event: 'participant-assigned'
             )
                 ->by($by)
                 ->properties([

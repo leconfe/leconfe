@@ -641,7 +641,7 @@ return [
     'assign_and_another' => 'تعيين هذا & تعيين آخر',
     'select_role' => 'اختر دورًا',
     'dont_send_notification' => 'لا ترسل إشعارًا',
-    'participant_assigned' => 'تم تعيين المشارك',
+    'participant_assigned_notification' => 'تم تعيين المشارك',
     'notify_participant' => 'إخطار المشارك',
     'notify' => 'إخطار',
     'notification_from_leconfe' => 'إشعار من Leconfe',

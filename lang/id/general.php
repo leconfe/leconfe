@@ -629,7 +629,7 @@ return [
     'assign_and_another' => 'Tugaskan ini & Tugaskan lainnya',
     'select_role' => 'Pilih Peran',
     'dont_send_notification' => 'Jangan Kirim Notifikasi',
-    'participant_assigned' => 'Peserta Ditugaskan',
+    'participant_assigned_notification' => 'Peserta Ditugaskan',
     'notify_participant' => 'Beritahu Peserta',
     'notify' => 'Beritahu',
     'notification_from_leconfe' => 'Notifikasi dari Leconfe',

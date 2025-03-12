@@ -643,7 +643,7 @@ return [
     'assign_and_another' => 'Cakto këtë & Cakto një tjetër',
     'select_role' => 'Zgjidh Rol',
     'dont_send_notification' => 'Mos Dërgo Njoftim',
-    'participant_assigned' => 'Pjesëmarrësi është caktuar',
+    'participant_assigned_notification' => 'Pjesëmarrësi është caktuar',
     'notify_participant' => 'Njofto Pjesëmarrësin',
     'notify' => 'Njofto',
     'notification_from_leconfe' => 'Njoftim nga Leconfe',

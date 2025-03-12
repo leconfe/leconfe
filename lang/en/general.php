@@ -658,7 +658,7 @@ return [
     'assign_and_another' => 'Assign this & Assign another',
     'select_role' => 'Select Role',
     'dont_send_notification' => "Don't Send Notification",
-    'participant_assigned' => 'Participant Assigned',
+    'participant_assigned_notification' => 'Participant Assigned',
     'notify_participant' => 'Notify Participant',
     'notify' => 'Notify',
     'notification_from_leconfe' => 'Notification from Leconfe',
