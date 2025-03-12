@@ -48,7 +48,8 @@ class ActivityLogList extends \Livewire\Component implements HasForms, HasTable
                     })
                     ->label(__('general.causer_name')),
                 TextColumn::make('description')
-                    ->label(__('general.description')),
+                    ->label(__('general.description'))
+                    ->wrap(),
             ]);
     }
 
