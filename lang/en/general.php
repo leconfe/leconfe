@@ -21,7 +21,7 @@ return [
     'participant_assigned' => ':name assigned as :role',
     'review_assgined' => ':name has been assigned as reviewer',
     'review_complete' => ':name has completed review',
-    'email_sent' => 'Email `:name` has been sent',
+    'email_sent' => 'Email ":name" has been sent',
 
     'pagination_previous' => '&laquo; Previous',
     'pagination_next' => 'Next &raquo;',
@@ -743,7 +743,6 @@ return [
     'reviewer_updated' => 'Reviewer updated',
     'email_reviewer' => 'E-Mail Reviewer',
     'send' => 'Send',
-    'email_sent' => 'E-mail sent',
     'cancel_reviewer' => 'Cancel Reviewer',
     'reviewer_canceled' => 'Reviewer canceled',
     'reinstate_reviewer' => 'Reinstate Reviewer',

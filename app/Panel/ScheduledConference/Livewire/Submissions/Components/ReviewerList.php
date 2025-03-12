@@ -428,7 +428,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 ->minHeight(300)
                                 ->profile('email'),
                         ])
-                        ->successNotificationTitle(__('general.email_sent'))
+                        ->successNotificationTitle('Email has been sent.')
                         ->action(function (Action $action, Review $record, array $data) {
                             Mail::send([], [], function (Message $message) use ($record, $data) {
                                 $message->to($record->user->email)
