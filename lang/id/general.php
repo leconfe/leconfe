@@ -3,7 +3,7 @@
 return [
     'submission_created' => 'Pengajuan dibuat',
     'submission_updated' => 'Pengajuan diperbarui',
-    'submission_abstract_accepted' => 'Abstrak pengajuan diterima',
+    'submission_send_to_review' => 'Pengajuan dikirim untuk ditinjau.',
     'submission_abstract_declined' => 'Abstrak pengajuan ditolak',
     'submission_payment_approved' => 'Abstrak pengajuan disetujui',
     'submission_payment_declined' => 'Abstrak pengajuan ditolak',

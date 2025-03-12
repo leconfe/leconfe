@@ -3,7 +3,7 @@
 return [
     'submission_created' => 'Submission created',
     'submission_updated' => 'Submission updated',
-    'submission_abstract_accepted' => 'Submission abstract accepted',
+    'submission_send_to_review' => 'Submission send to review.',
     'submission_abstract_declined' => 'Submission abstract declined',
     'submission_payment_approved' => 'Submission payment approved',
     'submission_payment_declined' => 'Submission payment declined',

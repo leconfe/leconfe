@@ -3,7 +3,7 @@
 return [
     'submission_created' => 'تم إنشاء التقديم',
     'submission_updated' => 'تم تحديث التقديم',
-    'submission_abstract_accepted' => 'تم قبول ملخص التقديم',
+    'submission_send_to_review' => 'تم إرسال التقديم للمراجعة',
     'submission_abstract_declined' => 'تم رفض ملخص التقديم',
     'submission_payment_approved' => 'تم قبول دفعة التقديم المقبولة',
     'submission_payment_declined' => 'تم رفض الدفع المقدم',

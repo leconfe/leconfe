@@ -3,7 +3,7 @@
 return [
     'submission_created' => 'Dorëzimi u krijua',
     'submission_updated' => 'Dorëzimi u përditësua',
-    'submission_abstract_accepted' => 'Përmbledhja e dorëzimit u pranua',
+    'submission_send_to_review' => 'Dorëzimi u dërgua për rishikim.',
     'submission_abstract_declined' => 'Përmbledhja e dorëzimit u refuzua',
     'submission_payment_approved' => 'Aprovohet pagesa e dorëzimit',
     'submission_payment_declined' => 'Pagesa e dorëzimit u refuzua',
