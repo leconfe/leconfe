@@ -24,6 +24,7 @@ return [
     'submission_review_assign_declined' => '":name" has declined to review submission ":submissionName (:submissionId)".',
     'submission_review_assign_canceled' => '":name" has been canceled as a reviewer of submission ":submissionName (:submissionId)".',
     'submission_review_completed' => '":name" has completed the review.',
+    'submission_request_revision' => '":name" as editor has decided for "Request Revision"',
     'review_complete' => ':name has completed review',
     'email_sent' => 'Email ":name" has been sent',
 
