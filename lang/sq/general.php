@@ -18,7 +18,6 @@ return [
     'submission_published' => 'Dorëzimi u publikua',
     'submission_unpublished' => 'Dorëzimi u tërhoq nga publikimi',
     'participant_assigned' => ':name është caktuar si :role',
-    'review_assgined' => ':name është caktuar si rishikues',
     'review_complete' => ':name ka përfunduar rishikimin',
     'email_sent' => 'Emaili ":name" është dërguar',
     'pagination_previous' => '&laquo; E kaluar',

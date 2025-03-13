@@ -18,7 +18,6 @@ return [
     'submission_published' => 'Pengajuan diterbitkan',
     'submission_unpublished' => 'Pengajuan tidak diterbitkan',
     'participant_assigned' => ':name ditugaskan sebagai :role',
-    'review_assgined' => ':name telah ditugaskan sebagai pengulas',
     'review_complete' => ':name telah menyelesaikan tinjauan',
     'email_sent' => 'Email ":name" telah dikirim',
     'pagination_previous' => '&laquo; Sebelumnya',

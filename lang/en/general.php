@@ -19,7 +19,11 @@ return [
     'submission_published' => 'Submission Published',
     'submission_unpublished' => 'Submission Unpublished',
     'participant_assigned' => ':name assigned as :role',
-    'review_assgined' => ':name has been assigned as reviewer',
+    'submission_review_assigned' => '":name" has been assigned to review submission ":submissionName (:submissionId)".',
+    'submission_review_assign_accepted' => '":name" has accepted to review submission ":submissionName (:submissionId)".',
+    'submission_review_assign_declined' => '":name" has declined to review submission ":submissionName (:submissionId)".',
+    'submission_review_assign_canceled' => '":name" has been canceled as a reviewer of submission ":submissionName (:submissionId)".',
+    'submission_review_completed' => '":name" has completed the review.',
     'review_complete' => ':name has completed review',
     'email_sent' => 'Email ":name" has been sent',
 

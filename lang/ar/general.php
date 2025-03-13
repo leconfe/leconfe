@@ -18,7 +18,6 @@ return [
     'submission_published' => 'تم نشر التقديم',
     'submission_unpublished' => 'تم إلغاء نشر التقديم',
     'participant_assigned' => ':name تم تعيينه كـ :role',
-    'review_assgined' => ':name تم تعيينه كمراجع',
     'review_complete' => ':name أكمل المراجعة',
     'email_sent' => 'تم إرسال البريد الإلكتروني ":name"',
     'pagination_previous' => '&laquo; السابق',
