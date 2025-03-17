@@ -85,7 +85,7 @@ class Installation extends Page
         }
 
         try {
-            $installer = new Installer($this->form->all());
+            $installer = new Installer($this->form->getHydratedData());
             $installer->run();
 
             return redirect()->route('livewirePageGroup.website.pages.installation-successful');
