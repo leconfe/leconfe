@@ -248,17 +248,12 @@ class Application extends LaravelApplication
 
     public function getCurrentTheme(): ?Theme
     {
-        $theme ??= app()->getSite()->getMeta('theme') ?? 'default';
-
-        if ($currentConference = app()->getCurrentConference()) {
-            $theme = $currentConference->getMeta('theme');
-        }
-
+        $theme = 'DefaultTheme';
+        
         if ($currentScheduledConference = app()->getCurrentScheduledConference()) {
             $theme = $currentScheduledConference->getMeta('theme');
         }
 
-        $theme ??= 'DefaultTheme';
 
         return Plugin::getPlugin($theme, true) ?? Plugin::getPlugin('DefaultTheme');
     }
