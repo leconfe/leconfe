@@ -62,13 +62,6 @@ class WebsiteSetting extends Page
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->schema([
-                                        VerticalTabs\Tab::make('Theme')
-                                            ->label(__('general.theme'))
-                                            ->icon('heroicon-o-adjustments-horizontal')
-                                            ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(ThemeSetting::class),
-                                            ]),
                                         VerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))
                                             ->icon('heroicon-o-cog')

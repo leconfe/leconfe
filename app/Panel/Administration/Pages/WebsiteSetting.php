@@ -89,14 +89,6 @@ class WebsiteSetting extends Page implements HasInfolists
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->tabs([
-                                        VerticalTabs\Tab::make('Theme')
-                                            ->label(__('general.theme'))
-                                            ->icon('heroicon-o-adjustments-horizontal')
-                                            ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(ThemeSetting::class)
-                                                    ->lazy(),
-                                            ]),
                                         VerticalTabs\Tab::make('Sidebar')
                                             ->label(__('general.sidebar'))
                                             ->icon('heroicon-o-view-columns')
