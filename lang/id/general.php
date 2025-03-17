@@ -926,5 +926,5 @@ return [
     'upcoming_conference' => 'Konferensi Mendatang',
     'view_current_event' => 'Lihat Acara Saat Ini',
     'system_information' => 'Informasi Sistem',
-    'submission_file_uploaded_activity' => 'File dengan nama ":name", diunggah pada kategori ":category" dengan id : :id.'
+    'submission_file_uploaded_activity' => 'File dengan nama ":name", diunggah pada kategori ":category" dengan id : :id.',
 ];

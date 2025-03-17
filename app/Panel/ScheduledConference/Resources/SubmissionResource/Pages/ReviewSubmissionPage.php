@@ -180,7 +180,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                     Log::make(
                         name: 'submission',
                         subject: $this->record,
-                        description: __('general.submission_review_completed',[
+                        description: __('general.submission_review_completed', [
                             'name' => $this->review->user->full_name,
                         ]),
                     )

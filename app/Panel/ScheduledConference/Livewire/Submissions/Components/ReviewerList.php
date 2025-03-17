@@ -491,7 +491,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                             Log::make(
                                 name: 'submission',
                                 subject: $this->record,
-                                description: __('general.submission_review_assign_canceled',[
+                                description: __('general.submission_review_assign_canceled', [
                                     'submissionId' => $this->record->getKey(),
                                     'submissionName' => $this->record->getMeta('title'),
                                     'name' => $record->user->full_name,
@@ -619,7 +619,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                         Log::make(
                             name: 'submission',
                             subject: $this->record,
-                            description: __('general.submission_review_assigned',[
+                            description: __('general.submission_review_assigned', [
                                 'submissionId' => $this->record->getKey(),
                                 'submissionName' => $this->record->getMeta('title'),
                                 'name' => $reviewAssignment->user->full_name,

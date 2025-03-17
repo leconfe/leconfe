@@ -57,8 +57,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->wrap()
                 ->label(__('general.filename'))
                 ->color('primary')
-                ->action(fn(Model $record) => $record->media)
-                ->description(fn(Model $record) => $record->type->name),
+                ->action(fn (Model $record) => $record->media)
+                ->description(fn (Model $record) => $record->type->name),
         ];
     }
 
@@ -68,7 +68,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->icon('iconpark-download-o')
             ->label(__('general.download_all_files'))
             ->button()
-            ->hidden(fn(Table $table): bool => ! $table->getQuery()->exists() || $this->isViewOnly())
+            ->hidden(fn (Table $table): bool => ! $table->getQuery()->exists() || $this->isViewOnly())
             ->color('gray')
             ->action(function (TableAction $action) {
                 $files = $this->submission->media()->where('collection_name', $this->category)->get();
@@ -86,7 +86,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             Select::make('type')
                 ->label(__('general.type'))
                 ->required()
-                ->options(fn() => SubmissionFileType::ordered()->pluck('name', 'id')->toArray())
+                ->options(fn () => SubmissionFileType::ordered()->pluck('name', 'id')->toArray())
                 ->searchable(),
             SpatieMediaLibraryFileUpload::make('files')
                 ->required()
@@ -97,7 +97,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->preserveFilenames()
                 ->collection($this->category)
                 ->visibility('private')
-                ->model(fn() => $this->submission)
+                ->model(fn () => $this->submission)
                 ->saveRelationshipsUsing(function (SpatieMediaLibraryFileUpload $component) {
                     $component->saveUploadedFiles();
 
@@ -143,7 +143,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->icon('iconpark-upload')
             ->label(__('general.upload_files'))
             ->outlined()
-            ->hidden(fn(): bool => $this->isViewOnly())
+            ->hidden(fn (): bool => $this->isViewOnly())
             ->modalWidth('xl')
             ->form(
                 $this->uploadFormSchema()
@@ -151,7 +151,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->successNotificationTitle(__('general.files_added_successfully'))
             ->failureNotificationTitle(__('general.a_problem_adding_files'))
             ->action(
-                fn(array $data, TableAction $action) => $this->handleUploadAction($data, $action)
+                fn (array $data, TableAction $action) => $this->handleUploadAction($data, $action)
             );
     }
 
@@ -173,7 +173,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->modalHeading(__('general.edit_files'))
                 ->modalHeading(__('general.rename'))
                 ->hidden(
-                    fn(): bool => $this->isViewOnly() || $this->submission->isDeclined()
+                    fn (): bool => $this->isViewOnly() || $this->submission->isDeclined()
                 )
                 ->successNotificationTitle(__('general.file_renamed_successfully'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
@@ -189,7 +189,6 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                         $media->file_name = $data['file_name'];
                         $media->name = $data['file_name'];
-
 
                         $log = Log::make(
                             name: 'submission',
@@ -219,13 +218,13 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                     TextInput::make('file_name')
                         ->label(__('general.new_filename'))
                         ->formatStateUsing(function (SubmissionFile $record) {
-                            return str($record->media->file_name)->beforeLast('.' . $record->media->extension);
+                            return str($record->media->file_name)->beforeLast('.'.$record->media->extension);
                         })
                         ->dehydrateStateUsing(function (SubmissionFile $record, $state) {
-                            return str($state)->append('.' . $record->media->extension);
+                            return str($state)->append('.'.$record->media->extension);
                         })
                         ->suffix(function (SubmissionFile $record) {
-                            return '.' . $record->media->extension;
+                            return '.'.$record->media->extension;
                         }),
                 ]),
             DeleteAction::make()
@@ -255,7 +254,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         throw $th;
                     }
                 })
-                ->hidden(fn() => $this->isViewOnly()),
+                ->hidden(fn () => $this->isViewOnly()),
         ];
     }
 

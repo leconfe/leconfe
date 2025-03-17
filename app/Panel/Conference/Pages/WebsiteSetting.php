@@ -10,7 +10,6 @@ use App\Panel\Administration\Livewire\SidebarSetting;
 use App\Panel\Conference\Livewire\DateAndTimeSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use App\Panel\Conference\Livewire\SetupSetting;
-use App\Panel\Conference\Livewire\ThemeSetting;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;

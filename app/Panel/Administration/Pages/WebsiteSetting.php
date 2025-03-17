@@ -8,7 +8,6 @@ use App\Infolists\Components\VerticalTabs;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
-use App\Panel\Administration\Livewire\ThemeSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;

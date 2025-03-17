@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
-use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
 use Filament\Forms\Components\Select;

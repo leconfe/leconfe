@@ -93,7 +93,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     Log::make(
                         name: 'submission',
                         subject: $this->record,
-                        description: __('general.submission_review_assign_accepted',[
+                        description: __('general.submission_review_assign_accepted', [
                             'submissionId' => $this->record->getKey(),
                             'submissionName' => $this->record->getMeta('title'),
                             'name' => $this->review->user->full_name,
@@ -158,7 +158,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                 Log::make(
                     name: 'submission',
                     subject: $this->record,
-                    description: __('general.submission_review_assign_declined',[
+                    description: __('general.submission_review_assign_declined', [
                         'submissionId' => $this->record->getKey(),
                         'submissionName' => $this->record->getMeta('title'),
                         'name' => $this->review->user->full_name,

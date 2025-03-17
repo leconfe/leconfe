@@ -307,7 +307,7 @@ class PeerReview extends Component implements HasActions, HasForms
                 Log::make(
                     name: 'submission',
                     subject: $this->submission,
-                    description: __('general.submission_request_revision',[
+                    description: __('general.submission_request_revision', [
                         'name' => auth()->user()?->full_name,
                     ]),
                 )
