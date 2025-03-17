@@ -274,6 +274,76 @@
                             </div>
                         @enderror
                     </div>
+                    <div class="survey space-y-6">
+                        <div class="mt-2.5 mb-6 space-y-2">
+                            <h2 class="text-lg not-italic font-semibold leading-7 text-black">Survey</h2>
+                            <p class="w-full text-sm not-italic leading-snug ">
+                                Please take a moment to answer the following question.
+                            </p>
+                        </div>
+                        <div class="form-control sm:col-span-3 gap-2">
+                            <label class="label-text">
+                                How did you hear about our platform? <span class="text-red-500">*</span>
+                            </label>
+                            <div>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="radio" name="referral_source" class="radio radio-xs" value="search_engine" wire:model="form.referral_source" />
+                                    <span class="label-text">Search engine</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="radio" name="referral_source" class="radio radio-xs" value="social_media" wire:model="form.referral_source" />
+                                    <span class="label-text">Social Media</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="radio" name="referral_source" class="radio radio-xs" value="friend_referral" wire:model="form.referral_source" />
+                                    <span class="label-text">Referral from a friend</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="radio" name="referral_source" class="radio radio-xs" value="other" wire:model="form.referral_source" />
+                                    <span class="label-text">Other</span>
+                                    <input class="input input-xs input-bordered" wire:model="form.other_referral_source" />
+                                </label>
+                            </div>
+                            @error('form.referral_source')
+                                <div class="text-red-600 text-sm">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="form-control sm:col-span-3 gap-2">
+                            <label class="label-text">
+                                What features are most important to you? (Select all that apply)
+                            </label>
+                            <div>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="checkbox" class="checkbox checkbox-xs" value="custom_conference_website" wire:model="form.important_features"/>
+                                    <span class="label-text">Custom conference website</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="checkbox" class="checkbox checkbox-xs" value="participant_registration" wire:model="form.important_features"/>
+                                    <span class="label-text">Participant Registration Management</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="checkbox" class="checkbox checkbox-xs" value="paper_submission" wire:model="form.important_features"/>
+                                    <span class="label-text">Paper Submission Workflow</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="checkbox" class="checkbox checkbox-xs" value="proceedings_publication" wire:model="form.important_features"/>
+                                    <span class="label-text">Proceedings Publication</span>
+                                </label>
+                                <label class="label cursor-pointer justify-normal gap-2">
+                                    <input type="checkbox" class="checkbox checkbox-xs" value="other" wire:model="form.important_features"/>
+                                    <span class="label-text">Other : </span>
+                                    <input class="input input-xs input-bordered" wire:model="form.other_important_feature" />
+                                </label>
+                            </div>
+                            @error('form.important_features')
+                                <div class="text-red-600 text-sm">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="flex justify-between mt-16">
                         <button class="btn btn-primary btn-outline btn-sm ml-auto" wire:loading.attr="disabled"
                             type="submit">

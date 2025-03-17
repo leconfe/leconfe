@@ -18,7 +18,7 @@ class CheckLatestVersion
 
     public function handle()
     {
-        return Cache::remember('get_latest_version', now()->endOfDay(), fn () => $this->getLatestVersion());
+        return Cache::remember('get_latest_version', now()->endOfDay(), fn() => $this->getLatestVersion());
     }
 
     public static function isUpdateAvailable()
@@ -32,12 +32,14 @@ class CheckLatestVersion
     {
         $response = Http::when(config('app.beacon') && app()->isProduction(), function ($http) {
             $admin = User::withoutGlobalScopes()->first();
-
+            $site = app()->getSite();
             $meta = [
                 'php_version' => phpversion(),
                 'total_scheduled_conferences' => ScheduledConference::count(),
                 'total_conferences' => Conference::count(),
-                'newsletter' => app()->getSite()->getMeta('newsletter'),
+                'newsletter' => $site->getMeta('newsletter'),
+                'survey_important_features' =>  $site->getMeta('survey_important_features'),
+                'survey_referral_source' => $site->getMeta('survey_referral_source'),
             ];
 
             if ($admin) {
@@ -66,7 +68,7 @@ class CheckLatestVersion
         try {
             $data = spin(
                 message: 'Getting Leconfe latest version...',
-                callback: fn () => $this->handle(),
+                callback: fn() => $this->handle(),
             );
 
             $command->table(
@@ -79,9 +81,9 @@ class CheckLatestVersion
             if (version_compare(app()->getInstalledVersion(), $data['tag'], '>=')) {
                 $command->info('Your application is already up to date!');
             } else {
-                $command->info('New version available : '.$data['tag']);
-                $command->info('Download latest version here : '.$data['package']);
-                $command->warn('Learn how to upgrade here: '.$data['upgrade_guide']);
+                $command->info('New version available : ' . $data['tag']);
+                $command->info('Download latest version here : ' . $data['package']);
+                $command->warn('Learn how to upgrade here: ' . $data['upgrade_guide']);
             }
         } catch (\Throwable $th) {
             throw new $th;
