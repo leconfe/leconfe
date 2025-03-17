@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Review\ReviewUpdateAction;
+use App\Classes\Log;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionStatusRecommendation;
 use App\Facades\Hook;
@@ -175,6 +176,16 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                     DB::beginTransaction();
 
                     ReviewUpdateAction::run($this->review, $data);
+
+                    Log::make(
+                        name: 'submission',
+                        subject: $this->record,
+                        description: __('general.submission_review_completed',[
+                            'name' => $this->review->user->full_name,
+                        ]),
+                    )
+                        ->by(auth()->user())
+                        ->save();
 
                     $editors = $this->record->editors()
                         ->pluck('user_id')

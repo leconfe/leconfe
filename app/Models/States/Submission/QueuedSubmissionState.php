@@ -22,8 +22,8 @@ class QueuedSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.submission_abstract_accepted'),
-            event : 'submission-abstract-accepted',
+            description: __('general.submission_send_to_review'),
+            event : 'submission-send-to-review',
         )
             ->by(auth()->user())
             ->save();

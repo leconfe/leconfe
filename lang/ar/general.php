@@ -3,7 +3,7 @@
 return [
     'submission_created' => 'تم إنشاء التقديم',
     'submission_updated' => 'تم تحديث التقديم',
-    'submission_abstract_accepted' => 'تم قبول ملخص التقديم',
+    'submission_send_to_review' => 'تم إرسال التقديم للمراجعة',
     'submission_abstract_declined' => 'تم رفض ملخص التقديم',
     'submission_payment_approved' => 'تم قبول دفعة التقديم المقبولة',
     'submission_payment_declined' => 'تم رفض الدفع المقدم',
@@ -18,9 +18,8 @@ return [
     'submission_published' => 'تم نشر التقديم',
     'submission_unpublished' => 'تم إلغاء نشر التقديم',
     'participant_assigned' => ':name تم تعيينه كـ :role',
-    'review_assgined' => ':name تم تعيينه كمراجع',
     'review_complete' => ':name أكمل المراجعة',
-    'email_sent' => 'تم إرسال البريد الإلكتروني `:name`',
+    'email_sent' => 'تم إرسال البريد الإلكتروني ":name"',
     'pagination_previous' => '&laquo; السابق',
     'pagination_next' => 'التالي &raquo;',
     'failed_credentials' => 'هذه البيانات لا تتطابق مع سجلاتنا.',
@@ -641,7 +640,7 @@ return [
     'assign_and_another' => 'تعيين هذا & تعيين آخر',
     'select_role' => 'اختر دورًا',
     'dont_send_notification' => 'لا ترسل إشعارًا',
-    'participant_assigned' => 'تم تعيين المشارك',
+    'participant_assigned_notification' => 'تم تعيين المشارك',
     'notify_participant' => 'إخطار المشارك',
     'notify' => 'إخطار',
     'notification_from_leconfe' => 'إشعار من Leconfe',
@@ -725,7 +724,6 @@ return [
     'reviewer_updated' => 'تم تحديث المراجع',
     'email_reviewer' => 'البريد الإلكتروني للمراجع',
     'send' => 'إرسال',
-    'email_sent' => 'تم إرسال البريد الإلكتروني',
     'cancel_reviewer' => 'إلغاء المراجع',
     'reviewer_canceled' => 'تم إلغاء المراجع',
     'reinstate_reviewer' => 'إعادة تفعيل المراجع',
@@ -947,4 +945,5 @@ return [
     'upcoming_conference' => 'المؤتمر القادم',
     'view_current_event' => 'عرض الحدث الحالي',
     'system_information' => 'معلومات النظام',
+    'submission_file_uploaded_activity' => 'تم تحميل الملف باسم ":name" في الفئة ":category" مع المعرف: :id.'
 ];

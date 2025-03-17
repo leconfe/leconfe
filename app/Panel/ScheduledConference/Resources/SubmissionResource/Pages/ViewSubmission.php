@@ -424,6 +424,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->modalWidth('2xl'),
             Action::make('activity-log')
                 ->label(__('general.activity_log'))
+                ->authorize(fn () => auth()->user()->can('actAsEditor', $this->record))
                 ->hidden(
                     fn (): bool => $this->record->stage == SubmissionStage::Wizard
                 )

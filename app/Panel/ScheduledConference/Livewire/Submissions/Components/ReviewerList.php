@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Review\ReviewUpdateAction;
+use App\Classes\Log;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
 use App\Constants\SubmissionStatusRecommendation;
@@ -428,7 +429,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 ->minHeight(300)
                                 ->profile('email'),
                         ])
-                        ->successNotificationTitle(__('general.email_sent'))
+                        ->successNotificationTitle('Email has been sent.')
                         ->action(function (Action $action, Review $record, array $data) {
                             Mail::send([], [], function (Message $message) use ($record, $data) {
                                 $message->to($record->user->email)
@@ -486,6 +487,18 @@ class ReviewerList extends Component implements HasForms, HasTable
                             $record->update([
                                 'status' => ReviewerStatus::CANCELED,
                             ]);
+
+                            Log::make(
+                                name: 'submission',
+                                subject: $this->record,
+                                description: __('general.submission_review_assign_canceled',[
+                                    'submissionId' => $this->record->getKey(),
+                                    'submissionName' => $this->record->getMeta('title'),
+                                    'name' => $record->user->full_name,
+                                ]),
+                            )
+                                ->by(auth()->user())
+                                ->save();
 
                             if (! $data['do-not-notify-cancelation']) {
                                 try {
@@ -602,6 +615,18 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     ]);
                             }
                         }
+
+                        Log::make(
+                            name: 'submission',
+                            subject: $this->record,
+                            description: __('general.submission_review_assigned',[
+                                'submissionId' => $this->record->getKey(),
+                                'submissionName' => $this->record->getMeta('title'),
+                                'name' => $reviewAssignment->user->full_name,
+                            ]),
+                        )
+                            ->by(auth()->user())
+                            ->save();
 
                         if (! $data['no-invitation-notification']) {
                             try {
