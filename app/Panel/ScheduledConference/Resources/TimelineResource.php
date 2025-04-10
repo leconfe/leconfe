@@ -6,6 +6,7 @@ use App\Facades\Setting;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -46,9 +47,15 @@ class TimelineResource extends Resource
                 Textarea::make('description')
                     ->label(__('general.description'))
                     ->maxLength(255),
-                DatePicker::make('date')
-                    ->label(__('general.date'))
-                    ->required(),
+                Grid::make()
+                    ->schema([
+                        DatePicker::make('date')
+                            ->label(__('general.start_date'))
+                            ->required(),
+                        DatePicker::make('date_end')
+                            ->label(__('general.end_date'))
+                            ->after('date'),
+                    ]),
                 Select::make('type')
                     ->label(__('general.type'))
                     ->options(Timeline::getTypes())
@@ -69,9 +76,8 @@ class TimelineResource extends Resource
             ->heading(__('general.timeline'))
             ->defaultSort('date')
             ->columns([
-                TextColumn::make('date')
+                TextColumn::make('fullDate')
                     ->label(__('general.date'))
-                    ->dateTime(Setting::get('format_date'))
                     ->sortable(),
                 TextColumn::make('name')
                     ->label(__('general.name')),
