@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Facades\Setting;
 use App\Models\Concerns\BelongsToScheduledConference;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,6 +26,7 @@ class Timeline extends Model
         'name',
         'description',
         'date',
+        'date_end',
         'type',
         'hide',
         'require_attendance',
@@ -31,6 +34,7 @@ class Timeline extends Model
 
     protected $casts = [
         'date' => 'datetime',
+        'date_end' => 'datetime',
         'hide' => 'boolean',
     ];
 
@@ -61,5 +65,20 @@ class Timeline extends Model
     public function scopeType($query, $type)
     {
         return $query->where('type', $type);
+    }
+
+    protected function fullDate(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                $formattedDate = $this->date->format(Setting::get('format_date'));
+
+                if ($this->date_end) {
+                    $formattedDate .= ' - ' . $this->date_end->format(Setting::get('format_date'));
+                }
+
+                return $formattedDate;
+            },
+        );
     }
 }
