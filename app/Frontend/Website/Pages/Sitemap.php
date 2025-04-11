@@ -2,6 +2,7 @@
 
 namespace App\Frontend\Website\Pages;
 
+use App\Application;
 use App\Frontend\ScheduledConference\Pages as ScheduledConferencePages;
 use App\Frontend\Website\Pages\Page;
 use App\Http\Middleware\RedirectToScheduledConference;
@@ -25,13 +26,12 @@ class Sitemap extends Page
 
     public function __invoke()
     {
-        // $sitemap = Cache::remember(
-        //     'sitemap_'.app()->getCurrentConferenceId(),
-        //     Carbon::now()->addMinutes(30),
-        //     fn () => $this->generateSitemap(),
-        // );
+        $sitemap = Cache::remember(
+            'sitemap_'. Application::CONTEXT_WEBSITE,
+            Carbon::now()->addHour(4),
+            fn () => $this->generateSitemap(),
+        );
 
-        $sitemap = $this->generateSitemap();
         return response($sitemap->render(), 200, [
             'Content-Type' => 'application/xml',
         ]);
