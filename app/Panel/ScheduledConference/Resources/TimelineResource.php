@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Resources;
 
-use App\Facades\Setting;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 use Filament\Forms\Components\DatePicker;
