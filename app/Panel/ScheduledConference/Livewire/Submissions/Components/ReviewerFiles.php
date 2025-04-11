@@ -40,7 +40,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
                         fn (): bool => $this->isViewOnly()
                     )
                     ->icon('iconpark-download-o')
-                    ->label('Download All Files')
+                    ->label(__('general.download_all_files'))
                     ->button()
                     ->color('gray')
                     ->action(function () {

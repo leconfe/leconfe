@@ -28,7 +28,9 @@ class Upgrade120Beta4 extends UpgradeBase
 
     protected function migrate(): void
     {
-        Artisan::call('migrate');
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
     }
 
     public function migrateRegistrationPayments(): void

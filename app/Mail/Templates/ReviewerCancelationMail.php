@@ -24,7 +24,7 @@ class ReviewerCancelationMail extends TemplateMailable
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
-            description: __('general.email_sent', ['name' => 'Reviewer Canceled Invitation']),
+            description: __('general.email_sent', ['name' => 'Reviewer Canceled']),
         );
     }
 

@@ -8,7 +8,6 @@ use App\Infolists\Components\VerticalTabs;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
-use App\Panel\Administration\Livewire\ThemeSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -89,14 +88,6 @@ class WebsiteSetting extends Page implements HasInfolists
                             ->schema([
                                 VerticalTabs\Tabs::make()
                                     ->tabs([
-                                        VerticalTabs\Tab::make('Theme')
-                                            ->label(__('general.theme'))
-                                            ->icon('heroicon-o-adjustments-horizontal')
-                                            ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(ThemeSetting::class)
-                                                    ->lazy(),
-                                            ]),
                                         VerticalTabs\Tab::make('Sidebar')
                                             ->label(__('general.sidebar'))
                                             ->icon('heroicon-o-view-columns')

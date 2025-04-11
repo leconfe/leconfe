@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Version extends Model
@@ -43,5 +44,34 @@ class Version extends Model
         }
 
         return $version;
+    }
+
+    protected function major(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => explode('.', $this->version)[0],
+        );
+    }
+
+    protected function minor(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => explode('.', $this->version)[1],
+        );
+    }
+
+    protected function patch(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $version = explode('.', $this->version)[2];
+
+                if (array_key_exists(3, explode('.', $this->version))) {
+                    $version .= '.'.explode('.', $this->version)[3];
+                }
+
+                return $version;
+            },
+        );
     }
 }

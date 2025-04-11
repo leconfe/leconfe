@@ -4,7 +4,6 @@ namespace App\Utils\UpgradeSchemas;
 
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class Upgrade122 extends UpgradeBase

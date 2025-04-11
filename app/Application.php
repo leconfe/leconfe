@@ -37,7 +37,7 @@ use Illuminate\Support\Collection;
 
 class Application extends LaravelApplication
 {
-    public const APP_VERSION = '1.2.2';
+    public const APP_VERSION = '1.2.4';
 
     public const PHP_MIN_VERSION = '8.1';
 
@@ -248,17 +248,11 @@ class Application extends LaravelApplication
 
     public function getCurrentTheme(): ?Theme
     {
-        $theme ??= app()->getSite()->getMeta('theme') ?? 'default';
-
-        if ($currentConference = app()->getCurrentConference()) {
-            $theme = $currentConference->getMeta('theme');
-        }
+        $theme = 'DefaultTheme';
 
         if ($currentScheduledConference = app()->getCurrentScheduledConference()) {
             $theme = $currentScheduledConference->getMeta('theme');
         }
-
-        $theme ??= 'DefaultTheme';
 
         return Plugin::getPlugin($theme, true) ?? Plugin::getPlugin('DefaultTheme');
     }

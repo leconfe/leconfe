@@ -20,7 +20,7 @@ class DeclinedSubmissionState extends BaseSubmissionState
         Log::make(
             name: 'submission',
             subject: $this->submission,
-            description: __('general.submission_abstract_accepted'),
+            description: __('general.submission_send_to_review'),
             event : 'submission-abstract-accepted',
         )
             ->by(auth()->user())

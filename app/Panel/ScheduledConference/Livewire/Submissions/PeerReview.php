@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclinePaperMail;
@@ -302,6 +303,16 @@ class PeerReview extends Component implements HasActions, HasForms
                     'status' => SubmissionStatus::OnReview,
                     'stage' => SubmissionStage::PeerReview,
                 ], $this->submission);
+
+                Log::make(
+                    name: 'submission',
+                    subject: $this->submission,
+                    description: __('general.submission_request_revision', [
+                        'name' => auth()->user()?->full_name,
+                    ]),
+                )
+                    ->by(auth()->user())
+                    ->save();
 
                 if (! $data['do-not-notify-author']) {
                     try {

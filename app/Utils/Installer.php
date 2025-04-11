@@ -28,6 +28,7 @@ class Installer
         try {
             $this->configureEnv();
             $this->configureMigration();
+            $this->configureSite();
             $this->configureAccount();
             $this->configureApplication();
             $this->configureOptimization();
@@ -164,6 +165,15 @@ class Installer
         }
 
         return $user;
+    }
+
+    private function configureSite()
+    {
+        $site = app()->getSite();
+        $site->setMeta('newsletter', $this->readParam('newsletter'));
+        $site->setMeta('survey_referral_source', $this->readParam('survey_referral_source'));
+        $site->setMeta('survey_important_features', $this->readParam('survey_important_features'));
+        $site->save();
     }
 
     private function removeEnvFile()

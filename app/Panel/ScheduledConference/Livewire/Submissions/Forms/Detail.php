@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
-use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
 use Filament\Forms\Components\Select;
@@ -79,14 +78,6 @@ class Detail extends \Livewire\Component implements HasForms
             $this->form->getState(),
             $this->submission
         );
-
-        Log::make(
-            name: 'submission',
-            subject: $this->submission,
-            description: __('general.submission_metadata_updated')
-        )
-            ->by(auth()->user())
-            ->save();
 
         Notification::make()
             ->body(__('general.saved_successfuly'))

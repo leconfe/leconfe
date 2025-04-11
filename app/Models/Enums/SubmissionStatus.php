@@ -16,7 +16,7 @@ enum SubmissionStatus: string implements HasColor, HasLabel
     /**
      * @deprecated
      */
-    case OnPayment = 'On Payment'; 
+    case OnPayment = 'On Payment';
     case OnPresentation = 'On Presentation';
     case Editing = 'Editing';
     case Published = 'Published';

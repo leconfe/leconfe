@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Review\ReviewUpdateAction;
+use App\Classes\Log;
 use App\Constants\ReviewerStatus;
 use App\Facades\Setting;
 use App\Infolists\Components\LivewireEntry;
@@ -79,6 +80,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->outlined()
             ->requiresConfirmation()
             ->successNotificationTitle('Request Accepted')
+            ->failureNotificationTitle('Failed to accept request, please try again later or contact admin.')
             ->action(function (Action $action) {
                 try {
                     DB::beginTransaction();
@@ -87,6 +89,18 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                         'date_confirmed' => now(),
                         'status' => ReviewerStatus::ACCEPTED,
                     ]);
+
+                    Log::make(
+                        name: 'submission',
+                        subject: $this->record,
+                        description: __('general.submission_review_assign_accepted', [
+                            'submissionId' => $this->record->getKey(),
+                            'submissionName' => $this->record->getMeta('title'),
+                            'name' => $this->review->user->full_name,
+                        ]),
+                    )
+                        ->by(auth()->user())
+                        ->save();
 
                     $editorsId = $this->record
                         ->editors()
@@ -111,6 +125,8 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     DB::rollBack();
 
                     $action->failure();
+
+                    throw $th;
 
                     return;
                 }
@@ -138,6 +154,18 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     'date_confirmed' => now(),
                     'status' => ReviewerStatus::DECLINED,
                 ]);
+
+                Log::make(
+                    name: 'submission',
+                    subject: $this->record,
+                    description: __('general.submission_review_assign_declined', [
+                        'submissionId' => $this->record->getKey(),
+                        'submissionName' => $this->record->getMeta('title'),
+                        'name' => $this->review->user->full_name,
+                    ]),
+                )
+                    ->by(auth()->user())
+                    ->save();
 
                 try {
                     Mail::to($this->review->user->email)
