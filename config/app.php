@@ -97,6 +97,8 @@ return [
         'id' => 'Indonesia',
         'sq' => 'Albania',
         'ar' => 'Arabic',
+        'ru' => 'Russian',
+        'uz' => 'Uzbek',
     ],
 
     /*
