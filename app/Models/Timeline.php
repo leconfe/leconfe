@@ -70,11 +70,11 @@ class Timeline extends Model
     protected function fullDate(): Attribute
     {
         return Attribute::make(
-            get: function() {
+            get: function () {
                 $formattedDate = $this->date->format(Setting::get('format_date'));
 
                 if ($this->date_end) {
-                    $formattedDate .= ' - ' . $this->date_end->format(Setting::get('format_date'));
+                    $formattedDate .= ' - '.$this->date_end->format(Setting::get('format_date'));
                 }
 
                 return $formattedDate;
