@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\OAIController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,5 +37,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
     return redirect()->route('livewirePageGroup.website.pages.home');
 })->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::get('oai', [OAIController::class, 'handleRequest'])->name('oai-pmh');
 
 Route::any('logout', LogoutController::class)->name('logout');

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1ac4ae54eae8343b1c4046adbb3eca2",
+    "content-hash": "59c56f080b7d8bdec68007c40f58dac5",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -6820,6 +6820,81 @@
                 }
             ],
             "time": "2024-03-08T11:56:40+00:00"
+        },
+        {
+            "name": "opencultureconsulting/simple-oai-pmh",
+            "version": "v1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opencultureconsulting/simple-oai-pmh.git",
+                "reference": "fc261eba4496c0736fa50cdb9c2e8d38e0aa729f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opencultureconsulting/simple-oai-pmh/zipball/fc261eba4496c0736fa50cdb9c2e8d38e0aa729f",
+                "reference": "fc261eba4496c0736fa50cdb9c2e8d38e0aa729f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "php": "7.4.*|8.0.*|8.1.*|8.2.*"
+            },
+            "replace": {
+                "opencultureconsulting/oai_pmh": "self.version"
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "OCC\\OAI2\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Meyer",
+                    "email": "sebastian.meyer@opencultureconsulting.com",
+                    "homepage": "https://www.opencultureconsulting.com",
+                    "role": "maintainer"
+                },
+                {
+                    "name": "Heinrich Stamerjohanns",
+                    "email": "stamer@uni-oldenburg.de",
+                    "role": "developer"
+                },
+                {
+                    "name": "Jianfeng Li",
+                    "email": "jianfeng.li@adelaide.edu.au",
+                    "role": "developer"
+                },
+                {
+                    "name": "Daniel Neis Araujo",
+                    "email": "danielneis@gmail.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kazimierz Pietruszewski",
+                    "email": "antenna@antenna.io",
+                    "role": "developer"
+                }
+            ],
+            "description": "This is a stand-alone and easy to install data provider implementing the Open Archives Initiative's Protocol for Metadata Harvesting (OAI-PMH).",
+            "homepage": "https://github.com/opencultureconsulting/simple-oai-pmh",
+            "keywords": [
+                "OAI",
+                "OAI-PMH",
+                "code4lib",
+                "data-provider",
+                "repository"
+            ],
+            "support": {
+                "docs": "https://github.com/opencultureconsulting/simple-oai-pmh/blob/master/README.md",
+                "issues": "https://github.com/opencultureconsulting/simple-oai-pmh/issues",
+                "source": "https://github.com/opencultureconsulting/simple-oai-pmh"
+            },
+            "time": "2024-05-16T09:06:01+00:00"
         },
         {
             "name": "openspout/openspout",
