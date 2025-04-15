@@ -38,6 +38,8 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return redirect()->route('livewirePageGroup.website.pages.home');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::get('oai', [OAIController::class, 'handleRequest'])->name('oai-pmh');
+Route::get('{conference}/oai', [OAIController::class, 'handleRequest'])
+    ->name('oai-pmh')
+    ->where('conference', '[a-zA-Z0-9-_]+');
 
 Route::any('logout', LogoutController::class)->name('logout');

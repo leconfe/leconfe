@@ -11,11 +11,13 @@ class OAIController extends Controller
     /**
      * Handle the OAI-PMH request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Conference $conference
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function handleRequest(Request $request)
+    public function handleRequest(Conference $conference, Request $request)
     {
+        dd($conference);
         $verb = $request->input('verb');
 
         switch ($verb) {
@@ -29,6 +31,8 @@ class OAIController extends Controller
                 return $this->getRecord($request);
             case 'ListSets':
                 return $this->listSets($request);
+            case 'ListMetadataFormats':
+                return $this->listMetadaFormats($request);
             default:
                 return $this->errorResponse('badVerb', 'Illegal OAI verb');
         }
@@ -71,6 +75,38 @@ class OAIController extends Controller
     public function listRecords(Request $request)
     {
 
+    }
+
+    public function listMetadaFormats(Request $request)
+    {
+        $metadataFormat = [
+            [
+                'metadataPrefix' => 'oai_dc',
+                'schema' => 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
+                'metadataNamespace' => 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+            ],
+            [
+                'metadataPrefix' => 'marcxml',
+                'schema' => 'http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd',
+                'metadataNamespace' => 'http://www.loc.gov/MARC21/slim',
+            ],
+            [
+                'metadataPrefix' => 'rfc1807',
+                'schema' => 'http://www.openarchives.org/OAI/1.1/rfc1807.xsd',
+                'metadataNamespace' => 'http://info.internet.isi.edu:80/in-notes/rfc/files/rfc1807.txt',
+            ],
+            [
+                'metadataPrefix' => 'oai_marc',
+                'schema' => 'http://www.openarchives.org/OAI/1.1/oai_marc.xsd',
+                'metadataNamespace' => 'http://www.openarchives.org/OAI/1.1/oai_marc',
+            ]
+        ];
+
+        return response()->view('panel.oai.list-metadata-formats', [
+            'metadataFormatArr' => collect($metadataFormat),
+            'baseURL' => route('oai-pmh'),
+            'xsl' => $this->xslPath(),
+        ])->header('Content-Type', 'text/xml');
     }
 
     public function listIdentifiers(Request $request)

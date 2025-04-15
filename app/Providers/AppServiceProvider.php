@@ -226,6 +226,8 @@ class AppServiceProvider extends ServiceProvider
         $isOnScheduledPath = isset($pathInfos[2]) && $pathInfos[2] == 'scheduled' && isset($pathInfos[3]) && ! blank($pathInfos[3]);
         $scheduledConferencePath = $pathInfos[3] ?? null;
 
+        $oaiPath = isset($pathInfos[2]) && $pathInfos[2] == 'oai';
+
         // Detect conference from URL path
         if ($conferencePath) {
 
@@ -236,6 +238,9 @@ class AppServiceProvider extends ServiceProvider
             $conference ? $this->app->setCurrentConferenceId($conference->getKey()) : $this->app->setCurrentConferenceId(Application::CONTEXT_WEBSITE);
 
             if (! $conference && $isOnScheduledPath) {
+                abort(404);
+            }
+            if (! $conference && $oaiPath) {
                 abort(404);
             }
             // Detect scheduledConference from URL path when conference is set
@@ -253,7 +258,14 @@ class AppServiceProvider extends ServiceProvider
         // Scope livewire update path to current conference
         $currentConference = $this->app->getCurrentConference();
         if ($currentConference) {
-            // Scope livewire update path to current serie
+            // Handle OAI path
+            if ($oaiPath) {
+                Livewire::setUpdateRoute(
+                    fn ($handle) => Route::post($currentConference->path.'/oai/livewire/update', $handle)->middleware('web')
+                );
+            }
+
+            // Scope livewire update path to current series
             $currentScheduledConference = $this->app->getCurrentScheduledConference();
             if ($isOnScheduledPath && $currentScheduledConference && $currentScheduledConference->path === $scheduledConferencePath) {
                 Livewire::setUpdateRoute(
