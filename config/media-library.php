@@ -16,7 +16,7 @@ return [
      */
     'max_file_size' => 1024 * 1024 * env('MAX_FILE_UPLOAD_SIZE', 30), // 30MB
 
-    'accepted_file_types' => explode(',', env('ACCEPTED_FILE_TYPES', 'image/*,.pdf,.doc,.docx,.zip,.xls,xlsx,.odt,.txt,.xml')),
+    'accepted_file_types' => explode(',', env('ACCEPTED_FILE_TYPES', 'pdf,doc,docx,xls,xlsx,odt,txt,xml,jpg,jpeg,csv,png,webp,text/xml,pptx')),
 
     /*
      * This queue connection will be used to generate derived and responsive images.
