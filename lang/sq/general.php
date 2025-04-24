@@ -463,6 +463,8 @@ return [
     'select_type_opened_date' => 'Zgjidhni datën e hapjes së llojit..',
     'select_type_closed_date' => 'Zgjidhni datën e mbylljes së llojit..',
     'payments' => 'Pagesat',
+    'payment_confirm' => 'Konfirmo Pagesën',
+    'payment_status' => 'Statusi i Pagesës',
     'payment' => 'Pagesë',
     'payment_declined' => 'Pagesa u refuzua',
     'input_name_payment_method' => 'Futni një emër për metodën e pagesës..',

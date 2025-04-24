@@ -9,8 +9,11 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
+use Filament\Infolists\Components\Grid as InfolistGrid;
+use Filament\Infolists\Components\TextEntry;
 
 class ManualPaymentPlugin extends Plugin
 {
@@ -31,12 +34,12 @@ class ManualPaymentPlugin extends Plugin
             Hook::add('Forms::Form::components::paymentForm', function ($hookName, array &$components, Form $form) {
 
                 $components[] = Grid::make(1)
-                    ->visible(fn (Get $get) => $get('payment_method') == 'manual')
+                    ->visible(fn(Get $get) => $get('payment_method') == 'manual')
                     ->schema([
                         Placeholder::make('manual_payment_instructions')
                             ->label('Payment Instructions')
-                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
+                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
+                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
                             ->required()
@@ -46,10 +49,11 @@ class ManualPaymentPlugin extends Plugin
 
                 return false;
             });
+
             Hook::add('Forms::Form::components::submissionPayment', function ($hookName, array &$components, Form $form) {
 
                 $components[] = Grid::make(1)
-                    ->visible(fn (Get $get) => $get('payment_method') == 'manual')
+                    ->visible(fn(Get $get) => $get('payment_method') == 'manual')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
@@ -58,6 +62,22 @@ class ManualPaymentPlugin extends Plugin
                             ->collection('manual_payment_proof'),
                     ])
                     ->disabled();
+
+                return false;
+            });
+
+            Hook::add('Infolists::Infolist::components::submissionPaymentStatus', function ($hookName, array &$components) {
+
+                $components[] = InfolistGrid::make(1)
+                    ->visible(fn($record) => $record->payment_method === 'manual')
+                    ->schema([
+                        TextEntry::make('payment_proof')
+                            ->getStateUsing(fn($record) => $record->getFirstMedia('manual_payment_proof')->name)
+                            ->suffixAction(Action::make('download')
+                                ->label('Download')
+                                ->icon('heroicon-o-arrow-down-tray')
+                                ->action(fn($record) => $record->getFirstMedia('manual_payment_proof')))
+                    ]);
 
                 return false;
             });

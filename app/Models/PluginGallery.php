@@ -45,7 +45,6 @@ class PluginGallery extends Model
     {
         try {
             $response = Http::acceptJson()->get(app()->getApiUrl('plugins'));
-
             if ($response->failed()) {
                 return [];
             }

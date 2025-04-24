@@ -17,7 +17,7 @@ class Infolist extends \Filament\Infolists\Infolist
     public function components(array|Closure $components): static
     {
         if ($this->getId()) {
-            Hook::call('Forms::Form::components::'.Str::camel($this->getId()), [&$components, $this]);
+            Hook::call('Infolists::Infolist::components::'.Str::camel($this->getId()), [&$components, $this]);
         }
 
         return parent::components($components);

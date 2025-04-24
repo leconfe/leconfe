@@ -459,6 +459,8 @@ return [
     'select_type_opened_date' => 'Pilih tanggal pembukaan tipe..',
     'select_type_closed_date' => 'Pilih tanggal penutupan tipe..',
     'payments' => 'Pembayaran',
+    'payment_confirm' => 'Konfirmasi Pembayaran',
+    'payment_status' => 'Status Pembayaran',
     'payment' => 'Pembayaran',
     'payment_declined' => 'Pembayaran Ditolak',
     'input_name_payment_method' => 'Masukkan nama untuk metode pembayaran..',

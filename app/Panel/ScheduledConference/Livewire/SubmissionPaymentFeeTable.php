@@ -90,7 +90,8 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
-                    Action::make('payment')
+                    Action::make('confirm_payment')
+                        ->label(__('general.payment_confirm'))
                         ->modalWidth(MaxWidth::Large)
                         ->modalCancelActionLabel(__('general.close'))
                         ->mountUsing(function (Form $form, $record) {
@@ -112,7 +113,8 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
                                         ->extraAttributes([
                                             'style' => 'font-size:1rem;',
                                         ]),
-                                    DatePicker::make('paid_at'),
+                                    DatePicker::make('paid_at')
+                                        ->default(now()),
                                 ]);
                         })
                         ->action(fn (array $data, Payment $record) => $record->update([...$data, 'payment_method' => 'manual'])),
@@ -128,7 +130,6 @@ class SubmissionPaymentFeeTable extends Component implements HasForms, HasTable
                         ->form(function (Form $form, Payment $record) {
                             return $form
                                 ->id('paymentForm')
-                                ->disabled()
                                 ->model($record)
                                 ->schema([
                                     Placeholder::make('title')

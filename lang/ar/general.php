@@ -463,6 +463,8 @@ return [
 
     'payments' => 'المدفوعات',
     'payment' => 'دفع',
+    'payment_confirm' => 'تأكيد الدفع',
+    'payment_status' => 'حالة الدفع',
     'payment_declined' => 'تم رفض الدفع',
     'input_name_payment_method' => 'أدخل اسم طريقة الدفع..',
     'select_payment_currency' => 'حدد عملة الدفع..',

@@ -484,6 +484,8 @@ return [
 
     'payments' => 'Payments',
     'payment' => 'Payment',
+    'payment_confirm' => 'Confirm Payment',
+    'payment_status' => 'Payment Status',
     'payment_declined' => 'Payment Declined',
     'input_name_payment_method' => 'Input a name for the payment method..',
     'select_payment_currency' => 'Select payment currency..',

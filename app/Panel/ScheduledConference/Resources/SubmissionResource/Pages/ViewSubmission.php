@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use App\Actions\Submissions\AcceptWithdrawalAction;
 use App\Actions\Submissions\CancelWithdrawalAction;
 use App\Actions\Submissions\RequestWithdrawalAction;
+use App\Facades\Setting;
 use App\Forms\Components\TinyEditor;
 use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs\Tab as Tab;
@@ -15,7 +16,10 @@ use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\PaymentFeeFormItem;
+use App\Models\Submission;
 use App\Models\User;
 use App\Notifications\PaymentRequired;
 use App\Notifications\SubmissionWithdrawn;
@@ -34,9 +38,12 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -48,6 +55,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
 use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -96,108 +104,155 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('payment')
-                ->visible(app()->getCurrentScheduledConference()->getMeta('submission_payment'))
-                ->modalWidth(MaxWidth::Large)
-                ->modalCancelActionLabel(__('general.close'))
-                ->visible(fn () => $this->record->payment)
-                ->authorize(fn () => $this->record->isParticipantAuthor(auth()->user()))
-                ->url(fn () => $this->record->payment->getPaymentUrl())
-                ->hidden(fn () => $this->record->payment?->isPaid()),
-            Action::make('charge_payment')
-                ->label('Charge Payment')
-                ->visible(fn () => ! $this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
-                ->authorize(fn () => auth()->user()->can('actAsEditor', $this->record))
-                ->icon('heroicon-o-banknotes')
-                ->modalWidth(MaxWidth::Large)
-                ->form(function (Form $form) {
-                    return $form
-                        ->model($this->record->payment)
-                        ->schema([
-                            Radio::make('payment_fee_id')
-                                ->label('Payment Fee')
-                                ->required()
-                                ->options(
-                                    fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
-                                        ->active()
-                                        ->get()
-                                        ->mapWithKeys(function ($record) {
-                                            return [
-                                                $record->getKey() => $record->name.' ('.money($record->amount, $record->currency, true)->formatWithoutZeroes().')',
-                                            ];
-                                        })
-                                )
-                                ->afterStateUpdated(function (Set $set, $state) {
-                                    if (! $state) {
-                                        return;
-                                    }
-
-                                    $paymentFee = PaymentFee::find($state);
-                                    $set('currency', $paymentFee->currency);
-                                    $set('amount', $paymentFee->amount);
-                                    $set('description', $paymentFee->getMeta('description'));
-                                })
-                                ->reactive(),
-                            Grid::make(1)
-                                ->visible(fn (Get $get) => $get('payment_fee_id'))
-                                ->schema([
-                                    Grid::make()
-                                        ->schema([
-                                            Select::make('currency')
-                                                ->label(__('general.currency'))
-                                                ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                                                ->options(
-                                                    fn () => Currency::query()->orderBy('code_numeric', 'asc')
-                                                        ->get()
-                                                        ->mapWithKeys(function (?Currency $value, int $key) {
-                                                            $currencyCode = Str::upper($value->id);
-                                                            $currencyName = $value->name;
-
-                                                            return [$value->id => "($currencyCode) $currencyName"];
-                                                        })
-                                                )
-                                                ->searchable()
-                                                ->required(),
-                                            TextInput::make('amount')
-                                                ->label('Amount')
-                                                ->numeric()
-                                                ->required()
-                                                ->minValue(0),
-                                        ]),
-                                    Textarea::make('description'),
-                                ]),
+            ActionGroup::make([
+                Action::make('payment')
+                    ->modalWidth(MaxWidth::Large)
+                    ->modalCancelActionLabel(__('general.close'))
+                    ->visible(fn() => $this->record->payment)
+                    ->authorize(fn() => $this->record->isParticipantAuthor(auth()->user()))
+                    ->url(fn() => $this->record->payment->getPaymentUrl())
+                    ->hidden(fn() => $this->record->payment?->isPaid()),
+                Action::make('confirm_payment')
+                    ->modalWidth(MaxWidth::Large)
+                    ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
+                    ->label(__('general.payment_confirm'))
+                    ->modalCancelActionLabel(__('general.close'))
+                    ->mountUsing(function (Form $form, $record) {
+                        $form->fill([
+                            ...$record->attributesToArray(),
+                            'meta' => $record->getAllMeta()->toArray(),
                         ]);
-                })
-                ->successNotificationTitle('Payment fee sent to user')
-                ->action(function (Action $action, array $data) {
-                    $paymentManager = PaymentManager::get();
+                    })
+                    ->visible(fn(Submission $record) => ! $record->payment?->paid_at)
+                    ->form(function (Form $form, Submission $record) {
+                        return $form
+                            ->id('payment')
+                            ->model($record->payment)
+                            ->schema([
+                                Placeholder::make('type')
+                                    ->content($record->payment->getPaymentType()),
+                                Placeholder::make('amount')
+                                    ->content($record->payment->getFormattedFee())
+                                    ->extraAttributes([
+                                        'style' => 'font-size:1rem;',
+                                    ]),
+                                DatePicker::make('paid_at')
+                                    ->required(),
+                            ]);
+                    })
+                    ->action(fn(array $data, Submission $record) => $record->payment->update([...$data, 'payment_method' => 'manual'])),
+                Action::make('status')
+                    ->label(__('general.payment_status'))
+                    ->visible(fn() => $this->record->payment)
+                    ->modalWidth(MaxWidth::Large)
+                    ->infolist(fn(Infolist $infolist, $record) => $infolist
+                        ->id('submission-payment-status')
+                        ->record($record->payment)
+                        ->schema([
+                            TextEntry::make('title')
+                                ->getStateUsing(fn(Payment $record) => $record->getMeta('title')),
+                            TextEntry::make('amount')
+                                ->getStateUsing(fn(Payment $record) => $record->getFormattedFee()),
+                            TextEntry::make('description')
+                                ->getStateUsing(fn(Payment $record) => $record->description ?? '-'),
+                            TextEntry::make('confirmed')
+                                ->label('Payment Confirmed')
+                                ->getStateUsing(fn(Payment $record) => $record->paid_at ? '✅ ' . $record->paid_at?->format(Setting::get('format_date')) : '-'),
+                        ]))
+                    ->modalCancelActionLabel(__('general.close'))
+                    ->modalSubmitAction(false),
+                Action::make('charge_payment')
+                    ->label('Charge Payment')
+                    ->visible(fn() => ! $this->record->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                    ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
+                    ->icon('heroicon-o-banknotes')
+                    ->modalWidth(MaxWidth::Large)
+                    ->form(function (Form $form) {
+                        return $form
+                            ->model($this->record->payment)
+                            ->schema([
+                                Radio::make('payment_fee_id')
+                                    ->label('Payment Fee')
+                                    ->required()
+                                    ->options(
+                                        fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                            ->active()
+                                            ->get()
+                                            ->mapWithKeys(function ($record) {
+                                                return [
+                                                    $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')',
+                                                ];
+                                            })
+                                    )
+                                    ->afterStateUpdated(function (Set $set, $state) {
+                                        if (! $state) {
+                                            return;
+                                        }
 
-                    $paymentFeeId = data_get($data, 'payment_fee_id');
+                                        $paymentFee = PaymentFee::find($state);
+                                        $set('currency', $paymentFee->currency);
+                                        $set('amount', $paymentFee->amount);
+                                        $set('description', $paymentFee->getMeta('description'));
+                                    })
+                                    ->reactive(),
+                                Grid::make(1)
+                                    ->visible(fn(Get $get) => $get('payment_fee_id'))
+                                    ->schema([
+                                        Grid::make()
+                                            ->schema([
+                                                Select::make('currency')
+                                                    ->label(__('general.currency'))
+                                                    ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                                    ->options(
+                                                        fn() => Currency::query()->orderBy('code_numeric', 'asc')
+                                                            ->get()
+                                                            ->mapWithKeys(function (?Currency $value, int $key) {
+                                                                $currencyCode = Str::upper($value->id);
+                                                                $currencyName = $value->name;
 
-                    $paymentFee = PaymentFee::find($paymentFeeId);
+                                                                return [$value->id => "($currencyCode) $currencyName"];
+                                                            })
+                                                    )
+                                                    ->searchable()
+                                                    ->required(),
+                                                TextInput::make('amount')
+                                                    ->label('Amount')
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->minValue(0),
+                                            ]),
+                                        Textarea::make('description'),
+                                    ]),
+                            ]);
+                    })
+                    ->successNotificationTitle('Payment fee sent to user')
+                    ->action(function (Action $action, array $data) {
+                        $paymentManager = PaymentManager::get();
 
-                    $paymentQueue = $paymentManager->queue(
-                        $this->record,
-                        $paymentFee,
-                        $this->record->user,
-                        PaymentManager::TYPE_SUBMISSION_FEE,
-                        $this->record->getMeta('title'),
-                        SubmissionResource::getUrl('view', ['record' => $this->record]),
-                        $data['description'],
-                        $data['amount'],
-                        $data['currency'],
-                    );
+                        $paymentFeeId = data_get($data, 'payment_fee_id');
 
-                    $this->record->user->notify(new PaymentRequired($paymentQueue));
+                        $paymentFee = PaymentFee::find($paymentFeeId);
 
-                    $action->success();
-                }),
-            Action::make('pay_submission_fee')
-                ->label('Pay Submission Fee')
-                ->authorize(fn () => $this->record->isParticipantAuthor(auth()->user()))
-                ->icon('heroicon-o-credit-card')
-                ->visible(fn () => $this->record->paymentQueue)
-                ->url(fn () => $this->record->paymentQueue->getPaymentUrl()),
+                        $paymentQueue = $paymentManager->queue(
+                            $this->record,
+                            $paymentFee,
+                            $this->record->user,
+                            PaymentManager::TYPE_SUBMISSION_FEE,
+                            $this->record->getMeta('title'),
+                            SubmissionResource::getUrl('view', ['record' => $this->record]),
+                            $data['description'],
+                            $data['amount'],
+                            $data['currency'],
+                        );
+
+                        $this->record->user->notify(new PaymentRequired($paymentQueue));
+
+                        $action->success();
+                    }),
+            ])
+                ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                ->button()
+                ->label('Submission Fee'),
             Action::make('view')
                 ->icon('heroicon-o-eye')
                 ->color('primary')
@@ -213,13 +268,13 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     }
                 })
                 ->visible(
-                    fn (): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
+                    fn(): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
                 ),
             Action::make('assign_proceeding')
                 ->label(__('general.publication'))
                 ->authorize('publish', $this->record)
                 ->modalHeading(__('general.assign_proceeding_for_publication'))
-                ->visible(fn () => ! $this->record->proceeding && $this->record->stage == SubmissionStage::Editing)
+                ->visible(fn() => ! $this->record->proceeding && $this->record->stage == SubmissionStage::Editing)
                 ->modalWidth(MaxWidth::ExtraLarge)
                 ->form(SubmissionProceeding::getFormAssignProceeding($this->record))
                 ->action(function (array $data) {
@@ -232,7 +287,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->color('primary')
                 ->label(__('general.publish_now'))
                 ->visible(
-                    fn (): bool => $this->record->proceeding ? true : false
+                    fn(): bool => $this->record->proceeding ? true : false
                 )
                 ->authorize('publish', $this->record)
                 ->successNotificationTitle(__('general.assign_proceeding_for_publication'))
@@ -288,7 +343,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     $action->success();
                 }),
             Action::make('unpublish')
-                ->label(fn () => $this->record->proceeding?->isPublished() ? __('general.unpublish') : __('general.unschedule'))
+                ->label(fn() => $this->record->proceeding?->isPublished() ? __('general.unpublish') : __('general.unschedule'))
                 ->icon('lineawesome-calendar-times-solid')
                 ->color('danger')
                 ->authorize('unpublish', $this->record)
@@ -329,11 +384,11 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         // Currently using admin, next is admin removed only managers
                         User::whereHas(
                             'roles',
-                            fn ($query) => $query->whereIn('name', [UserRole::Admin->value, UserRole::ConferenceManager->value])
+                            fn($query) => $query->whereIn('name', [UserRole::Admin->value, UserRole::ConferenceManager->value])
                         )
                             ->get()
                             ->each(
-                                fn ($manager) => $manager->notify(new SubmissionWithdrawRequested($this->record))
+                                fn($manager) => $manager->notify(new SubmissionWithdrawRequested($this->record))
                             );
 
                         $this
@@ -360,7 +415,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->color('danger')
                 ->extraAttributes(function (Action $action) {
                     if (filled($this->record->withdrawn_reason)) {
-                        $attributeValue = '$nextTick(() => { $wire.mountAction(\''.$action->getName().'\') })';
+                        $attributeValue = '$nextTick(() => { $wire.mountAction(\'' . $action->getName() . '\') })';
 
                         return [
                             'x-init' => new HtmlString($attributeValue),
@@ -383,7 +438,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ])
                 ->requiresConfirmation()
                 ->modalHeading(function () {
-                    return $this->record->user->fullName.__('general.requested_withdraw_this_submission');
+                    return $this->record->user->fullName . __('general.requested_withdraw_this_submission');
                 })
                 ->modalDescription(__('general.either_reject_request_or_accept'))
                 ->modalCancelActionLabel(__('general.ignore'))
@@ -424,9 +479,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->modalWidth('2xl'),
             Action::make('activity-log')
                 ->label(__('general.activity_log'))
-                ->authorize(fn () => auth()->user()->can('actAsEditor', $this->record))
+                ->authorize(fn() => auth()->user()->can('actAsEditor', $this->record))
                 ->hidden(
-                    fn (): bool => $this->record->stage == SubmissionStage::Wizard
+                    fn(): bool => $this->record->stage == SubmissionStage::Wizard
                 )
                 ->outlined()
                 ->icon('lineawesome-history-solid')
@@ -452,15 +507,15 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
         $badgeHtml = '<div class="flex items-center gap-x-2">';
 
         $badgeHtml .= match ($this->record->status) {
-            SubmissionStatus::Incomplete => '<x-filament::badge color="gray" class="w-fit">'.__('general.incomplete').'</x-filament::badge>',
-            SubmissionStatus::Queued => '<x-filament::badge color="primary" class="w-fit">'.__('general.queued').'</x-filament::badge>',
-            SubmissionStatus::OnReview => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_review').'</x-filament::badge>',
-            SubmissionStatus::OnPresentation => '<x-filament::badge color="warning" class="w-fit">'.__('general.on_presentation').'</x-filament::badge>',
-            SubmissionStatus::Published => $this->record->proceeding?->isPublished() ? '<x-filament::badge color="success" class="w-fit">'.__('general.published').'</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">'.__('general.scheduled').'</x-filament::badge>',
-            SubmissionStatus::Editing => '<x-filament::badge color="info" class="w-fit">'.__('general.editing').'</x-filament::badge>',
-            SubmissionStatus::Declined => '<x-filament::badge color="danger" class="w-fit">'.__('general.declined').'</x-filament::badge>',
-            SubmissionStatus::PaymentDeclined => '<x-filament::badge color="danger" class="w-fit">'.__('general.payment_declined').'</x-filament::badge>',
-            SubmissionStatus::Withdrawn => '<x-filament::badge color="danger" class="w-fit">'.__('general.withdrawn').'</x-filament::badge>',
+            SubmissionStatus::Incomplete => '<x-filament::badge color="gray" class="w-fit">' . __('general.incomplete') . '</x-filament::badge>',
+            SubmissionStatus::Queued => '<x-filament::badge color="primary" class="w-fit">' . __('general.queued') . '</x-filament::badge>',
+            SubmissionStatus::OnReview => '<x-filament::badge color="warning" class="w-fit">' . __('general.on_review') . '</x-filament::badge>',
+            SubmissionStatus::OnPresentation => '<x-filament::badge color="warning" class="w-fit">' . __('general.on_presentation') . '</x-filament::badge>',
+            SubmissionStatus::Published => $this->record->proceeding?->isPublished() ? '<x-filament::badge color="success" class="w-fit">' . __('general.published') . '</x-filament::badge>' : '<x-filament::badge color="primary" class="w-fit">' . __('general.scheduled') . '</x-filament::badge>',
+            SubmissionStatus::Editing => '<x-filament::badge color="info" class="w-fit">' . __('general.editing') . '</x-filament::badge>',
+            SubmissionStatus::Declined => '<x-filament::badge color="danger" class="w-fit">' . __('general.declined') . '</x-filament::badge>',
+            SubmissionStatus::PaymentDeclined => '<x-filament::badge color="danger" class="w-fit">' . __('general.payment_declined') . '</x-filament::badge>',
+            SubmissionStatus::Withdrawn => '<x-filament::badge color="danger" class="w-fit">' . __('general.withdrawn') . '</x-filament::badge>',
             default => null,
         };
 
@@ -473,7 +528,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return new HtmlString('<span class="text-xl ">'.$this->record->getMeta('title').'</span>');
+        return new HtmlString('<span class="text-xl ">' . $this->record->getMeta('title') . '</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -548,7 +603,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                     ->type('warning')
                                     ->color('warning')
                                     ->visible(
-                                        fn (): bool => $this->record->isPublished()
+                                        fn(): bool => $this->record->isPublished()
                                     )
                                     ->content(__('general.cant_edit_submission_because_already_published')),
                                 Tabs::make()
