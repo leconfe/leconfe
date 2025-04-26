@@ -228,6 +228,21 @@ class AppServiceProvider extends ServiceProvider
 
         $oaiPath = isset($pathInfos[2]) && $pathInfos[2] == 'oai';
 
+        // Find conference
+        $conference = Conference::query()
+            ->with(['media', 'meta'])
+            ->where('path', $conferencePath)
+            ->first();
+
+        // Special handling for OAI routes
+        if ($oaiPath) {
+            if ($conference) {
+                $this->app->setCurrentConferenceId($conference->getKey());
+            } else {
+                abort(404); // No conference found for OAI request
+            }
+        }
+
         // Detect conference from URL path
         if ($conferencePath) {
 
