@@ -34,7 +34,8 @@ class ManualPaymentSetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        Toggle::make('meta.manual_payment_enabled'),
+                        Toggle::make('meta.manual_payment_enabled')
+                            ->label(__('general.payment_manual_enable')),
                         TextInput::make('meta.manual_payment_name')
                             ->label(__('general.name'))
                             ->placeholder(__('general.input_name_payment_method'))

@@ -320,15 +320,14 @@ return [
     'before_you_begin_current_scheduled' => '<p>Faleminderit për dërgesën tuaj në :title. Do të kërkohet të ngarkoni skedarë, të identifikoni bashkëautorët dhe të jepni informacion si titulli dhe abstrakti.</p>
     <p>Ju lutemi lexoni udhëzimet tona për dërgesën nëse nuk e keni bërë tashmë. Kur plotësoni format, ofroni sa më shumë detaje të mundshme për të ndihmuar redaktorët tanë në vlerësimin e punës suaj.</p>
     <p>Sapo të filloni, mund të ruani dërgesën tuaj dhe të ktheheni më vonë. Do të jeni në gjendje të rishikoni dhe të korrigjoni çdo informacion para se të dorëzoni.</p>',
-    'submission_checklist_following_requirements' => '<p>Të gjitha dërgesat duhet të plotësojnë kërkesat e mëposhtme.</p>
-                        <ul>
-                            <li>Dërgesa nuk është publikuar më parë, as nuk është nën shqyrtim nga një revistë tjetër (ose është dhënë një shpjegim në Komentet për Redaktorin).</li>
-                            <li>Skedari i dërgesës është në formatin e dokumentit OpenOffice, Microsoft Word, ose RTF.</li>
-                            <li>Kërkohet të sigurohen URL-të për referencat, ku është e mundur.</li>
-                            <li>Teksti është me një hapësirë të vetme; përdor një font 12 pikë; përdor kursiv në vend të nënvizimit (përveç adresave URL); dhe të gjitha ilustret, figurat dhe tabelat janë vendosur brenda tekstin në pikat përkatëse, në vend që në fund.</li>
-                            <li>Teksti i përmbahet kërkesave stilistike dhe bibliografike të përshkruara në Udhëzimet për Autorët.</li>
-                        </ul>',
-
+    'submission_checklist_following_requirements' => '<p>Të gjitha dorëzimet duhet të përmbushin kërkesat e mëposhtme.</p>
+    <ul>
+        <li>Dorëzimi nuk është publikuar më parë dhe nuk është në shqyrtim nga ndonjë konferencë tjetër (ose është dhënë një shpjegim në Komentet për Redaktorin).</li>
+        <li>Skedari i dorëzimit duhet të jetë në format dokumenti OpenOffice, Microsoft Word, ose RTF.</li>
+        <li>Kur është e mundur, janë dhënë URL-të për referencat.</li>
+        <li>Teksti është me një hapësirë të vetme; përdor një shkronjë me madhësi 12 pikë; përdor kursiv në vend të nënvizimit (përveç për adresat e URL-ve); dhe të gjitha ilustrimet, figurat dhe tabelat vendosen brenda tekstit në pikat përkatëse, jo në fund.</li>
+        <li>Teksti i përmbahet kërkesave stilistike dhe bibliografike të përshkruara në Udhëzimet për Autorin.</li>
+    </ul>',
     'track' => 'Trajektori',
     'privacy_consent' => 'Konsenti për Privatësinë',
     'submission_checklist' => 'Lista e Kontrollit të Dërgesës',
@@ -464,6 +463,7 @@ return [
     'select_type_closed_date' => 'Zgjidhni datën e mbylljes së llojit..',
     'payments' => 'Pagesat',
     'payment_confirm' => 'Konfirmo Pagesën',
+    'payment_manual_enable' => 'Aktivizo pagesën manuale',
     'payment_status' => 'Statusi i Pagesës',
     'payment' => 'Pagesë',
     'payment_declined' => 'Pagesa u refuzua',

@@ -337,7 +337,7 @@ return [
     <p>Once you begin, you can save your submission and come back to it later. You will be able to review and correct any information before you submit.</p>",
     'submission_checklist_following_requirements' => '<p>All submissions must meet the following requirements.</p>
                     <ul>
-                        <li>The submission has not been previously published, nor is it under consideration by another journal (or an explanation has been provided in Comments to the Editor).</li>
+                        <li>The submission has not been previously published, nor is it under consideration by another conference (or an explanation has been provided in Comments to the Editor).</li>
                         <li>The submission file is in OpenOffice, Microsoft Word, or RTF document file format.</li>
                         <li>Where available, URLs for the references have been provided.</li>
                         <li>The text is single-spaced; uses a 12-point font; employs italics rather than underlining (except with URL addresses); and all illustrations, figures, and tables are placed within the text at the appropriate points, rather than at the end.</li>
@@ -485,6 +485,7 @@ return [
     'payments' => 'Payments',
     'payment' => 'Payment',
     'payment_confirm' => 'Confirm Payment',
+    'payment_manual_enable' => 'Enable manual payment',
     'payment_status' => 'Payment Status',
     'payment_declined' => 'Payment Declined',
     'input_name_payment_method' => 'Input a name for the payment method..',

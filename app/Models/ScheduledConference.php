@@ -158,6 +158,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allowed_self_assign_roles' => ['Author', 'Reader'],
             'allow_registration' => true,
             'default_register_country' => 'id',
+            'manual_payment_enabled' => true,
         ];
     }
 

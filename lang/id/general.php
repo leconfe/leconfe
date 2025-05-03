@@ -323,13 +323,13 @@ return [
     <p>Silakan baca Pedoman Pengiriman kami jika Anda belum melakukannya. Saat mengisi formulir, berikan detail sebanyak mungkin untuk membantu editor kami mengevaluasi pekerjaan Anda.</p>
     <p>Setelah Anda memulai, Anda dapat menyimpan pengiriman Anda dan kembali ke itu nanti. Anda akan dapat meninjau dan memperbaiki informasi sebelum Anda mengirimkan.</p>',
     'submission_checklist_following_requirements' => '<p>Semua pengiriman harus memenuhi persyaratan berikut.</p>
-                    <ul>
-                        <li>Pengiriman belum pernah dipublikasikan sebelumnya, atau sedang dalam pertimbangan jurnal lain (atau penjelasan telah diberikan dalam Komentar kepada Editor).</li>
-                        <li>File pengiriman dalam format dokumen OpenOffice, Microsoft Word, atau RTF.</li>
-                        <li>Jika tersedia, URL untuk referensi telah disediakan.</li>
-                        <li>Teks berjarak tunggal; menggunakan font ukuran 12 poin; menggunakan huruf miring, daripada garis bawah (kecuali dengan alamat URL); dan semua ilustrasi, gambar, dan tabel ditempatkan dalam teks pada titik yang sesuai, daripada di akhir.</li>
-                        <li>Teks mematuhi persyaratan gaya dan bibliografi yang diuraikan dalam Pedoman Penulis.</li>
-                    </ul>',
+    <ul>
+        <li>Naskah belum pernah dipublikasikan sebelumnya, dan tidak sedang dipertimbangkan oleh konferensi lain (atau penjelasan telah disampaikan di bagian Komentar untuk Editor).</li>
+        <li>Berkas naskah dalam format dokumen OpenOffice, Microsoft Word, atau RTF.</li>
+        <li>Jika tersedia, URL untuk referensi telah disertakan.</li>
+        <li>Teks diketik dengan spasi tunggal; menggunakan font ukuran 12 poin; menggunakan huruf miring (italic) alih-alih garis bawah (kecuali untuk alamat URL); dan semua ilustrasi, gambar, serta tabel ditempatkan di dalam teks pada posisi yang sesuai, bukan di akhir dokumen.</li>
+        <li>Teks mengikuti ketentuan gaya penulisan dan bibliografi yang dijelaskan dalam Panduan Penulis.</li>
+    </ul>',
     'track' => 'Jalur',
     'privacy_consent' => 'Persetujuan Privasi',
     'submission_checklist' => 'Daftar Periksa Pengiriman',
@@ -460,6 +460,7 @@ return [
     'select_type_closed_date' => 'Pilih tanggal penutupan tipe..',
     'payments' => 'Pembayaran',
     'payment_confirm' => 'Konfirmasi Pembayaran',
+    'payment_manual_enable' => 'Aktifkan pembayaran manual',
     'payment_status' => 'Status Pembayaran',
     'payment' => 'Pembayaran',
     'payment_declined' => 'Pembayaran Ditolak',
