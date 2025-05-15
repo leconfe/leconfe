@@ -54,6 +54,7 @@ class Paper extends Page
 
     public function addMetadata(): void
     {
+        $site = app()->getSite();
         $conference = $this->paper->conference;
         $scheduledConference = $this->paper->scheduledConference;
 
@@ -76,8 +77,8 @@ class Paper extends Page
             MetaTag::add('citation_doi', $this->paper->doi->doi);
         }
 
-        if ($scheduledConference->getMeta('publisher_name')) {
-            MetaTag::add('citation_publisher', e($scheduledConference->getMeta('publisher_name')));
+        if ($site->getMeta('publisher_name')) {
+            MetaTag::add('citation_publisher', e($site->getMeta('publisher_name')));
         }
 
         $proceeding = $this->paper->proceeding;

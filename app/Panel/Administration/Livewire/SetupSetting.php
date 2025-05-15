@@ -80,7 +80,8 @@ class SetupSetting extends Component implements HasForms
                                     ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->name => $country->flag.' '.$country->name]))
                                     ->optionsLimit(250),
                                 TextInput::make('meta.publisher_name')
-                                    ->label(__('general.publisher')),
+                                    ->label(__('general.publisher'))
+                                    ->required(),
                                 TextInput::make('meta.publisher_url')
                                     ->url()
                                     ->validationMessages([

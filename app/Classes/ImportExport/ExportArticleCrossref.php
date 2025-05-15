@@ -27,12 +27,12 @@ class ExportArticleCrossref
 
     public function generateBatchId()
     {
-        return 'leconfe-'.$this->submission->getKey().'-'.Str::random(5);
+        return 'leconfe-' . $this->submission->getKey() . '-' . Str::random(5);
     }
 
     public function getDepositUrl(): string
     {
-        return $this->getUrl().'deposits';
+        return $this->getUrl() . 'deposits';
     }
 
     public function getUrl(): string
@@ -53,7 +53,7 @@ class ExportArticleCrossref
         $username = $conference->getMeta('doi_crossref_username');
         $password = $conference->getMeta('doi_crossref_password');
 
-        $response = Http::attach('mdFile', $this->exportXml(), $this->batchId.'.xml')
+        $response = Http::attach('mdFile', $this->exportXml(), $this->batchId . '.xml')
             ->post($url, [
                 'operation' => 'doMDUpload',
                 'usr' => $username,
@@ -74,7 +74,7 @@ class ExportArticleCrossref
 
             throw new \Exception($msg);
         } elseif ($response->clientError() || $response->serverError()) {
-            $message = $responseContent.' ('.$response->status().')';
+            $message = $responseContent . ' (' . $response->status() . ')';
 
             $this->updateDepositStatus(DOIStatus::Error, $this->batchId, $message, $message);
 
@@ -85,7 +85,7 @@ class ExportArticleCrossref
         $xmlDoc->loadXML($responseContent);
         $batchIdNode = $xmlDoc->getElementsByTagName('batch_id')->item(0);
         $submissionIdNode = $xmlDoc->getElementsByTagName('submission_id')->item(0);
-        $successMessage = 'The metadata for this item has been deposited with Crossref. To view further details, see the submission in the <a href="https://doi.crossref.org/servlet/submissionAdmin?sf=detail&submissionID='.$submissionIdNode->nodeValue.'">Crossref admin panel</a>.';
+        $successMessage = 'The metadata for this item has been deposited with Crossref. To view further details, see the submission in the <a href="https://doi.crossref.org/servlet/submissionAdmin?sf=detail&submissionID=' . $submissionIdNode->nodeValue . '">Crossref admin panel</a>.';
 
         // Get the DOI deposit status
         // If the deposit failed
@@ -159,17 +159,19 @@ class ExportArticleCrossref
 
     protected function createHead()
     {
+        $site = app()->getSite();
+
         $conference = $this->submission->conference;
         $scheduledConference = $this->submission->scheduledConference;
 
         return [
             'doi_batch_id' => $this->batchId,
-            'timestamp' => date('YmdHis').'00',
+            'timestamp' => date('YmdHis') . '00',
             'depositor' => [
                 'depositor_name' => $conference->getMeta('doi_crossref_depositor_name'),
                 'email_address' => $conference->getMeta('doi_crossref_depositor_email'),
             ],
-            'registrant' => $scheduledConference->getMeta('publisher_name'),
+            'registrant' => $site->getMeta('publisher_name'),
         ];
     }
 
@@ -220,7 +222,7 @@ class ExportArticleCrossref
                     'end_month' => $scheduledConference->date_end->format('m'),
                     'end_year' => $scheduledConference->date_end->format('Y'),
                 ],
-                '_value' => $scheduledConference->date_start->format('M. d').' - '.$scheduledConference->date_end->format('M. d, Y'),
+                '_value' => $scheduledConference->date_start->format('M. d') . ' - ' . $scheduledConference->date_end->format('M. d, Y'),
             ];
         }
 
@@ -232,8 +234,13 @@ class ExportArticleCrossref
         $site = app()->getSite();
         $proceeding = $this->submission->proceeding;
 
+
+        if (!$proceeding) {
+            throw new \Exception('Submission does not have a proceeding');
+        }
+
         $metadata = [
-            'series_metadata' => $this->createSeriesMetadata(),
+            // 'series_metadata' => $this->createSeriesMetadata(),
             'proceedings_title' => $proceeding->title,
         ];
 
@@ -241,9 +248,11 @@ class ExportArticleCrossref
             $metadata['volume'] = $proceeding->volume;
         }
 
-        if ($site->getMeta('publisher_name')) {
-            $metadata['publisher']['publisher_name'] = $site->getMeta('publisher_name');
+        if (!$site->getMeta('publisher_name')) {
+            throw new \Exception('Publisher name cannot be empty, please set it in the Administration > Website Setting > Publishing Details');
         }
+
+        $metadata['publisher']['publisher_name'] = $site->getMeta('publisher_name');
 
         if ($site->getMeta('publisher_location')) {
             $metadata['publisher']['publisher_place'] = $site->getMeta('publisher_location');
