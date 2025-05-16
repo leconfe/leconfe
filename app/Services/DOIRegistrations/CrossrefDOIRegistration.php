@@ -43,6 +43,7 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
                                 echo $xml;
                             }, $filename);
                         } catch (\Throwable $th) {
+                            // throw $th;
                             Notification::make()
                                 ->danger()
                                 ->title(__('general.failed_to_export'))
