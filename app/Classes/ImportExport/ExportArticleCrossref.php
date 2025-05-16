@@ -180,7 +180,7 @@ class ExportArticleCrossref
         $body = [
             'conference' => [
                 'event_metadata' => $this->createEventMetadata(),
-                'proceedings_series_metadata' => $this->createProceedingsSeriesMetadata(),
+                'proceedings_metadata' => $this->createProceedingsMetadata(),
                 'conference_paper' => $this->createConferencePaper(),
             ],
         ];
@@ -229,7 +229,7 @@ class ExportArticleCrossref
         return $metadata;
     }
 
-    protected function createProceedingsSeriesMetadata(): array
+    protected function createProceedingsMetadata(): array
     {
         $site = app()->getSite();
         $proceeding = $this->submission->proceeding;
@@ -240,13 +240,8 @@ class ExportArticleCrossref
         }
 
         $metadata = [
-            // 'series_metadata' => $this->createSeriesMetadata(),
             'proceedings_title' => $proceeding->title,
         ];
-
-        if ($proceeding->volume) {
-            $metadata['volume'] = $proceeding->volume;
-        }
 
         if (!$site->getMeta('publisher_name')) {
             throw new \Exception('Publisher name cannot be empty, please set it in the Administration > Website Setting > Publishing Details');
