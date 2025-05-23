@@ -106,7 +106,7 @@
                                                             >
                                                             <span>{{ $item->getLabel() }}</span>
                                                             <svg :class="{ '-rotate-180': open}"
-                                                                class="transition relative top-[1px] ml-1 h-3 w-3" xmlns="http://www.w3.org/2000/svg"
+                                                                class="transition relative top-[1px] ms-1 h-3 w-3" xmlns="http://www.w3.org/2000/svg"
                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                                 stroke-linejoin="round" aria-hidden="true">
                                                                 <polyline points="6 9 12 15 18 9"></polyline>

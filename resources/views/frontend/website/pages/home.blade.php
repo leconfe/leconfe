@@ -231,9 +231,9 @@
                                             class="font-bold conference-name link link-primary link-hover">{{ $conference->name }}</a>
                                     </h3>
 
-                                    @if ($conference->getMeta('summary'))
+                                    @if ($conference->summary)
                                         <div class="conference-summary user-content">
-                                            {!! $conference->getMeta('summary') !!}
+                                            {!! $conference->summary !!}
                                         </div>
                                     @endif
                                     <div class="flex items-center gap-2 text-sm">

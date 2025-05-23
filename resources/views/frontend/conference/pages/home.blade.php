@@ -5,9 +5,9 @@
                 alt="{{ $conference->title }}" />
         </div>
     @endif
-    @if ($conference->getMeta('about'))
+    @if ($conference->about)
         <div class="conference-about user-content mb-4">
-            {!! $conference->getMeta('about') !!}
+            {!! $conference->about !!}
         </div>
     @endif
     @if($nextScheduledConference || $pastScheduledConferences->isNotEmpty())
