@@ -158,10 +158,10 @@ class CitationManager
 
             if (! empty($currentAuthor->family)) {
                 $currentAuthor->family = $author->family_name ?: null;
-                $currentAuthor->given = $author->given_name;
             } else {
                 $currentAuthor->family = $author->given_name;
             }
+            $currentAuthor->given = $author->given_name;
 
             $authorsGroups = app()->getCurrentConference()->getMeta('citation_contributor_authors') ?? [];
             $translatorsGroups = app()->getCurrentConference()->getMeta('citation_contributor_translators') ?? [];

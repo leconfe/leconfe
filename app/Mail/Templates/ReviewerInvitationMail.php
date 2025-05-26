@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Review;
+use Carbon\Carbon;
 
 class ReviewerInvitationMail extends TemplateMailable
 {
@@ -31,10 +32,10 @@ class ReviewerInvitationMail extends TemplateMailable
 
         $this->name = $review->user->fullName;
         $this->submissionTitle = $review->submission->getMeta('title');
-
-        $this->responseDueDate = now()->addDays($scheduledConference->getMeta('review_invitation_response_deadline') ?? 28)->format('d F Y');
-
-        $this->reviewDueDate = now()->addDays($scheduledConference->getMeta('review_completion_deadline') ?? 28)->format('d F Y');
+        
+        $this->responseDueDate = Carbon::parse($review->getMeta('response_due_date'))->format('d F Y');
+        $this->reviewDueDate = Carbon::parse($review->getMeta('review_due_date'))->format('d F Y');
+        
 
         $this->loginLink = route('filament.scheduledConference.pages.dashboard', ['scheduledConference' => $scheduledConference, 'conference' => $scheduledConference->conference]);
 

@@ -4,7 +4,7 @@ namespace App\Utils\UpgradeSchemas;
 
 use Illuminate\Support\Facades\Artisan;
 
-class Upgrade130Beta1 extends UpgradeBase
+class Upgrade125 extends UpgradeBase
 {
     public function run(): void
     {

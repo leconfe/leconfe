@@ -42,16 +42,6 @@ class ContributorForm extends Component
                 ->label(__('general.family_name')),
             Forms\Components\TextInput::make('email')
                 ->label(__('general.email'))
-                ->required()
-                ->unique(
-                    ignoreRecord: true,
-                    modifyRuleUsing: function (Unique $rule) use ($modelType) {
-                        return $rule
-                            ->when($modelType instanceof Conference, fn ($rule) => $rule->where('conference_id', $modelType->getKey()))
-                            ->when($modelType instanceof ScheduledConference, fn ($rule) => $rule->where('scheduled_conference_id', $modelType->getKey()))
-                            ->when($modelType instanceof Submission, fn ($rule) => $rule->where('submission_id', $modelType->getKey()));
-                    }
-                )
                 ->columnSpan([
                     'lg' => 2,
                 ]),
