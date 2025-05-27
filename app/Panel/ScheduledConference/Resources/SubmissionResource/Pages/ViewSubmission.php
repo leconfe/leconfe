@@ -105,7 +105,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     {
         return [
             ActionGroup::make([
-                Action::make('payment')
+                Action::make('pay_submission')
                     ->modalWidth(MaxWidth::Large)
                     ->modalCancelActionLabel(__('general.close'))
                     ->visible(fn() => $this->record->payment)
@@ -123,7 +123,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                             'meta' => $record->getAllMeta()->toArray(),
                         ]);
                     })
-                    ->visible(fn(Submission $record) => ! $record->payment?->paid_at)
+                    ->visible(fn(Submission $record) => $record->payment && !$record->payment?->paid_at)
                     ->form(function (Form $form, Submission $record) {
                         return $form
                             ->id('payment')
@@ -140,9 +140,14 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                     ->required(),
                             ]);
                     })
-                    ->action(fn(array $data, Submission $record) => $record->payment->update([...$data, 'payment_method' => 'manual'])),
-                Action::make('status')
-                    ->label(__('general.payment_status'))
+                    ->successNotificationTitle('Payment Confirmed')
+                    ->action(function (array $data, Submission $record, Action $action) {
+                        $record->payment->update([...$data, 'payment_method' => 'manual']);
+
+                        $action->success();
+                    }),
+                Action::make('detail')
+                    ->label(__('general.payment_detail'))
                     ->visible(fn() => $this->record->payment)
                     ->modalWidth(MaxWidth::Large)
                     ->infolist(fn(Infolist $infolist, $record) => $infolist
