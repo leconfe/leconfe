@@ -55,12 +55,12 @@
                                 <li class="w-full p-4 space-y-2 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.keywords') }}</div>
                                     <div class="flex flex-wrap items-center gap-1 text-gray-500">
-                                        @forelse ($this->record->tagsWithType('submissionKeywords')->pluck('name')->toArray() as $tag)
+                                        @forelse ($this->record->getMeta('keywords') as $keyword)
                                             <span @class([
                                                 'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm tracking-tight rounded-xl text-primary-700 bg-primary-500/10 whitespace-normal',
                                                 'dark:text-primary-500' => config('tables.dark_mode'),
                                             ])>
-                                                {{ $tag }}
+                                                {{ $keyword }}
                                             </span>
                                         @empty
                                             {{ __('general.no_information_been_provide') }}
