@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
+use RahmanRamsi\LaravelTranslatable\HasTranslations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -20,7 +21,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Conference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use Cachable, HasFactory, HasSlug, InteractsWithMedia, Metable;
+    use Cachable, HasFactory, HasSlug, InteractsWithMedia, Metable, HasTranslations;
 
     public const SCOPE_INTERNATIONAL = 'international';
 
@@ -32,9 +33,15 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'status',
         'path',
+    ];
+
+    protected $translatable = [
+        'name',
+        'description',
+        'summary',
+        'about',
     ];
 
     /**
@@ -155,7 +162,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     public function getFilamentAvatarUrl(): ?string
