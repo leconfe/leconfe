@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('payment_fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
+            // $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained();
             $table->string('name');
             $table->unsignedInteger('type');
@@ -46,7 +46,7 @@ return new class extends Migration
 
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
+            // $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(PaymentFee::class)->constrained();

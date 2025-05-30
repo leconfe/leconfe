@@ -28,9 +28,6 @@ class FrontendServiceProvider extends ServiceProvider
                 $this->websitePageGroup(PageGroup::make()),
             );
             LivewirePageGroup::registerPageGroup(
-                $this->conferencePageGroup(PageGroup::make()),
-            );
-            LivewirePageGroup::registerPageGroup(
                 $this->scheduledConferencePageGroup(PageGroup::make()),
             );
 
@@ -94,11 +91,10 @@ class FrontendServiceProvider extends ServiceProvider
     {
         $pageGroup
             ->id('scheduledConference')
-            ->path('{conference:path}/scheduled/{serie:path}')
+            ->path('{conference:path}')
             ->layout('frontend.website.components.layouts.app')
             ->middleware([
                 'web',
-                IdentifyConference::class,
                 IdentifyScheduledConference::class,
             ], true)
             ->discoverPages(in: app_path('Frontend/ScheduledConference/Pages'), for: 'App\\Frontend\\ScheduledConference\\Pages');

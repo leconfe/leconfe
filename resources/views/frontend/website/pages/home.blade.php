@@ -216,7 +216,7 @@
 
             <hr class="!my-5">
             <div class="space-y-4 conference-current">
-                @if ($conferences->isNotEmpty())
+                {{-- @if ($conferences->isNotEmpty())
                     <div class="grid gap-6 xl:grid-cols-2">
                         @foreach ($conferences as $conference)
                             <div class="gap-4 conference sm:flex">
@@ -250,7 +250,7 @@
                     <div class="my-12 text-center">
                         <p class="text-lg font-bold">{{ __('general.there_are_no_conferences_taking_place_at_this_time') }}</p>
                     </div>
-                @endif
+                @endif --}}
             </div>
         </div>
     </div>

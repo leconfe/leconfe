@@ -139,22 +139,22 @@ class Application extends LaravelApplication
 
     public function scopeCurrentConference(): void
     {
-        $models = [
-            Submission::class,
-            NavigationMenu::class,
-            AuthorRole::class,
-            Topic::class,
-            StaticPage::class,
-            ScheduledConference::class,
-            Proceeding::class,
-            MailTemplate::class,
-            Stakeholder::class,
-            StakeholderLevel::class,
-        ];
+        // $models = [
+        //     Submission::class,
+        //     NavigationMenu::class,
+        //     AuthorRole::class,
+        //     Topic::class,
+        //     StaticPage::class,
+        //     ScheduledConference::class,
+        //     Proceeding::class,
+        //     MailTemplate::class,
+        //     Stakeholder::class,
+        //     StakeholderLevel::class,
+        // ];
 
-        foreach ($models as $model) {
-            $model::addGlobalScope(new ConferenceScope);
-        }
+        // foreach ($models as $model) {
+        //     $model::addGlobalScope(new ConferenceScope);
+        // }
     }
 
     public function scopeCurrentScheduledConference(): void

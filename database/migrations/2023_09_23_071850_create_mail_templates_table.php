@@ -11,7 +11,7 @@ class CreateMailTemplatesTable extends Migration
     {
         Schema::create('mail_templates', function (Blueprint $table) {
             $table->increments('id');
-            $table->foreignIdFor(Conference::class);
+            // $table->foreignIdFor(Conference::class);
             $table->string('mailable');
             $table->text('description')->nullable();
             $table->text('subject')->nullable();
@@ -19,7 +19,7 @@ class CreateMailTemplatesTable extends Migration
             $table->longtext('text_template')->nullable();
             $table->timestamps();
 
-            $table->unique(['conference_id', 'mailable']);
+            $table->unique(['mailable']);
         });
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('proceedings', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
+            // $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('volume')->nullable();

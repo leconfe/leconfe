@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Conference\Resources;
+namespace App\Panel\Administration\Resources;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Facades\Setting;
@@ -45,7 +45,8 @@ class ScheduledConferenceResource extends Resource
                     ->label(__('general.title'))
                     ->autofocus()
                     ->autocomplete()
-                    ->required(),
+                    ->required()
+                    ->placeholder(__('general.enter_the_title_of_the_serie')),
                 TextInput::make('path')
                     // ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
                     ->label(__('general.path'))

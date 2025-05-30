@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('author_roles', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
+            // $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('name');
             $table->unsignedInteger('order_column')->nullable();

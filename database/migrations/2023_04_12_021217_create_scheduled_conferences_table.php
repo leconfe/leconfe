@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('scheduled_conferences', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
-            $table->string('path');
+            $table->string('path')->unique();
             $table->string('title');
             $table->date('date_start')->nullable();
             $table->date('date_end')->nullable();

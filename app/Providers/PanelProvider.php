@@ -45,7 +45,7 @@ class PanelProvider extends ServiceProvider
     {
         $this->setupPanel($panel)
             ->id(static::PANEL_SCHEDULED_CONFERENCE)
-            ->path('{conference:path}/scheduled/{serie:path}/panel')
+            ->path('{conference:path}/panel')
             // ->bootUsing(fn () => static::setupFilamentComponent())
             ->homeUrl(fn () => app()->getCurrentScheduledConference()?->getHomeUrl())
             ->discoverResources(in: app_path('Panel/ScheduledConference/Resources'), for: 'App\\Panel\\ScheduledConference\\Resources')
@@ -59,7 +59,6 @@ class PanelProvider extends ServiceProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 function () {
-                    $currentConference = app()->getCurrentConference();
                     $currentScheduledConference = app()->getCurrentScheduledConference();
                     $scheduledConferences = ScheduledConference::query()
                         ->where('path', '!=', $currentScheduledConference->path)
@@ -67,7 +66,7 @@ class PanelProvider extends ServiceProvider
                         ->latest()
                         ->get();
 
-                    return view('panel.scheduledConference.hooks.sidebar-nav-start', compact('currentConference', 'currentScheduledConference', 'scheduledConferences'));
+                    return view('panel.scheduledConference.hooks.sidebar-nav-start', compact('currentScheduledConference', 'scheduledConferences'));
                 }
             )
             ->middleware([
@@ -203,9 +202,9 @@ class PanelProvider extends ServiceProvider
             fn (): Panel => $this->scheduledConferencePanel(Panel::make()),
         );
 
-        Filament::registerPanel(
-            fn (): Panel => $this->conferencePanel(Panel::make()),
-        );
+        // Filament::registerPanel(
+        //     fn (): Panel => $this->conferencePanel(Panel::make()),
+        // );
 
         Filament::registerPanel(
             fn (): Panel => $this->administrationPanel(Panel::make()),

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('handle');
             $table->timestamps();
 
-            $table->unique(['conference_id', 'scheduled_conference_id', 'handle'], 'unique_navigation_menus');
+            $table->unique(['scheduled_conference_id', 'handle'], 'unique_navigation_menus');
         });
 
         Schema::create('navigation_menu_items', function (Blueprint $table) {

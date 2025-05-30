@@ -48,7 +48,7 @@
             {{ __('general.switch_conference') }}
         </div>
         <div class="overflow-y-scroll max-h-64">
-        @foreach (App\Models\Conference::with(['media'])->latest()->get() as $conference)
+        {{-- @foreach (App\Models\Conference::with(['media'])->latest()->get() as $conference)
             <x-filament::dropdown.list.item
                 :href="$conference->getPanelUrl()"
                 :icon="filament()->getTenantAvatarUrl($conference)"
@@ -56,7 +56,7 @@
             >
                 {{ $conference->name }}
             </x-filament::dropdown.list.item>
-        @endforeach
+        @endforeach --}}
         </div>
     </x-filament::dropdown.list>
 

@@ -64,16 +64,6 @@
             </x-filament::dropdown.list.item>
         @endcan
 
-        @can('view', $currentConference)
-            <x-filament::dropdown.list.item
-                :href="$currentConference->getPanelUrl()"
-                icon="heroicon-m-arrow-uturn-left"
-                tag="a"
-            >
-                {{ __('general.back_to_conference') }}
-            </x-filament::dropdown.list.item>
-        @endcan
-
         <div class="overflow-y-scroll max-h-64">
             @foreach ($scheduledConferences as $scheduledConference)
                 <x-filament::dropdown.list.item

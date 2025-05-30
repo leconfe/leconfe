@@ -161,7 +161,7 @@ class Home extends Page
 
         return [
             'topics' => $topicList,
-            'conferences' => $conferences->get(),
+            // 'conferences' => $conferences->get(),
             'coordinatorList' => $coordinatorList,
             // Selected Filter Data
             'scopeSelected' => $this->filter['scope']['value'],

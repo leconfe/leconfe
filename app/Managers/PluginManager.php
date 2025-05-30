@@ -148,7 +148,6 @@ class PluginManager
     {
         return Cache::rememberForever($this->getCacheKey($plugin, $key), function () use ($plugin, $key, $default) {
             $setting = PluginSetting::query()
-                ->where('conference_id', App::getCurrentConferenceId())
                 ->where('scheduled_conference_id', App::getCurrentScheduledConferenceId() ?? 0)
                 ->where('plugin', $plugin)
                 ->where('key', $key)

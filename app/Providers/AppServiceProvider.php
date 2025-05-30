@@ -13,7 +13,6 @@ use App\Infolists\Infolist;
 use App\Listeners\SubmissionEventSubscriber;
 use App\Managers\MetaTagManager;
 use App\Managers\SidebarManager;
-use App\Models\Conference;
 use App\Models\ScheduledConference;
 use App\Routing\CustomUrlGenerator;
 use Filament\Forms\Form as FilamentForm;
@@ -218,49 +217,18 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole() || ! $this->app->isInstalled()) {
             return;
         }
-        $this->app->scopeCurrentConference();
 
         $pathInfos = explode('/', request()->getPathInfo());
         $conferencePath = $pathInfos[1] ?? null;
 
-        $isOnScheduledPath = isset($pathInfos[2]) && $pathInfos[2] == 'scheduled' && isset($pathInfos[3]) && ! blank($pathInfos[3]);
-        $scheduledConferencePath = $pathInfos[3] ?? null;
-
         // Detect conference from URL path
         if ($conferencePath) {
+            $scheduledConference = ScheduledConference::where('path', $conferencePath)->first();
+            if ($scheduledConference) {
+                $this->app->setCurrentScheduledConferenceId($scheduledConference->getKey());
+                $this->app->scopeCurrentScheduledConference();
+                Livewire::setUpdateRoute(fn ($handle) => Route::post($scheduledConference->path.'/livewire/update', $handle)->middleware('web'));
 
-            $conference = Conference::query()
-                ->with(['media', 'meta'])
-                ->where('path', $pathInfos[1])->first();
-
-            $conference ? $this->app->setCurrentConferenceId($conference->getKey()) : $this->app->setCurrentConferenceId(Application::CONTEXT_WEBSITE);
-
-            if (! $conference && $isOnScheduledPath) {
-                abort(404);
-            }
-            // Detect scheduledConference from URL path when conference is set
-            if ($conference && $isOnScheduledPath) {
-                $scheduledConference = ScheduledConference::where('path', $scheduledConferencePath)->first();
-                if ($scheduledConference) {
-                    $this->app->setCurrentScheduledConferenceId($scheduledConference->getKey());
-                    $this->app->scopeCurrentScheduledConference();
-                } else {
-                    abort(404);
-                }
-            }
-        }
-
-        // Scope livewire update path to current conference
-        $currentConference = $this->app->getCurrentConference();
-        if ($currentConference) {
-            // Scope livewire update path to current serie
-            $currentScheduledConference = $this->app->getCurrentScheduledConference();
-            if ($isOnScheduledPath && $currentScheduledConference && $currentScheduledConference->path === $scheduledConferencePath) {
-                Livewire::setUpdateRoute(
-                    fn ($handle) => Route::post($currentConference->path.'/scheduled/'.$currentScheduledConference->path.'/livewire/update', $handle)->middleware('web')
-                );
-            } else {
-                Livewire::setUpdateRoute(fn ($handle) => Route::post($currentConference->path.'/livewire/update', $handle)->middleware('web'));
             }
         }
     }
