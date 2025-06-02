@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Conference\Livewire;
+namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Frontend\ScheduledConference\Pages\PublisherLibrary as PublisherLibraryPage;
 use App\Models\Media;

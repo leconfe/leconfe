@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Conference\Livewire\Forms\Conferences;
+namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Models\Conference;
 use App\Models\ScheduledConference;

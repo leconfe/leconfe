@@ -37,8 +37,6 @@ class PanelProvider extends ServiceProvider
 {
     public const PANEL_ADMINISTRATION = 'administration';
 
-    public const PANEL_CONFERENCE = 'conference';
-
     public const PANEL_SCHEDULED_CONFERENCE = 'scheduledConference';
 
     public function scheduledConferencePanel(Panel $panel): Panel
@@ -70,55 +68,6 @@ class PanelProvider extends ServiceProvider
                 }
             )
             ->middleware([
-                ...static::getMiddleware(),
-            ], true)
-            ->authMiddleware(static::getAuthMiddleware(), true);
-
-        Plugin::getPlugins()->each(function ($plugin) use ($panel) {
-            $plugin->onPanel($panel);
-        });
-
-        return $panel;
-    }
-
-    public function conferencePanel(Panel $panel): Panel
-    {
-        $this->setupPanel($panel)
-            ->id(static::PANEL_CONFERENCE)
-            ->default()
-            ->path('{conference:path}/panel')
-            // ->bootUsing(fn () => static::setupFilamentComponent())
-            ->homeUrl(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()]))
-            ->discoverResources(in: app_path('Panel/Conference/Resources'), for: 'App\\Panel\\Conference\\Resources')
-            ->discoverPages(in: app_path('Panel/Conference/Pages'), for: 'App\\Panel\\Conference\\Pages')
-            ->discoverWidgets(in: app_path('Panel/Conference/Widgets'), for: 'App\\Panel\\Conference\\Widgets')
-            ->discoverLivewireComponents(in: app_path('Panel/Conference/Livewire'), for: 'App\\Panel\\Conference\\Livewire')
-            ->pages([
-                Dashboard::class,
-            ])
-            ->renderHook(
-                PanelsRenderHook::TOPBAR_START,
-                fn () => view('panel.conference.hooks.topbar'),
-            )
-            ->renderHook(
-                PanelsRenderHook::SIDEBAR_NAV_START,
-                function () {
-                    $currentConference = app()->getCurrentConference();
-                    $conferenceQuery = Conference::query()
-                        ->when(! auth()->user()->hasRole(UserRole::Admin), fn ($query) => $query->whereHas('conferenceUsers', function ($query) {
-                            $query->where('model_has_roles.model_id', auth()->id());
-                        }))
-                        ->where('path', '!=', $currentConference->path)
-                        ->with(['media'])
-                        ->latest();
-
-                    return view('panel.conference.hooks.sidebar-nav-start', [
-                        'conferences' => $conferenceQuery->get(),
-                    ]);
-                }
-            )
-            ->middleware([
-                IdentifyConference::class,
                 ...static::getMiddleware(),
             ], true)
             ->authMiddleware(static::getAuthMiddleware(), true);
@@ -165,15 +114,11 @@ class PanelProvider extends ServiceProvider
                 fn () => Blade::render('<x-livewire-handle-error />')))
             ->renderHook(
                 PanelsRenderHook::FOOTER,
-                fn () => Blade::render(<<<'Blade'
-                        <x-footer-platform-panel />
-                    Blade)
+                fn () => Blade::render('<x-footer-platform-panel />')
             )
             ->renderHook(
                 PanelsRenderHook::SCRIPTS_BEFORE,
-                fn () => Blade::render(<<<'Blade'
-                        @vite(['resources/panel/js/panel.js'])
-                    Blade)
+                fn () => Blade::render("@vite(['resources/panel/js/panel.js'])")
             )
             ->renderHook(
                 PanelsRenderHook::USER_MENU_PROFILE_AFTER,
@@ -201,10 +146,6 @@ class PanelProvider extends ServiceProvider
         Filament::registerPanel(
             fn (): Panel => $this->scheduledConferencePanel(Panel::make()),
         );
-
-        // Filament::registerPanel(
-        //     fn (): Panel => $this->conferencePanel(Panel::make()),
-        // );
 
         Filament::registerPanel(
             fn (): Panel => $this->administrationPanel(Panel::make()),

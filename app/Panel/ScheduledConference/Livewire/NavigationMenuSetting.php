@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Conference\Livewire;
+namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\NavigationMenu\CreateNavigationMenuAction;
 use App\Actions\NavigationMenu\CreateNavigationMenuItemAction;
@@ -28,7 +28,7 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
 
     public function render()
     {
-        return view('panel.conference.livewire.navigation-menu', $this->getViewData());
+        return view('panel.scheduledConference.livewire.navigation-menu', $this->getViewData());
     }
 
     /**

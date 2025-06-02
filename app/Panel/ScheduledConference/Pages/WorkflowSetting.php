@@ -4,8 +4,8 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
-use App\Panel\Conference\Livewire\EmailSetting;
-use App\Panel\Conference\Livewire\PublisherLibrary;
+use App\Panel\ScheduledConference\Livewire\EmailSetting;
+use App\Panel\ScheduledConference\Livewire\PublisherLibrary;
 use App\Panel\ScheduledConference\Livewire\AuthorGuidance;
 use App\Panel\ScheduledConference\Livewire\AuthorRoleTable;
 use App\Panel\ScheduledConference\Livewire\ReviewGuidance;

@@ -6,7 +6,7 @@ use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Facades\Setting;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\ScheduledConference;
-use App\Panel\Conference\Resources\ScheduledConferenceResource\Pages;
+use App\Panel\Administration\Resources\ScheduledConferenceResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;

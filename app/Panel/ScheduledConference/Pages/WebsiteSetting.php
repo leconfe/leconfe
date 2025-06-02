@@ -9,7 +9,7 @@ use App\Panel\Administration\Livewire\PartnerTable;
 use App\Panel\Administration\Livewire\SidebarSetting;
 use App\Panel\Administration\Livewire\SponsorLevelTable;
 use App\Panel\Administration\Livewire\SponsorTable;
-use App\Panel\Conference\Livewire\NavigationMenuSetting;
+use App\Panel\ScheduledConference\Livewire\NavigationMenuSetting;
 use App\Panel\ScheduledConference\Livewire\AppearanceSetupSetting;
 use App\Panel\ScheduledConference\Livewire\PrivacySetting;
 use App\Panel\ScheduledConference\Livewire\SetupSetting;

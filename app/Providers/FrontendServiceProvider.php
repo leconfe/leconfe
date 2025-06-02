@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Facades\Plugin;
-use App\Http\Middleware\IdentifyConference;
 use App\Http\Middleware\IdentifyScheduledConference;
 use App\Http\Middleware\RedirectToConference;
-use App\Http\Middleware\RedirectToScheduledConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
@@ -39,7 +37,6 @@ class FrontendServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
-
     }
 
     /**
@@ -63,24 +60,6 @@ class FrontendServiceProvider extends ServiceProvider
                 RedirectToConference::class,
             ], true)
             ->discoverPages(in: app_path('Frontend/Website/Pages'), for: 'App\\Frontend\\Website\\Pages');
-
-        Plugin::getPlugins()->each(fn ($plugin) => $plugin->onFrontend($pageGroup));
-
-        return $pageGroup;
-    }
-
-    public function conferencePageGroup(PageGroup $pageGroup): PageGroup
-    {
-        $pageGroup
-            ->id('conference')
-            ->path('{conference:path}')
-            ->layout('frontend.website.components.layouts.app')
-            ->middleware([
-                'web',
-                IdentifyConference::class,
-                RedirectToScheduledConference::class,
-            ], true)
-            ->discoverPages(in: app_path('Frontend/Conference/Pages'), for: 'App\\Frontend\\Conference\\Pages');
 
         Plugin::getPlugins()->each(fn ($plugin) => $plugin->onFrontend($pageGroup));
 

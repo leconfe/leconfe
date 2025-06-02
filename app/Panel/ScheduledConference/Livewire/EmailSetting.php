@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Conference\Livewire;
+namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
 use App\Forms\Components\TinyEditor;

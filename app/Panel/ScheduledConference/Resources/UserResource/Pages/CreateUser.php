@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Panel\Conference\Resources\UserResource\Pages;
+namespace App\Panel\ScheduledConference\Resources\UserResource\Pages;
 
 use App\Actions\User\UserCreateAction;
-use App\Panel\Conference\Resources\UserResource;
+use App\Panel\ScheduledConference\Resources\UserResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Panel\Conference\Resources\UserResource\Pages;
+namespace App\Panel\ScheduledConference\Resources\UserResource\Pages;
 
 use App\Actions\User\UserDeleteAction;
 use App\Actions\User\UserUpdateAction;
 use App\Models\User;
-use App\Panel\Conference\Resources\UserResource;
+use App\Panel\ScheduledConference\Resources\UserResource;
 use Filament\Actions;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
