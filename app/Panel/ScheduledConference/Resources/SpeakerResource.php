@@ -7,7 +7,7 @@ use App\Actions\Speakers\SpeakerDeleteAction;
 use App\Actions\Speakers\SpeakerUpdateAction;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Speaker;
-use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
+use App\Panel\ScheduledConference\Livewire;
 use App\Panel\ScheduledConference\Resources\SpeakerResource\Pages;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action as FormAction;

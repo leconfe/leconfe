@@ -16,10 +16,8 @@ class RolePopulateScheduledConferenceAction
         foreach (UserRole::scheduledConferenceRoles() as $role) {
             $role = Role::withoutGlobalScopes()->firstOrCreate([
                 'name' => $role->value,
-                'conference_id' => $scheduledConference->conference_id,
                 'scheduled_conference_id' => $scheduledConference->getKey(),
             ]);
-
         }
     }
 }

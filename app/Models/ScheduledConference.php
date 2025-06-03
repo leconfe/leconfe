@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -20,10 +19,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
+    use Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
 
     protected $fillable = [
-        'conference_id',
         'path',
         'title',
         'date_start',
@@ -50,7 +48,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         static::updating(function (ScheduledConference $scheduledConference) {
             if ($scheduledConference->isDirty('state') && $scheduledConference->state == ScheduledConferenceState::Current) {
                 static::query()
-                    ->where('conference_id', $scheduledConference->conference_id)
                     ->where('state', ScheduledConferenceState::Current->value)
                     ->where('id', '!=', $scheduledConference->id)
                     ->update(['state' => ScheduledConferenceState::Archived]);

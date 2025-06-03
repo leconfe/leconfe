@@ -38,19 +38,17 @@ return new class extends Migration
 
         Schema::create($tableNames['roles'], function (Blueprint $table) {
             $table->bigIncrements('id'); // role id
-            $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
 
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
             $table->timestamps();
 
-            $table->unique(['name', 'guard_name', 'conference_id', 'scheduled_conference_id'], 'roles_keys_unique');
+            $table->unique(['name', 'guard_name', 'scheduled_conference_id'], 'roles_keys_unique');
         });
 
         Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission) {
             $table->unsignedBigInteger($pivotPermission);
-            $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
 
             $table->string('model_type');
@@ -62,14 +60,13 @@ return new class extends Migration
                 ->on($tableNames['permissions'])
                 ->onDelete('cascade');
 
-            $table->primary(['conference_id', 'scheduled_conference_id', $pivotPermission, $columnNames['model_morph_key'], 'model_type'],
+            $table->primary(['scheduled_conference_id', $pivotPermission, $columnNames['model_morph_key'], 'model_type'],
                 'model_has_permissions_permission_model_type_primary');
 
         });
 
         Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole) {
             $table->unsignedBigInteger($pivotRole);
-            $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
 
             $table->string('model_type');
@@ -81,7 +78,7 @@ return new class extends Migration
                 ->on($tableNames['roles'])
                 ->onDelete('cascade');
 
-            $table->primary(['conference_id', 'scheduled_conference_id', $pivotRole, $columnNames['model_morph_key'], 'model_type'],
+            $table->primary(['scheduled_conference_id', $pivotRole, $columnNames['model_morph_key'], 'model_type'],
                 'model_has_roles_role_model_type_primary');
         });
 

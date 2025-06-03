@@ -15,13 +15,12 @@ return new class extends Migration
     {
         Schema::create('static_pages', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class);
             $table->foreignIdFor(ScheduledConference::class)->nullable()->default(0);
             $table->string('title');
             $table->string('slug');
             $table->timestamps();
 
-            $table->unique(['conference_id', 'scheduled_conference_id', 'slug']);
+            $table->unique(['scheduled_conference_id', 'slug']);
         });
     }
 

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Interfaces\HasPayment;
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use App\Models\Concerns\InteractsWithPayment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,7 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Participant extends Model implements HasMedia, HasPayment
 {
-    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, InteractsWithPayment, Metable;
+    use BelongsToScheduledConference, HasFactory, InteractsWithMedia, InteractsWithPayment, Metable;
 
     protected $fillable = [
         'given_name',

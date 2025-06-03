@@ -30,19 +30,19 @@ class DefaultMailTemplate extends BaseMailTemplate
 
     public function getRows()
     {
-        return $this->getData(app()->getCurrentConference());
+        return $this->getData();
     }
 
-    public function getData(Conference $conference)
+    public function getData()
     {
         if (empty($this->data)) {
-            $this->data = $this->getDefaultData($conference);
+            $this->data = $this->getDefaultData();
         }
 
         return $this->data;
     }
 
-    public function getDefaultData(Conference $conference)
+    public function getDefaultData()
     {
         $data = [];
 
@@ -83,7 +83,6 @@ class DefaultMailTemplate extends BaseMailTemplate
             }
 
             $defaultData = [
-                'conference_id' => $conference?->getKey() ?? Application::CONTEXT_WEBSITE,
                 'mailable' => $class,
                 'description' => $class::getDefaultDescription(),
                 'subject' => $class::getDefaultSubject(),

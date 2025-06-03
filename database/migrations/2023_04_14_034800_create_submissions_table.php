@@ -21,7 +21,6 @@ return new class extends Migration
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ScheduledConference::class)->nullable()->default(0);
             $table->foreignIdFor(Proceeding::class)->nullable();
             $table->foreignIdFor(Track::class)->constrained();

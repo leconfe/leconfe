@@ -46,10 +46,6 @@ class SetupSetting extends Component implements HasForms
                         TextInput::make('meta.name')
                             ->label(__('general.website_name'))
                             ->required(),
-                        Select::make('meta.conference_redirect')
-                            ->label(__('general.conference_redirect'))
-                            ->helperText(__('general.conference_redirect_hint'))
-                            ->options(Conference::query()->pluck('name', 'id')),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
                             ->label(__('general.logo'))

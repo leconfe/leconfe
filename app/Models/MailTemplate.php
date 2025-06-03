@@ -3,15 +3,12 @@
 namespace App\Models;
 
 use App\Facades\Setting;
-use App\Models\Concerns\BelongsToConference;
 use Illuminate\Contracts\Mail\Mailable;
 use Spatie\MailTemplates\Interfaces\MailTemplateInterface;
 use Spatie\MailTemplates\Models\MailTemplate as BaseMailTemplate;
 
 class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
 {
-    use BelongsToConference;
-
     public function getHtmlLayout(): string
     {
         return view('mail.template', [

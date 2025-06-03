@@ -15,14 +15,13 @@ return new class extends Migration
     {
         Schema::create('plugin_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
             $table->string('plugin');
             $table->string('key');
             $table->text('value')->nullable();
             $table->string('type');
 
-            $table->unique(['conference_id', 'scheduled_conference_id', 'plugin', 'key'], 'plugin_settings_unique');
+            $table->unique(['scheduled_conference_id', 'plugin', 'key'], 'plugin_settings_unique');
         });
     }
 

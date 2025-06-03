@@ -22,15 +22,11 @@ class CustomUrlGenerator extends UrlGenerator
         $route = $this->routes->getByName($name);
 
         /**
-         * Handle the conference and serie parameters when the route needs them
+         * Handle the conference parameters when the route needs them
          */
         if ($route) {
-            if (Str::contains($route->uri(), '{conference}') && $conference = app()->getCurrentConference()) {
-                $parameters['conference'] ??= $conference->path;
-            }
-
-            if (Str::contains($route->uri(), '{serie}') && $scheduledConference = app()->getCurrentScheduledConference()) {
-                $parameters['serie'] ??= $scheduledConference->path;
+            if (Str::contains($route->uri(), '{conference}') && $scheduledConference = app()->getCurrentScheduledConference()) {
+                $parameters['conference'] ??= $scheduledConference->path;
             }
         }
 

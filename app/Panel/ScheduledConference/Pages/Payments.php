@@ -11,6 +11,7 @@ use App\Panel\ScheduledConference\Livewire\Payment\ManualPaymentSetting;
 use App\Panel\ScheduledConference\Livewire\PaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\PaymentSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentFeeTable;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -78,8 +79,7 @@ class Payments extends Page
                                         InfolistsVerticalTabs\Tab::make('submission_fee_tab')
                                             ->label('Fees')
                                             ->schema([
-                                                LivewireEntry::make('payment_fees')
-                                                    ->livewire(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE]),
+                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE]),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('submission_fee_payments_tab')
                                             ->label('Payments')
@@ -98,8 +98,7 @@ class Payments extends Page
                                         InfolistsVerticalTabs\Tab::make('participant_fee_tab')
                                             ->label('Fees')
                                             ->schema([
-                                                LivewireEntry::make('participant_payment_fees')
-                                                    ->livewire(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE]),
+                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE]),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('submission_fee_payments_tab')
                                             ->label('Payments')

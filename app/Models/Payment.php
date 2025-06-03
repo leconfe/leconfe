@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Frontend\ScheduledConference\Pages\PaymentForm;
 use App\Managers\PaymentManager;
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Payment extends Model implements HasMedia
 {
-    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, Metable;
+    use BelongsToScheduledConference, HasFactory, InteractsWithMedia, Metable;
 
     protected $fillable = [
         'type',

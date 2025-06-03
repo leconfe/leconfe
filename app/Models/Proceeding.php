@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Frontend\Conference\Pages\ProceedingDetail;
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\HasDOI;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Proceeding extends Model implements HasMedia, Sortable
 {
-    use BelongsToConference, Cachable, HasDOI, HasFactory, InteractsWithMedia, SortableTrait;
+    use Cachable, HasDOI, HasFactory, InteractsWithMedia, SortableTrait;
 
     protected $table = 'proceedings';
 

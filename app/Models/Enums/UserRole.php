@@ -54,8 +54,12 @@ enum UserRole: string implements HasLabel
     public static function scheduledConferenceRoles(): array
     {
         return [
+            self::ConferenceManager,
             self::ScheduledConferenceEditor,
             self::TrackEditor,
+            self::Reviewer,
+            self::Author,
+            self::Reader,
         ];
     }
 
