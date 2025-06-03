@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Stakeholder extends Model implements HasMedia, Sortable
 {
-    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, Metable, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, Metable, SortableTrait;
 
     public const TYPE_SPONSOR = 1;
 

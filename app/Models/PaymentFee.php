@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Managers\PaymentManager;
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +14,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class PaymentFee extends Model implements Sortable
 {
-    use BelongsToConference, BelongsToScheduledConference, HasFactory, Metable, SortableTrait;
+    use BelongsToScheduledConference, HasFactory, Metable, SortableTrait;
 
     protected $fillable = [
         'name',

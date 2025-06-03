@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;

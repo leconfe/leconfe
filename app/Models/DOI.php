@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\DOIStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +10,7 @@ use Plank\Metable\Metable;
 
 class DOI extends Model
 {
-    use BelongsToConference, HasFactory, Metable;
+    use HasFactory, Metable;
 
     protected $table = 'dois';
 
