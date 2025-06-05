@@ -228,8 +228,12 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->setCurrentScheduledConferenceId($scheduledConference->getKey());
                 $this->app->scopeCurrentScheduledConference();
                 Livewire::setUpdateRoute(fn ($handle) => Route::post($scheduledConference->path.'/livewire/update', $handle)->middleware('web'));
-
+                $this->app->scopeCurrentScheduledConference();
+                return;
             }
         }
+
+        $this->app->scopeGlobal();
+        return;
     }
 }

@@ -20,6 +20,7 @@ use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\GlobalScope;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Site;
 use App\Models\SpeakerRole;
@@ -182,6 +183,17 @@ class Application extends LaravelApplication
 
         foreach ($models as $model) {
             $model::addGlobalScope(new ScheduledConferenceScope);
+        }
+    }
+
+    public function scopeGlobal() : void
+    {
+        $models = [
+            StaticPage::class,
+        ];
+
+        foreach ($models as $model){
+            $model::addGlobalScope(new GlobalScope);
         }
     }
 
