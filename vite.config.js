@@ -18,4 +18,10 @@ export default defineConfig({
             "@": "/resources",
         },
     },
+    server: {
+        //....
+		headers: {
+        	'Access-Control-Allow-Origin': '*',
+        },
+    },
 });

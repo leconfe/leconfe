@@ -12,7 +12,16 @@ use App\Http\Middleware\RedirectPanelIfCannotAccess;
 use App\Models\Conference;
 use App\Models\Enums\UserRole;
 use App\Models\ScheduledConference;
+use App\Models\StaticPage;
+use App\Panel\Administration\Pages\Dashboard as AdminDashboard;
+use App\Panel\Administration\Pages\PluginManagement;
 use App\Panel\Administration\Pages\Profile;
+use App\Panel\Administration\Pages\WebsiteSetting;
+use App\Panel\Administration\Resources\ScheduledConferenceResource;
+use App\Panel\Administration\Resources\StaticPageResource;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\EditStaticPage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\HomePage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\ListStaticPages;
 use App\Panel\Conference\Pages\Dashboard;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
@@ -22,6 +31,9 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -45,14 +57,14 @@ class PanelProvider extends ServiceProvider
             ->id(static::PANEL_SCHEDULED_CONFERENCE)
             ->path('{conference:path}/panel')
             // ->bootUsing(fn () => static::setupFilamentComponent())
-            ->homeUrl(fn () => app()->getCurrentScheduledConference()?->getHomeUrl())
+            ->homeUrl(fn() => app()->getCurrentScheduledConference()?->getHomeUrl())
             ->discoverResources(in: app_path('Panel/ScheduledConference/Resources'), for: 'App\\Panel\\ScheduledConference\\Resources')
             ->discoverPages(in: app_path('Panel/ScheduledConference/Pages'), for: 'App\\Panel\\ScheduledConference\\Pages')
             ->discoverWidgets(in: app_path('Panel/ScheduledConference/Widgets'), for: 'App\\Panel\\ScheduledConference\\Widgets')
             ->discoverLivewireComponents(in: app_path('Panel/ScheduledConference/Livewire'), for: 'App\\Panel\\ScheduledConference\\Livewire')
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
-                fn () => view('panel.scheduledConference.hooks.topbar'),
+                fn() => view('panel.scheduledConference.hooks.topbar'),
             )
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
@@ -82,17 +94,17 @@ class PanelProvider extends ServiceProvider
     public function administrationPanel(Panel $panel): Panel
     {
         $this->setupPanel($panel)
+            ->default()
             ->id(static::PANEL_ADMINISTRATION)
             ->path('administration')
-            ->homeUrl(fn () => route('livewirePageGroup.website.pages.home'))
-            // ->bootUsing(fn () => static::setupFilamentComponent())
+            ->homeUrl(fn() => route('livewirePageGroup.website.pages.home'))
             ->discoverResources(in: app_path('Panel/Administration/Resources'), for: 'App\\Panel\\Administration\\Resources')
             ->discoverPages(in: app_path('Panel/Administration/Pages'), for: 'App\\Panel\\Administration\\Pages')
             ->discoverWidgets(in: app_path('Panel/Administration/Widgets'), for: 'App\\Panel\\Administration\\Widgets')
             ->discoverLivewireComponents(in: app_path('Panel/Administration/Livewire'), for: 'App\\Panel\\Administration\\Livewire')
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
-                fn () => view('panel.administration.hooks.sidebar-nav-start'),
+                fn() => view('panel.administration.hooks.sidebar-nav-start'),
             )
             ->middleware(static::getMiddleware(), true)
             ->authMiddleware(static::getAuthMiddleware(), true);
@@ -108,17 +120,19 @@ class PanelProvider extends ServiceProvider
     {
         return $panel
             ->favicon(asset('favicon.ico'))
+            ->unsavedChangesAlerts()
             ->maxContentWidth('full')
-            ->when(app()->isProduction(), fn (Panel $panel) => $panel->renderHook(
+            ->when(app()->isProduction(), fn(Panel $panel) => $panel->renderHook(
                 PanelsRenderHook::FOOTER,
-                fn () => Blade::render('<x-livewire-handle-error />')))
+                fn() => Blade::render('<x-livewire-handle-error />')
+            ))
             ->renderHook(
                 PanelsRenderHook::FOOTER,
-                fn () => Blade::render('<x-footer-platform-panel />')
+                fn() => Blade::render('<x-footer-platform-panel />')
             )
             ->renderHook(
                 PanelsRenderHook::SCRIPTS_BEFORE,
-                fn () => Blade::render("@vite(['resources/panel/js/panel.js'])")
+                fn() => Blade::render("@vite(['resources/panel/js/panel.js'])")
             )
             ->renderHook(
                 PanelsRenderHook::USER_MENU_PROFILE_AFTER,
@@ -134,7 +148,7 @@ class PanelProvider extends ServiceProvider
             ->viteTheme('resources/panel/css/panel.css')
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->url(fn (): string => Profile::getUrl()),
+                    ->url(fn(): string => Profile::getUrl()),
             ])
             ->darkMode(false)
             ->databaseNotifications()
@@ -144,11 +158,11 @@ class PanelProvider extends ServiceProvider
     public function register(): void
     {
         Filament::registerPanel(
-            fn (): Panel => $this->scheduledConferencePanel(Panel::make()),
+            fn(): Panel => $this->scheduledConferencePanel(Panel::make()),
         );
 
         Filament::registerPanel(
-            fn (): Panel => $this->administrationPanel(Panel::make()),
+            fn(): Panel => $this->administrationPanel(Panel::make()),
         );
 
         FilamentColor::register([
@@ -166,7 +180,7 @@ class PanelProvider extends ServiceProvider
         Blade::anonymousComponentPath(resource_path('views/panel/scheduledConference/components'), 'scheduledConference');
 
         Livewire::setScriptRoute(function ($handle) {
-            return Route::get(request()->getBaseUrl().'/livewire/livewire.js', $handle);
+            return Route::get(request()->getBaseUrl() . '/livewire/livewire.js', $handle);
         });
 
         static::setupFilamentComponent();
@@ -193,8 +207,8 @@ class PanelProvider extends ServiceProvider
 
     public static function setupFilamentComponent()
     {
-        SpatieMediaLibraryFileUpload::configureUsing(fn (SpatieMediaLibraryFileUpload $fileUpload) => static::configureFileUpload($fileUpload));
-        FileUpload::configureUsing(fn (FileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+        SpatieMediaLibraryFileUpload::configureUsing(fn(SpatieMediaLibraryFileUpload $fileUpload) => static::configureFileUpload($fileUpload));
+        FileUpload::configureUsing(fn(FileUpload $fileUpload) => static::configureFileUpload($fileUpload));
 
         DatePicker::configureUsing(function (DatePicker $datePicker): void {
             $datePicker
@@ -230,7 +244,7 @@ class PanelProvider extends ServiceProvider
             ->imageResizeUpscale(false)
             ->maxSize(config('media-library.max_file_size') / 1024)
             ->acceptedFileTypes(collect(config('media-library.accepted_file_types'))
-                ->map(fn ($ext) => MimeType::fromExtension($ext) ?? $ext)
+                ->map(fn($ext) => MimeType::fromExtension($ext) ?? $ext)
                 ->toArray());
     }
 }

@@ -5,8 +5,8 @@
                 {{ new Illuminate\Support\HtmlString($site->getMeta('about')) }}
             </div>
         @endif
-        <div class="space-y-4 conferences">
-            <x-website::heading-title title="{{ __('general.conference_list') }}" class="grow"/>
-        </div>
+        @foreach ($homepage->getBlocks() as $block)
+            {!! $block->render() !!}
+        @endforeach
     </div>
 </x-website::layouts.main>

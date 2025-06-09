@@ -56,13 +56,13 @@ class PluginGallery extends Model
         }
 
         return collect($response->json())
-            ->filter(function ($plugin) {
-                // Check if plugin is compatible with the current leconfe version
-                $releases = collect($plugin['releases']);
-                $currentVersion = app()->getInstalledVersion();
+            // ->filter(function ($plugin) {
+            //     // Check if plugin is compatible with the current leconfe version
+            //     $releases = collect($plugin['releases']);
+            //     $currentVersion = app()->getInstalledVersion();
 
-                return $releases->contains(fn ($release) => collect($release['compatibility'])->contains(fn ($value) => Semver::satisfies($currentVersion, $value)));
-            })
+            //     return $releases->contains(fn ($release) => collect($release['compatibility'])->contains(fn ($value) => Semver::satisfies($currentVersion, $value)));
+            // })
             ->map(
                 fn ($plugin) => [
                     'id' => $plugin['id'],
@@ -95,8 +95,8 @@ class PluginGallery extends Model
         }
 
         $latestRelease = $this->getLatestCompatibleRelease();
-
-        return $latestRelease && version_compare($plugin->getVersion(), $latestRelease['version'], '<');
+        
+        return $latestRelease->isNotEmpty() && version_compare($plugin->getVersion(), $latestRelease['version'], '<');
     }
 
     public function getLatestCompatibleRelease(): Collection
@@ -110,7 +110,8 @@ class PluginGallery extends Model
     public function install()
     {
         $latestRelease = $this->getLatestCompatibleRelease();
-        if (! $latestRelease) {
+
+        if ($latestRelease->empty()) {
             return false;
         }
 

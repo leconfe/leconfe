@@ -2,78 +2,62 @@
 
 namespace App\Panel\Administration\Resources;
 
-use App\Actions\StaticPages\StaticPageUpdateAction;
-use App\Forms\Components\TinyEditor;
-use App\Models\StaticPage;
+use App\Facades\StaticPageBlockFacade;
+use App\Managers\StaticPageBlockManager;
 use App\Panel\Administration\Resources\StaticPageResource\Pages;
-use App\Tables\Columns\IndexColumn;
+use App\Models\StaticPage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\EditStaticPage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\HomePage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\ListStaticPages;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action as ActionForm;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Validation\Rules\Unique;
 
 class StaticPageResource extends Resource
 {
     protected static ?string $model = StaticPage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function getNavigationLabel(): string
+    public static function getEloquentQuery(): EloquentBuilder
     {
-        return __('general.static_page');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('general.static_page');
-    }
-
-    public static function getNavigationGroup(): string
-    {
-        return __('general.settings');
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        $query = static::getModel()::query();
-
-        if (! app()->getCurrentScheduledConferenceId()) {
-            $query->where('scheduled_conference_id', 0);
-        }
-
-        return $query;
+        return parent::getEloquentQuery()->isDefault(false);
     }
 
     public static function form(Form $form): Form
     {
         return $form
+            ->extraAttributes(['class' => 'max-w-3xl'])
+            ->columns(1)
             ->schema([
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                TextInput::make('slug')
-                    ->label(__('general.slug'))
-                    ->alphaDash()
-                    ->required()
-                    ->helperText(__('general.slug_helper'))
-                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
-                        return $rule
-                            ->where('conference_id', app()->getCurrentConference()?->getKey() ?? 0)
-                            ->where('scheduled_conference_id', app()->getCurrentScheduledConference()?->getKey() ?? 0);
-                    }),
-                TinyEditor::make('meta.content')
-                    ->label(__('general.content'))
-                    ->minHeight(400)
-                    ->columnSpanFull()
-                    ->plugins('advlist autoresize codesample directionality emoticons fullscreen hr image imagetools link lists media table toc wordcount code')
-                    ->toolbar('undo redo removeformat | formatselect fontsizeselect | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist | forecolor backcolor | blockquote table hr | image link code')
-                    ->helperText(__('general.the_complete_page_content')),
+                Section::make()
+                    ->columnSpan(1)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('general.title'))
+                            ->required(),
+                        TextInput::make('slug')
+                            ->label(__('general.slug'))
+                            ->alphaDash()
+                            ->required()
+                            ->helperText(__('general.slug_helper'))
+                            ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
+                                return $rule
+                                    ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId());
+                            }),
+                    ]),
+                StaticPageBlockFacade::getBuilder(),
             ]);
     }
 
@@ -81,38 +65,94 @@ class StaticPageResource extends Resource
     {
         return $table
             ->columns([
-                IndexColumn::make('no')
-                    ->label('No.'),
                 TextColumn::make('title')
-                    ->label(__('general.title'))
                     ->searchable(),
                 TextColumn::make('slug')
-                    ->label(__('general.slug'))
-                    ->searchable()
-                    ->color('primary'),
+                    ->searchable(),
+                TextColumn::make('url')
+                    ->getStateUsing(fn($record) => $record->getUrl())
+                    ->url(fn($record) => $record->getUrl())
+                    ->color('primary')
+            ])
+            ->filters([
+                //
             ])
             ->actions([
-                Action::make('preview')
-                    ->label(__('general.preview'))
-                    ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => $record->getUrl())
-                    ->openUrlInNewTab(),
-                EditAction::make()
-                    ->mutateRecordDataUsing(function (StaticPage $record, array $data) {
-                        $data['meta'] = $record->getAllMeta()->toArray();
-
-                        return $data;
-                    })
-                    ->using(fn (StaticPage $record, array $data) => StaticPageUpdateAction::run($record, $data)),
-                DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListStaticPages::route('/'),
+            'home' => Pages\HomePage::route('/home'),
+            'create' => Pages\CreateStaticPage::route('/create'),
+            'edit' => Pages\EditStaticPage::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
+                ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
+                ->isActiveWhen(fn() => request()->routeIs(ListStaticPages::getRouteName()))
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
+                ->sort(static::getNavigationSort())
+                ->url(static::getNavigationUrl()),
+        ];
+    }
+
+    public static function registerNavigationItems(): void
+    {
+        if (filled(static::getCluster())) {
+            return;
+        }
+
+        if (! static::shouldRegisterNavigation()) {
+            return;
+        }
+
+        if (! static::canAccess()) {
+            return;
+        }
+
+        $pages = StaticPage::isDefault(false)->whereNull('scheduled_conference_id')->get()
+            ->map(
+                fn(StaticPage $page) => NavigationItem::make($page->title)
+                    ->url(EditStaticPage::getUrl(['record' => $page]))
+                    ->group('Pages')
+                    ->isActiveWhen(fn() => request()->fullUrlIs(EditStaticPage::getUrl(['record' => $page])))
+            );
+
+        Filament::getCurrentPanel()
+            ->navigationItems([
+                ...HomePage::getNavigationItems(),
+                ...$pages->toArray(),
+                ...ListStaticPages::getNavigationItems(),
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Pages'),
+            ]);
     }
 }

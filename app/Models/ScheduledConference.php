@@ -242,7 +242,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getHomeUrl(): string
     {
-        return route('livewirePageGroup.scheduledConference.pages.home', ['conference' => $this->conference, 'serie' => $this->path]);
+        return route('livewirePageGroup.scheduledConference.pages.home', ['conference' => $this->path]);
     }
 
     public function isSubmissionRequirePayment(): bool

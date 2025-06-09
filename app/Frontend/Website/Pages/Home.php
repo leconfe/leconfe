@@ -6,6 +6,7 @@ use App\Models\Conference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
+use App\Models\StaticPage;
 use App\Models\Topic;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
@@ -77,7 +78,7 @@ class Home extends Page
     protected function getViewData(): array
     {
         return [
-            
+            'homepage' => StaticPage::getHome(),
         ];
     }
 
