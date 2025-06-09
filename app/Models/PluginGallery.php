@@ -95,8 +95,8 @@ class PluginGallery extends Model
         }
 
         $latestRelease = $this->getLatestCompatibleRelease();
-
-        return $latestRelease && version_compare($plugin->getVersion(), $latestRelease['version'], '<');
+        
+        return $latestRelease->isNotEmpty() && version_compare($plugin->getVersion(), $latestRelease['version'], '<');
     }
 
     public function getLatestCompatibleRelease(): Collection
@@ -110,7 +110,8 @@ class PluginGallery extends Model
     public function install()
     {
         $latestRelease = $this->getLatestCompatibleRelease();
-        if (! $latestRelease) {
+
+        if ($latestRelease->empty()) {
             return false;
         }
 

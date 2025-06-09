@@ -24,8 +24,9 @@ class HomePage extends Page implements HasForms
     use InteractsWithRecord;
     use InteractsWithFormActions;
 
-
     public static bool $hasInlineLabels = true;
+
+    protected static ?string $navigationGroup = 'Pages';
 
     protected static string $resource = StaticPageResource::class;
 

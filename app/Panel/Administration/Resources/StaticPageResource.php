@@ -6,13 +6,16 @@ use App\Facades\StaticPageBlockFacade;
 use App\Managers\StaticPageBlockManager;
 use App\Panel\Administration\Resources\StaticPageResource\Pages;
 use App\Models\StaticPage;
+use App\Panel\Administration\Resources\StaticPageResource\Pages\EditStaticPage;
 use App\Panel\Administration\Resources\StaticPageResource\Pages\HomePage;
 use App\Panel\Administration\Resources\StaticPageResource\Pages\ListStaticPages;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as ActionForm;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -118,5 +121,38 @@ class StaticPageResource extends Resource
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    public static function registerNavigationItems(): void
+    {
+        if (filled(static::getCluster())) {
+            return;
+        }
+
+        if (! static::shouldRegisterNavigation()) {
+            return;
+        }
+
+        if (! static::canAccess()) {
+            return;
+        }
+
+        $pages = StaticPage::isDefault(false)->whereNull('scheduled_conference_id')->get()
+            ->map(
+                fn(StaticPage $page) => NavigationItem::make($page->title)
+                    ->url(EditStaticPage::getUrl(['record' => $page]))
+                    ->group('Pages')
+                    ->isActiveWhen(fn() => request()->fullUrlIs(EditStaticPage::getUrl(['record' => $page])))
+            );
+
+        Filament::getCurrentPanel()
+            ->navigationItems([
+                ...HomePage::getNavigationItems(),
+                ...$pages->toArray(),
+                ...ListStaticPages::getNavigationItems(),
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Pages'),
+            ]);
     }
 }

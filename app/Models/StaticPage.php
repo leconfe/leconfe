@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Facades\StaticPageBlockFacade;
 use App\Models\Concerns\BelongsToScheduledConference;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class StaticPage extends Model
+class StaticPage extends Model implements HasMedia
 {
-    use BelongsToScheduledConference, Metable, Cachable;
+    use BelongsToScheduledConference, Metable, Cachable, InteractsWithMedia;
 
     protected $fillable = [
         'title',
@@ -50,11 +55,29 @@ class StaticPage extends Model
         $query->where('is_default', $isDefault);
     }
 
+    public function getBlocks()
+    {
+        return collect($this->getMeta('blocks'))
+            ->map(function($block){
+                return StaticPageBlockFacade::initBlock($block['type'], $block['data']);
+            })
+            ->filter();
+    }
+
     public static function getHome()
     {
         return static::firstOrCreate(
             ['slug' => 'home'],
             ['title' => 'Home', 'is_default' => true],
         );
+    }
+
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Manipulations::FIT_CROP, 300, 300)
+            ->nonQueued();
     }
 }

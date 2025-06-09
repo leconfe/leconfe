@@ -7,15 +7,19 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\View\View;
 
 class SpeakersBlock extends BaseBlock
 {
-    protected string $view = 'filament.forms.block-previews.speaker-block';
+	protected string $view = 'frontend.website.pages.blocks.speakers';
 
 	public static function getBuilderBlock(Builder\Block $block): Builder\Block
 	{

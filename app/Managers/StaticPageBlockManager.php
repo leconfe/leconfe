@@ -3,6 +3,8 @@
 namespace App\Managers;
 
 use App\Classes\StaticPageBlocks\BaseBlock;
+use App\Classes\StaticPageBlocks\ConferenceListBlock;
+use App\Classes\StaticPageBlocks\GalleryBlock;
 use App\Classes\StaticPageBlocks\HtmlBlock;
 use App\Classes\StaticPageBlocks\SpeakersBlock;
 use Filament\Forms\Components\Builder;
@@ -19,6 +21,8 @@ class StaticPageBlockManager
 			$blocks = [
 				'html' => HtmlBlock::class,
 				'speakers' => SpeakersBlock::class,
+				'gallery' => GalleryBlock::class,
+				'conference-list' => ConferenceListBlock::class,
 			];
 
 			// 	TODO : Add Hooks here
@@ -52,10 +56,10 @@ class StaticPageBlockManager
 	public function getBuilder(): Builder
 	{
 		return Builder::make('blocks')
-			->collapsible()
+			->collapsed()
 			->addActionAlignment(Alignment::Start)
 			->blockIcons()
-			->blockPreviews(areInteractive: true)
+			->blockPreviews(areInteractive: false)
 			->hiddenLabel()
 			->blockNumbers(false)
 			->addActionLabel('Add new block')

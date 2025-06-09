@@ -12,6 +12,8 @@ class ListStaticPages extends ListRecords
 {
     protected static string $resource = StaticPageResource::class;
 
+    protected static ?string $navigationGroup = 'Pages';
+
     public function mount() : void
     {
         $staticPage = StaticPage::first();

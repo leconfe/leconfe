@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 
 class HtmlBlock extends BaseBlock
 {
-    protected string $view = 'filament.forms.block-previews.html';
+    protected string $view = 'frontend.website.pages.blocks.html';
 
 	public static function getBuilderBlock(Builder\Block $block): Builder\Block
 	{

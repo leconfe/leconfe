@@ -10,6 +10,8 @@ class EditStaticPage extends EditRecord
 {
     protected static string $resource = StaticPageResource::class;
 
+    protected static ?string $navigationGroup = 'Pages';
+
     protected function getHeaderActions(): array
     {
         return [
