@@ -8,9 +8,11 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Livewire\Component;
 
 class LanguageSetting extends Component implements HasForms
@@ -39,9 +41,16 @@ class LanguageSetting extends Component implements HasForms
                         CheckboxList::make('languages')
                             ->label(__('general.languages'))
                             ->options(config('app.locales'))
+                            ->live()
                             ->required(),
-                        Radio::make('default_language')
-                            ->options(config('app.locales'))
+                        Select::make('default_language')
+                            ->options(function (Get $get) {
+                                return array_filter(
+                                    config('app.locales'),
+                                    fn($value, $key) => in_array($key, $get('languages')),
+                                    ARRAY_FILTER_USE_BOTH
+                                );
+                            })
                             ->label(__('general.default_language'))
                             ->required(),
                     ]),
