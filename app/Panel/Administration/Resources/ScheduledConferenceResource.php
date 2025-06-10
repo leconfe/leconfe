@@ -36,6 +36,11 @@ class ScheduledConferenceResource extends Resource
         return __('general.scheduled_conference');
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -72,6 +77,7 @@ class ScheduledConferenceResource extends Resource
         return $table
             // ->recordUrl(fn (ScheduledConference $record) => route('filament.scheduledConference.pages.dashboard', ['serie' => $record]))
             ->modifyQueryUsing(fn (Builder $query) => $query->latest())
+            ->recordUrl(fn($record) => $record->getPanelUrl())
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
@@ -81,13 +87,30 @@ class ScheduledConferenceResource extends Resource
                     ->sortable()
                     ->wrap()
                     ->wrapHeader(),
-                TextColumn::make('date_start')
-                    ->label(__('general.start_date'))
-                    ->date(Setting::get('format_date')),
-                TextColumn::make('date_end')
-                    ->label(__('general.end_date'))
-                    ->date(Setting::get('format_date')),
+                TextColumn::make('date')
+                    ->getStateUsing(function(ScheduledConference $record){
+                        $date = '';
 
+                        if($record->date_start){
+                            $date = $record->date_start->format(Setting::get('format_date'));
+                        }
+
+                        if($record->date_start && $record->date_end && !$record->date_start->equalTo($record->date_end)){
+                            $date .= ' - ';
+                        }
+
+                        if($record->date_end && !$record->date_start->equalTo($record->date_end)){
+                             $date .= $record->date_end->format(Setting::get('format_date'));
+                        }
+
+                        return $date;
+                    }),
+                TextColumn::make('submissions_count')
+                    ->label('Submissions')
+                    ->default(0)
+                    ->counts('submissions'),
+                TextColumn::make('registrations')
+                    ->default(0),
             ])
             ->filters([
                 //

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->date('date_start')->nullable();
             $table->date('date_end')->nullable();
-            $table->enum('state', ScheduledConferenceState::array())->default(ScheduledConferenceState::Draft->value);
+            $table->boolean('is_published')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('series');
+        Schema::dropIfExists('scheduled_conferences');
     }
 };

@@ -31,14 +31,12 @@ class ScheduledConferenceObserver
         $primaryNavigationMenu = NavigationMenu::create([
             'name' => 'Primary Navigation Menu',
             'handle' => 'primary-navigation-menu',
-            'conference_id' => $scheduledConference->conference_id,
             'scheduled_conference_id' => $scheduledConference->getKey(),
         ]);
 
         $userNavigationMenu = NavigationMenu::create([
             'name' => 'User Navigation Menu',
             'handle' => 'user-navigation-menu',
-            'conference_id' => $scheduledConference->conference_id,
             'scheduled_conference_id' => $scheduledConference->getKey(),
         ]);
 

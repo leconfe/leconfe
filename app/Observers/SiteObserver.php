@@ -26,12 +26,10 @@ class SiteObserver
         $primaryNavigationMenu = NavigationMenu::create([
             'name' => 'Primary Navigation Menu',
             'handle' => 'primary-navigation-menu',
-            'conference_id' => Application::CONTEXT_WEBSITE,
         ]);
         $userNavigationMenu = NavigationMenu::create([
             'name' => 'User Navigation Menu',
             'handle' => 'user-navigation-menu',
-            'conference_id' => Application::CONTEXT_WEBSITE,
         ]);
 
         NavigationMenuItem::insert([
