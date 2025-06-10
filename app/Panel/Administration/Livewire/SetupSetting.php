@@ -85,11 +85,6 @@ class SetupSetting extends Component implements HasForms
                                     ])
                                     ->label(__('general.url')),
                             ]),
-                        TinyEditor::make('meta.about')
-                            ->label(__('general.about_site'))
-                            ->profile('advanced')
-                            ->minHeight(300)
-                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                         TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
                             ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist | image | code')
