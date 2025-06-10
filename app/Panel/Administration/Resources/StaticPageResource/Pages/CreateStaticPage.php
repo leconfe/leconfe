@@ -9,4 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateStaticPage extends CreateRecord
 {
     protected static string $resource = StaticPageResource::class;
+
+    protected function afterCreate(): void
+    {
+        $data = $this->form->getState();
+
+        $this->getRecord()->setMeta('contents', $data['contents']);
+    }
 }

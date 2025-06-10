@@ -5,6 +5,7 @@ namespace App\Frontend\ScheduledConference\Pages;
 use App\Frontend\Website\Pages\Page;
 use App\Models\Stakeholder;
 use App\Models\StakeholderLevel;
+use App\Models\StaticPage;
 use Illuminate\Support\Facades\Route;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
@@ -16,32 +17,8 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        $currentScheduledConference = app()->getCurrentScheduledConference();
-        $currentScheduledConference->load([
-            'speakerRoles.speakers' => ['meta'],
-        ]);
-
-        $sponsorLevels = StakeholderLevel::sponsors()
-            ->with(['stakeholders'])
-            ->whereHas('stakeholders')
-            ->orderBy('order_column', 'asc')
-            ->get();
-
-        $sponsorsWithoutLevel = Stakeholder::sponsors()
-            ->whereNull('level_id')
-            ->orderBy('order_column', 'asc')
-            ->get();
-
-        $partners = Stakeholder::partners()
-            ->where('is_shown', true)
-            ->orderBy('order_column', 'asc')
-            ->get();
-
         return [
-            'partners' => $partners,
-            'sponsorLevels' => $sponsorLevels,
-            'sponsorsWithoutLevel' => $sponsorsWithoutLevel,
-            'currentScheduledConference' => $currentScheduledConference,
+            'homepage' => StaticPage::getHome(),
         ];
     }
 

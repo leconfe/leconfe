@@ -6,6 +6,7 @@ use App\Classes\StaticPageBlocks\BaseBlock;
 use App\Classes\StaticPageBlocks\ConferenceListBlock;
 use App\Classes\StaticPageBlocks\GalleryBlock;
 use App\Classes\StaticPageBlocks\HtmlBlock;
+use App\Classes\StaticPageBlocks\LogoBlock;
 use App\Classes\StaticPageBlocks\SpeakersBlock;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Actions\Action as ActionForm;
@@ -23,6 +24,7 @@ class StaticPageBlockManager
 				'speakers' => SpeakersBlock::class,
 				'gallery' => GalleryBlock::class,
 				'conference-list' => ConferenceListBlock::class,
+				'logo' => LogoBlock::class,
 			];
 
 			// 	TODO : Add Hooks here
@@ -60,7 +62,7 @@ class StaticPageBlockManager
 			->persistCollapsed()
 			->addActionAlignment(Alignment::Start)
 			->blockIcons()
-			->blockPreviews(areInteractive: false)
+			->blockPreviews(areInteractive: true)
 			->hiddenLabel()
 			->blockNumbers(false)
 			->editAction(fn(ActionForm $action) => $action->slideOver())

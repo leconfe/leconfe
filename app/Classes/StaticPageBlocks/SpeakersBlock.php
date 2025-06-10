@@ -32,6 +32,8 @@ class SpeakersBlock extends BaseBlock
 					->profile('advanced'),
 				Repeater::make('speakers')
 					->collapsible()
+					->reorderableWithButtons()
+					->reorderableWithDragAndDrop(false)
 					->addActionLabel('Add Speaker')
 					->addActionAlignment(Alignment::Start)
 					->itemLabel(fn(array $state): ?string => $state['name'] ?? null)

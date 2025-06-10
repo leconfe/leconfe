@@ -28,8 +28,6 @@ class StaticPageResource extends Resource
 {
     protected static ?string $model = StaticPage::class;
 
-    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     public static function getEloquentQuery(): EloquentBuilder
     {
         return parent::getEloquentQuery()->isDefault(false);
@@ -137,7 +135,9 @@ class StaticPageResource extends Resource
             return;
         }
 
-        $pages = StaticPage::isDefault(false)->whereNull('scheduled_conference_id')->limit(10)->get()
+        $pages = StaticPage::isDefault(false)
+            ->limit(10)
+            ->get()
             ->map(
                 fn(StaticPage $page) => NavigationItem::make($page->title)
                     ->url(EditStaticPage::getUrl(['record' => $page]))

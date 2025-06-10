@@ -2,6 +2,7 @@
 
 namespace App\Panel\Administration\Resources\StaticPageResource\Pages;
 
+use App\Models\StaticPage;
 use App\Panel\Administration\Resources\StaticPageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -15,6 +16,8 @@ class EditStaticPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('view')
+                ->url(fn(StaticPage $record) => $record->getUrl()),
             Actions\DeleteAction::make(),
         ];
     }
@@ -23,7 +26,7 @@ class EditStaticPage extends EditRecord
     {
         $data = $this->form->getState();
 
-        $this->getRecord()->setMeta('blocks', $data['blocks']);
+        $this->getRecord()->setMeta('contents', $data['contents']);
     }
     
 
@@ -31,7 +34,7 @@ class EditStaticPage extends EditRecord
     {
         /** @internal Read the DocBlock above the following method. */
         $this->fillFormWithDataAndCallHooks($this->getRecord(), [
-            'blocks' => $this->getRecord()->getMeta('blocks'),
+            'contents' => $this->getRecord()->getMeta('contents'),
         ]);
     }
 

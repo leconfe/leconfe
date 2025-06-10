@@ -30,11 +30,7 @@ class StaticPage extends Model implements HasMedia
 
     public function getUrl(): string
     {
-        $routeName = 'livewirePageGroup.website.pages.static-page';
-
-        if (app()->getCurrentScheduledConferenceId()) {
-            $routeName = 'livewirePageGroup.scheduledConference.pages.static-page';
-        }
+        $routeName = $this->scheduled_conference_id ? 'livewirePageGroup.scheduledConference.pages.static-page' : 'livewirePageGroup.website.pages.static-page';
 
         return route($routeName, [
             'staticPage' => $this->slug,
