@@ -38,9 +38,6 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     {
         return [
             'navigationMenus' => NavigationMenu::query()
-                ->when(! app()->getCurrentScheduledConferenceId(), function ($query) {
-                    $query->where('scheduled_conference_id', 0);
-                })
                 ->with([
                     'items' => function ($query) {
                         $query
