@@ -18,7 +18,6 @@ class StaticPage extends Page
     {
         return [
             'title' => $this->staticPage->title,
-            'content' => $this->staticPage->getMeta('content'),
         ];
     }
 

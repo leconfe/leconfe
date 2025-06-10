@@ -18,10 +18,8 @@ class GalleryBlock extends BaseBlock
 			->label("Gallery")
 			->schema([
 				TextInput::make('title')
-					->required()
 					->live(),
 				FileUpload::make('images')
-					->hiddenLabel()
 					->downloadable()
 					->multiple()
 					->panelLayout('grid')

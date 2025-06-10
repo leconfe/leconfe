@@ -7,14 +7,8 @@
             <h1 class="text-xl font-semibold min-w-fit">{{ $title }}</h1>
             <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
         </div>
-        @if ($content)
-            <div class="user-content">
-                {{ new Illuminate\Support\HtmlString($content) }}
-            </div>
-        @else
-            <div>
-                {{ __('general.no_content_provided') }}
-            </div>
-        @endif
+        @foreach ($this->staticPage->getBlocks() as $block)
+            {!! $block->render() !!}
+        @endforeach
     </div>
 </x-website::layouts.main>

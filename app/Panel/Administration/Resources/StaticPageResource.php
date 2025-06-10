@@ -137,7 +137,7 @@ class StaticPageResource extends Resource
             return;
         }
 
-        $pages = StaticPage::isDefault(false)->whereNull('scheduled_conference_id')->get()
+        $pages = StaticPage::isDefault(false)->whereNull('scheduled_conference_id')->limit(10)->get()
             ->map(
                 fn(StaticPage $page) => NavigationItem::make($page->title)
                     ->url(EditStaticPage::getUrl(['record' => $page]))

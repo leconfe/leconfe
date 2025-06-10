@@ -190,6 +190,7 @@ class Application extends LaravelApplication
     {
         $models = [
             StaticPage::class,
+            NavigationMenu::class,
         ];
 
         foreach ($models as $model){

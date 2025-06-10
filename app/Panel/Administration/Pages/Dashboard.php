@@ -25,6 +25,9 @@ class Dashboard extends Page implements HasInfolists
     protected static ?string $navigationIcon = 'heroicon-m-home';
 
     protected static string $view = 'panel.administration.pages.dashboard';
+    
+    protected static bool $shouldRegisterNavigation = false;
+
 
     public static function getNavigationLabel(): string
     {

@@ -26,9 +26,7 @@ class StaticPage extends Model implements HasMedia
         'is_default' => 'boolean',
     ];
 
-    protected static function booted(): void
-    {
-    }
+    protected static function booted(): void {}
 
     public function getUrl(): string
     {
@@ -58,9 +56,7 @@ class StaticPage extends Model implements HasMedia
     public function getBlocks()
     {
         return collect($this->getMeta('blocks'))
-            ->map(function($block){
-                return StaticPageBlockFacade::initBlock($block['type'], $block['data']);
-            })
+            ->map(fn($block) => StaticPageBlockFacade::initBlock($block['type'], $block['data']))
             ->filter();
     }
 
