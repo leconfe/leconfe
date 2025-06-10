@@ -47,7 +47,7 @@ class HomePage extends Page implements HasForms
 
         $this->form->fill([
             ...$this->record->attributesToArray(),
-            'blocks' => $this->record->getMeta('blocks'),
+            'contents' => $this->record->getMeta('contents'),
         ]);
     }
 
@@ -101,7 +101,7 @@ class HomePage extends Page implements HasForms
     {
         $record->update($data);
 
-        $record->setMeta('blocks', $data['blocks']);
+        $record->setMeta('contents', $data['contents']);
 
         return $record;
     }

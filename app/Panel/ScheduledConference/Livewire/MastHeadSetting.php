@@ -80,7 +80,7 @@ class MastHeadSetting extends Component implements HasForms
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                TextInput::make('meta.theme')
+                                TextInput::make('meta.theme_information')
                                     ->label(__('general.theme'))
                                     ->helperText(__('general.theme_information'))
                                     ->columnSpanFull(),
@@ -94,19 +94,6 @@ class MastHeadSetting extends Component implements HasForms
                             ->schema([
                                 TinyEditor::make('meta.summary')
                                     ->label(__('general.conference_summary')),
-                                TinyEditor::make('meta.editorial_team')
-                                    ->label(__('general.editorial_team'))
-                                    ->profile('basic')
-                                    ->minHeight(100),
-
-                            ]),
-                        Section::make(__('general.description'))
-                            ->aside()
-                            ->description(__('general.include_about_your_conference'))
-                            ->schema([
-                                TinyEditor::make('meta.about')
-                                    ->label(__('general.about_the_scheduled_conference'))
-                                    ->profile('advanced'),
                             ]),
                     ]),
                 Actions::make([

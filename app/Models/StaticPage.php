@@ -55,7 +55,7 @@ class StaticPage extends Model implements HasMedia
 
     public function getBlocks()
     {
-        return collect($this->getMeta('blocks'))
+        return collect($this->getMeta('contents'))
             ->map(fn($block) => StaticPageBlockFacade::initBlock($block['type'], $block['data']))
             ->filter();
     }

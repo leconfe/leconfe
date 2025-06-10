@@ -55,14 +55,14 @@ class StaticPageBlockManager
 
 	public function getBuilder(): Builder
 	{
-		return Builder::make('blocks')
-			->collapsed()
+		return Builder::make('contents')
+			->collapsible()
+			->persistCollapsed()
 			->addActionAlignment(Alignment::Start)
 			->blockIcons()
 			->blockPreviews(areInteractive: false)
 			->hiddenLabel()
 			->blockNumbers(false)
-			->addActionLabel('Add new block')
 			->editAction(fn(ActionForm $action) => $action->slideOver())
 			->addAction(fn(ActionForm $action) => $action->slideOver())
 			->addBetweenAction(fn(ActionForm $action) => $action->slideOver())

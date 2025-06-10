@@ -8,6 +8,7 @@ use App\Actions\Committees\CommitteeUpdateAction;
 use App\Models\Committee;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Panel\ScheduledConference\Livewire;
+use App\Panel\ScheduledConference\Livewire\ContributorForm;
 use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action as FormAction;
