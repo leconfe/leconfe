@@ -26,14 +26,11 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'title',
         'date_start',
         'date_end',
-        'state',
+        'is_published',
         'type',
     ];
 
     protected $casts = [
-        'published' => 'boolean',
-        'published_at' => 'datetime',
-        'current' => 'boolean',
         'date_start' => 'date',
         'date_end' => 'date',
         'type' => ScheduledConferenceType::class,
@@ -215,9 +212,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getPanelUrl(): string
     {
-        $currentConference = app()->getCurrentConference() ?? $this->conference;
-
-        return route('filament.scheduledConference.pages.dashboard', ['serie' => $this->path, 'conference' => $currentConference]);
+        return route('filament.scheduledConference.pages.dashboard', ['conference' => $this->path]);
     }
 
     public function getFilamentAvatarUrl(): ?string
@@ -287,5 +282,10 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopeState($query, ScheduledConferenceState $state)
     {
         return $query->where('state', $state);
+    }
+    
+    public function scopeIsPublished($query, bool $published = true)
+    {
+        return $query->where('is_published', $published);
     }
 }

@@ -16,8 +16,7 @@ return new class extends Migration
     {
         Schema::create('navigation_menus', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->default(0);
-            $table->foreignIdFor(ScheduledConference::class)->default(0);
+            $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('handle');
             $table->timestamps();
