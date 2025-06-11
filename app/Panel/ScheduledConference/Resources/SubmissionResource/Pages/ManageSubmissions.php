@@ -4,7 +4,6 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
-use App\Models\Timeline;
 use App\Panel\ScheduledConference\Pages\WorkflowSetting;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
@@ -32,7 +31,7 @@ class ManageSubmissions extends ManageRecords
                 ->label(__('general.create'))
                 ->button()
                 ->disabled(
-                    fn (): bool => ! Timeline::isSubmissionOpen()
+                    fn (): bool => ! app()->getCurrentScheduledConference()->isSubmissionOpen(),
                 )
                 ->url(static::$resource::getUrl('create'))
                 ->icon('heroicon-o-plus')

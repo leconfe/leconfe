@@ -6,7 +6,6 @@ use App\Actions\Submissions\SubmissionCreateAction;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\Submission;
-use App\Models\Timeline;
 use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
@@ -49,7 +48,7 @@ class CreateSubmission extends Page implements HasForms
     protected function getViewData(): array
     {
         return [
-            'isOpen' => Timeline::isSubmissionOpen() && Track::query()
+            'isOpen' => app()->getCurrentScheduledConference()->isSubmissionOpen() && Track::query()
                 ->active()
                 ->when(! auth()->user()->hasAnyRole([
                     UserRole::Admin,

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
+use Carbon\Carbon;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -195,11 +197,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getHomeUrl();
     }
 
-    public function timelines(): HasMany
-    {
-        return $this->hasMany(Timeline::class);
-    }
-
     public function registration(): HasMany
     {
         return $this->hasMany(Registration::class);
@@ -287,5 +284,21 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopeIsPublished($query, bool $published = true)
     {
         return $query->where('is_published', $published);
+    }
+
+    public function isSubmissionOpen() : bool
+    {
+        $submissionOpenDate = $this->getMeta('submission_open_date') ? Date::parse($this->getMeta('submission_open_date')) : null;
+        $submissionCloseDate = $this->getMeta('submission_close_date') ? Date::parse($this->getMeta('submission_close_date')) : null;
+
+        if (! $submissionOpenDate) {
+            return false;
+        }
+
+        if ($submissionOpenDate->isPast() && (! $submissionCloseDate || $submissionCloseDate->isFuture())) {
+            return true;
+        }
+
+        return false;
     }
 }

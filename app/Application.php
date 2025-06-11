@@ -29,7 +29,6 @@ use App\Models\StakeholderLevel;
 use App\Models\StaticPage;
 use App\Models\Submission;
 use App\Models\SubmissionFileType;
-use App\Models\Timeline;
 use App\Models\Topic;
 use App\Models\Track;
 use App\Models\Version;
@@ -161,7 +160,6 @@ class Application extends LaravelApplication
     public function scopeCurrentScheduledConference(): void
     {
         $models = [
-            Timeline::class,
             CommitteeRole::class,
             SpeakerRole::class,
             StaticPage::class,

@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Models\Timeline;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -23,10 +22,11 @@ class SubmissionSetting extends Component implements HasForms
 
     public function mount(): void
     {
+        $scheduledConference = app()->getCurrentScheduledConference();
+
         $this->form->fill([
-            'open_date' => Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->value('date'),
-            'close_date' => Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->value('date'),
-            'hide_from_timeline' => Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->value('hide') || Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->value('hide'),
+            'submission_open_date' => $scheduledConference->getMeta('submission_open_date'),
+            'submission_close_date' => $scheduledConference->getMeta('submission_close_date'),
         ]);
     }
 
@@ -43,14 +43,11 @@ class SubmissionSetting extends Component implements HasForms
                 Section::make(__('general.submission_setting'))
                     ->columns(1)
                     ->schema([
-                        DatePicker::make('open_date')
+                        DatePicker::make('submission_open_date')
                             ->label(__('general.submission_setting.open_date')),
-                        DatePicker::make('close_date')
+                        DatePicker::make('submission_close_date')
                             ->afterOrEqual('open_date')
                             ->label(__('general.submission_setting.close_date')),
-                        Toggle::make('hide_from_timeline')
-                            ->label(__('general.submission_setting.hide_from_timeline'))
-                            ->label('Hide from timeline'),
                     ]),
                 Actions::make([
                     Action::make('save')
@@ -59,38 +56,19 @@ class SubmissionSetting extends Component implements HasForms
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
+                            $scheduledConference = app()->getCurrentScheduledConference();
+
                             try {
                                 DB::beginTransaction();
 
-                                if (data_get($formData, 'open_date')) {
-                                    Timeline::updateOrCreate([
-                                        'type' => Timeline::TYPE_SUBMISSION_OPEN,
-                                    ], [
-                                        'name' => 'Submission Open',
-                                        'date' => Date::parse(data_get($formData, 'open_date')),
-                                        'hide' => data_get($formData, 'hide_from_timeline'),
-                                    ]);
-                                } else {
-                                    Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->delete();
-                                }
-
-                                if (data_get($formData, 'close_date')) {
-                                    Timeline::updateOrCreate([
-                                        'type' => Timeline::TYPE_SUBMISSION_CLOSE,
-                                    ], [
-                                        'name' => 'Submission Close',
-                                        'date' => Date::parse(data_get($formData, 'close_date')),
-                                        'hide' => data_get($formData, 'hide_from_timeline'),
-                                    ]);
-                                } else {
-                                    Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->delete();
-                                }
+                                $scheduledConference->setManyMeta($formData);
 
                                 DB::commit();
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
                                 $action->failureNotificationTitle($th->getMessage());
                                 $action->sendFailureNotification();
+
                                 DB::rollBack();
                                 throw $th;
                             }
