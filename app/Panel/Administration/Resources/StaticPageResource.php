@@ -102,25 +102,6 @@ class StaticPageResource extends Resource
         ];
     }
 
-    /**
-     * @return array<NavigationItem>
-     */
-    public static function getNavigationItems(): array
-    {
-        return [
-            NavigationItem::make(static::getNavigationLabel())
-                ->group(static::getNavigationGroup())
-                ->parentItem(static::getNavigationParentItem())
-                ->icon(static::getNavigationIcon())
-                ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn() => request()->routeIs(ListStaticPages::getRouteName()))
-                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
-                ->badgeTooltip(static::getNavigationBadgeTooltip())
-                ->sort(static::getNavigationSort())
-                ->url(static::getNavigationUrl()),
-        ];
-    }
-
     public static function registerNavigationItems(): void
     {
         if (filled(static::getCluster())) {
