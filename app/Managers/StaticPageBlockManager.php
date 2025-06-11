@@ -8,6 +8,7 @@ use App\Classes\StaticPageBlocks\GalleryBlock;
 use App\Classes\StaticPageBlocks\HtmlBlock;
 use App\Classes\StaticPageBlocks\LogoBlock;
 use App\Classes\StaticPageBlocks\SpeakersBlock;
+use App\Classes\StaticPageBlocks\TimelineBlock;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Actions\Action as ActionForm;
 use Filament\Support\Enums\Alignment;
@@ -25,6 +26,7 @@ class StaticPageBlockManager
 				'gallery' => GalleryBlock::class,
 				'conference-list' => ConferenceListBlock::class,
 				'logo' => LogoBlock::class,
+				'timeline' => TimelineBlock::class,
 			];
 
 			// 	TODO : Add Hooks here

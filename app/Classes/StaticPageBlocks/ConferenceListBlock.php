@@ -20,11 +20,7 @@ class ConferenceListBlock extends BaseBlock
 				TextInput::make('title'),
 			])
 			->label(function (?array $state): string {
-				if ($state === null) {
-					return 'Conference List';
-				}
-
-				return $state['title'] ?: 'Conference List';
+				return $state['title'] ?? 'Conference List';
 			})
 			->maxItems(1);
 		// ->preview('filament.forms.block-previews.html')

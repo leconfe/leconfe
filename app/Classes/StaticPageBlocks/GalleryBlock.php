@@ -27,9 +27,7 @@ class GalleryBlock extends BaseBlock
 					->required(),
 			])
 			->label(function (?array $state): string {
-				if ($state === null) return 'Gallery';
-
-				return $state['title'] ?: 'Gallery';
+				return $state['title'] ?? 'Gallery';
 			})
 			->preview('filament.forms.block-previews.gallery')
 			;

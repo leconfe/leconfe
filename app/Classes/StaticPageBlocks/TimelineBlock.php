@@ -4,22 +4,17 @@ namespace App\Classes\StaticPageBlocks;
 
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Contracts\View\View;
 
-class LogoBlock extends BaseBlock
+class TimelineBlock extends BaseBlock
 {
-	protected string $view = 'frontend.website.pages.blocks.logo';
+	protected string $view = 'frontend.website.pages.blocks.timeline';
 
 	public static function getBuilderBlock(Builder\Block $block): Builder\Block
 	{
@@ -28,28 +23,34 @@ class LogoBlock extends BaseBlock
 				TextInput::make('title')
 					->live(onBlur: true)
 					->required(),
-				TinyEditor::make('description')
-					->profile('advanced'),
-				Repeater::make('logos')
+				RichEditor::make('description'),
+				Repeater::make('timelines')
 					->collapsible()
 					->reorderableWithButtons()
 					->reorderableWithDragAndDrop(false)
-					->addActionLabel('Add Logo')
 					->addActionAlignment(Alignment::Start)
 					->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
 					->schema([
-						FileUpload::make('image')
-							->required()
-							->image(),
 						TextInput::make('name')
+							->label(__('general.name'))
 							->required(),
-						TextInput::make('url')
-							->url(),
+						Textarea::make('description')
+							->label(__('general.description'))
+							->autosize(),
+						Grid::make()
+							->schema([
+								DatePicker::make('date_start')
+									->label(__('general.start_date'))
+									->required(),
+								DatePicker::make('date_end')
+									->label(__('general.end_date'))
+									->after('date'),
+							]),
 					]),
 			])
-			->preview('filament.forms.block-previews.logo')
+			->preview('filament.forms.block-previews.timeline')
 			->label(function (?array $state): string {
-				return $state['title'] ?? 'Logo';
+				return $state['title'] ?? 'Timeline';
 			});
 	}
 }

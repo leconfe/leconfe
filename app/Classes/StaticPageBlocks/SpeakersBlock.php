@@ -74,9 +74,7 @@ class SpeakersBlock extends BaseBlock
 			])
 			->preview('filament.forms.block-previews.speaker-block')
 			->label(function (?array $state): string {
-				if ($state === null) return 'Speakers';
-
-				return $state['title'] ?: 'Speakers';
+				return $state['title'] ?? 'Speakers';
 			});
 	}
 }
