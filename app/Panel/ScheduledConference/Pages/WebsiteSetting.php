@@ -87,32 +87,6 @@ class WebsiteSetting extends Page
                                                 LivewireEntry::make('sidebar-setting')
                                                     ->livewire(SidebarSetting::class),
                                             ]),
-                                        VerticalTabs\Tab::make('Supports')
-                                            ->label(__('general.supports'))
-                                            ->icon('heroicon-o-currency-dollar')
-                                            ->schema([
-                                                Tabs::make('sponsors')
-                                                    ->tabs([
-                                                        Tabs\Tab::make('Sponsorship Levels')
-                                                            ->label(__('general.sponsorship_levels'))
-                                                            ->schema([
-                                                                LivewireEntry::make('sponsorship-level-table')
-                                                                    ->livewire(SponsorLevelTable::class),
-                                                            ]),
-                                                        Tabs\Tab::make('Sponsors')
-                                                            ->label(__('general.sponsors'))
-                                                            ->schema([
-                                                                LivewireEntry::make('sponsor-table')
-                                                                    ->livewire(SponsorTable::class),
-                                                            ]),
-                                                        Tabs\Tab::make('Partners')
-                                                            ->label(__('general.partners'))
-                                                            ->schema([
-                                                                LivewireEntry::make('partner-table')
-                                                                    ->livewire(PartnerTable::class),
-                                                            ]),
-                                                    ]),
-                                            ]),
                                     ]),
                             ]),
                         Tabs\Tab::make('Setup')
