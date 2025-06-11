@@ -173,6 +173,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ->query(
                 fn(): Builder => $this->getQuery()
             )
+            ->reorderable('order_column')
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
