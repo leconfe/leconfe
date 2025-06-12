@@ -35,7 +35,7 @@ return [
         ],
 
         'async' => [
-            'driver' => 'async',
+            'driver' => 'defer',
         ],
 
         'database' => [

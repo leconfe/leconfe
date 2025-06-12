@@ -21,11 +21,10 @@
         "dflydev/base32-crockford": "^1.0",
         "filament/filament": "^3.3",
         "filament/spatie-laravel-media-library-plugin": "^3.3",
-        "filament/spatie-laravel-tags-plugin": "^3.3",
         "genealabs/laravel-model-caching": "^12.0",
         "guzzlehttp/guzzle": "^7.2",
         "jackiedo/timezonelist": "^5.1",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "laravel/horizon": "^5.21",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
@@ -38,8 +37,9 @@
         "plank/laravel-metable": "^6.2",
         "propaganistas/laravel-disposable-email": "^2.2",
         "propaganistas/laravel-phone": "^5.0",
-        "rahmanramsi/laravel-async-queue": "^1.0",
-        "rahmanramsi/livewire-page-group": "^0.0.6",
+        "rahmanramsi/defer-queue": "^1.1",
+        "rahmanramsi/laravel-translatable": "^1.0.0",
+        "rahmanramsi/livewire-page-group": "^1.0",
         "rickselby/laravel-gate-cache": "^3.8",
         "seboettg/citeproc-php": "2.5.2",
         "spatie/array-to-xml": "^3.3",
@@ -55,8 +55,7 @@
         "stechstudio/filament-impersonate": "^3.5",
         "stevebauman/purify": "^6.0",
         "symfony/filesystem": "^6.4",
-        "symfony/yaml": "^6.4",
-        "rahmanramsi/laravel-translatable": "^1.0.0"
+        "symfony/yaml": "^6.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -65,7 +64,7 @@
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^11.0"
     },
    
     "autoload": {
