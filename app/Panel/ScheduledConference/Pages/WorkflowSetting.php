@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Panel\ScheduledConference\Livewire\EmailSetting;
 use App\Panel\ScheduledConference\Livewire\PublisherLibrary;
@@ -14,6 +13,7 @@ use App\Panel\ScheduledConference\Livewire\SubmissionFileTypeTable;
 use App\Panel\ScheduledConference\Livewire\SubmissionSetting;
 use App\Panel\ScheduledConference\Livewire\TopicTable;
 use App\Panel\ScheduledConference\Livewire\TrackTable;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -67,38 +67,32 @@ class WorkflowSetting extends Page
                                         InfolistsVerticalTabs\Tab::make('Submission')
                                             ->label(__('general.submission'))
                                             ->schema([
-                                                LivewireEntry::make('submission-setting')
-                                                    ->livewire(SubmissionSetting::class),
+                                                Livewire::make(SubmissionSetting::class)->key('submission-setting'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Components')
                                             ->label(__('general.components'))
                                             ->schema([
-                                                LivewireEntry::make('submission-file-type-table')
-                                                    ->livewire(SubmissionFileTypeTable::class),
+                                                Livewire::make(SubmissionFileTypeTable::class)->key('submission-file-type-table'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Author Guidance')
                                             ->label(__('general.author_guidance'))
                                             ->schema([
-                                                LivewireEntry::make('author-guidance')
-                                                    ->livewire(AuthorGuidance::class),
+                                                Livewire::make(AuthorGuidance::class)->key('author-guidance')
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Author Roles')
                                             ->label(__('general.author_roles'))
                                             ->schema([
-                                                LivewireEntry::make('author-roles')
-                                                    ->livewire(AuthorRoleTable::class),
+                                                Livewire::make(AuthorRoleTable::class)->key('author-roles'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Tracks')
                                             ->label(__('general.track'))
                                             ->schema([
-                                                LivewireEntry::make('tracks')
-                                                    ->livewire(TrackTable::class),
+                                                Livewire::make(TrackTable::class)->key('tracks'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Topics')
                                             ->label(__('general.topic'))
                                             ->schema([
-                                                LivewireEntry::make('topics')
-                                                    ->livewire(TopicTable::class),
+                                                Livewire::make(TopicTable::class)->key('topics')
                                             ]),
                                     ]),
                             ]),
@@ -110,28 +104,24 @@ class WorkflowSetting extends Page
                                         InfolistsVerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))
                                             ->schema([
-                                                LivewireEntry::make('review-setup')
-                                                    ->livewire(ReviewSetupSetting::class),
+                                                Livewire::make(ReviewSetupSetting::class)->key('review-setup'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Reviewer Guidance')
                                             ->label(__('general.reviewer_guidance'))
                                             ->schema([
-                                                LivewireEntry::make('review-guidance')
-                                                    ->livewire(ReviewGuidance::class),
+                                                Livewire::make(ReviewGuidance::class)->key('review-guidance')
                                             ]),
                                     ]),
                             ]),
                         Tabs\Tab::make('Publisher Library')
                             ->label(__('general.publisher_library'))
                             ->schema([
-                                LivewireEntry::make('publisher-library')
-                                    ->livewire(PublisherLibrary::class),
+                                Livewire::make(PublisherLibrary::class)->key('publisher-library'),
                             ]),
                         Tabs\Tab::make('Emails')
                             ->label(__('general.email'))
                             ->schema([
-                                LivewireEntry::make('email-setting')
-                                    ->livewire(EmailSetting::class),
+                                Livewire::make(EmailSetting::class)->key('email-setting'),
                             ]),
                     ]),
             ]);

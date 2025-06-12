@@ -2,9 +2,9 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\Traits;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\SelectFiles;
 use Awcodes\Shout\Components\ShoutEntry;
+use Filament\Infolists\Components\Livewire;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Support\HtmlString;
@@ -31,23 +31,20 @@ trait CanSelectFiles
                     ShoutEntry::make('information')
                         ->color('info')
                         ->content('Choose the files to create duplicates.'),
-                    LivewireEntry::make('list-files')
-                        ->livewire(
-                            SelectFiles::class,
-                            [
-                                'submission' => $this->submission,
-                                'targetCategory' => $this->getTargetCategory(),
-                                'selectableCategories' => $this->getSelectableCategories(),
-                                'allowedFileTypes' => config('media-library.accepted_file_types'),
-                                'lazy' => true,
-                            ]
-                        ),
+                    Livewire::make(SelectFiles::class, [
+                        'submission' => $this->submission,
+                        'targetCategory' => $this->getTargetCategory(),
+                        'selectableCategories' => $this->getSelectableCategories(),
+                        'allowedFileTypes' => config('media-library.accepted_file_types'),
+                    ])
+                        ->key('list-files')
+                        ->lazy()
                 ]),
             Action::make('upload')
                 ->icon('iconpark-upload')
                 ->label('Upload Files')
                 ->hidden(
-                    fn (): bool => $this->submission->isDeclined() ?: $this->isViewOnly()
+                    fn(): bool => $this->submission->isDeclined() ?: $this->isViewOnly()
                 )
                 ->modalWidth('xl')
                 ->form(
@@ -56,7 +53,7 @@ trait CanSelectFiles
                 ->successNotificationTitle('Files added successfully')
                 ->failureNotificationTitle('There was a problem adding the files')
                 ->action(
-                    fn (array $data, Action $action) => $this->handleUploadAction($data, $action)
+                    fn(array $data, Action $action) => $this->handleUploadAction($data, $action)
                 ),
         ])
             ->button();

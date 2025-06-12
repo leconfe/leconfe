@@ -4,7 +4,6 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
 use App\Frontend\ScheduledConference\Pages\ParticipantForm;
-use App\Infolists\Components\LivewireEntry;
 use App\Managers\PaymentManager;
 use App\Models\PaymentFee;
 use App\Tables\Columns\IndexColumn;
@@ -17,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Livewire;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -141,8 +141,8 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         ->modalSubmitAction(false)
                         ->modalHeading(false)
                         ->infolist(fn ($record) => [
-                            LivewireEntry::make('form-items')
-                                ->livewire(PaymentFeeFormItemTable::class, ['record' => $record]),
+                            Livewire::make(PaymentFeeFormItemTable::class, ['record' => $record])
+                                ->key('form-items'),
                         ]),
                     Action::make('copy')
                         ->label('Copy')

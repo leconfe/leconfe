@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Hook;
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Managers\PaymentManager;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
@@ -54,8 +53,8 @@ class Payments extends Page
                 ->label(__('general.manual'))
                 ->icon('heroicon-o-credit-card')
                 ->schema([
-                    LivewireEntry::make('manual')
-                        ->livewire(ManualPaymentSetting::class),
+                    Livewire::make(ManualPaymentSetting::class)
+                        ->key('manual'),
                 ]),
         ];
 
@@ -69,8 +68,8 @@ class Payments extends Page
                     ->tabs([
                         Tabs\Tab::make('Settings')
                             ->schema([
-                                LivewireEntry::make('submission_payment_settings')
-                                    ->livewire(PaymentSetting::class),
+                                Livewire::make(PaymentSetting::class)
+                                    ->key('submission_payment_settings'),
                             ]),
                         Tabs\Tab::make('Submission Payment')
                             ->schema([
@@ -84,9 +83,8 @@ class Payments extends Page
                                         InfolistsVerticalTabs\Tab::make('submission_fee_payments_tab')
                                             ->label('Payments')
                                             ->schema([
-                                                LivewireEntry::make('payment_fees')
-                                                    ->livewire(SubmissionPaymentFeeTable::class),
-
+                                                Livewire::make(SubmissionPaymentFeeTable::class)
+                                                    ->key('payment_fees'),
                                             ]),
                                     ]),
 
@@ -103,8 +101,8 @@ class Payments extends Page
                                         InfolistsVerticalTabs\Tab::make('submission_fee_payments_tab')
                                             ->label('Payments')
                                             ->schema([
-                                                LivewireEntry::make('participant_payment_fees')
-                                                    ->livewire(ParticipantPaymentFeeTable::class),
+                                                Livewire::make(ParticipantPaymentFeeTable::class)
+                                                    ->key('participant_payment_fees'),
 
                                             ]),
                                     ]),

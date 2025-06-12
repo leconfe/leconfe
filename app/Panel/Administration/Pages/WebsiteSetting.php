@@ -2,13 +2,13 @@
 
 namespace App\Panel\Administration\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
 use App\Panel\Administration\Livewire\NavigationMenuSetting;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -63,23 +63,23 @@ class WebsiteSetting extends Page implements HasInfolists
                                             ->label(__('general.settings'))
                                             ->icon('heroicon-o-cog')
                                             ->schema([
-                                                LivewireEntry::make('setting')
-                                                    ->livewire(SetupSetting::class),
+                                                Livewire::make(SetupSetting::class)
+                                                    ->key('setup-setting'),
                                             ]),
                                         VerticalTabs\Tab::make('Navigation Menu')
                                             ->label(__('general.navigation_menu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
-                                                LivewireEntry::make('navigation-menu-setting')
-                                                    ->livewire(NavigationMenuSetting::class)
+                                                Livewire::make(NavigationMenuSetting::class)
+                                                    ->key('navigation-menu-setting')
                                                     ->lazy(),
                                             ]),
                                         VerticalTabs\Tab::make('Languages')
                                             ->label(__('general.languages'))
                                             ->icon('heroicon-o-language')
                                             ->schema([
-                                                LivewireEntry::make('language-setting')
-                                                    ->livewire(LanguageSetting::class),
+                                                Livewire::make(LanguageSetting::class)
+                                                    ->key('language-setting'),
                                             ]),
                                     ]),
                             ]),
@@ -92,8 +92,8 @@ class WebsiteSetting extends Page implements HasInfolists
                                             ->label(__('general.sidebar'))
                                             ->icon('heroicon-o-view-columns')
                                             ->schema([
-                                                LivewireEntry::make('sidebar_setting')
-                                                    ->livewire(SidebarSetting::class)
+                                                Livewire::make(SidebarSetting::class)
+                                                    ->key('sidebar_setting')
                                                     ->lazy(),
                                             ]),
                                     ]),
