@@ -39,7 +39,6 @@ class EventServiceProvider extends ServiceProvider
 
     protected $observers = [
         User::class => [UserObserver::class],
-        Conference::class => [ConferenceObserver::class],
         ScheduledConference::class => [ScheduledConferenceObserver::class],
         Site::class => [SiteObserver::class],
     ];
