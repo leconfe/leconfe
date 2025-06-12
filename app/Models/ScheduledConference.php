@@ -61,22 +61,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                 ->each
                 ->delete();
 
-            SpeakerRole::query()
-                ->with(['speakers'])
-                ->withoutGlobalScopes()
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            CommitteeRole::query()
-                ->with(['committees'])
-                ->withoutGlobalScopes()
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
             Submission::query()
                 ->with(['submissionFiles', 'authors', 'participants', 'reviews', 'media'])
                 ->withoutGlobalScopes()
@@ -109,22 +93,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             NavigationMenu::query()
                 ->withoutGlobalScopes()
                 ->with(['items'])
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            StakeholderLevel::query()
-                ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            Stakeholder::query()
-                ->withoutGlobalScopes()
-                ->whereNull('level_id')
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
