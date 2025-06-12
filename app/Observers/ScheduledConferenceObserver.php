@@ -2,9 +2,7 @@
 
 namespace App\Observers;
 
-use App\Actions\Committees\CommitteeRolePopulateDefaultDataAction;
 use App\Actions\Roles\RolePopulateScheduledConferenceAction;
-use App\Actions\Speakers\SpeakerRolePopulateDefaultDataAction;
 use App\Actions\SubmissionFiles\FilesTypePopulateAction;
 use App\Actions\Tracks\TrackPopulateAction;
 use App\Models\NavigationMenu;
