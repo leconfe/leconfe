@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class)->nullable();
-            $table->foreignIdFor(ScheduledConference::class)->nullable()->default(0);
+
+            $table->foreignIdFor(ScheduledConference::class)->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
         });

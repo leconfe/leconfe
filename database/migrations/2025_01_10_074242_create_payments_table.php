@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('payment_fees', function (Blueprint $table) {
             $table->id();
             // $table->foreignIdFor(Conference::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained();
+            $table->foreignIdFor(ScheduledConference::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->unsignedInteger('type');
             $table->double('amount');

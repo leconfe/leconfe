@@ -51,9 +51,9 @@ class PermissionsAndDisclosure extends \Livewire\Component implements HasForms
             ->schema([
                 TextInput::make('meta.copyright_holder')
                     ->label(__('general.submission_copyright_holder'))
-                    ->helperText(__('general.submission_copyright_holder_helper', [
-                        'copyrightHolder' => app()->getCurrentConference()->getCopyrightHolderForSubmission($this->submission),
-                    ]))
+                    // ->helperText(__('general.submission_copyright_holder_helper', [
+                    //     'copyrightHolder' => app()->getCurrentConference()->getCopyrightHolderForSubmission($this->submission),
+                    // ]))
                     ->maxWidth(MaxWidth::Large)
                     ->disabled(fn () => ! $this->submission->getMeta('copyright_holder') && ! $this->overrideCopyrightHolder)
                     ->suffixActions([
@@ -83,7 +83,7 @@ class PermissionsAndDisclosure extends \Livewire\Component implements HasForms
                     ->label(__('general.submission_license_url'))
                     ->helperText(function () {
                         $licenseOptions = License::getCCLicenseOptions();
-                        $licenseUrl = app()->getCurrentConference()->getLicenseUrl();
+                        $licenseUrl = app()->getCurrentScheduledConference()->getLicenseUrl();
                         if (array_key_exists($licenseUrl, $licenseOptions)) {
                             $licenseName = $licenseOptions[$licenseUrl];
                         } else {

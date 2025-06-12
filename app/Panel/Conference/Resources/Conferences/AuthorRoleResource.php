@@ -44,8 +44,7 @@ class AuthorRoleResource extends Resource
                     ->label(__('general.name'))
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule) {
-                        return $rule
-                            ->where('conference_id', app()->getCurrentConference()->getKey());
+                        return $rule;
                     }, ignoreRecord: true),
             ]);
     }

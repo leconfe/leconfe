@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::create('dois', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Conference::class);
             $table->morphs('doiable');
             $table->string('doi')->unique();
             $table->unsignedInteger('status')->default(1);

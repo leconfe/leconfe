@@ -39,7 +39,7 @@ class Application extends LaravelApplication
 {
     public const APP_VERSION = '2.0.0-alpha.1';
 
-    public const PHP_MIN_VERSION = '8.1';
+    public const PHP_MIN_VERSION = '8.2';
 
     public const CONTEXT_WEBSITE = 0;
 

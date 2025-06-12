@@ -154,6 +154,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allowed_self_assign_roles' => ['Author', 'Reader'],
             'allow_registration' => true,
             'default_register_country' => 'id',
+            'license_url' => 'https://creativecommons.org/licenses/by-nc-nd/4.0',
         ];
     }
 
@@ -300,5 +301,15 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         }
 
         return false;
+    }
+
+    public function getLicenseUrl(): string
+    {
+        $licenseUrl = $this->getMeta('license_url');
+        if ($licenseUrl == 'custom') {
+            return $this->getMeta('license_url_custom');
+        }
+
+        return $licenseUrl;
     }
 }

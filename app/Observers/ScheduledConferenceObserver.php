@@ -25,9 +25,6 @@ class ScheduledConferenceObserver
      */
     public function created(ScheduledConference $scheduledConference): void
     {
-        CommitteeRolePopulateDefaultDataAction::run($scheduledConference);
-        SpeakerRolePopulateDefaultDataAction::run($scheduledConference);
-
         $primaryNavigationMenu = NavigationMenu::create([
             'name' => 'Primary Navigation Menu',
             'handle' => 'primary-navigation-menu',
@@ -46,14 +43,6 @@ class ScheduledConferenceObserver
                 'label' => 'Home',
                 'type' => 'home',
                 'order_column' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'navigation_menu_id' => $primaryNavigationMenu->getKey(),
-                'label' => 'About',
-                'type' => 'about',
-                'order_column' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

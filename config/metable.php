@@ -32,6 +32,13 @@ return [
         Plank\Metable\DataType\PureEnumHandler::class,
         Plank\Metable\DataType\ModelHandler::class,
         Plank\Metable\DataType\ModelCollectionHandler::class,
+        /*
+         * The following handlers are deprecated and will be removed in a future release.
+         * They are kept for backwards compatibility, but should not be used in new code.
+         */
+         Plank\Metable\DataType\ArrayHandler::class,
+         Plank\Metable\DataType\ObjectHandler::class,
+         Plank\Metable\DataType\SerializableHandler::class,
 
         /*
          * The following handler is a catch-all that will encode anything.
@@ -41,13 +48,6 @@ return [
          */
         Plank\Metable\DataType\SignedSerializeHandler::class,
 
-        /*
-         * The following handlers are deprecated and will be removed in a future release.
-         * They are kept for backwards compatibility, but should not be used in new code.
-         */
-         Plank\Metable\DataType\ArrayHandler::class,
-         // Plank\Metable\DataType\ObjectHandler::class,
-         // Plank\Metable\DataType\SerializableHandler::class,
     ],
 
     /*
