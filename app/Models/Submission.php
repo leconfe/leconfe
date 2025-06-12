@@ -38,11 +38,10 @@ use Spatie\EloquentSortable\SortableTrait;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
 
     /**
      * The attributes that are mass assignable.

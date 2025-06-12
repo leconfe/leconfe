@@ -4,7 +4,7 @@ namespace App\Http;
 
 class Request extends \Illuminate\Http\Request
 {
-    public function initialize(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
+    public function initialize(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null): void
     {
         parent::initialize($query, $request, $attributes, $cookies, $files, $server, $content);
         if (LECONFE_SUBDIR) {
