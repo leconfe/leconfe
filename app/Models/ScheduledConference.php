@@ -37,6 +37,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_end' => 'date',
         'type' => ScheduledConferenceType::class,
         'state' => ScheduledConferenceState::class,
+        'is_published' => 'boolean',
     ];
 
     /**
@@ -215,29 +216,15 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('submission_payment');
     }
 
-    public function isCurrent(): bool
-    {
-        return $this->state == ScheduledConferenceState::Current;
-    }
 
     public function isDraft(): bool
     {
-        return $this->state == ScheduledConferenceState::Draft;
+        return !$this->isPublished();
     }
 
     public function isPublished(): bool
     {
-        return $this->state == ScheduledConferenceState::Published;
-    }
-
-    public function isUpcoming(): bool
-    {
-        return $this->isPublished();
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->state == ScheduledConferenceState::Archived;
+        return $this->is_published;
     }
 
     public function scopeType($query, ScheduledConferenceType $type)
