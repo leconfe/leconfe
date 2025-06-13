@@ -99,7 +99,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('Keywords')
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
+                                        fn (Submission $record) => $record->getMeta('keywords')
                                     ),
                                 TextEntry::make('Abstract')
                                     ->color('gray')
