@@ -19,7 +19,7 @@
     </div>
 </div>
     
-@if(app()->getCurrentConference() || app()->getCurrentScheduledConference())
+@if(app()->getCurrentScheduledConference())
     <div class="navbar-container bg-primary text-white shadow z-50">
         <div class="navbar mx-auto max-w-7xl justify-between">
             <div class="navbar-start items-center w-max gap-2">
