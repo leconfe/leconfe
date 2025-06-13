@@ -61,8 +61,8 @@ class SubmissionEventSubscriber
     public function subscribe(Dispatcher $events): array
     {
         return [
-            Accepted::class => 'generateDoiUponReachingEditingStage',
-            Published::class => 'generateDoiUponPublication',
+            // Accepted::class => 'generateDoiUponReachingEditingStage',
+            // Published::class => 'generateDoiUponPublication',
         ];
     }
 }
