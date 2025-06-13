@@ -66,14 +66,14 @@ class SidebarManager
 
     public function getActiveList(): array
     {
-        $context = app()->getCurrentScheduledConference() ?? app()->getCurrentConference() ?? app()->getSite();
+        $context = app()->getCurrentScheduledConference() ?? app()->getCurrentScheduledConference() ?? app()->getSite();
 
         return $context->getMeta('sidebars') ?? [];
     }
 
     public function updateActiveList(array $sidebars): void
     {
-        $context = app()->getCurrentScheduledConference() ?? app()->getCurrentConference() ?? app()->getSite();
+        $context = app()->getCurrentScheduledConference() ?? app()->getCurrentScheduledConference() ?? app()->getSite();
         $context->setMeta('sidebars', $sidebars);
     }
 }

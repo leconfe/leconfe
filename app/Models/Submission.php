@@ -86,7 +86,6 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
     {
         static::creating(function (Submission $submission) {
             $submission->user_id ??= Auth::id();
-            $submission->conference_id ??= app()->getCurrentConferenceId();
             $submission->scheduled_conference_id ??= app()->getCurrentScheduledConferenceId();
 
             if (! $submission->track_id) {
@@ -143,11 +142,6 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
     public function reviews()
     {
         return $this->hasMany(Review::class);
-    }
-
-    public function conference()
-    {
-        return $this->belongsTo(Conference::class);
     }
 
     public function scheduledConference()

@@ -37,6 +37,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_end' => 'date',
         'type' => ScheduledConferenceType::class,
         'state' => ScheduledConferenceState::class,
+        'is_published' => 'boolean',
     ];
 
     /**
@@ -55,22 +56,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
         static::deleting(function (ScheduledConference $scheduledConference) {
             Announcement::query()
-                ->withoutGlobalScopes()
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            SpeakerRole::query()
-                ->with(['speakers'])
-                ->withoutGlobalScopes()
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            CommitteeRole::query()
-                ->with(['committees'])
                 ->withoutGlobalScopes()
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
@@ -114,22 +99,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                 ->each
                 ->delete();
 
-            StakeholderLevel::query()
-                ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
-            Stakeholder::query()
-                ->withoutGlobalScopes()
-                ->whereNull('level_id')
-                ->where('scheduled_conference_id', $scheduledConference->getKey())
-                ->lazy()
-                ->each
-                ->delete();
-
             Track::query()
                 ->withoutGlobalScopes()
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
@@ -154,6 +123,21 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allowed_self_assign_roles' => ['Author', 'Reader'],
             'allow_registration' => true,
             'default_register_country' => 'id',
+            'license_url' => 'https://creativecommons.org/licenses/by-nc-nd/4.0',
+            'primary_citation_format' => 'apa',
+            'enabled_citation_styles' => [
+                'harvard-cite-them-right',
+                'ieee',
+                'modern-language-association',
+                'turabian-fullnote-bibliography',
+                'vancouver',
+                'ama',
+                'chicago-author-date',
+                'associacao-brasileira-de-normas-tecnicas',
+                'apa',
+                'acs-nano',
+                'acm-sig-proceedings',
+            ],
         ];
     }
 
@@ -180,6 +164,11 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function speakerRoles(): HasMany
     {
         return $this->hasMany(SpeakerRole::class);
+    }
+
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class);
     }
 
     public function announcements(): HasMany
@@ -246,29 +235,15 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('submission_payment');
     }
 
-    public function isCurrent(): bool
-    {
-        return $this->state == ScheduledConferenceState::Current;
-    }
 
     public function isDraft(): bool
     {
-        return $this->state == ScheduledConferenceState::Draft;
+        return !$this->isPublished();
     }
 
     public function isPublished(): bool
     {
-        return $this->state == ScheduledConferenceState::Published;
-    }
-
-    public function isUpcoming(): bool
-    {
-        return $this->isPublished();
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->state == ScheduledConferenceState::Archived;
+        return $this->is_published;
     }
 
     public function scopeType($query, ScheduledConferenceType $type)
@@ -300,5 +275,15 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         }
 
         return false;
+    }
+
+    public function getLicenseUrl(): string
+    {
+        $licenseUrl = $this->getMeta('license_url');
+        if ($licenseUrl == 'custom') {
+            return $this->getMeta('license_url_custom');
+        }
+
+        return $licenseUrl;
     }
 }

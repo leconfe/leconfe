@@ -22,10 +22,6 @@ class Login extends BaseNavigationItemType
             return route('livewirePageGroup.scheduledConference.pages.login');
         }
 
-        if (app()->getCurrentConferenceId()) {
-            return route('livewirePageGroup.conference.pages.login');
-        }
-
         return route('livewirePageGroup.website.pages.login');
     }
 

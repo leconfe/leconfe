@@ -53,7 +53,7 @@ class ScheduledConferenceResource extends Resource
                     ->required()
                     ->placeholder(__('general.enter_the_title_of_the_serie')),
                 TextInput::make('path')
-                    // ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
+                    ->prefix(fn () => url('') . '/')
                     ->label(__('general.path'))
                     ->rule('alpha_dash')
                     ->required(),
@@ -76,31 +76,31 @@ class ScheduledConferenceResource extends Resource
     {
         return $table
             // ->recordUrl(fn (ScheduledConference $record) => route('filament.scheduledConference.pages.dashboard', ['serie' => $record]))
-            ->modifyQueryUsing(fn (Builder $query) => $query->latest())
+            ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->recordUrl(fn($record) => $record->getPanelUrl())
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
                     ->searchable()
-                    ->description(fn (ScheduledConference $record) => $record->current ? 'Current' : null)
+                    ->description(fn(ScheduledConference $record) => $record->current ? 'Current' : null)
                     ->sortable()
                     ->wrap()
                     ->wrapHeader(),
                 TextColumn::make('date')
-                    ->getStateUsing(function(ScheduledConference $record){
+                    ->getStateUsing(function (ScheduledConference $record) {
                         $date = '';
 
-                        if($record->date_start){
+                        if ($record->date_start) {
                             $date = $record->date_start->format(Setting::get('format_date'));
                         }
 
-                        if($record->date_start && $record->date_end && !$record->date_start->equalTo($record->date_end)){
+                        if ($record->date_start && $record->date_end && !$record->date_start->equalTo($record->date_end)) {
                             $date .= ' - ';
                         }
 
-                        if($record->date_end && !$record->date_start->equalTo($record->date_end)){
-                             $date .= $record->date_end->format(Setting::get('format_date'));
+                        if ($record->date_end && !$record->date_start->equalTo($record->date_end)) {
+                            $date .= $record->date_end->format(Setting::get('format_date'));
                         }
 
                         return $date;
@@ -122,58 +122,44 @@ class ScheduledConferenceResource extends Resource
                         ->requiresConfirmation()
                         ->icon('heroicon-o-arrow-up-on-square')
                         ->color('primary')
-                        ->form([
-                            Checkbox::make('set_as_current')
-                                ->label(__('general.set_as_current')),
-                        ])
-                        ->hidden(fn (ScheduledConference $record) => $record->isArchived() || $record->isCurrent() || $record->isPublished() || $record->trashed())
-                        ->action(function (ScheduledConference $record, array $data, Tables\Actions\Action $action) {
-                            $data['state'] = $data['set_as_current'] ? ScheduledConferenceState::Current : ScheduledConferenceState::Published;
-
-                            ScheduledConferenceUpdateAction::run($record, $data);
+                        ->hidden(fn(ScheduledConference $record) => $record->isPublished() || $record->trashed())
+                        ->action(function (ScheduledConference $record, Tables\Actions\Action $action) {
+                            $record->is_published = true;
+                            $record->save();
 
                             return $action->success();
-                        }),
-                    Tables\Actions\Action::make('set_as_current')
-                        ->label(__('general.set_as_current'))
-                        ->requiresConfirmation()
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->hidden(fn (ScheduledConference $record) => $record->isCurrent() || $record->isDraft() || $record->trashed())
-                        ->action(fn (ScheduledConference $record, Tables\Actions\Action $action) => $record->update(['state' => ScheduledConferenceState::Current]) && $action->success())
-                        ->successNotificationTitle(fn (ScheduledConference $scheduledConference) => $scheduledConference->title.' is set as current'),
-                    Tables\Actions\Action::make('set_as_draft')
-                        ->label(__('general.set_as_draft'))
-                        ->requiresConfirmation()
-                        ->icon('heroicon-o-pencil-square')
-                        ->hidden(fn (ScheduledConference $record) => $record->isDraft() || $record->trashed())
-                        ->action(fn (ScheduledConference $record, Tables\Actions\Action $action) => $record->update(['state' => ScheduledConferenceState::Draft]) && $action->success())
-                        ->successNotificationTitle(fn (ScheduledConference $scheduledConference) => $scheduledConference->title.' is set as current'),
-                    Tables\Actions\Action::make('move_to_archive')
-                        ->label(__('general.move_to_archive'))
-                        ->requiresConfirmation()
-                        ->icon('heroicon-o-archive-box-arrow-down')
-                        ->color('warning')
-                        ->hidden(fn (ScheduledConference $record) => $record->isArchived() || $record->isDraft() || $record->trashed())
-                        ->action(fn (ScheduledConference $record, Tables\Actions\Action $action) => $record->update(['state' => ScheduledConferenceState::Archived]) && $action->success())
-                        ->successNotificationTitle(fn (ScheduledConference $scheduledConference) => $scheduledConference->title.' is moved to archive'),
+                        })
+                        ->successNotificationTitle(fn(ScheduledConference $scheduledConference) => $scheduledConference->title . ' is published'),
                     Tables\Actions\EditAction::make()
                         ->modalWidth(MaxWidth::ExtraLarge)
-                        ->hidden(fn (ScheduledConference $record) => $record->isArchived() || $record->trashed())
+                        ->hidden(fn(ScheduledConference $record) => $record->trashed())
                         ->mutateRecordDataUsing(function (ScheduledConference $record, array $data) {
                             $data['meta'] = $record->getAllMeta()->toArray();
 
                             return $data;
                         })
-                        ->using(fn (ScheduledConference $record, array $data) => ScheduledConferenceUpdateAction::run($record, $data)),
+                        ->using(fn(ScheduledConference $record, array $data) => ScheduledConferenceUpdateAction::run($record, $data)),
+                    Tables\Actions\Action::make('set_as_draft')
+                        ->label(__('general.set_as_draft'))
+                        ->requiresConfirmation()
+                        ->color('warning')
+                        ->icon('heroicon-o-information-circle')
+                        ->hidden(fn(ScheduledConference $record) => $record->isDraft() || $record->trashed())
+                        ->action(function (ScheduledConference $record, Tables\Actions\Action $action) {
+                            $record->is_published = false;
+                            $record->save();
+
+                            return $action->success();
+                        })
+                        ->successNotificationTitle(fn(ScheduledConference $scheduledConference) => $scheduledConference->title . ' is set as draft'),
                     Tables\Actions\DeleteAction::make()
                         ->label(__('general.move_to_trash'))
                         ->modalHeading(__('general.move_to_trash'))
-                        ->hidden(fn (ScheduledConference $record) => $record->isCurrent() || $record->trashed())
+                        ->hidden(fn(ScheduledConference $record) => $record->trashed())
                         ->successNotificationTitle(__('general.serie_moved_to_trash')),
                     Tables\Actions\ForceDeleteAction::make()
                         ->label(__('general.delete_permanently'))
-                        ->hidden(fn (ScheduledConference $record) => ! $record->trashed())
+                        ->hidden(fn(ScheduledConference $record) => ! $record->trashed())
                         ->successNotificationTitle(__('general.serie_deleted_permanently')),
                 ]),
             ]);

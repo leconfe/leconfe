@@ -175,6 +175,7 @@ class CreateSubmission extends Page implements HasForms
                 'role_id' => $submitAsRole->getKey(),
             ]);
         } catch (\Throwable $th) {
+            throw $th;
             Notification::make()
                 ->title($th->getMessage())
                 ->danger()

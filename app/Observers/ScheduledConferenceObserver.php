@@ -2,9 +2,7 @@
 
 namespace App\Observers;
 
-use App\Actions\Committees\CommitteeRolePopulateDefaultDataAction;
 use App\Actions\Roles\RolePopulateScheduledConferenceAction;
-use App\Actions\Speakers\SpeakerRolePopulateDefaultDataAction;
 use App\Actions\SubmissionFiles\FilesTypePopulateAction;
 use App\Actions\Tracks\TrackPopulateAction;
 use App\Models\NavigationMenu;
@@ -25,9 +23,6 @@ class ScheduledConferenceObserver
      */
     public function created(ScheduledConference $scheduledConference): void
     {
-        CommitteeRolePopulateDefaultDataAction::run($scheduledConference);
-        SpeakerRolePopulateDefaultDataAction::run($scheduledConference);
-
         $primaryNavigationMenu = NavigationMenu::create([
             'name' => 'Primary Navigation Menu',
             'handle' => 'primary-navigation-menu',
@@ -46,14 +41,6 @@ class ScheduledConferenceObserver
                 'label' => 'Home',
                 'type' => 'home',
                 'order_column' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'navigation_menu_id' => $primaryNavigationMenu->getKey(),
-                'label' => 'About',
-                'type' => 'about',
-                'order_column' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

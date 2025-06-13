@@ -198,23 +198,23 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->icon('heroicon-o-credit-card')
                 ->visible(fn() => $this->record->paymentQueue)
                 ->url(fn() => $this->record->paymentQueue->getPaymentUrl()),
-            Action::make('view')
-                ->icon('heroicon-o-eye')
-                ->color('primary')
-                ->outlined()
-                ->url(route('livewirePageGroup.conference.pages.paper', ['submission' => $this->record->id]), true)
-                ->label(function () {
-                    if ($this->record->isPublished()) {
-                        return __('general.view');
-                    }
+            // Action::make('view')
+            //     ->icon('heroicon-o-eye')
+            //     ->color('primary')
+            //     ->outlined()
+            //     ->url(route('livewirePageGroup.conference.pages.paper', ['submission' => $this->record->id]), true)
+            //     ->label(function () {
+            //         if ($this->record->isPublished()) {
+            //             return __('general.view');
+            //         }
 
-                    if (auth()->user()->can('editing', $this->record)) {
-                        return __('general.preview');
-                    }
-                })
-                ->visible(
-                    fn(): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
-                ),
+            //         if (auth()->user()->can('editing', $this->record)) {
+            //             return __('general.preview');
+            //         }
+            //     })
+            //     ->visible(
+            //         fn(): bool => ($this->record->isPublished() || auth()->user()->can('editing', $this->record)) && $this->record->proceeding
+            //     ),
             Action::make('assign_proceeding')
                 ->label(__('general.publication'))
                 ->authorize('publish', $this->record)

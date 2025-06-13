@@ -22,10 +22,6 @@ class Profile extends BaseNavigationItemType
             return route('filament.scheduledConference.pages.profile');
         }
 
-        if (app()->getCurrentConferenceId()) {
-            return route('filament.conference.pages.profile');
-        }
-
         return route('filament.administration.pages.profile');
     }
 }

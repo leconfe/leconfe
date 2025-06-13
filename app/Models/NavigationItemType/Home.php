@@ -22,10 +22,6 @@ class Home extends BaseNavigationItemType
             return route('livewirePageGroup.scheduledConference.pages.home');
         }
 
-        if (app()->getCurrentConferenceId()) {
-            return route('livewirePageGroup.conference.pages.home');
-        }
-
         return route('livewirePageGroup.administration.pages.home');
     }
 }

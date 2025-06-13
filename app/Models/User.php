@@ -234,14 +234,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
 
         $model = $this->getModel();
 
-        $conference = app()->getCurrentConference();
         $scheduledConference = app()->getCurrentScheduledConference();
 
         $teamPivot = [];
-
-        if ($conference) {
-            $teamPivot['conference_id'] = $conference->getKey();
-        }
 
         if ($scheduledConference) {
             $teamPivot['scheduled_conference_id'] = $scheduledConference->getKey();

@@ -19,7 +19,6 @@ use App\Models\Registration;
 use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
 use App\Models\ScheduledConference;
-use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\GlobalScope;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Site;
@@ -39,17 +38,13 @@ class Application extends LaravelApplication
 {
     public const APP_VERSION = '2.0.0-alpha.1';
 
-    public const PHP_MIN_VERSION = '8.1';
+    public const PHP_MIN_VERSION = '8.2';
 
     public const CONTEXT_WEBSITE = 0;
 
     public const API_URL = 'https://panel.leconfe.com/api/';
 
-    protected ?int $currentConferenceId = null;
-
     protected ?Site $site = null;
-
-    protected ?Conference $currentConference = null;
 
     protected string $currentConferencePath;
 
@@ -91,29 +86,6 @@ class Application extends LaravelApplication
         return static::PHP_MIN_VERSION;
     }
 
-    public function getCurrentConference(): ?Conference
-    {
-        if ($this->currentConferenceId && ! $this->currentConference) {
-            $this->currentConference = Conference::find($this->getCurrentConferenceId());
-        }
-
-        if ($this->currentConference && $this->currentConference->getKey() !== $this->getCurrentConferenceId()) {
-            $this->currentConference = Conference::find($this->getCurrentConferenceId());
-        }
-
-        return $this->currentConference;
-    }
-
-    public function getCurrentConferenceId(): int
-    {
-        return $this->currentConferenceId ?? static::CONTEXT_WEBSITE;
-    }
-
-    public function setCurrentConferenceId(int $conferenceId)
-    {
-        $this->currentConferenceId = $conferenceId;
-    }
-
     public function getCurrentScheduledConferenceId(): ?int
     {
         return $this->currentScheduledConferenceId;
@@ -137,41 +109,16 @@ class Application extends LaravelApplication
         return $this->currentScheduledConference;
     }
 
-    public function scopeCurrentConference(): void
-    {
-        // $models = [
-        //     Submission::class,
-        //     NavigationMenu::class,
-        //     AuthorRole::class,
-        //     Topic::class,
-        //     StaticPage::class,
-        //     ScheduledConference::class,
-        //     Proceeding::class,
-        //     MailTemplate::class,
-        //     Stakeholder::class,
-        //     StakeholderLevel::class,
-        // ];
-
-        // foreach ($models as $model) {
-        //     $model::addGlobalScope(new ConferenceScope);
-        // }
-    }
-
     public function scopeCurrentScheduledConference(): void
     {
         $models = [
-            CommitteeRole::class,
-            SpeakerRole::class,
             StaticPage::class,
-            Committee::class,
             Announcement::class,
             Topic::class,
             NavigationMenu::class,
             SubmissionFileType::class,
             Track::class,
             Submission::class,
-            Stakeholder::class,
-            StakeholderLevel::class,
             RegistrationType::class,
             Registration::class,
             RegistrationPayment::class,
@@ -241,10 +188,6 @@ class Application extends LaravelApplication
             return route('livewirePageGroup.scheduledConference.pages.login');
         }
 
-        if (app()->getCurrentConference()) {
-            return route('livewirePageGroup.conference.pages.login');
-        }
-
         return route('livewirePageGroup.website.pages.login');
     }
 
@@ -272,12 +215,6 @@ class Application extends LaravelApplication
     {
         if ($currentScheduledConference = app()->getCurrentScheduledConference()) {
             $currentScheduledConference->setMeta('theme', $theme);
-
-            return;
-        }
-
-        if ($currentConference = app()->getCurrentConference()) {
-            $theme = $currentConference->setMeta('theme', $theme);
 
             return;
         }

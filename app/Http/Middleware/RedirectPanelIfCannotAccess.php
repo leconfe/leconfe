@@ -27,7 +27,6 @@ class RedirectPanelIfCannotAccess
             abort(404);
         }
 
-        // $conference = app()->getCurrentConference();
         $role = Role::query()
             ->withoutGlobalScopes()
             ->with([
@@ -36,15 +35,6 @@ class RedirectPanelIfCannotAccess
             ])
             ->whereHas('users', fn ($query) => $query->where('id', $user->id))
             ->first();
-
-        // if ($panel->getId() === PanelProvider::PANEL_CONFERENCE) {
-
-        //     if ($user->can('view', $conference)) {
-        //         return $next($request);
-        //     }
-
-        //     return redirect()->to($conference->currentScheduledConference->getPanelUrl());
-        // }
 
         if ($panel->getId() === PanelProvider::PANEL_ADMINISTRATION) {
             if ($user->can('Administration:view')) {

@@ -17,7 +17,7 @@ class CitationStyleLanguage extends Component
 
     public function mount()
     {
-        $this->citationStyle = app()->getCurrentConference()->getMeta('primary_citation_format');
+        $this->citationStyle = app()->getCurrentScheduledConference()->getMeta('primary_citation_format');
     }
 
     public function render()

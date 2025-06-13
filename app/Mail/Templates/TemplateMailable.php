@@ -40,24 +40,24 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
 
     public static function getConferenceViewData()
     {
-        $conference = app()->getCurrentConference();
+        $scheduledConference = app()->getScheduledCurrentConference();
 
-        if (! $conference) {
+        if (! $scheduledConference) {
             return [];
         }
 
         return [
-            'conferenceName' => $conference->name,
-            'conferenceLink' => $conference->getHomeUrl(),
-            'conferenceLogoUrl' => $conference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']),
-            'conferenceLogoAltText' => $conference->name,
+            'conferenceName' => $scheduledConference->title,
+            'conferenceLink' => $scheduledConference->getHomeUrl(),
+            'conferenceLogoUrl' => $scheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']),
+            'conferenceLogoAltText' => $scheduledConference->title,
         ];
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(config('mail.from.address'), app()->getCurrentConference()->name ?? app()->getSite()->getMeta('name')),
+            from: new Address(config('mail.from.address'), app()->getScheduledCurrentConference()?->title ?? app()->getSite()->getMeta('name')),
         );
     }
 }

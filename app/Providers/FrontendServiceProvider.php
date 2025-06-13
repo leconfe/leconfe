@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Facades\Plugin;
 use App\Http\Middleware\IdentifyScheduledConference;
-use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
@@ -57,7 +56,6 @@ class FrontendServiceProvider extends ServiceProvider
             ->layout('frontend.website.components.layouts.app')
             ->middleware([
                 'web',
-                RedirectToConference::class,
             ], true)
             ->discoverPages(in: app_path('Frontend/Website/Pages'), for: 'App\\Frontend\\Website\\Pages');
 

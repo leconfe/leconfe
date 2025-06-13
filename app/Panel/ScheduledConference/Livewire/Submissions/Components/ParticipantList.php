@@ -115,7 +115,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                 Select::make('role_id')
                                     ->label('Role')
                                     ->options(function () {
-                                        return app()->getCurrentConference()->roles()->whereIn('name', [
+                                        return app()->getCurrentScheduledConference()->roles()->whereIn('name', [
                                             UserRole::ConferenceManager,
                                             UserRole::ScheduledConferenceEditor,
                                             UserRole::TrackEditor,

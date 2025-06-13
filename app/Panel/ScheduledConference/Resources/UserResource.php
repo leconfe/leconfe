@@ -10,6 +10,7 @@ use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire;
+use App\Panel\ScheduledConference\Livewire\ContributorForm;
 use App\Panel\ScheduledConference\Resources\UserResource\Pages;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -279,7 +280,7 @@ class UserResource extends Resource
                         ->label(fn (User $record) => __('general.login_as_user', ['name' => $record->full_name]))
                         ->icon('heroicon-m-key')
                         ->color('primary')
-                        ->redirectTo(fn () => app()->getCurrentScheduledConference()?->getPanelUrl() ?? app()->getCurrentConference()?->getPanelUrl()),
+                        ->redirectTo(fn () => app()->getCurrentScheduledConference()?->getPanelUrl()),
                     Action::make('enable')
                         ->visible(fn (User $record) => auth()->user()->can('enable', $record))
                         ->label(__('general.enable_user'))
@@ -336,7 +337,7 @@ class UserResource extends Resource
 
                 ]),
             ])
-            ->queryStringIdentifier('users')
+            // ->queryStringIdentifier('users')
             ->bulkActions([
                 DeleteBulkAction::make(),
             ])

@@ -11,6 +11,7 @@ use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Livewire;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
+use App\Panel\ScheduledConference\Livewire\ContributorForm;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;

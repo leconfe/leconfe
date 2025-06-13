@@ -4,7 +4,6 @@ namespace App\Frontend\Website\Pages;
 
 use App\Facades\Hook;
 use App\Facades\MetaTag;
-use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
 use App\Http\Middleware\ThemeActivator;
@@ -13,6 +12,7 @@ use App\Utils\Installer;
 use App\Utils\PermissionChecker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Log;
 use Jackiedo\Timezonelist\Facades\Timezonelist;
 
 class Installation extends Page
@@ -22,7 +22,6 @@ class Installation extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
-        RedirectToConference::class,
         ThemeActivator::class,
     ];
 
@@ -91,6 +90,7 @@ class Installation extends Page
             return redirect()->route('livewirePageGroup.website.pages.installation-successful');
         } catch (\Throwable $th) {
             $this->form->addError('error', $th->getMessage());
+            Log::error($th);
         }
 
     }

@@ -132,12 +132,10 @@ class PluginManager
 
     protected function getCacheKey($plugin, $key)
     {
-        $conferenceId = App::getCurrentConferenceId();
         $scheduledConferenceId = App::getCurrentScheduledConferenceId();
 
         return md5(implode('_', [
             'plugin_setting',
-            $conferenceId,
             $scheduledConferenceId,
             $plugin,
             $key,
@@ -159,7 +157,6 @@ class PluginManager
 
     public function updateSetting(string $plugin, $key, $value): mixed
     {
-        $conferenceId = App::getCurrentConferenceId();
         $scheduledConferenceId = App::getCurrentScheduledConferenceId() ?? 0;
 
         Cache::forget($this->getCacheKey($plugin, $key));
@@ -170,7 +167,6 @@ class PluginManager
             ->updateOrInsert(
                 [
                     'plugin' => $plugin,
-                    'conference_id' => $conferenceId,
                     'scheduled_conference_id' => $scheduledConferenceId,
                     'key' => $key,
                 ],

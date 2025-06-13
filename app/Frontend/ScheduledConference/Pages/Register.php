@@ -131,16 +131,8 @@ class Register extends Page
             ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
             'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
         ]);
-
-        if (app()->getCurrentConference()) {
-            $user->assignRole($data['selfAssignRoles']);
-        } else {
-            foreach ($data['selfAssignRoles'] as $conferenceId => $roles) {
-                // get keys of roles where value is true
-                $roles = array_keys(array_filter($roles));
-                $user->assignRole($roles);
-            }
-        }
+        
+        $user->assignRole($data['selfAssignRoles']);
 
         Filament::auth()->login($user);
 
