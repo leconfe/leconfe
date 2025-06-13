@@ -30,12 +30,6 @@ class SetupDefaultData
             return $next($request);
         }
 
-        if ($currentConference = app()->getCurrentConference()) {
-            $this->setupConference($request, $currentConference);
-
-            return $next($request);
-        }
-
         $this->setupSite();
 
         return $next($request);
@@ -57,27 +51,8 @@ class SetupDefaultData
         MetaTag::add('description', $site->getMeta('description'));
     }
 
-    protected function setupConference(Request $request, $currentConference)
-    {
-        View::share('currentConference', $currentConference);
-        View::share('homeUrl', route('livewirePageGroup.conference.pages.home'));
-        View::share('headerLogo', $currentConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
-        View::share('headerLogoAltText', $currentConference->name);
-        View::share('contextName', $currentConference->name);
-        View::share('pageFooter', $currentConference->getMeta('page_footer'));
-        View::share('favicon', $currentConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
-        View::share('styleSheet', $currentConference->getFirstMediaUrl('styleSheet'));
-
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->description));
-
-        foreach ($currentConference->getMeta('meta_tags') ?? [] as $name => $content) {
-            MetaTag::add($name, $content);
-        }
-    }
-
     protected function setupScheduledConference(Request $request, $currentScheduledConference)
     {
-        View::share('currentConference', app()->getCurrentConference());
         View::share('currentScheduledConference', $currentScheduledConference);
         View::share('homeUrl', route('livewirePageGroup.scheduledConference.pages.home'));
         View::share('headerLogo', $currentScheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));

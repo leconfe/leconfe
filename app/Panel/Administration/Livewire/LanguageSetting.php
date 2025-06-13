@@ -34,7 +34,6 @@ class LanguageSetting extends Component implements HasForms
     public function form(Form $form): Form
     {
         return $form
-            ->model(app()->getCurrentConference())
             ->schema([
                 Section::make()
                     ->schema([

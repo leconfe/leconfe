@@ -53,7 +53,7 @@ class ScheduledConferenceResource extends Resource
                     ->required()
                     ->placeholder(__('general.enter_the_title_of_the_serie')),
                 TextInput::make('path')
-                    // ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
+                    ->prefix(fn () => url('') . '/')
                     ->label(__('general.path'))
                     ->rule('alpha_dash')
                     ->required(),

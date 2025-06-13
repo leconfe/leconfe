@@ -23,28 +23,6 @@ class Role extends Model
      */
     protected static function booted(): void
     {
-        // static::addGlobalScope('conferences', function (Builder $builder) {
-
-        //     $conferenceScopeColumn = config('permission.table_names.roles', 'roles').'.conference_id';
-        //     $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles').'.scheduled_conference_id';
-
-        //     $conferenceId = app()->getCurrentConferenceId();
-        //     $builder->where($conferenceScopeColumn, 0);
-        //     if ($conferenceId) {
-        //         $builder->orWhere($conferenceScopeColumn, app()->getCurrentConferenceId());
-        //     }
-
-        //     $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-        //     $builder->where($scheduledConferenceScopeColumn, 0);
-        //     if ($scheduledConferenceId) {
-        //         $builder->orWhere($scheduledConferenceScopeColumn, app()->getCurrentScheduledConferenceId());
-        //     }
-        // });
-    }
-
-    public function conference(): BelongsTo
-    {
-        return $this->belongsTo(Conference::class);
     }
 
     public function scheduledConference(): BelongsTo

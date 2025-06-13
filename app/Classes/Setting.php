@@ -30,23 +30,19 @@ class Setting
     {
         $prefixedKey = $this->prefix.$key;
 
-        return app()->getCurrentConferenceId() ? app()->getCurrentConference()->getMeta($prefixedKey) : app()->getSite()->getMeta($prefixedKey);
+        return app()->getSite()->getMeta($prefixedKey);
     }
 
     protected function setData($key, $value): void
     {
         $prefixedKey = $this->prefix.$key;
 
-        if (app()->getCurrentConferenceId()) {
-            app()->getCurrentConference()->setMeta($prefixedKey, $value);
-        }
-
         app()->getSite()->setMeta($prefixedKey, $value);
     }
 
     protected function getAllData(): array
     {
-        $data = app()->getCurrentConferenceId() ? app()->getCurrentConference()->getAllMeta() : app()->getSite()->getAllMeta();
+        $data = app()->getSite()->getAllMeta();
         $settings = [];
 
         foreach ($data as $key => $value) {
@@ -64,12 +60,6 @@ class Setting
 
         foreach ($data as $key => $value) {
             $prefixedData[$this->prefix.$key] = $value;
-        }
-
-        if (app()->getCurrentConferenceId()) {
-            app()->getCurrentConference()->setManyMeta($prefixedData);
-
-            return;
         }
 
         app()->getSite()->setManyMeta($prefixedData);

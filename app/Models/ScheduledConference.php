@@ -124,6 +124,20 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allow_registration' => true,
             'default_register_country' => 'id',
             'license_url' => 'https://creativecommons.org/licenses/by-nc-nd/4.0',
+            'primary_citation_format' => 'apa',
+            'enabled_citation_styles' => [
+                'harvard-cite-them-right',
+                'ieee',
+                'modern-language-association',
+                'turabian-fullnote-bibliography',
+                'vancouver',
+                'ama',
+                'chicago-author-date',
+                'associacao-brasileira-de-normas-tecnicas',
+                'apa',
+                'acs-nano',
+                'acm-sig-proceedings',
+            ],
         ];
     }
 
@@ -150,6 +164,11 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function speakerRoles(): HasMany
     {
         return $this->hasMany(SpeakerRole::class);
+    }
+
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class);
     }
 
     public function announcements(): HasMany

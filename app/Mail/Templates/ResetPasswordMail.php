@@ -21,7 +21,7 @@ class ResetPasswordMail extends TemplateMailable
      */
     public function __construct(User $user)
     {
-        $this->siteName = app()->getCurrentScheduledConference()?->title ?? app()->getCurrentConference()?->name ?? app()->getSite()->getMeta('name');
+        $this->siteName = app()->getCurrentScheduledConference()?->title ?? app()->getSite()->getMeta('name');
 
         $this->verificationUrl = $this->verificationUrl($user);
 
@@ -35,10 +35,6 @@ class ResetPasswordMail extends TemplateMailable
     protected function verificationUrl($user)
     {
         $routeName = 'livewirePageGroup.website.pages.reset-password-confirmation';
-
-        if (app()->getCurrentConference()) {
-            $routeName = 'livewirePageGroup.conference.pages.reset-password-confirmation';
-        }
 
         if (app()->getCurrentScheduledConference()) {
             $routeName = 'livewirePageGroup.scheduledConference.pages.reset-password-confirmation';

@@ -4,7 +4,6 @@ namespace App\Frontend\Website\Pages;
 
 use App\Facades\Hook;
 use App\Facades\MetaTag;
-use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
 use App\Http\Middleware\ThemeActivator;
@@ -23,7 +22,6 @@ class Installation extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
-        RedirectToConference::class,
         ThemeActivator::class,
     ];
 

@@ -27,10 +27,6 @@ class Logout extends BaseNavigationItemType
             return route('livewirePageGroup.scheduledConference.pages.logout');
         }
 
-        if (app()->getCurrentConferenceId()) {
-            return route('livewirePageGroup.conference.pages.logout');
-        }
-
         return route('livewirePageGroup.website.pages.logout');
     }
 }
