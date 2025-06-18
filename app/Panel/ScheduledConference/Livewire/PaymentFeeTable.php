@@ -84,6 +84,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ->headerActions([
                 CreateAction::make()
                     ->form(fn (Form $form) => $this->form($form))
+                    ->label('New Type')
                     ->using(function ($data) {
                         $record = new PaymentFee;
                         $record->fill($data);

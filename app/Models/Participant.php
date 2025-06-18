@@ -41,7 +41,7 @@ class Participant extends Model implements HasMedia, HasPayment
     {
         return Attribute::make(
             get: function () {
-                return $this->public_name ?? Str::squish($this->given_name.' '.$this->family_name);
+                return $this->public_name ?? Str::squish($this->given_name . ' ' . $this->family_name);
             },
         );
     }

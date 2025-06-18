@@ -66,7 +66,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
-                    ->label('Participant Fee')
+                    ->label('Registration Type')
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('amount')

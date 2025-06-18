@@ -12,6 +12,7 @@ use App\Models\CommitteeRole;
 use App\Models\Conference;
 use App\Models\MailTemplate;
 use App\Models\NavigationMenu;
+use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\Proceeding;
@@ -173,11 +174,10 @@ class Application extends LaravelApplication
             Submission::class,
             Stakeholder::class,
             StakeholderLevel::class,
-            RegistrationType::class,
             Registration::class,
-            RegistrationPayment::class,
             Payment::class,
             PaymentFee::class,
+            Participant::class,
         ];
 
         foreach ($models as $model) {
