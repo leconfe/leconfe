@@ -316,4 +316,9 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             ->where('user_id', $user->getKey())
             ->first()?->role;
     }
+
+    public function setPrimaryContact(Author $author) : void
+    {
+        $this->setMeta('primary_contact_id', $author->getKey());
+    }
 }

@@ -39,6 +39,9 @@
                                 <x-lineawesome-user class="w-5 h-5 mr-1" />
                                 <h3 class="citation_author">{{ $contributor->fullName }}</h3>
                             </div>
+                            @if($contributor->isPrimaryContact($paper))
+                                <a href="mailto:{{$contributor->email}}" class="ml-[25px] text-sm text-slate-500">{{ $contributor->email }}</a>
+                            @endif
                             <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role->name }}</div>
                         </div>
                     @endforeach

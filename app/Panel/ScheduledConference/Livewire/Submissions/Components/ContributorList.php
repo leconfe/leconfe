@@ -12,16 +12,19 @@ use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -49,9 +52,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ->orderBy('order_column');
     }
 
-    public function getContributorFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form->schema([
             Grid::make()
                 ->schema([
                     Select::make('author_id')
@@ -158,11 +161,12 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->columnSpanFull()
                         ->searchable(),
                     ...ContributorForm::additionalFormField(),
+                    Checkbox::make('primary_contact'),
                 ])
                 ->columnSpan([
                     'lg' => 2,
                 ]),
-        ];
+        ]);
     }
 
     public function table(Table $table): Table
@@ -178,13 +182,19 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                 ActionGroup::make([
                     EditAction::make()
                         ->modalWidth('3xl')
-                        ->mutateRecordDataUsing(function (array $data, Model $record) {
+                        ->mutateRecordDataUsing(function (array $data, Author $record) {
                             $data['meta'] = $record->getAllMeta();
-
+                            $data['primary_contact'] = $record->isPrimaryContact($this->submission);
                             return $data;
                         })
-                        ->form($this->getContributorFormSchema())
-                        ->using(fn(array $data, Author $record) => AuthorUpdateAction::run($data, $record)),
+                        ->form(fn(Form $form) => $this->form($form))
+                        ->using(function (array $data, Author $record) {
+                            AuthorUpdateAction::run($data, $record);
+
+                            if($data['primary_contact']){
+                                $this->submission->setPrimaryContact($record);
+                            }
+                        }),
                     DeleteAction::make()
                         ->using(fn(array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
                 ])
@@ -197,11 +207,16 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->icon('heroicon-o-user-plus')
                     ->modalHeading(__('general.add_contributor'))
                     ->successNotificationTitle(__('general.contributor_added'))
-                    ->form($this->getContributorFormSchema())
+                    ->form(fn(Form $form) => $this->form($form))
                     ->using(function (array $data) {
                         $author = Author::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();
                         if (! $author) {
                             $author = AuthorCreateAction::run($this->submission, $data);
+                        }
+
+                        $authorCount = Author::where('submission_id', $author->submission_id)->count();
+                        if ($authorCount == 1) {
+                            $this->submission->setPrimaryContact($author);
                         }
 
                         return $author;
@@ -209,46 +224,23 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->hidden($this->viewOnly),
             ])
             ->columns([
-                Split::make([
-                    SpatieMediaLibraryImageColumn::make('profile')
-                        ->grow(false)
-                        ->collection('profile')
-                        ->conversion('avatar')
-                        ->width(50)
-                        ->height(50)
-                        ->defaultImageUrl(
-                            fn(Model $record): string => $record->getFilamentAvatarUrl()
-                        )
-                        ->extraCellAttributes([
-                            'style' => 'width: 1px',
-                        ])
-                        ->circular()
-                        ->toggleable(! $this->viewOnly),
-                    Stack::make([
-                        TextColumn::make('fullName'),
-                        TextColumn::make('affiliation')
-                            ->size('xs')
-                            ->getStateUsing(
-                                fn(Model $record) => $record->getMeta('affiliation')
-                            )
-                            ->icon('heroicon-o-building-library')
-                            ->extraAttributes([
-                                'class' => 'text-xs',
-                            ])
-                            ->color('gray'),
-                        TextColumn::make('email')
-                            ->size('xs')
-                            ->extraAttributes([
-                                'class' => 'text-xs',
-                            ])
-                            ->color('gray')
-                            ->icon('heroicon-o-envelope')
-                            ->alignStart(),
-                    ])->space(1),
-                    TextColumn::make('role.name')
-                        ->badge()
-                        ->alignEnd(),
-                ]),
+                TextColumn::make('name')
+                    ->getStateUsing(fn(Author $record) => $record->fullName),
+                TextColumn::make('email')
+                    ->size('xs')
+                    ->color('gray')
+                    ->alignStart(),
+                TextColumn::make('role.name')
+                    ->badge(),
+                IconColumn::make('primary_contact')
+                    ->getStateUsing(fn($record) => $record->isPrimaryContact($this->submission))
+                    ->icon(fn(bool $state): ?string => match ($state) {
+                        true => 'heroicon-o-check-circle',
+                        default => null,
+                    })
+                    ->color('success'),
+                
+
             ]);
     }
 

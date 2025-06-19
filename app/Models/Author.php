@@ -88,4 +88,9 @@ class Author extends Model implements HasAvatar, HasMedia, Sortable
     {
         return $this->belongsTo(Submission::class, 'submission_id', 'id');
     }
+
+    public function isPrimaryContact(Submission $submission): bool
+    {
+        return $this->getKey() == $submission->getMeta('primary_contact_id');
+    }
 }
