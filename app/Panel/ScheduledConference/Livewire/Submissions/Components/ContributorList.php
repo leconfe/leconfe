@@ -192,7 +192,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             AuthorUpdateAction::run($data, $record);
 
                             if($data['primary_contact']){
-                                $this->submission->setMeta('primary_contact_id', $record->getKey());
+                                $this->submission->setPrimaryContact($record);
                             }
                         }),
                     DeleteAction::make()
@@ -216,7 +216,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
                         $authorCount = Author::where('submission_id', $author->submission_id)->count();
                         if ($authorCount == 1) {
-                            $this->submission->setMeta('primary_contact_id', $author->getKey());
+                            $this->submission->setPrimaryContact($author);
                         }
 
                         return $author;
