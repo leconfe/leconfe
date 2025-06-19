@@ -27,6 +27,7 @@ class UpgradeSchema
         '1.2.1' => Upgrade121::class,
         '1.2.2' => Upgrade122::class,
         '1.2.5' => Upgrade125::class,
+        '1.3.0-beta.1' => Upgrade130Beta1::class,
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)
