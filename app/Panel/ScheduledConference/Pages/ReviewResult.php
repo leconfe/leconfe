@@ -35,11 +35,6 @@ class ReviewResult extends Page implements HasForms, HasTable
         return Auth::user()->can('update', App::getCurrentScheduledConference());
     }
 
-    public static function getNavigationGroup(): string
-    {
-        return __('general.conference');
-    }
-
     public function table(Table $table): Table
     {
         return $table

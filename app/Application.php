@@ -18,6 +18,7 @@ use App\Models\Proceeding;
 use App\Models\Registration;
 use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
+use App\Models\ReviewForm;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\ScheduledConferenceScope;
@@ -178,6 +179,7 @@ class Application extends LaravelApplication
             RegistrationPayment::class,
             Payment::class,
             PaymentFee::class,
+            ReviewForm::class,
         ];
 
         foreach ($models as $model) {
