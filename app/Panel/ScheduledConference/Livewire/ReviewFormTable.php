@@ -21,6 +21,8 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -31,6 +33,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -108,7 +111,36 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 
 						return $record;
 					}),
-				DeleteAction::make(),
+				ActionGroup::make([
+					Action::make('copy')
+						->modalWidth(MaxWidth::ExtraLarge)
+						->icon('heroicon-m-clipboard-document-check')
+						->color('warning')
+						->form(fn(Form $form) => $this->form($form)->model(null))
+						->fillForm(fn($record) => [
+							...$record->attributesToArray(),
+							'meta' => $record->getAllMeta()->toArray(),
+						])
+						->action(function (array $data) {
+							try {
+								DB::beginTransaction();
+
+								$record = ReviewForm::create($data);
+								if (data_get($data, 'meta')) {
+									$record->setManyMeta(data_get($data, 'meta'));
+								}
+
+								DB::commit();
+							} catch (\Throwable $th) {
+								DB::rollBack();
+
+								throw $th;
+							}
+
+							return $record;
+						}),
+					DeleteAction::make(),
+				]),
 			])
 			->bulkActions([
 				DeleteBulkAction::make(),
@@ -147,12 +179,28 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 			->visible(fn(Get $get) => $get('type') == ReviewForm::TYPE_SELECT)
 			->schema([
 				TextInput::make('weight')
-					->hint('Weight from 0 to 1')
+					->hintIcon('heroicon-m-question-mark-circle', 'Enter the weight as a percentage. This determines the contribution of this criterion to the final score.')
 					->numeric()
-					->step(0.05)
-					->maxValue(1),
+					->rule(fn(?ReviewForm $record): Closure => function (string $attribute, $value, Closure $fail) use ($record) {
+						$currentWeight = ReviewForm::query()
+							->when($record, fn($query) => $query->where('id', '!=', $record->getKey()))
+							->whereNotNull('weight')
+							->sum('weight');
+
+						$totalWeight = $currentWeight + $value;
+
+
+						if ($totalWeight > 100) {
+							$fail('Please ensure the total weight does not exceed 100%. Currently, it is ' . $totalWeight . '%.');
+						}
+					})
+					->maxValue(100)
+					->minValue(0)
+					->suffix('%'),
 				Repeater::make('meta.select_options')
 					->label('Response Options')
+					->hint('Enter a value between 10 and 1')
+					->hintIcon('heroicon-m-question-mark-circle', 'Enter a value between 10 and 1, where 10 represents the highest rating and 1 the lowest. These values define the score used in reviewer selections.')
 					->required()
 					->columns(4)
 					->reorderable()
@@ -160,15 +208,16 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 						TextInput::make('value')
 							->integer()
 							->minValue(1)
-							->maxValue(5)
+							->maxValue(10)
+							->required()
 							->distinct(),
-						TextInput::make('item')
+						TextInput::make('label')
 							->required()
 							->columnSpan([
 								'lg' => 3
 							]),
 					])
-					->maxItems(5)
+					->maxItems(10)
 			]);
 	}
 
@@ -185,7 +234,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 					)
 			]);
 	}
-	
+
 	protected function getSchemaTypeRadio(): FormComponent
 	{
 		return Grid::make(1)

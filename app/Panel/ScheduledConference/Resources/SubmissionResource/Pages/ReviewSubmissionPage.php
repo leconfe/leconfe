@@ -147,7 +147,6 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                             ->label('Review for Editor'),
                         Select::make('recommendation')
                             ->required()
-                            ->native(false)
                             ->options(SubmissionStatusRecommendation::list()),
                         ...ReviewForm::query()->lazy()->map(fn(ReviewForm $item) => $item->getFormField())->toArray(),
                     ]),
@@ -165,7 +164,8 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->action(function (Action $action) {
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
-
+                $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses']);
+                
                 try {
                     DB::beginTransaction();
 

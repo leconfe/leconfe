@@ -46,7 +46,6 @@ class ReviewResult extends Page implements HasForms, HasTable
                         SubmissionStatus::OnPresentation,
                         SubmissionStatus::Editing,
                         SubmissionStatus::Published,
-                        SubmissionStatus::Declined,
                     ])
                     ->whereHas('reviews', fn ($query) => $query->whereNotNull('date_completed'))
                     ->withCount([

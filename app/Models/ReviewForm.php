@@ -50,7 +50,7 @@ class ReviewForm extends Model implements Sortable
 
     public function isEnableScoring(): bool
     {
-        return $this->type === static::TYPE_SELECT && $this->weight;
+        return $this->type === static::TYPE_SELECT && filled($this->weight);
     }
 
     protected function getFieldId(): string
@@ -109,9 +109,7 @@ class ReviewForm extends Model implements Sortable
         return Select::make($this->getFieldId())
             ->label($this->label)
             ->helperText(new HtmlString($this->getMeta('description')))
-            ->native(false)
-            ->searchable()
             ->required($this->getMeta('required'))
-            ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn($item, $key) => [$item['value'] => $item['item']])->toArray());
+            ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn($item, $key) => [$item['value'] => $item['label']])->toArray());
     }
 }
