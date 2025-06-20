@@ -10,7 +10,7 @@ use App\Facades\Hook;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ReviewCompleteMail;
 use App\Models\Review;
-use App\Models\ReviewForm;
+use App\Models\ReviewFormItem;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -148,7 +148,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                         Select::make('recommendation')
                             ->required()
                             ->options(SubmissionStatusRecommendation::list()),
-                        ...ReviewForm::query()->lazy()->map(fn(ReviewForm $item) => $item->getFormField())->toArray(),
+                        ...ReviewFormItem::query()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),
                     ]),
             ]);
     }

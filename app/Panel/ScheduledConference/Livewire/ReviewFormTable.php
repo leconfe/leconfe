@@ -2,16 +2,11 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Actions\Topics\TopicCreateAction;
-use App\Actions\Topics\TopicUpdateAction;
-use App\Models\ReviewForm;
-use App\Models\Topic;
+use App\Models\ReviewFormItem;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component as FormComponent;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -27,13 +22,10 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\Summarizers\Count;
-use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -49,15 +41,16 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 	public function table(Table $table): Table
 	{
 		return $table
-			->query(ReviewForm::query()->ordered())
+			->query(ReviewFormItem::query()->ordered())
 			->reorderable('order_column')
 			->columns([
 				TextColumn::make('label')
-					// ->description(fn(ReviewForm $record) => $record->getMeta("description"))
+					->label(__('scheduled_conference.label'))
 					->wrap()
 					->searchable(),
 				TextColumn::make('weight')
-					->getStateUsing(fn(ReviewForm $record) => $record->isEnableScoring() ? $record->weight : '-')
+					->label(__('scheduled_conference.weight'))
+					->getStateUsing(fn(ReviewFormItem $record) => $record->isEnableScoring() ? $record->weight : '-')
 					->searchable(),
 			])
 			->headerActions([
@@ -68,7 +61,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 						try {
 							DB::beginTransaction();
 
-							$record = ReviewForm::create($data);
+							$record = ReviewFormItem::create($data);
 							if (data_get($data, 'meta')) {
 								$record->setManyMeta(data_get($data, 'meta'));
 							}
@@ -87,12 +80,12 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 				EditAction::make()
 					->modalWidth(MaxWidth::ExtraLarge)
 					->form(fn(Form $form) => $this->form($form))
-					->mutateRecordDataUsing(function (ReviewForm $record, array $data) {
+					->mutateRecordDataUsing(function (ReviewFormItem $record, array $data) {
 						$data['meta'] = $record->getAllMeta()->toArray();
 
 						return $data;
 					})
-					->using(function (ReviewForm $record, array $data) {
+					->using(function (ReviewFormItem $record, array $data) {
 						try {
 							DB::beginTransaction();
 
@@ -113,6 +106,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 					}),
 				ActionGroup::make([
 					Action::make('copy')
+						->label(__('scheduled_conference.copy'))
 						->modalWidth(MaxWidth::ExtraLarge)
 						->icon('heroicon-m-clipboard-document-check')
 						->color('warning')
@@ -125,7 +119,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 							try {
 								DB::beginTransaction();
 
-								$record = ReviewForm::create($data);
+								$record = ReviewFormItem::create($data);
 								if (data_get($data, 'meta')) {
 									$record->setManyMeta(data_get($data, 'meta'));
 								}
@@ -152,21 +146,23 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 		return $form
 			->schema([
 				TextInput::make('label')
+					->label(__('scheduled_conference.label'))
 					->required(),
 				Textarea::make('meta.description')
+					->label(__('scheduled_conference.description'))
 					->autosize(),
 				Checkbox::make('meta.required')
-					->label('Reviewers required to complete item'),
+					->label(__('scheduled_conference.review_form_item.reviewer_required_input_label')),
 				Select::make('type')
+					->label(__('scheduled_conference.type'))
 					->required()
 					->live()
-					->options(fn() => ReviewForm::getOptions())
+					->options(fn() => ReviewFormItem::getOptions())
 					->rule(fn(): Closure => function (string $attribute, $value, Closure $fail) {
-						if (! array_key_exists($value, ReviewForm::getOptions())) {
-							$fail('Option unavailable');
+						if (! array_key_exists($value, ReviewFormItem::getOptions())) {
+							$fail(__('scheduled_conference.option_unavailable'));
 						}
-					})
-					->label('Item Type'),
+					}),
 				$this->getSchemaTypeSelect(),
 				$this->getSchemaTypeCheckbox(),
 				$this->getSchemaTypeRadio(),
@@ -176,13 +172,14 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 	protected function getSchemaTypeSelect(): FormComponent
 	{
 		return Grid::make(1)
-			->visible(fn(Get $get) => $get('type') == ReviewForm::TYPE_SELECT)
+			->visible(fn(Get $get) => $get('type') == ReviewFormItem::TYPE_SELECT)
 			->schema([
 				TextInput::make('weight')
-					->hintIcon('heroicon-m-question-mark-circle', 'Enter the weight as a percentage. This determines the contribution of this criterion to the final score.')
+					->label(__('scheduled_conference.review_form_item.weight_input_label'))
+					->hintIcon('heroicon-m-question-mark-circle', __('scheduled_conference.review_form_item.weight_input_helper_full'))
 					->numeric()
-					->rule(fn(?ReviewForm $record): Closure => function (string $attribute, $value, Closure $fail) use ($record) {
-						$currentWeight = ReviewForm::query()
+					->rule(fn(?ReviewFormItem $record): Closure => function (string $attribute, $value, Closure $fail) use ($record) {
+						$currentWeight = ReviewFormItem::query()
 							->when($record, fn($query) => $query->where('id', '!=', $record->getKey()))
 							->whereNotNull('weight')
 							->sum('weight');
@@ -191,27 +188,29 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 
 
 						if ($totalWeight > 100) {
-							$fail('Please ensure the total weight does not exceed 100%. Currently, it is ' . $totalWeight . '%.');
+							$fail(__('validation.weight_over', ['attribute' => $totalWeight]));
 						}
 					})
 					->maxValue(100)
 					->minValue(0)
 					->suffix('%'),
 				Repeater::make('meta.select_options')
-					->label('Response Options')
-					->hint('Enter a value between 10 and 1')
-					->hintIcon('heroicon-m-question-mark-circle', 'Enter a value between 10 and 1, where 10 represents the highest rating and 1 the lowest. These values define the score used in reviewer selections.')
+					->label(__('scheduled_conference.review_form_item.select_options_input_label'))
+					->hint(__('scheduled_conference.review_form_item.select_options_input_helper'))
+					->hintIcon('heroicon-m-question-mark-circle', __('scheduled_conference.review_form_item.select_options_input_helper_full'))
 					->required()
 					->columns(4)
 					->reorderable()
 					->schema([
 						TextInput::make('value')
+							->label(__('scheduled_conference.value'))
 							->integer()
 							->minValue(1)
 							->maxValue(10)
 							->required()
 							->distinct(),
 						TextInput::make('label')
+							->label(__('scheduled_conference.label'))
 							->required()
 							->columnSpan([
 								'lg' => 3
@@ -224,13 +223,14 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 	protected function getSchemaTypeCheckbox(): FormComponent
 	{
 		return Grid::make(1)
-			->visible(fn(Get $get) => $get('type') == ReviewForm::TYPE_CHECKBOX)
+			->visible(fn(Get $get) => $get('type') == ReviewFormItem::TYPE_CHECKBOX)
 			->schema([
 				Repeater::make('meta.checkbox_options')
-					->label('Response Options')
+					->label(__('scheduled_conference.review_form_item.checkbox_options_input_label'))
 					->simple(
 						TextInput::make('option')
 							->required()
+							->label(__('scheduled_conference.option'))
 					)
 			]);
 	}
@@ -238,13 +238,14 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 	protected function getSchemaTypeRadio(): FormComponent
 	{
 		return Grid::make(1)
-			->visible(fn(Get $get) => $get('type') == ReviewForm::TYPE_RADIO)
+			->visible(fn(Get $get) => $get('type') == ReviewFormItem::TYPE_RADIO)
 			->schema([
 				Repeater::make('meta.radio_options')
-					->label('Response Options')
+					->label(__('scheduled_conference.review_form_item.radio_options_input_label'))
 					->simple(
 						TextInput::make('option')
 							->required()
+							->label(__('scheduled_conference.option'))
 					)
 			]);
 	}
