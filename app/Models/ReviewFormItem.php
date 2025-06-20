@@ -17,7 +17,7 @@ use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
-class ReviewForm extends Model implements Sortable
+class ReviewFormItem extends Model implements Sortable
 {
     use HasFactory, Metable, Cachable, SortableTrait, BelongsToScheduledConference;
 
