@@ -122,6 +122,7 @@ class WorkflowSetting extends Page
                                                     ->livewire(ReviewGuidance::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Review Form')
+                                            ->label(__('scheduled_conference.review_form'))
                                             ->schema([
                                                 Livewire::make(ReviewFormTable::class)
                                                     ->key('review_form_table'),

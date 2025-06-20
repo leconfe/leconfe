@@ -70,7 +70,11 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ])
                     ->getStateUsing(fn ($record) => $record->completed_reviews_count.' / '.$record->reviews_count),
                 TextColumn::make('id')
-                    ->label('ID'),
+                    ->label('ID')
+                    ->extraCellAttributes([
+                        'style' => 'width: 1px',
+                    ])
+                    ->grow(false),
                 TextColumn::make('title')
                     ->getStateUsing(fn ($record) => $record->getMeta('title'))
                     ->color('primary')

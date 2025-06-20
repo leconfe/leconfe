@@ -125,7 +125,7 @@ class Review extends Model implements HasMedia
 
     public function calculateReviewScore(array $data) : float
     {
-        $reviewForms = ReviewForm::query()  
+        $reviewForms = ReviewFormItem::query()  
             ->with(['meta'])
             ->whereIn('id', array_keys($data))
             ->get();
