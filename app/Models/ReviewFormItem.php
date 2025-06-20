@@ -37,6 +37,11 @@ class ReviewFormItem extends Model implements Sortable
         'order_column',
     ];
 
+    protected $casts = [
+        'type' => 'integer',
+        'weight' => 'double',
+    ];
+
     public static function getOptions(): array
     {
         return [
