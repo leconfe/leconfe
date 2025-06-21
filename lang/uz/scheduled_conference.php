@@ -21,4 +21,5 @@ return [
 	'option_unavailable' => 'Variant mavjud emas',
 	'review_form' => 'Ko‘rib chiqish shakli',
 	'form_preview' => 'Shaklni ko‘rish',
+	'registrations' => 'Ro‘yxatdan o‘tishlar',
 ];

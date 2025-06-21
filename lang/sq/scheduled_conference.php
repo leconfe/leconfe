@@ -21,4 +21,5 @@ return [
 	'option_unavailable' => 'Opsioni i padisponueshëm',
 	'review_form' => 'Formulari i Recensimit',
 	'form_preview' => 'Parapamje e Formularit',
+	'registrations' => 'Regjistrimet',
 ];

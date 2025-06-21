@@ -27,7 +27,7 @@ class RegistrationFormSetting extends Component implements HasForms
 	public function mount(): void
 	{
 		$scheduledConference = app()->getCurrentScheduledConference();
-		// dd($scheduledConference->getMeta('registration_form'));
+
 		$this->form->fill([
 			'registration_form' => $scheduledConference->getMeta('registration_form'),
 		]);
