@@ -20,4 +20,5 @@ return [
 	'option' => 'Opsi',
 	'option_unavailable' => 'Opsi tidak tersedia',
 	'review_form' => 'Formulir Review',
+	'form_preview' => 'Pratinjau Formulir',
 ];

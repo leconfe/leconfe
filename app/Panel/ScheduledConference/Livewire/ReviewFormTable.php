@@ -54,6 +54,14 @@ class ReviewFormTable extends Component implements HasForms, HasTable
 					->searchable(),
 			])
 			->headerActions([
+				Action::make('form_preview')
+						->label(__('scheduled_conference.form_preview'))
+                        ->icon('heroicon-m-eye')
+                        ->modalWidth(MaxWidth::TwoExtraLarge)
+                        ->closeModalByClickingAway()
+                        ->form(function (Form $form) {
+                            return $form->schema(ReviewFormItem::ordered()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),);
+                        }),
 				CreateAction::make()
 					->modalWidth(MaxWidth::ExtraLarge)
 					->form(fn(Form $form) => $this->form($form))

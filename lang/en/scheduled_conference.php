@@ -20,4 +20,5 @@ return [
 	'option' => 'Option',
 	'option_unavailable' => 'Option unavailable',
 	'review_form' => 'Review Form',
+	'form_preview' => 'Form Preview',
 ];
