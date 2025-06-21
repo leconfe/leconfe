@@ -84,7 +84,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                             ->color('gray')
                             ->size('xs'),
                         TextColumn::make('role.name')
-                            ->color('gray')
+                            ->extraAttributes(['class' => 'mt-2'])
                             ->size('xs'),
                     ]),
                 ]),
