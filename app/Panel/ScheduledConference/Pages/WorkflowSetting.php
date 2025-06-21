@@ -8,12 +8,14 @@ use App\Panel\Conference\Livewire\EmailSetting;
 use App\Panel\Conference\Livewire\PublisherLibrary;
 use App\Panel\ScheduledConference\Livewire\AuthorGuidance;
 use App\Panel\ScheduledConference\Livewire\AuthorRoleTable;
+use App\Panel\ScheduledConference\Livewire\ReviewFormTable;
 use App\Panel\ScheduledConference\Livewire\ReviewGuidance;
 use App\Panel\ScheduledConference\Livewire\ReviewSetupSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionFileTypeTable;
 use App\Panel\ScheduledConference\Livewire\SubmissionSetting;
 use App\Panel\ScheduledConference\Livewire\TopicTable;
 use App\Panel\ScheduledConference\Livewire\TrackTable;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -118,6 +120,12 @@ class WorkflowSetting extends Page
                                             ->schema([
                                                 LivewireEntry::make('review-guidance')
                                                     ->livewire(ReviewGuidance::class),
+                                            ]),
+                                        InfolistsVerticalTabs\Tab::make('Review Form')
+                                            ->label(__('scheduled_conference.review_form'))
+                                            ->schema([
+                                                Livewire::make(ReviewFormTable::class)
+                                                    ->key('review_form_table'),
                                             ]),
                                     ]),
                             ]),

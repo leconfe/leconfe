@@ -19,6 +19,7 @@ use App\Models\Proceeding;
 use App\Models\Registration;
 use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
+use App\Models\ReviewFormItem;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\ScheduledConferenceScope;
@@ -38,7 +39,7 @@ use Illuminate\Support\Collection;
 
 class Application extends LaravelApplication
 {
-    public const APP_VERSION = '1.2.6';
+    public const APP_VERSION = '1.3.0-beta.1';
 
     public const PHP_MIN_VERSION = '8.1';
 
@@ -178,6 +179,7 @@ class Application extends LaravelApplication
             Payment::class,
             PaymentFee::class,
             Participant::class,
+            ReviewFormItem::class,
         ];
 
         foreach ($models as $model) {

@@ -978,7 +978,6 @@ return [
     'allow_registration_helper' => 'Allow public to register on the conference.',
     'public_name' => 'Public Name',
     'public_name_helper' => 'Specify how you’d like to be addressed. You may also add salutations, middle names, and suffixes if desired.',
-    'publisher_library' => 'Publisher Library',
     'add_a_file' => 'Add a File',
     'allow_public_access' => 'Allow Public Access',
     'publisher_library' => 'Publisher Library',

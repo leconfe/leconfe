@@ -10,6 +10,8 @@ use App\Utils\UpgradeSchemas\Upgrade121;
 use App\Utils\UpgradeSchemas\Upgrade122;
 use App\Utils\UpgradeSchemas\Upgrade125;
 use App\Utils\UpgradeSchemas\Upgrade130;
+use App\Utils\UpgradeSchemas\Upgrade130Beta1;
+use App\Utils\UpgradeSchemas\Upgrade130Beta2;
 use App\Utils\UpgradeSchemas\UpgradeBeta3;
 use App\Utils\UpgradeSchemas\UpgradeBeta4;
 use App\Utils\UpgradeSchemas\UpgradeBeta5;
@@ -27,7 +29,8 @@ class UpgradeSchema
         '1.2.1' => Upgrade121::class,
         '1.2.2' => Upgrade122::class,
         '1.2.5' => Upgrade125::class,
-        '1.3.0' => Upgrade130::class,
+        '1.3.0-beta.1' => Upgrade130Beta1::class,
+        '1.3.0-beta.2' => Upgrade130Beta2::class,
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)

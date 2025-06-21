@@ -122,4 +122,22 @@ class Review extends Model implements HasMedia
             'review_mode' => Review::MODE_DOUBLE_ANONYMOUS,
         ];
     }
+
+    public function calculateReviewScore(array $data) : float
+    {
+        $reviewForms = ReviewFormItem::query()  
+            ->with(['meta'])
+            ->whereIn('id', array_keys($data))
+            ->get();
+
+        return collect($data)
+            ->filter(fn($item, $key) => $reviewForms->find($key)?->isEnableScoring())
+            ->reduce(function(?int $carry, $value, int $key) use ($reviewForms){
+                $reviewForm = $reviewForms->find($key); 
+
+                $weight = $reviewForm->weight / 10;
+
+                return $carry + ($value * $weight);
+            });
+    }
 }
