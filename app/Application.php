@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\Proceeding;
 use App\Models\Registration;
+use App\Models\RegistrationForm;
 use App\Models\RegistrationPayment;
 use App\Models\RegistrationType;
 use App\Models\ReviewFormItem;
@@ -180,6 +181,8 @@ class Application extends LaravelApplication
             PaymentFee::class,
             Participant::class,
             ReviewFormItem::class,
+            RegistrationType::class,
+            RegistrationForm::class,
         ];
 
         foreach ($models as $model) {

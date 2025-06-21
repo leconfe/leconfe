@@ -11,6 +11,9 @@ return [
 		'radio_options_input_label' => 'Checkbox Options',
 		'reviewer_required_input_label' => 'Reviewers required to complete item'
 	],
+	'registration_form_table' => [
+		'create_action_label' => 'New Form Item',
+	],
 	'label' => 'Label',
 	'value' => 'Value',
 	'copy' => 'Copy',
@@ -18,8 +21,13 @@ return [
 	'type' => 'Type',
 	'weight' => 'Weight',
 	'option' => 'Option',
+	'options' => 'Options',
 	'option_unavailable' => 'Option unavailable',
 	'review_form' => 'Review Form',
 	'form_preview' => 'Form Preview',
 	'registrations' => 'Registrations',
+	'required' => 'Required',
+	'setting' => 'Setting',
+	'settings' => 'Settings',
+	'general' => 'General',
 ];

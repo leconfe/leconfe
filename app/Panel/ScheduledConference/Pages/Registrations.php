@@ -2,18 +2,11 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Facades\Hook;
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
-use App\Managers\PaymentManager;
-use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
-use App\Panel\ScheduledConference\Livewire\Payment\ManualPaymentSetting;
-use App\Panel\ScheduledConference\Livewire\PaymentFeeTable;
-use App\Panel\ScheduledConference\Livewire\PaymentSetting;
-use App\Panel\ScheduledConference\Livewire\RegistrationFormSetting;
+use App\Panel\ScheduledConference\Livewire\RegistrationFormTable;
+use App\Panel\ScheduledConference\Livewire\RegistrationSetting;
 use App\Panel\ScheduledConference\Livewire\RegistrationTable;
 use App\Panel\ScheduledConference\Livewire\RegistrationTypeTable;
-use App\Panel\ScheduledConference\Livewire\SubmissionPaymentFeeTable;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
@@ -33,12 +26,12 @@ class Registrations extends Page
 
     public static function getNavigationLabel(): string
     {
-        return "Registrations";
+        return __('scheduled_conference.registrations');
     }
 
     public function getHeading(): string|Htmlable
     {
-        return "Registrations";
+        return __('scheduled_conference.registrations');
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
@@ -63,20 +56,29 @@ class Registrations extends Page
                                 Livewire::make(RegistrationTable::class)
                                     ->key('registration_table'),
                             ]),
-                        Tabs\Tab::make('Settings')
+                        Tabs\Tab::make('settings')
+                            ->label(__('scheduled_conference.settings'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
-                                ->schema([
-                                    InfolistsVerticalTabs\Tab::make('Form')
-                                        ->label('Form')
-                                        ->schema([
-                                            Livewire::make(RegistrationFormSetting::class)
-                                                ->key('registration_form_setting'),
-                                        ]),
-                                ]),
-                              
-                                // Livewire::make(RegistrationTypeTable::class)
-                                //     ->key('registration_type_table'),
+                                    ->schema([
+                                        InfolistsVerticalTabs\Tab::make('General')
+                                            ->label(__('scheduled_conference.general'))
+                                            ->schema([
+                                                Livewire::make(RegistrationSetting::class)
+                                                    ->key('registration_form_setting'),
+                                            ]),
+                                        InfolistsVerticalTabs\Tab::make('Form')
+                                            ->label(__('general.form'))
+                                            ->schema([
+                                                Livewire::make(RegistrationFormTable::class)
+                                                    ->key('registration_form_table'),
+                                            ]),
+                                        InfolistsVerticalTabs\Tab::make('Type')
+                                            ->schema([
+                                                Livewire::make(RegistrationTypeTable::class)
+                                                    ->key('registration_type_table'),
+                                            ]),
+                                    ]),
                             ]),
                     ]),
             ]);

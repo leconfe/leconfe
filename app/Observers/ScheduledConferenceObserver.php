@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Actions\Committees\CommitteeRolePopulateDefaultDataAction;
+use App\Actions\Registrations\PopulateRegistrationFormAction;
 use App\Actions\Roles\RolePopulateScheduledConferenceAction;
 use App\Actions\Speakers\SpeakerRolePopulateDefaultDataAction;
 use App\Actions\SubmissionFiles\FilesTypePopulateAction;
@@ -125,5 +126,7 @@ class ScheduledConferenceObserver
         TrackPopulateAction::run($scheduledConference);
         RolePopulateScheduledConferenceAction::run($scheduledConference);
         FilesTypePopulateAction::run($scheduledConference);
+        PopulateRegistrationFormAction::run($scheduledConference);
+
     }
 }

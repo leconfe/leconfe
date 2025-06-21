@@ -15,10 +15,12 @@ use Filament\Forms\Form;
 use Filament\Support\Enums\Alignment;
 use Livewire\Component;
 use Filament\Forms\Components\Actions\Action as ActionForm;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 
-class RegistrationFormSetting extends Component implements HasForms
+class RegistrationSetting extends Component implements HasForms
 {
 	use InteractsWithForms;
 
@@ -29,7 +31,7 @@ class RegistrationFormSetting extends Component implements HasForms
 		$scheduledConference = app()->getCurrentScheduledConference();
 
 		$this->form->fill([
-			'registration_form' => $scheduledConference->getMeta('registration_form'),
+			'meta' => $scheduledConference->getAllMeta(),
 		]);
 	}
 
@@ -43,32 +45,11 @@ class RegistrationFormSetting extends Component implements HasForms
 		return $form
 			->model(app()->getCurrentScheduledConference())
 			->schema([
-				Builder::make('registration_form')
-					->collapsible()
-					->persistCollapsed()
-					->addActionAlignment(Alignment::Start)
-					->blockIcons()
-					->blockPreviews(areInteractive: true)
-					->hiddenLabel()
-					->blockNumbers(false)
-					->editAction(fn(ActionForm $action) => $action->slideOver())
-					->addAction(fn(ActionForm $action) => $action->slideOver())
-					->addBetweenAction(fn(ActionForm $action) => $action->slideOver())
-					->blocks([
-						Builder\Block::make('single_text_box')
-							->schema([
-								Hidden::make('key')
-									->dehydrateStateUsing(fn(Get $get) => Str::snake($get('label'))),
-								TextInput::make('label')
-									->required(),
-								Textarea::make('description'),
-								Toggle::make('required')
-									->default(false),
-								Hidden::make('is_deleteable')
-									->default(true),
-							])
-							->label(fn(?array $state) => $state['label'] ?? 'Single Text Box')
-							->preview('panel.scheduledConference.form.registrationForm.preview.answer'),
+				Section::make()
+					->columns(1)
+					->schema([
+						Checkbox::make('meta.enable_registration')
+							->label('Enable Registration')
 					]),
 				Actions::make([
 					ActionForm::make('save')
@@ -78,7 +59,7 @@ class RegistrationFormSetting extends Component implements HasForms
 						->action(function (ActionForm $action) {
 							$formData = $this->form->getState();
 							try {
-								app()->getCurrentScheduledConference()->setMeta('registration_form', $formData['registration_form']);
+								app()->getCurrentScheduledConference()->setManyMeta($formData['meta']);
 								$action->sendSuccessNotification();
 							} catch (\Throwable $th) {
 								$action->sendFailureNotification();

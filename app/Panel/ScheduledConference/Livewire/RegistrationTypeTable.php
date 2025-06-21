@@ -64,13 +64,14 @@ class RegistrationTypeTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
+            ->reorderable('order_column')
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('name')
                     ->grow(false),
                 TextColumn::make('cost')
-                    ->getStateUsing(fn (RegistrationType $record) => $record->cost ? money($record->cost, $record->currency, true)->formatWithoutZeroes() : '')
-                    ->description(fn(RegistrationType $record) => $record->currency ? Currency::find($record->currency)?->name : ''),
+                    ->getStateUsing(fn (RegistrationType $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes())
+                    ->description(fn(RegistrationType $record) => Currency::find($record->currency)?->name),
                 TextColumn::make('from')
                     ->date(),
                 TextColumn::make('to')

@@ -15,6 +15,9 @@ class Registration extends Model
         'email',
         'given_name',
         'family_name',
+        'cost',
+        'currency',
+        'type',
     ];
 
     

@@ -18,6 +18,19 @@ return new class extends Migration
             $table->string('email');
             $table->string('given_name');
             $table->string('family_name')->nullable();
+            $table->double('cost');
+            $table->string('currency');
+            $table->string('type');
+            $table->timestamps();
+        });
+
+        Schema::create('registration_forms', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(ScheduledConference::class)->constrained()->cascadeOnDelete();
+            $table->string('label');
+            $table->unsignedInteger('type');
+            $table->boolean('is_default')->default(false);
+            $table->unsignedInteger('order_column')->nullable();
             $table->timestamps();
         });
         
@@ -42,6 +55,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('registration_types');
+        Schema::dropIfExists('registration_forms');
         Schema::dropIfExists('registrations');
     }
 };
