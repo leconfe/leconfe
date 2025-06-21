@@ -60,10 +60,10 @@ class ReviewFormItem extends Model implements Sortable
 
     protected function getFieldId(): string
     {
-        return 'meta.review_responses.'.$this->getKey();
+        return 'meta.review_responses.' . $this->getKey();
     }
 
-    public function getFormField() : Component
+    public function getFormField(): Component
     {
         return match ($this->type) {
             static::TYPE_TEXT => $this->fieldText(),
@@ -116,5 +116,12 @@ class ReviewFormItem extends Model implements Sortable
             ->helperText(new HtmlString($this->getMeta('description')))
             ->required($this->getMeta('required'))
             ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn($item, $key) => [$item['value'] => $item['label']])->toArray());
+    }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'required' => false,
+        ];
     }
 }

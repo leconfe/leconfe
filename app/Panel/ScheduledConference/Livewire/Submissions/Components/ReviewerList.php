@@ -333,6 +333,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     ->label('Paper Score')
                                     ->hidden(fn (Review $record) => ! $record->score)
                                     ->content(fn (Review $record) => $record->score),
+                                ...ReviewFormItem::ordered()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
                                 Section::make('Reviewer Comments')
                                     ->schema([
                                         Placeholder::make('for_author_and_editor')
@@ -354,7 +355,6 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))
                                     ->helperText('Set or adjust the reviewer recommendation.')
                                     ->options(SubmissionStatusRecommendation::list()),
-                                ...ReviewFormItem::query()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
                                 Select::make('quality')
                                     ->required()
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))

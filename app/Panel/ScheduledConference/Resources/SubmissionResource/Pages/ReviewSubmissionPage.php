@@ -139,6 +139,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 Section::make()
                     ->heading('Review Form')
                     ->schema([
+                        ...ReviewFormItem::ordered()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),
                         TinyEditor::make('meta.review_for_author_editor')
                             ->minHeight(300)
                             ->label('Review for Author and Editor'),
@@ -148,7 +149,6 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                         Select::make('recommendation')
                             ->required()
                             ->options(SubmissionStatusRecommendation::list()),
-                        ...ReviewFormItem::query()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),
                     ]),
             ]);
     }
