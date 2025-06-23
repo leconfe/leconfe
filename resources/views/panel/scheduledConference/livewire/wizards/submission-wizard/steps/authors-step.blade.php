@@ -49,10 +49,7 @@
         </div>
 
         <div>
-            <x-filament::button icon="heroicon-o-chevron-right" icon-position="after" x-show="! isLastStep()" x-cloak
-                wire:click="nextStep" wire:loading.class.delay="opacity-70 cursor-wait" size="sm">
-                {{ __('general.next') }}
-            </x-filament::button>
+            {{ $this->nextStep() }}
         </div>
     </div>
 </div>
