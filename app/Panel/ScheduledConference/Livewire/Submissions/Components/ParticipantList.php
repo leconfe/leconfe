@@ -26,6 +26,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -75,13 +76,17 @@ class ParticipantList extends Component implements HasForms, HasTable
                             'style' => 'width: 1px',
                         ])
                         ->circular(),
-                    TextColumn::make('user.fullName')
-                        ->label(__('general.full_name'))
-                        ->description(
-                            function (Model $record) {
-                                return $record->role->name;
-                            }
-                        ),
+                    Stack::make([
+                        TextColumn::make('user.fullName')
+                            ->label(__('general.full_name')),
+                        TextColumn::make('affiliation')
+                            ->getStateUsing(fn($record) => $record->user->getMeta('affiliation'))
+                            ->color('gray')
+                            ->size('xs'),
+                        TextColumn::make('role.name')
+                            ->extraAttributes(['class' => 'mt-2'])
+                            ->size('xs'),
+                    ]),
                 ]),
             ])
             ->heading(__('general.participants'))

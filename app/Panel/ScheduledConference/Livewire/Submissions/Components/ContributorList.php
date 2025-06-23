@@ -44,6 +44,8 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
     public bool $viewOnly = false;
 
+    protected $listeners = ['refreshLivewire' => '$refresh'];
+
     public function getQuery(bool $submissionRelated = true): Builder
     {
         return Author::query()

@@ -14,10 +14,8 @@ class AbstractFiles extends SubmissionFilesTable
     {
         $this->tableHeading = __('general.submission_files');
     }
-
-    protected $listeners = [
-        'refreshAbstractsFiles' => '$refresh',
-    ];
+    
+    protected $listeners = ['refreshLivewire' => '$refresh'];
 
     public function getTargetCategory(): string
     {
