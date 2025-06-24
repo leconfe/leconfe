@@ -126,7 +126,7 @@ class ScheduledConferenceObserver
         TrackPopulateAction::run($scheduledConference);
         RolePopulateScheduledConferenceAction::run($scheduledConference);
         FilesTypePopulateAction::run($scheduledConference);
-        PopulateRegistrationFormAction::run($scheduledConference);
+        // PopulateRegistrationFormAction::run($scheduledConference);
 
     }
 }

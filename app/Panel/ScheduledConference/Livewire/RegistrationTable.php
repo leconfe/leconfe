@@ -13,6 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
+use Squire\Models\Currency;
 
 class RegistrationTable extends Component implements HasForms, HasTable
 {
@@ -36,21 +37,22 @@ class RegistrationTable extends Component implements HasForms, HasTable
             ->query($this->getTableQuery())
             ->columns([
                 IndexColumn::make('No'),
-                TextColumn::make('name')
+                TextColumn::make('full_name')
                     ->grow(false),
+                TextColumn::make('email')
+                    ->grow(false),
+                TextColumn::make('type'),
+                TextColumn::make('cost')
+                    ->getStateUsing(fn(Registration $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes())
+                    ->description(fn(Registration $record) => Currency::find($record->currency)?->name),
             ])
-            ->headerActions([
-
-            ])
-            ->actions([
-
-            ]);
+            ->headerActions([])
+            ->actions([]);
     }
 
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-            ]);
+            ->schema([]);
     }
 }

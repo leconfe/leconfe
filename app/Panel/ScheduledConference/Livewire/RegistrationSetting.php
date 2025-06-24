@@ -16,6 +16,8 @@ use Filament\Support\Enums\Alignment;
 use Livewire\Component;
 use Filament\Forms\Components\Actions\Action as ActionForm;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
@@ -48,8 +50,13 @@ class RegistrationSetting extends Component implements HasForms
 				Section::make()
 					->columns(1)
 					->schema([
-						Checkbox::make('meta.enable_registration')
-							->label('Enable Registration')
+						Fieldset::make('Registration Period')
+							->columns(2)
+							->schema([
+								DateTimePicker::make('meta.registration_start'),
+								DateTimePicker::make('meta.registration_end')
+									->after('meta.registration_start'),
+							]),
 					]),
 				Actions::make([
 					ActionForm::make('save')

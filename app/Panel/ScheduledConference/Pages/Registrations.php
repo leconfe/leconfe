@@ -67,16 +67,16 @@ class Registrations extends Page
                                                 Livewire::make(RegistrationSetting::class)
                                                     ->key('registration_form_setting'),
                                             ]),
+                                        InfolistsVerticalTabs\Tab::make('Type')
+                                            ->schema([
+                                                Livewire::make(RegistrationTypeTable::class)
+                                                    ->key('registration_type_table'),
+                                            ]),
                                         InfolistsVerticalTabs\Tab::make('Form')
                                             ->label(__('general.form'))
                                             ->schema([
                                                 Livewire::make(RegistrationFormTable::class)
                                                     ->key('registration_form_table'),
-                                            ]),
-                                        InfolistsVerticalTabs\Tab::make('Type')
-                                            ->schema([
-                                                Livewire::make(RegistrationTypeTable::class)
-                                                    ->key('registration_type_table'),
                                             ]),
                                     ]),
                             ]),

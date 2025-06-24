@@ -69,7 +69,7 @@ class RegistrationFormTable extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::TwoExtraLarge)
                     ->closeModalByClickingAway()
                     ->form(function (Form $form) {
-                        return $form->schema(RegistrationForm::ordered()->lazy()->map(fn(RegistrationForm $item) => $item->getFormField())->toArray());
+                        return $form->schema(RegistrationForm::getFormSchema())->disabled();
                     }),
                 CreateAction::make()
                     ->label(__('scheduled_conference.registration_form_table.create_action_label'))

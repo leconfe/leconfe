@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -52,10 +54,10 @@ class RegistrationForm extends Model implements Sortable
         ];
     }
 
-    public static function getTypeLabel(int $type) : string
+    public static function getTypeLabel(int $type): string
     {
         return match ($type) {
-           static::TYPE_TEXT => 'Single text box',
+            static::TYPE_TEXT => 'Single text box',
             static::TYPE_TEXTAREA => 'Extended text box',
             static::TYPE_SELECT => 'Drop down box',
             static::TYPE_CHECKBOX => 'Checkboxes (can choose one or more)',
@@ -80,7 +82,7 @@ class RegistrationForm extends Model implements Sortable
 
     protected function getFieldId(): string
     {
-        return 'meta.registration_form.' . $this->getKey();
+        return 'meta.additional_field.' . $this->getKey();
     }
 
     protected function fieldText(): TextInput
@@ -129,14 +131,50 @@ class RegistrationForm extends Model implements Sortable
     protected function fieldRegistrationType(): Radio
     {
         $registrationTypes = RegistrationType::query()
-                    ->with(['meta'])
-                    ->get();
+            ->with(['meta'])
+            ->get();
 
         return Radio::make($this->getFieldId())
             ->label($this->label)
             ->required($this->getMeta('required'))
             ->options($registrationTypes->pluck('name', 'id'))
             ->descriptions($registrationTypes->mapWithKeys(fn(RegistrationType $record) => [$record->getKey() => money($record->cost, $record->currency, true)->formatWithoutZeroes()]));
+    }
+
+    public static function getFormSchema(): array
+    {
+         $registrationTypes = RegistrationType::query()
+            ->with(['meta'])
+            ->get();
+
+        return [
+            Grid::make()
+                ->schema([
+                    TextInput::make('given_name')
+                        ->label(__('general.given_name'))
+                        ->disabled(),
+                    TextInput::make('family_name')
+                        ->label(__('general.family_name'))
+                        ->disabled(),
+                ]),
+            TextInput::make('email')
+                ->email()
+                ->label(__('general.email'))
+                ->disabled(),
+            Radio::make('type')
+                ->required()
+                ->options($registrationTypes->pluck('name', 'id'))
+                ->descriptions($registrationTypes->mapWithKeys(fn(RegistrationType $record) => [$record->getKey() => money($record->cost, $record->currency, true)->formatWithoutZeroes()])),
+            // ->disableOptionWhen(function (string $value) use ($registrationTypes) {
+            //     $registrationType = $registrationTypes->find($value);
+            //     if ($registrationType) {
+            //         return $registrationType->isDisabled();
+            //     }
+            //     return false;
+
+            // })
+            ...RegistrationForm::ordered()->lazy()->map(fn(RegistrationForm $item) => $item->getFormField())->toArray(),
+        ];
     }
 
     protected function getAllDefaultMeta(): array

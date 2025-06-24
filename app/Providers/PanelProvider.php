@@ -14,6 +14,7 @@ use App\Models\Enums\UserRole;
 use App\Models\ScheduledConference;
 use App\Panel\Administration\Pages\Profile;
 use App\Panel\Conference\Pages\Dashboard;
+use App\Panel\ScheduledConference\Pages\Dashboard as ScheduledConferenceDashboard;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -52,6 +53,9 @@ class PanelProvider extends ServiceProvider
             ->discoverPages(in: app_path('Panel/ScheduledConference/Pages'), for: 'App\\Panel\\ScheduledConference\\Pages')
             ->discoverWidgets(in: app_path('Panel/ScheduledConference/Widgets'), for: 'App\\Panel\\ScheduledConference\\Widgets')
             ->discoverLivewireComponents(in: app_path('Panel/ScheduledConference/Livewire'), for: 'App\\Panel\\ScheduledConference\\Livewire')
+            ->pages([
+                ScheduledConferenceDashboard::class,
+            ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('panel.scheduledConference.hooks.topbar'),
