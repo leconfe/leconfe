@@ -36,7 +36,6 @@ class RegistrationFormTable extends Component implements HasForms, HasTable
     use InteractsWithForms, InteractsWithTable;
 
     public function mount() {
-        // dd(RegistrationForm::createDefaultFormItems());
     }
 
     public function render()
@@ -63,14 +62,6 @@ class RegistrationFormTable extends Component implements HasForms, HasTable
                     ->getStateUsing(fn(RegistrationForm $record) => RegistrationForm::getTypeLabel($record->type)),
             ])
             ->headerActions([
-                Action::make('form_preview')
-                    ->label(__('scheduled_conference.form_preview'))
-                    ->icon('heroicon-m-eye')
-                    ->modalWidth(MaxWidth::TwoExtraLarge)
-                    ->closeModalByClickingAway()
-                    ->form(function (Form $form) {
-                        return $form->schema(RegistrationForm::getFormSchema())->disabled();
-                    }),
                 CreateAction::make()
                     ->label(__('scheduled_conference.registration_form_table.create_action_label'))
                     ->modalHeading(__('scheduled_conference.registration_form_table.create_action_label'))

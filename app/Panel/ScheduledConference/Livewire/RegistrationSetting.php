@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Forms\Components\TinyEditor;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Builder;
@@ -16,10 +17,12 @@ use Filament\Support\Enums\Alignment;
 use Livewire\Component;
 use Filament\Forms\Components\Actions\Action as ActionForm;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Get;
 
 class RegistrationSetting extends Component implements HasForms
@@ -53,10 +56,21 @@ class RegistrationSetting extends Component implements HasForms
 						Fieldset::make('Registration Period')
 							->columns(2)
 							->schema([
-								DateTimePicker::make('meta.registration_start'),
-								DateTimePicker::make('meta.registration_end')
+								DatePicker::make('meta.registration_start')
+									->label('Start'),
+								DatePicker::make('meta.registration_end')
+									->label('End')
 									->after('meta.registration_start'),
 							]),
+						SpatieMediaLibraryFileUpload::make('cover')
+							->image()
+							->label('Registration Form Cover')
+							->collection('registration_cover'),
+						TinyEditor::make('meta.registration_form_header')
+							->label('Registration Form Header')
+							->toolbar('bold italic superscript subscript | link | blockquote bullist numlist | image | code | fullscreen')
+							->plugins('paste link lists image code')
+							->minHeight(300),
 					]),
 				Actions::make([
 					ActionForm::make('save')

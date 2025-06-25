@@ -15,8 +15,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 
 class ParticipantRegister extends Page implements HasForms
 {
@@ -26,11 +28,9 @@ class ParticipantRegister extends Page implements HasForms
 
     protected static string $view = 'panel.scheduledConference.pages.participant-register';
 
-    // protected static ?int $navigationSort = 99;
-
     public ?array $formData = [];
 
-    public function mount(): void 
+    public function mount(): void
     {
         $this->form->fill([
             'given_name' => auth()->user()?->given_name,
@@ -49,54 +49,67 @@ class ParticipantRegister extends Page implements HasForms
         return !auth()->user()?->isRegisteredAsParticipant();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getViewData(): array
+    {
+        return [
+            'coverImageUrl' => app()->getCurrentScheduledConference()->getFirstMediaUrl('registration_cover'),
+            'registrationFormHeader' => app()->getCurrentScheduledConference()->getMeta('registration_form_header') ? new HtmlString(app()->getCurrentScheduledConference()->getMeta('registration_form_header')) : null,
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
-            ->extraAttributes([
-                'class' => 'max-w-3xl'
-            ])
             ->schema([
                 Section::make()
                     ->columns(1)
                     ->schema(RegistrationForm::getFormSchema()),
-                 Actions::make([
-                    Action::make('save')
-                        ->label(__('general.submit'))
-                        ->successNotificationTitle(__('general.saved'))
-                        ->failureNotificationTitle(__('general.data_could_not_saved'))
-                        ->action(function (Action $action) {
-                            $formData = $this->form->getState();
-                            
-                            try {
-                                DB::beginTransaction();
-
-                                $registrationType = RegistrationType::findOrFail($formData['type']);
-                                
-                                $currentUser = auth()->user();
-
-                                $registration = new Registration();
-                                $registration->given_name   = $currentUser->given_name;
-                                $registration->family_name  = $currentUser->family_name;
-                                $registration->email        = $currentUser->email;
-                                $registration->type         = $registrationType->name;
-                                $registration->cost         = $registrationType->cost;
-                                $registration->currency     = $registrationType->currency;
-
-                                $registration->save();
-
-                                $registration->setManyMeta($formData);
-
-                                DB::commit();
-                                $action->sendSuccessNotification();
-                            } catch (\Throwable $th) {
-                                $action->failureNotificationTitle($th->getMessage());
-                                $action->sendFailureNotification();
-                                DB::rollBack();
-                                throw $th;
-                            }
-                        }),
-                ])->alignLeft(),
             ])
             ->statePath('formData');
+    }
+
+    public function submit()
+    {
+        $formData = $this->form->getState();
+
+        try {
+            DB::beginTransaction();
+
+            $registrationType = RegistrationType::findOrFail($formData['type']);
+
+            $currentUser = auth()->user();
+
+            $registration = new Registration();
+            $registration->given_name   = $currentUser->given_name;
+            $registration->family_name  = $currentUser->family_name;
+            $registration->email        = $currentUser->email;
+            $registration->type         = $registrationType->name;
+            $registration->cost         = $registrationType->cost;
+            $registration->currency     = $registrationType->currency;
+
+            $registration->save();
+
+            if (array_key_exists('meta', $formData)) {
+                $registration->setManyMeta($formData['meta']);
+            };
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            Notification::make()
+                ->danger()
+                ->title($th->getMessage())
+                ->send();
+
+            DB::rollBack();
+            throw $th;
+        }
+
+        Notification::make()
+            ->success()
+            ->title(__('general.saved'))
+            ->send();
     }
 }

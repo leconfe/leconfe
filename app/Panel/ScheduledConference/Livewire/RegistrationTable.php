@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Models\Registration;
+use App\Panel\ScheduledConference\Pages\RegistrationDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -35,6 +36,7 @@ class RegistrationTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
+            ->recordUrl(fn($record) => RegistrationDetail::getUrl(['record' => $record]))
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('full_name')

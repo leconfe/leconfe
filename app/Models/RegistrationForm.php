@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -80,9 +81,9 @@ class RegistrationForm extends Model implements Sortable
         };
     }
 
-    protected function getFieldId(): string
+    public function getFieldId(): string
     {
-        return 'meta.additional_field.' . $this->getKey();
+        return 'meta.form_entries.' . $this->getKey();
     }
 
     protected function fieldText(): TextInput
@@ -143,7 +144,7 @@ class RegistrationForm extends Model implements Sortable
 
     public static function getFormSchema(): array
     {
-         $registrationTypes = RegistrationType::query()
+        $registrationTypes = RegistrationType::query()
             ->with(['meta'])
             ->get();
 
