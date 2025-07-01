@@ -196,8 +196,8 @@ class ExportArticleCrossref
             'conference_name' => $scheduledConference->title,
         ];
 
-        if ($scheduledConference->getMeta('theme')) {
-            $metadata['conference_theme'] = $scheduledConference->getMeta('theme');
+        if ($scheduledConference->getMeta('conference_theme')) {
+            $metadata['conference_theme'] = $scheduledConference->getMeta('conference_theme');
         }
 
         if ($scheduledConference->getMeta('acronym')) {
