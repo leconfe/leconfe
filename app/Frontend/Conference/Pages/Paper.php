@@ -2,6 +2,7 @@
 
 namespace App\Frontend\Conference\Pages;
 
+use App\Facades\Citation;
 use App\Facades\Hook;
 use App\Facades\License;
 use App\Facades\MetaTag;
@@ -22,7 +23,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -56,10 +57,10 @@ class Paper extends Page
     {
         $site = app()->getSite();
         $conference = $this->paper->conference;
-        $scheduledConference = $this->paper->scheduledConference;
 
         MetaTag::add('gs_meta_revision', '1.1');
         MetaTag::add('citation_title', e($this->paper->getMeta('title')));
+        MetaTag::add('citation_abstract', strip_tags($this->paper->getMeta('abstract')));
 
         $this->paper->authors->each(function ($author) {
             MetaTag::add('citation_author', $author->fullName);
@@ -114,12 +115,12 @@ class Paper extends Page
         });
 
         collect($this->paper->getMeta('keywords'))
-            ->each(fn ($keyword) => MetaTag::add('citation_keywords', $keyword));
+            ->each(fn($keyword) => MetaTag::add('citation_keywords', $keyword));
 
         collect(explode(PHP_EOL, $this->paper->getMeta('references')))
             ->filter()
             ->values()
-            ->each(fn ($reference) => MetaTag::add('citation_reference', $reference));
+            ->each(fn($reference) => MetaTag::add('citation_reference', $reference));
 
         MetaTag::add('og:title', e($this->paper->getMeta('title')));
         MetaTag::add('og:type', 'paper');
@@ -128,7 +129,46 @@ class Paper extends Page
             MetaTag::add('og:image', $this->paper->getFirstMedia('cover')->getAvailableUrl(['thumb']));
         }
 
+        $this->addEprintMetadata();
+
         Hook::call('Frontend::Paper::addMetadata', [$this, $this->paper]);
+    }
+
+    public function addEprintMetadata()
+    {
+        $site = app()->getSite();
+
+        MetaTag::add('eprints.eprintid', $this->paper->id);
+        MetaTag::add('eprints.metadata_visibility', 'show');
+
+        $this->paper->authors->each(function ($author) {
+            MetaTag::add('eprints.creators_name', $author->fullName);
+        });
+
+        MetaTag::add('eprints.title', e($this->paper->getMeta('title')));
+        MetaTag::add('eprints.ispublished', "pub");
+        MetaTag::add('eprints.full_text_status', "public");
+        MetaTag::add('eprints.type', "article");
+        MetaTag::add('eprints.abstract', strip_tags($this->paper->getMeta('abstract')));
+        MetaTag::add('eprints.date', $this->paper->published_at?->format('Y/m/d'));
+        MetaTag::add('eprints.date_type', "published");
+        MetaTag::add('eprints.full_text_status', "public");
+        MetaTag::add('eprints.document_url', route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
+        MetaTag::add('eprints.publication', $this->paper->conference->name);
+        MetaTag::add('eprints.publisher', strip_tags($site->getMeta('publisher_name')));
+        MetaTag::add('eprints.institution', strip_tags($site->getMeta('publisher_name')));
+        MetaTag::add('eprints.citation', trim(preg_replace('/\s+/', ' ', strip_tags(Citation::getCitation($this->paper, 'apa')))));
+        MetaTag::add('eprints.refereed', "TRUE");
+        MetaTag::add('eprints.volume', e($this->paper->proceeding->volume));
+        MetaTag::add('eprints.number', e($this->paper->proceeding->number));
+        MetaTag::add('eprints.pagerange', $this->paper->getMeta('article_pages'));
+        MetaTag::add('eprints.keywords', implode(', ', $this->paper->getMeta('keywords')));
+        MetaTag::add('eprints.issn', $this->paper->conference->getMeta('issn'));
+        $this->paper->galleys->each(function ($galley) {
+            if ($galley->isPdf()) {
+                MetaTag::add('eprints.document_url', $galley->getUrl());
+            }
+        });
     }
 
     public function canAccess(): bool
