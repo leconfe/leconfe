@@ -35,6 +35,11 @@ class ReviewResult extends Page implements HasForms, HasTable
         return Auth::user()->can('update', App::getCurrentScheduledConference());
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('general.conference');
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -46,6 +51,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                         SubmissionStatus::OnPresentation,
                         SubmissionStatus::Editing,
                         SubmissionStatus::Published,
+                        SubmissionStatus::Declined,
                     ])
                     ->whereHas('reviews', fn ($query) => $query->whereNotNull('date_completed'))
                     ->withCount([
@@ -70,11 +76,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ])
                     ->getStateUsing(fn ($record) => $record->completed_reviews_count.' / '.$record->reviews_count),
                 TextColumn::make('id')
-                    ->label('ID')
-                    ->extraCellAttributes([
-                        'style' => 'width: 1px',
-                    ])
-                    ->grow(false),
+                    ->label('ID'),
                 TextColumn::make('title')
                     ->getStateUsing(fn ($record) => $record->getMeta('title'))
                     ->color('primary')

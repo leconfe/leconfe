@@ -14,7 +14,6 @@ use App\Models\DefaultMailTemplate;
 use App\Models\Enums\UserRole;
 use App\Models\Review;
 use App\Models\ReviewerAssignedFile;
-use App\Models\ReviewFormItem;
 use App\Models\Role;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
@@ -354,7 +353,6 @@ class ReviewerList extends Component implements HasForms, HasTable
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))
                                     ->helperText('Set or adjust the reviewer recommendation.')
                                     ->options(SubmissionStatusRecommendation::list()),
-                                ...ReviewFormItem::query()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
                                 Select::make('quality')
                                     ->required()
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))
@@ -366,6 +364,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                             ->mapWithKeys(fn ($count) => [$count => view('components.star', ['count' => $count])->render()])
                                             ->prepend('No Rating', 0)
                                             ->toArray()
+
                                     )
                                     ->allowHtml(),
                             ])

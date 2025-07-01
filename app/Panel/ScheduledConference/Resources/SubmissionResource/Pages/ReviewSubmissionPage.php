@@ -10,7 +10,6 @@ use App\Facades\Hook;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ReviewCompleteMail;
 use App\Models\Review;
-use App\Models\ReviewFormItem;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -147,8 +146,16 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                             ->label('Review for Editor'),
                         Select::make('recommendation')
                             ->required()
+                            ->native(false)
                             ->options(SubmissionStatusRecommendation::list()),
-                        ...ReviewFormItem::query()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),
+                        TextInput::make('score')
+                            ->label('What is the overall score of this paper?')
+                            ->required()
+                            ->helperText('Score between 1-100')
+                            ->numeric()
+                            ->alphaNum()
+                            ->minValue(1)
+                            ->maxValue(100),
                     ]),
             ]);
     }
@@ -164,8 +171,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->action(function (Action $action) {
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
-                $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses']);
-                
+
                 try {
                     DB::beginTransaction();
 
