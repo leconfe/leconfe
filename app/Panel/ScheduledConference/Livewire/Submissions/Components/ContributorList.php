@@ -135,14 +135,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             'lg' => 2,
                         ])
                         ->required()
-                        ->email()
-                        ->unique(
-                            ignoreRecord: true,
-                            modifyRuleUsing: fn(Unique $rule) => $rule
-                                ->when($this->submission instanceof Conference, fn($rule) => $rule->where('conference_id', $this->submission->getKey()))
-                                ->when($this->submission instanceof ScheduledConference, fn($rule) => $rule->where('scheduled_conference_id', $this->submission->getKey()))
-                                ->when($this->submission instanceof Submission, fn($rule) => $rule->where('submission_id', $this->submission->getKey()))
-                        ),
+                        ->email(),
                     TextInput::make('meta.public_name')
                         ->label(__('general.public_name'))
                         ->helperText(__('general.public_name_helper'))
@@ -211,10 +204,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->successNotificationTitle(__('general.contributor_added'))
                     ->form(fn(Form $form) => $this->form($form))
                     ->using(function (array $data) {
-                        $author = Author::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();
-                        if (! $author) {
-                            $author = AuthorCreateAction::run($this->submission, $data);
-                        }
+                        $author = AuthorCreateAction::run($this->submission, $data);
 
                         $authorCount = Author::where('submission_id', $author->submission_id)->count();
                         if ($authorCount == 1) {
