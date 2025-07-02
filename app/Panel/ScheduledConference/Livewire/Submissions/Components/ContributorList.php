@@ -6,8 +6,6 @@ use App\Actions\Authors\AuthorCreateAction;
 use App\Actions\Authors\AuthorDeleteAction;
 use App\Actions\Authors\AuthorUpdateAction;
 use App\Models\Author;
-use App\Models\Conference;
-use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
@@ -25,16 +23,12 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\Unique;
 
 class ContributorList extends \Livewire\Component implements HasForms, HasTable
 {
@@ -133,14 +127,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             'lg' => 2,
                         ])
                         ->required()
-                        ->email()
-                        ->unique(
-                            ignoreRecord: true,
-                            modifyRuleUsing: fn(Unique $rule) => $rule
-                                ->when($this->submission instanceof Conference, fn($rule) => $rule->where('conference_id', $this->submission->getKey()))
-                                ->when($this->submission instanceof ScheduledConference, fn($rule) => $rule->where('scheduled_conference_id', $this->submission->getKey()))
-                                ->when($this->submission instanceof Submission, fn($rule) => $rule->where('submission_id', $this->submission->getKey()))
-                        ),
+                        ->email(),
                     TextInput::make('meta.public_name')
                         ->label(__('general.public_name'))
                         ->helperText(__('general.public_name_helper'))
