@@ -196,10 +196,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->successNotificationTitle(__('general.contributor_added'))
                     ->form(fn(Form $form) => $this->form($form))
                     ->using(function (array $data) {
-                        $author = Author::whereSubmissionId($this->submission->getKey())->email($data['email'])->first();
-                        if (! $author) {
-                            $author = AuthorCreateAction::run($this->submission, $data);
-                        }
+                        $author = AuthorCreateAction::run($this->submission, $data);
 
                         $authorCount = Author::where('submission_id', $author->submission_id)->count();
                         if ($authorCount == 1) {
