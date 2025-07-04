@@ -579,6 +579,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 'response_due_date' => now()->addDays(app()->getCurrentScheduledConference()->getMeta('review_invitation_response_deadline') ?? 28)->format('d F Y'),
                                 'review_due_date' => now()->addDays(app()->getCurrentScheduledConference()->getMeta('review_completion_deadline') ?? 28)->format('d F Y'),
                                 'review_mode' => app()->getCurrentScheduledConference()->getMeta('review_mode'),
+                                'open_review_for_author' => app()->getCurrentScheduledConference()->getMeta('default_open_review_for_author')
                             ],
                         ]);
                     })
