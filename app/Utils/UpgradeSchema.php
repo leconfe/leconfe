@@ -12,6 +12,7 @@ use App\Utils\UpgradeSchemas\{
     Upgrade125,
     Upgrade128,
     Upgrade130Beta1,
+    Upgrade130Beta2,
     UpgradeBeta3,
     UpgradeBeta4,
     UpgradeBeta5,
