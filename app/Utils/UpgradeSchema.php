@@ -2,19 +2,20 @@
 
 namespace App\Utils;
 
-use App\Utils\UpgradeSchemas\Upgrade110;
-use App\Utils\UpgradeSchemas\Upgrade120Beta1;
-use App\Utils\UpgradeSchemas\Upgrade120Beta3;
-use App\Utils\UpgradeSchemas\Upgrade120Beta4;
-use App\Utils\UpgradeSchemas\Upgrade121;
-use App\Utils\UpgradeSchemas\Upgrade122;
-use App\Utils\UpgradeSchemas\Upgrade125;
-use App\Utils\UpgradeSchemas\Upgrade130;
-use App\Utils\UpgradeSchemas\Upgrade130Beta1;
-use App\Utils\UpgradeSchemas\Upgrade130Beta2;
-use App\Utils\UpgradeSchemas\UpgradeBeta3;
-use App\Utils\UpgradeSchemas\UpgradeBeta4;
-use App\Utils\UpgradeSchemas\UpgradeBeta5;
+use App\Utils\UpgradeSchemas\{
+    Upgrade110,
+    Upgrade120Beta1,
+    Upgrade120Beta3,
+    Upgrade120Beta4,
+    Upgrade121,
+    Upgrade122,
+    Upgrade125,
+    Upgrade128,
+    Upgrade130Beta1,
+    UpgradeBeta3,
+    UpgradeBeta4,
+    UpgradeBeta5,
+};
 
 class UpgradeSchema
 {
@@ -29,6 +30,7 @@ class UpgradeSchema
         '1.2.1' => Upgrade121::class,
         '1.2.2' => Upgrade122::class,
         '1.2.5' => Upgrade125::class,
+        '1.2.8' => Upgrade128::class,
         '1.3.0-beta.1' => Upgrade130Beta1::class,
         '1.3.0-beta.2' => Upgrade130Beta2::class,
     ];

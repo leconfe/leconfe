@@ -80,7 +80,7 @@ class MastHeadSetting extends Component implements HasForms
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                TextInput::make('meta.theme')
+                                TextInput::make('meta.conference_theme')
                                     ->label(__('general.theme'))
                                     ->helperText(__('general.theme_information'))
                                     ->columnSpanFull(),

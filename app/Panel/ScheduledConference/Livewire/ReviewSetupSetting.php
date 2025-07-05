@@ -6,6 +6,7 @@ use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Models\Review;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -45,6 +46,7 @@ class ReviewSetupSetting extends Component implements HasForms
                         Radio::make('meta.review_mode')
                             ->label(__('general.review_mode'))
                             ->options(Review::getModeOptions()),
+                        Checkbox::make('meta.default_open_review_for_author'),
                         TextInput::make('meta.review_invitation_response_deadline')
                             ->required()
                             ->label(__('general.default_response_deadline'))

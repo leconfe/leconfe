@@ -93,8 +93,6 @@ class Profile extends Page implements HasForms
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->columnSpan(['lg' => 2])
-                            ->disabled(fn (?User $record) => $record)
-                            ->dehydrated(fn (?User $record) => ! $record)
                             ->unique(ignoreRecord: true),
                         TextInput::make('password')
                             ->label(__('general.password'))

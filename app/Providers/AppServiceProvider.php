@@ -87,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
             return $service->withHeaders([
                 'Leconfe-Version' => app()->getCodeVersion(),
                 'User-Agent' => 'Leconfe/'.app()->getCodeVersion(),
+                'Beacon' => app()->getUniqueIdentifier(),
             ]);
         });
     }

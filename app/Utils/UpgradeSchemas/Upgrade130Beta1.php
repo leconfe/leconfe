@@ -3,12 +3,19 @@
 namespace App\Utils\UpgradeSchemas;
 
 use App\Models\Submission;
+use Illuminate\Support\Facades\Artisan;
 
 class Upgrade130Beta1 extends UpgradeBase
 {
     public function run(): void
     {
-        Submission::query()
+        $this->updateAuthorPrimaryContact();
+        $this->migrate();
+    }
+
+    protected function updateAuthorPrimaryContact(): void 
+    {
+         Submission::query()
             ->with([
                 'authors' => fn($query) => $query->ordered(),
                 'meta'
@@ -22,5 +29,12 @@ class Upgrade130Beta1 extends UpgradeBase
                     $submission->setPrimaryContact($author);
                 }
             });
+    }
+
+    protected function migrate(): void
+    {
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
     }
 }
