@@ -937,7 +937,7 @@ return [
     'allow_registration' => 'Roʻyxatdan oʻtishga ruxsat berish',
     'allow_registration_helper' => 'Ommaviy foydalanuvchilarga konferensiyaga roʻyxatdan oʻtishga ruxsat beriladi.',
     'public_name' => 'Ommaviy nom',
-    'public_name_helper' => 'Sizga qanday murojaat qilishni xohlayotganingizni belgilang. Istasangiz murojaat so‘zlari, otaning ismi va qo‘shimchalarni ham qo‘shishingiz mumkin.',
+    'public_name_helper' => 'Toʻliq nom va sarlavhani kiriting',
     'publisher_library' => 'Nashriyot kutubxonasi',
     'add_a_file' => 'Fayl qoʻshish',
     'allow_public_access' => 'Ochiq kirishga ruxsat berish',
