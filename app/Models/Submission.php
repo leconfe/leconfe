@@ -199,7 +199,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
 
     public function authors()
     {
-        return $this->hasMany(Author::class);
+        return $this->hasMany(Author::class)->ordered();
     }
 
     public function registration(): HasOne
