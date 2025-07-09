@@ -13,7 +13,7 @@
         'grid grid-cols-12' => $user->can('actAsEditor', $submission),
     ])>
         <div class="col-span-8 space-y-4">
-            @livewire(Components\Files\AbstractFiles::class, ['submission' => $submission, 'category' => SubmissionFileCategory::SUPPLEMENTARY_FILES, 'viewOnly' => !$user->can('actAsEditor', $submission)])
+            @livewire(Components\Files\AbstractFiles::class, ['submission' => $submission, 'category' => SubmissionFileCategory::SUPPLEMENTARY_FILES, 'viewOnly' => !$user->can('Submission:uploadAbstract', $submission)])
 
             @livewire(Components\Discussions\DiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::CallforAbstract, 'lazy' => true])
         </div>
