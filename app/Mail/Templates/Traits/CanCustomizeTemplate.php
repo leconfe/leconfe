@@ -2,6 +2,8 @@
 
 namespace App\Mail\Templates\Traits;
 
+use App\Facades\Setting;
+use App\Models\MailTemplate;
 use Illuminate\Contracts\Mail\Mailable;
 use Spatie\MailTemplates\Interfaces\MailTemplateInterface;
 
@@ -52,6 +54,15 @@ trait CanCustomizeTemplate
                 public function getTextTemplate(): ?string
                 {
                     return null;
+                }
+
+                public function getHtmlLayout(): string
+                {
+                    return view('mail.template', [
+                        'body' => '{{{ body }}}',
+                        'header' => Setting::get('mail_header') ?? MailTemplate::getDefaultHeader(),
+                        'footer' => Setting::get('mail_footer') ?? MailTemplate::getDefaultFooter(),
+                    ])->render();
                 }
             };
         }
