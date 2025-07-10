@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -291,5 +292,21 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopeState($query, ScheduledConferenceState $state)
     {
         return $query->where('state', $state);
+    }
+
+    public function isRegistrationOpen() : bool
+    {
+        $registrationStartDate = $this->getMeta('registration_start') ? Date::parse($this->getMeta('registration_start')) : null;
+        $registrationEndDate = $this->getMeta('registration_end') ? Date::parse($this->getMeta('registration_end')) : null;
+
+        $now = now();
+
+        if(!$registrationStartDate) return false;
+
+        if($now->lt($registrationStartDate)) return false;
+
+        if($registrationEndDate && $now->gt($registrationEndDate)) return false;
+
+        return true;
     }
 }

@@ -22,6 +22,7 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\App;
 use Squire\Models\Currency;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 
 class RegistrationDetail extends Page  implements HasForms, HasInfolists
 {
@@ -49,14 +50,21 @@ class RegistrationDetail extends Page  implements HasForms, HasInfolists
 	protected function getHeaderActions(): array
 	{
 		return [
-			Action::make('download_invoice')
-				->label('Download Invoice')
-				->color('gray')
-				->requiresConfirmation()
-				->action(fn() => ''),
-			Action::make('edit')
-				->requiresConfirmation()
-				->action(fn() => ''),
+			ActionGroup::make([
+				Action::make('download_proof_payment')
+					->label('Download Proof of Payment')
+					->action(fn() => $this->record->getFirstMedia('payment_proof')),
+				Action::make('download_invoice')
+					->label('Download Invoice')
+					->color('gray')
+					->requiresConfirmation()
+					->action(fn() => ''),
+				Action::make('edit')
+					->requiresConfirmation()
+					->action(fn() => ''),
+			])
+			->label("Actions")
+			->button(),
 			
 		];
 	}
@@ -93,16 +101,6 @@ class RegistrationDetail extends Page  implements HasForms, HasInfolists
 											->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
 										TextEntry::make('paid_at')
 											->visible(fn(Registration $record) => $record->paid_at),
-
-										// InfolistActions::make([
-										// 	InfolistAction::make('resetStars')
-										// 		->icon('heroicon-m-x-mark')
-										// 		->color('danger')
-										// 		->requiresConfirmation()
-										// 		->action(function ($data) {
-										// 			dd($data);
-										// 		})
-										// ]),
 									]),
 								Section::make('Submissions')
 									->visible(fn($record) => $record->userSubmissions->isNotEmpty())

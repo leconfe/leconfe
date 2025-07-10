@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Plank\Metable\Metable;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-
-class Registration extends Model
+class Registration extends Model implements HasMedia
 {
-    use HasFactory, Metable, BelongsToScheduledConference;
+    use HasFactory, Metable, BelongsToScheduledConference, InteractsWithMedia;
 
     protected $fillable = [
         'email',

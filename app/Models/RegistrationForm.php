@@ -10,14 +10,12 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
 use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
+use Squire\Models\Country;
 
 class RegistrationForm extends Model implements Sortable
 {
@@ -162,6 +160,23 @@ class RegistrationForm extends Model implements Sortable
                 ->email()
                 ->label(__('general.email'))
                 ->disabled(),
+            TextInput::make('meta.affiliation')
+                ->label('Affiliation'),
+            TextInput::make('meta.address_line')
+                ->label('Address Line')
+                ->required(),
+            TextInput::make('meta.post_code')
+                ->label('Postcode / ZIP Code')
+                ->required(),
+            TextInput::make('meta.city')
+                ->label('City')
+                ->required(),
+            Select::make('meta.country')
+                ->label("Country")
+                ->required()
+                ->searchable()
+                ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                ->optionsLimit(250),
             Radio::make('type')
                 ->required()
                 ->options($registrationTypes->pluck('name', 'id'))

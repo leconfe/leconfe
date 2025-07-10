@@ -2,16 +2,10 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Models\PaymentFee;
 use App\Models\Registration;
 use App\Models\RegistrationForm;
 use App\Models\RegistrationType;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -20,13 +14,15 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
-class ParticipantRegister extends Page implements HasForms
+class ParticipantRegistration extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
     protected static string $view = 'panel.scheduledConference.pages.participant-register';
+
+    protected static ?int $navigationSort = 99;
 
     public ?array $formData = [];
 
@@ -36,17 +32,18 @@ class ParticipantRegister extends Page implements HasForms
             'given_name' => auth()->user()?->given_name,
             'family_name' => auth()->user()?->family_name,
             'email' => auth()->user()?->email,
+            'affiliation' => auth()->user()?->getMeta('affiliation')
         ]);
     }
 
     public static function canAccess(): bool
     {
-        return !auth()->user()?->isRegisteredAsParticipant();
+        return app()->getCurrentScheduledConference()->isRegistrationOpen() && !auth()->user()?->isRegisteredAsParticipant();
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return !auth()->user()?->isRegisteredAsParticipant();
+        return !auth()->user()?->isRegisteredAsParticipant() && app()->getCurrentScheduledConference()->isRegistrationOpen();
     }
 
     /**
@@ -111,5 +108,7 @@ class ParticipantRegister extends Page implements HasForms
             ->success()
             ->title(__('general.saved'))
             ->send();
+
+        redirect()->to(Dashboard::getUrl());
     }
 }

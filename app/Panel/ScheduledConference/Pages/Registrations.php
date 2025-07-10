@@ -34,7 +34,7 @@ class Registrations extends Page
         return __('scheduled_conference.registrations');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?int $navigationSort = 3;
 
