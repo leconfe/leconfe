@@ -89,7 +89,7 @@
                                     {{ __('general.edit_contributors') }}
                                 </x-filament::button>
                             </div>
-                            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList::class, ['submission' => $record, 'viewOnly' => true, 'lazy' => true])
+                            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList::class, ['submission' => $record, 'viewOnly' => true])
                         </div>
                     </div>
                 </div>
