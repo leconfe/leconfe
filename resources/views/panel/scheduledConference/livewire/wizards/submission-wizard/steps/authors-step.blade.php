@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                         @enderror
-                        @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList::class, ['submission' => $this->record, 'lazy' => true])
+                        @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList::class, ['submission' => $this->record])
                     </div>
                 </div>
             </div>
