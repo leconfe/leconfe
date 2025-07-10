@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DiscussionTopic extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'stage',
