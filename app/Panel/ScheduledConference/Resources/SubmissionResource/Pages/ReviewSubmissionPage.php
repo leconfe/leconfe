@@ -164,7 +164,10 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->action(function (Action $action) {
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
-                $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses']);
+                
+                if (isset($data['meta']['review_responses'])) {
+                    $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses'] ?? []);
+                }
                 
                 try {
                     DB::beginTransaction();
