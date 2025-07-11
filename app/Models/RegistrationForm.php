@@ -161,6 +161,7 @@ class RegistrationForm extends Model implements Sortable
                 ->label(__('general.email'))
                 ->disabled(),
             TextInput::make('meta.affiliation')
+                ->required()
                 ->label('Affiliation'),
             TextInput::make('meta.address_line')
                 ->label('Address Line')

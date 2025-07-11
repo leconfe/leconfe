@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('cost');
             $table->string('currency');
             $table->string('type');
+            $table->string('number');
             $table->timestamp('paid_at')->nullable();
             $table->timestamp('withdraw')->nullable();
             $table->timestamps();

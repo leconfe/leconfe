@@ -26,7 +26,7 @@ return [
 
         'basic' => [
             'plugins' => 'autoresize link wordcount image code lists',
-            'toolbar' => 'bold italic superscript subscript | link | blockquote bullist numlist | image | code',
+            'toolbar' => 'bold italic superscript subscript | link | blockquote bullist numlist | image | code | removeformat',
             'upload_directory' => 'tinyeditor',
         ],
 

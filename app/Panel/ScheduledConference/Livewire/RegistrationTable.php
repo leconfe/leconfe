@@ -40,10 +40,13 @@ class RegistrationTable extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('full_name')
+                    ->searchable()
                     ->grow(false),
                 TextColumn::make('email')
+                    ->searchable()
                     ->grow(false),
-                TextColumn::make('type'),
+                TextColumn::make('type')
+                    ->searchable(),
                 TextColumn::make('cost')
                     ->getStateUsing(fn(Registration $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes())
                     ->description(fn(Registration $record) => Currency::find($record->currency)?->name),

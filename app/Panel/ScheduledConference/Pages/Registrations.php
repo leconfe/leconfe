@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
+use App\Panel\ScheduledConference\Livewire\InvoiceSetting;
 use App\Panel\ScheduledConference\Livewire\RegistrationFormTable;
 use App\Panel\ScheduledConference\Livewire\RegistrationSetting;
 use App\Panel\ScheduledConference\Livewire\RegistrationTable;
@@ -77,6 +78,12 @@ class Registrations extends Page
                                             ->schema([
                                                 Livewire::make(RegistrationFormTable::class)
                                                     ->key('registration_form_table'),
+                                            ]),
+                                        InfolistsVerticalTabs\Tab::make('Invoice')
+                                            ->label(__('scheduled_conference.invoice'))
+                                            ->schema([
+                                                Livewire::make(InvoiceSetting::class)
+                                                    ->key('invoice_setting'),
                                             ]),
                                     ]),
                             ]),

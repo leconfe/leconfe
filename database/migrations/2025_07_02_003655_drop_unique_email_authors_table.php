@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('authors', function (Blueprint $table) {
-            $table->dropUnique(['email', 'submission_id']);
+            if (Schema::hasIndex('authors', 'authors_email_submission_id_unique')) {
+                $table->dropUnique(['email', 'submission_id']);
+            }
         });
     }
 

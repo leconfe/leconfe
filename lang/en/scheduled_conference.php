@@ -30,4 +30,5 @@ return [
 	'setting' => 'Setting',
 	'settings' => 'Settings',
 	'general' => 'General',
+	'invoice' => 'Invoice',
 ];

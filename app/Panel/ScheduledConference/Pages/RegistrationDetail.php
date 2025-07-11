@@ -49,24 +49,7 @@ class RegistrationDetail extends Page  implements HasForms, HasInfolists
 
 	protected function getHeaderActions(): array
 	{
-		return [
-			ActionGroup::make([
-				Action::make('download_proof_payment')
-					->label('Download Proof of Payment')
-					->action(fn() => $this->record->getFirstMedia('payment_proof')),
-				Action::make('download_invoice')
-					->label('Download Invoice')
-					->color('gray')
-					->requiresConfirmation()
-					->action(fn() => ''),
-				Action::make('edit')
-					->requiresConfirmation()
-					->action(fn() => ''),
-			])
-			->label("Actions")
-			->button(),
-			
-		];
+		return [];
 	}
 
 	public function infolist(Infolist $infolist): Infolist
@@ -87,6 +70,16 @@ class RegistrationDetail extends Page  implements HasForms, HasInfolists
 								TextEntry::make('currency')
 									->getStateUsing(fn(Registration $record) => Currency::find($record->currency)?->name),
 								...$this->record->getInfolistEntries(),
+							])
+							->headerActions([
+								InfolistAction::make('download_proof_payment')
+									->label('Download Proof of Payment')
+									->visible(fn() => $this->record->hasMedia('payment_proof'))
+									->action(fn() => $this->record->getFirstMedia('payment_proof')),
+								InfolistAction::make('download_invoice')
+									->label('Download Invoice')
+									->color('gray')
+									->url(fn($record) => Invoice::getUrl(['record' => $record])),
 							])
 							->columnSpan([
 								'default' => 1,

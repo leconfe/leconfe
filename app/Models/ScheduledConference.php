@@ -160,6 +160,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allow_registration' => true,
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
+            'invoice_number' => 1,
         ];
     }
 

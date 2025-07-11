@@ -76,7 +76,7 @@ class ParticipantRegistration extends Page implements HasForms
             DB::beginTransaction();
 
             $registrationType = RegistrationType::findOrFail($formData['type']);
-
+            $scheduledConference = app()->getCurrentScheduledConference();
             $currentUser = auth()->user();
 
             $registration = new Registration();
@@ -86,12 +86,15 @@ class ParticipantRegistration extends Page implements HasForms
             $registration->type         = $registrationType->name;
             $registration->cost         = $registrationType->cost;
             $registration->currency     = $registrationType->currency;
+            $registration->number       = $scheduledConference->getMeta('invoice_prefix_number') . str_pad($scheduledConference->getMeta('invoice_number'), 3, '0', STR_PAD_LEFT);
 
             $registration->save();
 
             if (array_key_exists('meta', $formData)) {
                 $registration->setManyMeta($formData['meta']);
             };
+
+            $scheduledConference->setMeta('invoice_number', $scheduledConference->getMeta('invoice_number') + 1);
 
             DB::commit();
         } catch (\Throwable $th) {

@@ -12,6 +12,7 @@ use Plank\Metable\Metable;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Squire\Models\Country;
 
 class Registration extends Model implements HasMedia
 {
@@ -24,6 +25,7 @@ class Registration extends Model implements HasMedia
         'cost',
         'currency',
         'type',
+        'number',
     ];
 
     protected $casts = [
@@ -69,5 +71,12 @@ class Registration extends Model implements HasMedia
                 RegistrationForm::TYPE_SELECT, RegistrationForm::TYPE_RADIO, RegistrationForm::TYPE_CHECKBOX => $item->getMeta('options')[$formEntries->get($item->getKey())] ?? '-',
                 default => $formEntries->get($item->getKey()) ?? '-'
             });
+    }
+
+    public function countryName() : Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => Country::find($this->getMeta('country'))?->name
+        );
     }
 }
