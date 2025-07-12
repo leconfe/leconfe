@@ -55,6 +55,10 @@ class InvoiceSetting extends Component implements HasForms
 				Section::make()
 					->columns(1)
 					->schema([
+						Checkbox::make('meta.invoice_enable')
+							->label('Enable Invoice'),
+						Checkbox::make('meta.receipt_enable')
+							->label('Enable Receipt'),
 						TextInput::make('meta.organizer')
 							->label('Organizer')
 							->required(),

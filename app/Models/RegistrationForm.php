@@ -10,12 +10,14 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Squire\Models\Country;
+use Squire\Models\Currency;
 
 class RegistrationForm extends Model implements Sortable
 {
@@ -151,10 +153,10 @@ class RegistrationForm extends Model implements Sortable
                 ->schema([
                     TextInput::make('given_name')
                         ->label(__('general.given_name'))
-                        ->disabled(),
+                        ->required(),
                     TextInput::make('family_name')
                         ->label(__('general.family_name'))
-                        ->disabled(),
+                        ->required(),
                 ]),
             TextInput::make('email')
                 ->email()
@@ -176,10 +178,11 @@ class RegistrationForm extends Model implements Sortable
                 ->label("Country")
                 ->required()
                 ->searchable()
-                ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->id => $country->flag . ' ' . $country->name]))
                 ->optionsLimit(250),
             Radio::make('type')
                 ->required()
+                ->visible(fn($operation) => $operation == 'create')
                 ->options($registrationTypes->pluck('name', 'id'))
                 ->descriptions($registrationTypes->mapWithKeys(fn(RegistrationType $record) => [$record->getKey() => money($record->cost, $record->currency, true)->formatWithoutZeroes()])),
             // ->disableOptionWhen(function (string $value) use ($registrationTypes) {
@@ -190,6 +193,22 @@ class RegistrationForm extends Model implements Sortable
             //     return false;
 
             // })
+            Grid::make(2)
+                ->visible(fn($operation) => $operation == 'edit')
+                ->schema([
+                    Select::make('currency')
+                        ->required()
+                        ->label(__('general.currency'))
+                        ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
+                            ->mapWithKeys(fn(?Currency $currency, int $key) => [$currency->id => $currency->name . " (" . $currency->symbol_native . ")"]))
+                        ->searchable()
+                        ->required(),
+                    TextInput::make('cost')
+                        ->label('Cost')
+                        ->numeric()
+                        ->required()
+                        ->minValue(0),
+                ]),
             ...RegistrationForm::ordered()->lazy()->map(fn(RegistrationForm $item) => $item->getFormField())->toArray(),
         ];
     }

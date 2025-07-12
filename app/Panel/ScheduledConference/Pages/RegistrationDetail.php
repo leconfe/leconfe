@@ -2,29 +2,21 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Facades\Setting;
 use App\Models\Registration;
-use App\Models\Submission;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Models\RegistrationForm;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Actions as InfolistActions;
-use Filament\Infolists\Components\Actions\Action as InfolistAction;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\App;
-use Squire\Models\Currency;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 
-class RegistrationDetail extends Page  implements HasForms, HasInfolists
+class RegistrationDetail extends Page implements HasForms, HasInfolists
 {
 	use InteractsWithForms, InteractsWithInfolists;
 
@@ -49,74 +41,41 @@ class RegistrationDetail extends Page  implements HasForms, HasInfolists
 
 	protected function getHeaderActions(): array
 	{
-		return [];
+		return [
+			Action::make('edit_registration')
+				->record($this->record)
+				->label('Edit Registration')
+				->fillForm([
+					...$this->record->attributesToArray(),
+					'meta' => $this->record->getAllMeta()->toArray(),
+				])
+				->form(
+					fn(Form $form) => $form
+						->operation('edit')
+						->schema([
+							...RegistrationForm::getFormSchema(),
+							TextInput::make('number')
+								->label("Invoice Number"),
+							DatePicker::make('paid_at')
+								->label("Payment Date")
+						])
+				)
+				->action(function (Action $action, array $data, Registration $record) {
+					$record->update($data);
+
+					if (array_key_exists('meta', $data)) {
+						$record->setManyMeta($data['meta']);
+					};
+
+					$action->successNotificationTitle('Registration Updated.');
+					$action->success();
+
+				})
+		];
 	}
 
 	public function infolist(Infolist $infolist): Infolist
 	{
-		return $infolist
-			->record($this->record)
-			->schema([
-				Grid::make()
-					->columns(12)
-					->schema([
-						Section::make('Information')
-							->schema([
-								TextEntry::make('full_name'),
-								TextEntry::make('email'),
-								TextEntry::make('type'),
-								TextEntry::make('cost')
-									->getStateUsing(fn(Registration $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes()),
-								TextEntry::make('currency')
-									->getStateUsing(fn(Registration $record) => Currency::find($record->currency)?->name),
-								...$this->record->getInfolistEntries(),
-							])
-							->headerActions([
-								InfolistAction::make('download_proof_payment')
-									->label('Download Proof of Payment')
-									->visible(fn() => $this->record->hasMedia('payment_proof'))
-									->action(fn() => $this->record->getFirstMedia('payment_proof')),
-								InfolistAction::make('download_invoice')
-									->label('Download Invoice')
-									->color('gray')
-									->url(fn($record) => Invoice::getUrl(['record' => $record])),
-							])
-							->columnSpan([
-								'default' => 1,
-								'lg' => 8,
-							]),
-						Grid::make(1)
-							->schema([
-								Section::make()
-									->schema([
-										TextEntry::make('created_at')
-											->label('Registered At')
-											->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
-										TextEntry::make('paid_at')
-											->visible(fn(Registration $record) => $record->paid_at),
-									]),
-								Section::make('Submissions')
-									->visible(fn($record) => $record->userSubmissions->isNotEmpty())
-									->schema([
-										RepeatableEntry::make('userSubmissions')
-											->hiddenLabel()
-											->schema([
-												TextEntry::make('title')
-													->url(fn(Submission $record) => SubmissionResource::getUrl('view', ['record' => $record]))
-													->hiddenLabel()
-													->color('primary')
-													->openUrlInNewTab()
-													->getStateUsing(fn(Submission $record) => $record->getMeta('title') ?? '-'),
-											])
-											->contained(false)
-									]),
-							])
-							->columnSpan([
-								'default' => 1,
-								'lg' => 4,
-							]),
-					])
-
-			]);
+		return $this->record->detailInfolist($infolist);
 	}
 }

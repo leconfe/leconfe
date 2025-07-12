@@ -7,9 +7,9 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
-class Invoice extends Page
+class Receipt extends Page
 {
-	protected static string $view = 'panel.scheduledConference.pages.invoice';
+	protected static string $view = 'panel.scheduledConference.pages.receipt';
 
 	public Registration $record;
 
@@ -27,7 +27,6 @@ class Invoice extends Page
 
 		abort_unless($canAccess, 404);
 
-
 		return view(static::$view, [
 			'scheduledConference' => app()->getCurrentScheduledConference(),
 			'record' => $this->record,
@@ -43,6 +42,6 @@ class Invoice extends Page
 
 	public static function getRoutePath(): string
 	{
-		return '/registrations/invoice/{record}';
+		return '/registrations/receipt/{record}';
 	}
 }

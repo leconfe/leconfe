@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Widgets;
 use App\Facades\Setting;
 use App\Models\Registration;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Pages\Invoice;
 use App\Panel\ScheduledConference\Pages\ParticipantRegistration;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -30,11 +31,26 @@ class RegistrationInfo extends Widget implements HasInfolists, HasForms
 
     protected static string $view = 'panel.scheduledConference.widgets.registration-info';
 
+    protected static bool $isLazy = false;
+
     protected int|string|array $columnSpan = 'full';
+
+    public ?Registration $record;
+
+    public function mount()
+    {
+        $this->record = Registration::query()
+            ->where('email', auth()->user()->email)
+            ->first();
+    }
 
     public static function canView(): bool
     {
-        return app()->getCurrentScheduledConference()->isRegistrationOpen();
+        if(auth()->user()?->can('update', app()->getCurrentScheduledConference())){
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -42,122 +58,16 @@ class RegistrationInfo extends Widget implements HasInfolists, HasForms
      */
     protected function getViewData(): array
     {
-        $user = auth()->user();
-
         return [
-            'isRegiteredAsParticipant' => $user->isRegisteredAsParticipant(),
+            'isRegiteredAsParticipant' => filled($this->record),
             'registerAsParticipantUrl' => ParticipantRegistration::getUrl(),
             // 'registrationDetailUrl' => RegistrationDetail::getUrl(),
-            'conferenceTitle' => app()->getCurrentScheduledConference()?->title,
+            'scheduledConference' => app()->getCurrentScheduledConference(),
         ];
     }
 
     public function infolist(Infolist $infolist): Infolist
     {
-        $record = Registration::query()
-            ->where('email', auth()->user()->email)
-            ->first();
-
-        return $infolist
-            ->record($record)
-            ->schema([
-                Grid::make()
-                    ->columns(12)
-                    ->schema([
-                        Grid::make(1)
-                            ->schema([
-                                Section::make('Registration Information')
-                                    ->schema([
-                                        TextEntry::make('full_name'),
-                                        TextEntry::make('email'),
-                                        TextEntry::make('affiliation')
-                                            ->state(fn(Registration $record) => $record->getMeta('affiliation')),
-                                        TextEntry::make('type'),
-                                        TextEntry::make('cost')
-                                            ->state(fn(Registration $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes()),
-                                        TextEntry::make('currency')
-                                            ->state(fn(Registration $record) => Currency::find($record->currency)?->name),
-                                        ...$record->getInfolistEntries(),
-                                    ])
-                                    ->headerActions([
-                                        Action::make('proof_of_payment')
-                                            ->label('Upload Proof of Payment')
-                                            ->modalWidth(MaxWidth::ExtraLarge)
-                                            ->fillForm([])
-                                            ->form([
-                                                SpatieMediaLibraryFileUpload::make('payment_proof')
-                                                    ->hiddenLabel()
-                                                    ->disk('private-files')
-                                                    ->collection('payment_proof'),
-                                            ])
-                                            ->action(function ($form, Action $action) {
-                                                $action->successNotificationTitle('Payment Proof Uploaded');
-                                                $action->success();
-                                            }),
-                                        Action::make('invoice')
-                                            ->label('Download Invoice')
-                                            ->color('gray')
-                                            ->action(fn() => dd($this))
-                                    ]),
-                                Section::make('Address Information')
-                                    ->schema([
-                                        TextEntry::make('address_line')
-                                            ->label('Address Line')
-                                            ->state(fn(Registration $record) => $record->getMeta('address_line')),
-                                        TextEntry::make('post_code')
-                                            ->label('Postcode / ZIP Code')
-                                            ->state(fn(Registration $record) => $record->getMeta('post_code')),
-                                        TextEntry::make('city')
-                                            ->label('City')
-                                            ->state(fn(Registration $record) => $record->getMeta('city')),
-                                        TextEntry::make('country')
-                                            ->label('Country')
-                                            ->state(function (Registration $record) {
-                                                $country = Country::find($record->getMeta('country'));
-
-                                                if (!$country) {
-                                                    return '';
-                                                }
-
-                                                return $country->flag . ' ' . $country->name;
-                                            }),
-                                    ]),
-                            ])
-                            ->columnSpan([
-                                'default' => 1,
-                                'lg' => 8,
-                            ]),
-                        Grid::make(1)
-                            ->schema([
-                                Section::make()
-                                    ->schema([
-                                        TextEntry::make('created_at')
-                                            ->label('Registered At')
-                                            ->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
-                                        TextEntry::make('paid_at')
-                                            ->visible(fn(Registration $record) => $record->paid_at),
-                                    ]),
-                                Section::make('Submissions')
-                                    ->visible(fn($record) => $record->userSubmissions->isNotEmpty())
-                                    ->schema([
-                                        RepeatableEntry::make('userSubmissions')
-                                            ->hiddenLabel()
-                                            ->schema([
-                                                TextEntry::make('title')
-                                                    ->url(fn(Submission $record) => SubmissionResource::getUrl('view', ['record' => $record]))
-                                                    ->hiddenLabel()
-                                                    ->color('primary')
-                                                    ->openUrlInNewTab()
-                                                    ->getStateUsing(fn(Submission $record) => $record->getMeta('title') ?? '-'),
-                                            ])
-                                            ->contained(false)
-                                    ]),
-                            ])
-                            ->columnSpan([
-                                'default' => 1,
-                                'lg' => 4,
-                            ]),
-                    ]),
-            ]);
+        return $this->record->detailInfolist($infolist);
     }
 }

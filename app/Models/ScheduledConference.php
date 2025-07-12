@@ -161,6 +161,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
             'invoice_number' => 1,
+            'invoice_enable' => false,
+            'receipt_enable' => true,
         ];
     }
 
@@ -300,14 +302,38 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         $registrationStartDate = $this->getMeta('registration_start') ? Date::parse($this->getMeta('registration_start')) : null;
         $registrationEndDate = $this->getMeta('registration_end') ? Date::parse($this->getMeta('registration_end')) : null;
 
+        return now()->between($registrationStartDate, $registrationEndDate);
+    }
+
+    public function isRegistrationNotYetOpen() : bool
+    {
+        $registrationStartDate = $this->getMeta('registration_start') ? Date::parse($this->getMeta('registration_start')) : null;
+
         $now = now();
 
         if(!$registrationStartDate) return false;
 
-        if($now->lt($registrationStartDate)) return false;
+        return $now->lt($registrationStartDate);
+    }
 
-        if($registrationEndDate && $now->gt($registrationEndDate)) return false;
+    public function isRegistrationClosed(): bool
+    {
+        $registrationEndDate = $this->getMeta('registration_end') ? Date::parse($this->getMeta('registration_end')) : null;
 
-        return true;
+        if (!$registrationEndDate) {
+            return false;
+        }
+
+        return now()->gt($registrationEndDate);
+    }
+
+    public function isInvoiceEnabled() : bool
+    {
+        return $this->getMeta('invoice_enable');
+    }
+
+    public function isReceiptEnabled() : bool
+    {
+        return $this->getMeta('receipt_enable');
     }
 }

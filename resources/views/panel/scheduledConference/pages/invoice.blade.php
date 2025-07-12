@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        {{ $scheduledConference->title }} - Invoice - {{ $record->number }}
+        Invoice - {{ $record->number }} - {{ $scheduledConference->title }}
     </title>
 
     @vite(['resources/panel/css/panel.css'])

@@ -60,6 +60,7 @@ class ParticipantRegistration extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form
+            ->operation('create')
             ->schema([
                 Section::make()
                     ->columns(1)
@@ -80,8 +81,8 @@ class ParticipantRegistration extends Page implements HasForms
             $currentUser = auth()->user();
 
             $registration = new Registration();
-            $registration->given_name   = $currentUser->given_name;
-            $registration->family_name  = $currentUser->family_name;
+            $registration->given_name   = $formData['given_name'];
+            $registration->family_name  = $formData['family_name'];
             $registration->email        = $currentUser->email;
             $registration->type         = $registrationType->name;
             $registration->cost         = $registrationType->cost;
