@@ -47,9 +47,14 @@ class SubmissionResource extends Resource
             ->withCount([
                 'editors',
                 'reviews',
-                'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
+                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed'),
             ])
-            ->with(['meta', 'user', 'reviews', 'participants'])
+            ->with([
+                'meta',
+                'user.registration',
+                'reviews',
+                'participants'
+            ])
             ->orderBy('updated_at', 'desc');
     }
 
@@ -85,7 +90,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->reviews->where('user_id', auth()->id())->first();
                                 if ($review) {
@@ -97,7 +102,7 @@ class SubmissionResource extends Resource
                             ->searchable(query: function (Builder $query, string $search): Builder {
                                 return $query
                                     ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                    ->orWhereHas('user', fn($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
                             }),
                         Tables\Columns\TextColumn::make('status')
                             ->extraAttributes([
@@ -105,7 +110,29 @@ class SubmissionResource extends Resource
                             ])
                             ->badge()
                             ->formatStateUsing(
-                                fn (Submission $record) => $record->status?->value
+                                fn(Submission $record) => $record->status?->value
+                            ),
+                        Tables\Columns\TextColumn::make('status')
+                            ->extraAttributes([
+                                'class' => 'mt-2',
+                            ])
+                            ->badge()
+                            ->color(
+                                fn(Submission $record) => $record->user->registration?->paid_at ? 'success' : 'danger',
+                            )
+                            ->state(
+                                function(Submission $record){
+                                    $suffix = $record->user->registration?->paid_at ? 'Paid' : 'Unpaid';
+                                    
+                                    if(!$record->user->registration){
+                                        return '';
+                                    }
+
+                                    return implode(' - ', [
+                                        $record->user->registration->type,
+                                        $suffix
+                                    ]);
+                                },
                             ),
                     ]),
                     Stack::make([
@@ -129,7 +156,7 @@ class SubmissionResource extends Resource
                             ->extraCellAttributes([
                                 'style' => 'width: 1px',
                             ])
-                            ->getStateUsing(fn ($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
+                            ->getStateUsing(fn($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
                                 'reviews_count' => $record->reviews_count,
                                 'completed_reviews_count' => $record->completed_reviews_count,
                             ]) : ''),
@@ -167,7 +194,7 @@ class SubmissionResource extends Resource
                     ->authorize(function (Submission $record) {
                         return auth()->user()->can('view', $record);
                     })
-                    ->url(fn (Submission $record) => static::getUrl('view', [
+                    ->url(fn(Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),
                 Tables\Actions\DeleteAction::make(),
