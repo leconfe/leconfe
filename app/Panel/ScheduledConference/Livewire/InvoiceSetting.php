@@ -67,13 +67,15 @@ class InvoiceSetting extends Component implements HasForms
 						TinyEditor::make('meta.invoice_notes')
 							->profile('basic')
 							->label('Notes'),
-						Grid::make()
+						Grid::make(3)
 							->schema([
 								TextInput::make('meta.invoice_prefix_number')
 									->label('Prefix Number of Invoice'),
 								TextInput::make('meta.invoice_number')
 									->label('Next Invoice Number'),
-							]),
+								TextInput::make('meta.invoice_suffix_number')
+									->label('Suffix Number of Invoice'),
+						]),
 					]),
 				Actions::make([
 					ActionForm::make('save')

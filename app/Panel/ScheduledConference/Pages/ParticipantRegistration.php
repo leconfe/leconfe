@@ -87,7 +87,7 @@ class ParticipantRegistration extends Page implements HasForms
             $registration->type         = $registrationType->name;
             $registration->cost         = $registrationType->cost;
             $registration->currency     = $registrationType->currency;
-            $registration->number       = $scheduledConference->getMeta('invoice_prefix_number') . str_pad($scheduledConference->getMeta('invoice_number'), 3, '0', STR_PAD_LEFT);
+            $registration->number       = $scheduledConference->getMeta('invoice_prefix_number') . str_pad($scheduledConference->getMeta('invoice_number'), 3, '0', STR_PAD_LEFT) . $scheduledConference->getMeta('invoice_suffix_number');
 
             $registration->save();
 
