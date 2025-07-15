@@ -311,7 +311,7 @@ class UserResource extends Resource
                         ->icon('heroicon-o-envelope')
                         ->modalWidth('3xl')
                         ->fillForm(fn ($record) => ['to' => $record->email])
-                        ->modalHeading(fn (User $record) => __('general.send_email_to').$record->full_name)
+                        ->modalHeading(fn (User $record) => __('general.send_email_to') . ' ' .$record->full_name)
                         ->form([
                             Grid::make()
                                 ->schema([
