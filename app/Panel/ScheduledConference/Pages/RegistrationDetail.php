@@ -70,7 +70,18 @@ class RegistrationDetail extends Page implements HasForms, HasInfolists
 					$action->successNotificationTitle('Registration Updated.');
 					$action->success();
 
-				})
+				}),
+			Action::make('delete')
+				->color('danger')
+				->requiresConfirmation()
+				->action(function(Action $action){
+					$this->record->delete();
+
+					$action->successNotificationTitle('Success delete registration.');
+					$action->success();
+
+					return redirect()->to(Registrations::getUrl());
+				}) 
 		];
 	}
 
