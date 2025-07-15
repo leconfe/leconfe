@@ -2,17 +2,24 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Forms\Components\TinyEditor;
+use App\Mail\MailUser;
 use App\Models\Registration;
 use App\Panel\ScheduledConference\Pages\RegistrationDetail;
 use App\Tables\Columns\IndexColumn;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Squire\Models\Currency;
 
@@ -51,8 +58,33 @@ class RegistrationTable extends Component implements HasForms, HasTable
                     ->getStateUsing(fn(Registration $record) => money($record->cost, $record->currency, true)->formatWithoutZeroes())
                     ->description(fn(Registration $record) => Currency::find($record->currency)?->name),
             ])
-            ->headerActions([])
-            ->actions([]);
+            ->filters([
+                
+            ])
+            ->headerActions([
+
+            ])
+            ->bulkActions([
+                BulkAction::make('email')
+                    ->label(__('general.send_email'))
+                    ->icon('heroicon-o-envelope')
+                    ->modalWidth('3xl')
+                    ->form([
+                        TextInput::make('subject')
+                            ->label(__('general.subject'))
+                            ->required(),
+                        TinyEditor::make('message')
+                            ->label(__('general.message'))
+                            ->minHeight(500)
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Collection $records) {
+                        $records->each(fn($record) => Mail::to($record->email)->send(new MailUser($data['subject'], $data['message'])));
+                    })
+            ])
+            ->actions([
+
+            ]);
     }
 
     public function form(Form $form): Form
