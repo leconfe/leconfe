@@ -254,4 +254,6 @@ return [
     'must_verify_email' => env('MUST_VERIFY_EMAIL', false),
 
     'report_errors' => env('REPORT_ERRORS', false),
+
+    'force_https' => env("APP_FORCE_HTTPS", false),
 ];

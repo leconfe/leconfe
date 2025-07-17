@@ -103,6 +103,7 @@ class AppServiceProvider extends ServiceProvider
         $this->extendBlade();
         $this->detectConference();
         $this->handleEvent();
+        $this->forceHttps();
     }
 
     protected function handleEvent()
@@ -263,6 +264,13 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 Livewire::setUpdateRoute(fn ($handle) => Route::post($currentConference->path.'/livewire/update', $handle)->middleware('web'));
             }
+        }
+    }
+
+    public function forceHttps()
+    {
+         if(config('app.force_https')) {
+            URL::forceScheme('https');
         }
     }
 }
