@@ -35,7 +35,7 @@ class Payment extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'paid_at' => 'date',
+        'paid_at' => 'datetime',
     ];
 
     public function scopeType($query, $type): Builder

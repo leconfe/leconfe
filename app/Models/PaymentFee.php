@@ -80,4 +80,11 @@ class PaymentFee extends Model implements Sortable
     {
         return $this->hasMany(Payment::class);
     }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'additional_items' => [],
+        ];
+    }
 }

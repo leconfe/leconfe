@@ -153,7 +153,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'review_mode' => Review::MODE_DOUBLE_ANONYMOUS,
             'review_invitation_response_deadline' => 21,
             'review_completion_deadline' => 28,
-            'timezone' => 'UTC',
             'theme' => 'DefaultTheme',
             'allowed_self_assign_roles' => ['Author', 'Reader'],
             'allow_registration' => true,

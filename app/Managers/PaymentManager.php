@@ -88,4 +88,22 @@ class PaymentManager
 
         return $options;
     }
+
+    public function getPaymentMethodActions()
+    {
+        $actions = [];
+
+        Hook::call('PaymentManager::getPaymentMethodActions', [&$actions]);
+
+        return $actions;
+    }
+
+    public function getPaymentMethodInfolist()
+    {
+        $schemas = [];
+
+        Hook::call('PaymentManager::getPaymentMethodInfolist', [&$schemas]);
+
+        return $schemas;
+    }
 }

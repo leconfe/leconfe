@@ -60,6 +60,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
+            ->queryStringIdentifier('participant_payment_fees')
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('model.full_name')

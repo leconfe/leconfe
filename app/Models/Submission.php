@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -102,6 +103,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             $submission->participants->each->delete();
             $submission->reviews->each->delete();
             $submission->media->each->delete();
+            $submission->payment->delete();
         });
     }
 
