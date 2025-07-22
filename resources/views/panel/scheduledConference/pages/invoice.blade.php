@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        Invoice - {{ $record->number }} - {{ $scheduledConference->title }}
+        Invoice - {{ $record->invoice }} - {{ $scheduledConference->title }}
     </title>
 
     @vite(['resources/panel/css/panel.css'])
@@ -66,16 +66,16 @@
             {!! $scheduledConference->getMeta('invoice_sender_information') !!}
         </div>
         <div class="bg-gray-200 p-2 mt-4">
-            <p class="text-xl font-bold">Invoice No.: {{ $record->number }}</p>
+            <p class="text-xl font-bold">Invoice No.: {{ $record->invoice }}</p>
             <p>Registration Date: {{ $record->created_at->format('jS M Y, h:i:sa') }} </p>
         </div>
         <div class="mt-4">
             <p class="font-bold text-base">Invoiced To</p>
-            <p>{{ $record->getMeta('affiliation') }}</p>
-            <p>{{ $record->fullName }}</p>
-            <p>{{ $record->getMeta('address_line') }}</p>
-            <p>{{ $record->getMeta('post_code') }} {{ $record->getMeta('city') }}</p>
-            <p>{{ $record->country_name }}</p>
+            <p>{{ $user_affiliation }}</p>
+            <p>{{ $user_fullname }}</p>
+            <p>{{ $user_address_line }}</p>
+            <p>{{ $user_city }} {{ $user_post_code }}</p>
+            <p>{{ $user_country_name }}</p>
         </div>
         <div class="mt-4 invoice-table p-1">
             <table class="w-full border border-collapse border-gray-400">
@@ -88,7 +88,7 @@
                 <tbody>
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
-                            <p>{{ $record->type }}</p>
+                            <p>{{ $record->fee->name }}</p>
                             <p class="font-bold text-base">{{ $scheduledConference->title }}</p>
                             <div>&nbsp;</div>
                         </td>

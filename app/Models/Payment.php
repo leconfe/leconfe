@@ -39,6 +39,23 @@ class Payment extends Model implements HasMedia
         'paid_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function(Payment $payment){
+            $scheduledConference = app()->getCurrentScheduledConference();
+            if($scheduledConference?->isInvoiceEnabled()){
+                $number = $scheduledConference->getLatestInvoiceNumber();
+
+                $payment->update([
+                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
+                ]);
+
+                $scheduledConference->updateLatestInvoiceNumber($number + 1);
+            }
+        });
+    }
+
+
     public function scopeType($query, $type): Builder
     {
         return $query->where('type', $type);

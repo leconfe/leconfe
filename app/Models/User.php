@@ -302,4 +302,16 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             }
         );
     }
+
+    public function isRegisteredAsParticipant(): bool
+    {
+        return Participant::query()
+            ->where('email', $this->email)
+            ->exists();
+    }
+
+    public function participant()
+    {
+        return $this->hasOne(Participant::class, 'email', 'email');
+    }
 }

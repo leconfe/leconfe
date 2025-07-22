@@ -173,19 +173,6 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                             ->required()
                             ->minValue(0),
                     ]),
-                KeyValue::make('meta.additional_items')
-                    ->keyLabel("Name")
-                    ->reorderable()
-                    ->rule(fn(): Closure => function (string $attribute, $items, Closure $fail) {
-                        // Validate key value items, the value must be a float
-                        foreach ($items as $key => $value) {
-                            if (!filter_var($value, FILTER_VALIDATE_FLOAT)) {
-                                $fail("Amount of $key must be a number.");
-                            }
-                        }
-                    })
-                    ->valueLabel("Amount")
-                    ->addActionLabel("Add Item"),
                 Grid::make(2)
                     ->schema([
                         DatePicker::make('opened_at')

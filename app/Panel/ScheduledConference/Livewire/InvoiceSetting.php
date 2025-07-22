@@ -56,26 +56,31 @@ class InvoiceSetting extends Component implements HasForms
 					->columns(1)
 					->schema([
 						Checkbox::make('meta.invoice_enable')
-							->label('Enable Invoice'),
+							->label('Enable Invoice')
+							->live(),
 						Checkbox::make('meta.receipt_enable')
 							->label('Enable Receipt'),
-						TextInput::make('meta.organizer')
-							->label('Organizer')
-							->required(),
-						TinyEditor::make('meta.invoice_sender_information')
-							->label('Sender Information'),
-						TinyEditor::make('meta.invoice_notes')
-							->profile('basic')
-							->label('Notes'),
-						Grid::make(3)
+						Grid::make(1)
 							->schema([
-								TextInput::make('meta.invoice_prefix_number')
-									->label('Prefix Number of Invoice'),
-								TextInput::make('meta.invoice_number')
-									->label('Next Invoice Number'),
-								TextInput::make('meta.invoice_suffix_number')
-									->label('Suffix Number of Invoice'),
-						]),
+								TextInput::make('meta.organizer')
+									->label('Organizer')
+									->required(),
+								TinyEditor::make('meta.invoice_sender_information')
+									->label('Sender Information'),
+								TinyEditor::make('meta.invoice_notes')
+									->profile('basic')
+									->label('Notes'),
+								Grid::make(3)
+									->schema([
+										TextInput::make('meta.invoice_prefix_number')
+											->label('Prefix Number of Invoice'),
+										TextInput::make('meta.invoice_number')
+											->label('Next Invoice Number'),
+										TextInput::make('meta.invoice_suffix_number')
+											->label('Suffix Number of Invoice'),
+									]),
+							])
+							->visible(fn(Get $get) => $get('meta.invoice_enable'))
 					]),
 				Actions::make([
 					ActionForm::make('save')

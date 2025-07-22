@@ -7,17 +7,18 @@ use App\Managers\PaymentManager;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 
 class PaymentDetail extends Page
 {
@@ -25,17 +26,38 @@ class PaymentDetail extends Page
 
 	public Payment $record;
 
-	protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+	
+    protected static ?int $navigationSort = 99;
 
-	public function mount(Payment $record)
+	public function mount($record = null)
 	{
-		$record->load(['model', 'user']);
+		if (!$record) {
+			$record = auth()->user()->participant?->payment;
+		}
+
+		abort_unless($record && auth()->user()->can('view', $record), 403);
+
+		$this->record = $record;
 	}
 
-	public static function canAccess(): bool
+	public static function shouldRegisterNavigation(): bool
 	{
-		return true;
+		return auth()->user()->isRegisteredAsParticipant();
 	}
+
+	public static function getNavigationLabel(): string
+    {
+        return "Participant Payment";
+    }
+
+	public function getTitle(): string | Htmlable
+    {
+        return match($this->record->type){
+			PaymentManager::TYPE_PARTICIPANT_FEE => 'Participant Payment',
+			PaymentManager::TYPE_SUBMISSION_FEE => 'Submission Payment',
+		};
+    }
 
 	protected function getHeaderActions(): array
 	{
@@ -51,66 +73,92 @@ class PaymentDetail extends Page
 			ActionGroup::make($paymentActions->toArray())
 				->button()
 				->label('Payment'),
-			Action::make('edit_payment_fee')
-				->label('Edit Payment Fee')
-				->visible(fn(Payment $record) => ! $record->isPaid())
-				->color('gray')
-				->record($this->record)
-				->form(fn($form, $record) => $form->schema([
-					Radio::make('payment_fee_id')
-						->label('Payment Fee')
-						->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
-						->required()
-						->options(
-							fn() => PaymentFee::type($record->type)
-								->active()
-								->get()
-								->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
-						)
-						->descriptions(
-							fn() => PaymentFee::type($record->type)
-								->active()
-								->get()
-								->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
-						),
-				]))
-				->action(function (Action $action, Payment $record, $data) {
-					$paymentFeeId = data_get($data, 'payment_fee_id');
+			ActionGroup::make([
+				Action::make('edit_payment')
+					->label('Edit Payment')
+					->visible(fn(Payment $record) => auth()->user()->can('update', $record) && !$record->isPaid())
+					->color('gray')
+					->record($this->record)
+					->fillForm([
+						'invoice' => $this->record->invoice,
+						'payment_fee_id' => $this->record->payment_fee_id,
+					])
+					->form([
+						TextInput::make('invoice')
+							->visible(fn() => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+							->rule(fn($record): Closure => function (string $attribute, $value, Closure $fail) use ($record) {
+								if (Payment::query()
+									->where('invoice', $value)
+									->whereNot('id', $record->getKey())
+									->exists()
+								) {
+									$fail("Invoice $value already exists");
+								}
+							}),
+						Radio::make('payment_fee_id')
+							->label('Payment Fee')
+							->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+							->required()
+							->options(
+								fn(Payment $record) => PaymentFee::type($record->type)
+									->active()
+									->get()
+									->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+							)
+							->descriptions(
+								fn(Payment  $record) => PaymentFee::type($record->type)
+									->active()
+									->get()
+									->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
+							),
+					])
+					->action(function (Action $action, Payment $record, $data) {
+						$paymentFeeId = data_get($data, 'payment_fee_id');
 
-					$paymentFee = PaymentFee::find($paymentFeeId);
+						$paymentFee = PaymentFee::find($paymentFeeId);
 
-					$record->update([
-						'payment_fee_id' => $paymentFeeId,
-						'amount' => $paymentFee->amount,
-						'currency' => $paymentFee->currency,
-					]);
+						$updateData = [
+							'payment_fee_id' => $paymentFeeId,
+							'amount' => $paymentFee->amount,
+							'currency' => $paymentFee->currency,
+						];
 
-					$action->successNotificationTitle('Payment Fee Updated');
-					$action->success();
-				}),
-			Action::make('mark_as_paid')
-				->label('Mark as Paid')
-				->color('success')
-				->authorize(fn(Payment $record) => auth()->user()->can('update', $record))
-				->record($this->record)
-				->requiresConfirmation()
-				->form([
-					DateTimePicker::make('paid_at')
-						->label('Paid At')
-						->default(now())
-						->required()
-						->native(false)
-						->displayFormat(Setting::get('format_date') . ' ' . Setting::get('format_time')),
-				])
-				->action(function (Action $action, Payment $record, $data) {
-					$record->update([
-						'paid_at' => $data['paid_at'],
-					]);
+						if (array_key_exists('invoice', $data)) {
+							$updateData['invoice'] = $data['invoice'];
+						}
 
-					$action->successNotificationTitle('Payment Marked as Paid');
-					$action->success();
-				})
-				->visible(fn(Payment $record) => ! $record->isPaid()),
+						$record->update($updateData);
+
+						$action->successNotificationTitle('Payment Fee Updated');
+						$action->success();
+					}),
+				Action::make('mark_as_paid')
+					->label('Mark as Paid')
+					->color('success')
+					->authorize(fn(Payment $record) => auth()->user()->can('update', $record))
+					->record($this->record)
+					->requiresConfirmation()
+					->form([
+						DateTimePicker::make('paid_at')
+							->label('Paid At')
+							->default(now())
+							->required()
+							->native(false)
+							->displayFormat(Setting::get('format_date') . ' ' . Setting::get('format_time')),
+					])
+					->action(function (Action $action, Payment $record, $data) {
+						$record->update([
+							'paid_at' => $data['paid_at'],
+						]);
+
+						$action->successNotificationTitle('Payment Marked as Paid');
+						$action->success();
+					})
+					->visible(fn(Payment $record) => ! $record->isPaid()),
+			])
+				->button()
+				->label('Actions')
+				->color('gray'),
 		];
 	}
 
@@ -195,6 +243,6 @@ class PaymentDetail extends Page
 
 	public static function getRoutePath(): string
 	{
-		return '/payments/detail/{record}';
+		return '/payments/detail/{record?}';
 	}
 }
