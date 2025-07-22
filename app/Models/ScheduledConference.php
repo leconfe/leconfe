@@ -158,6 +158,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'allow_registration' => true,
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
+            'invoice_number' => 1,
+            'invoice_enable' => false,
+            'receipt_enable' => false,
         ];
     }
 
@@ -290,5 +293,15 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopeState($query, ScheduledConferenceState $state)
     {
         return $query->where('state', $state);
+    }
+
+    public function isInvoiceEnabled() : bool
+    {
+        return $this->getMeta('invoice_enable');
+    }
+
+    public function isReceiptEnabled() : bool
+    {
+        return $this->getMeta('receipt_enable');
     }
 }

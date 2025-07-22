@@ -27,6 +27,7 @@ class Payment extends Model implements HasMedia
         'user_id',
         'amount',
         'currency',
+        'invoice',
         'payment_method',
         'expired_at',
         'paid_at',

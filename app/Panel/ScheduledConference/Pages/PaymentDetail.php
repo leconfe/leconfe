@@ -5,9 +5,12 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
 use App\Models\Payment;
+use App\Models\PaymentFee;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
@@ -36,12 +39,78 @@ class PaymentDetail extends Page
 
 	protected function getHeaderActions(): array
 	{
-		$paymentActions = collect(PaymentManager::get()->getPaymentMethodActions())->map(fn(Action $action) => $action->record($this->record)->model(Payment::class));
+		$paymentActions = collect(PaymentManager::get()->getPaymentMethodActions())
+			->map(
+				fn(Action $action) => $action
+					->record($this->record)
+					->model(Payment::class)
+					->visible(fn(Payment $record) => ! $record->isPaid())
+			);
 
 		return [
 			ActionGroup::make($paymentActions->toArray())
 				->button()
 				->label('Payment'),
+			Action::make('edit_payment_fee')
+				->label('Edit Payment Fee')
+				->visible(fn(Payment $record) => ! $record->isPaid())
+				->color('gray')
+				->record($this->record)
+				->form(fn($form, $record) => $form->schema([
+					Radio::make('payment_fee_id')
+						->label('Payment Fee')
+						->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+						->required()
+						->options(
+							fn() => PaymentFee::type($record->type)
+								->active()
+								->get()
+								->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+						)
+						->descriptions(
+							fn() => PaymentFee::type($record->type)
+								->active()
+								->get()
+								->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
+						),
+				]))
+				->action(function (Action $action, Payment $record, $data) {
+					$paymentFeeId = data_get($data, 'payment_fee_id');
+
+					$paymentFee = PaymentFee::find($paymentFeeId);
+
+					$record->update([
+						'payment_fee_id' => $paymentFeeId,
+						'amount' => $paymentFee->amount,
+						'currency' => $paymentFee->currency,
+					]);
+
+					$action->successNotificationTitle('Payment Fee Updated');
+					$action->success();
+				}),
+			Action::make('mark_as_paid')
+				->label('Mark as Paid')
+				->color('success')
+				->authorize(fn(Payment $record) => auth()->user()->can('update', $record))
+				->record($this->record)
+				->requiresConfirmation()
+				->form([
+					DateTimePicker::make('paid_at')
+						->label('Paid At')
+						->default(now())
+						->required()
+						->native(false)
+						->displayFormat(Setting::get('format_date') . ' ' . Setting::get('format_time')),
+				])
+				->action(function (Action $action, Payment $record, $data) {
+					$record->update([
+						'paid_at' => $data['paid_at'],
+					]);
+
+					$action->successNotificationTitle('Payment Marked as Paid');
+					$action->success();
+				})
+				->visible(fn(Payment $record) => ! $record->isPaid()),
 		];
 	}
 
@@ -62,7 +131,7 @@ class PaymentDetail extends Page
 								TextEntry::make('submission')
 									->visible(fn(Payment $record) => $record->type == PaymentManager::TYPE_SUBMISSION_FEE)
 									->state(fn(Payment $record) => $record->model?->getMeta('title') ?? '-')
-				                    ->url(fn (Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
+									->url(fn(Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
 									->color('primary'),
 								TextEntry::make('full_name')
 									->state(function (Payment $record) {
@@ -102,21 +171,11 @@ class PaymentDetail extends Page
 									->label('Registered at')
 									->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
 								TextEntry::make('invoice')
+									->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isInvoiceEnabled() && $record->invoice)
 									->state('Download')
 									->color('primary')
-									// ->visible(fn() => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
 									->url(fn(Payment $record) => Invoice::getUrl(['record' => $record]))
 									->openUrlInNewTab(),
-								// TextEntry::make('proof_of_payment')
-								// 	->state('Download')
-								// 	->visible(fn(Registration $record) => $record->hasMedia('payment_proof'))
-								// 	->color('primary')
-								// 	->action(
-								// 		InfolistAction::make('download')
-								// 			->link()
-								// 			->visible(fn(Registration $record) => $record->hasMedia('payment_proof'))
-								// 			->action(fn(Registration $record) => $record->getFirstMedia('payment_proof')),
-								// 	),
 								TextEntry::make('paid_at')
 									->visible(fn(Payment $record) => $record->paid_at)
 									->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time'))
