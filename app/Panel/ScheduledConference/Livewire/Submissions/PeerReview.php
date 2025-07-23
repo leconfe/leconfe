@@ -261,7 +261,6 @@ class PeerReview extends Component implements HasActions, HasForms
     {
         return Action::make('requestRevisionAction')
             ->authorize('requestRevision', $this->submission)
-            ->hidden(fn (): bool => $this->submission->revision_required)
             ->icon('lineawesome-list-alt-solid')
             ->outlined()
             ->color(Color::Orange)
