@@ -12,6 +12,7 @@ use App\Utils\UpgradeSchemas\{
     Upgrade125,
     Upgrade128,
     Upgrade130Beta1,
+    Upgrade130Beta3,
     UpgradeBeta3,
     UpgradeBeta4,
     UpgradeBeta5,
@@ -32,6 +33,7 @@ class UpgradeSchema
         '1.2.5' => Upgrade125::class,
         '1.2.8' => Upgrade128::class,
         '1.3.0-beta.1' => Upgrade130Beta1::class,
+        '1.3.0-beta.3' => Upgrade130Beta3::class,
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)
