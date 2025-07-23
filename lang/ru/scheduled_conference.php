@@ -8,7 +8,7 @@ return [
 		'weight_input_label' => 'Вес',
 		'weight_input_helper_full' => 'Введите вес в процентах. Это определяет вклад данного критерия в итоговую оценку.',
 		'checkbox_options_input_label' => 'Варианты флажков',
-		'radio_options_input_label' => 'Варианты флажков',
+		'radio_options_input_label' => 'Варианты радио',
 		'reviewer_required_input_label' => 'Рецензенты, обязанные заполнить пункт'
 	],
 	'label' => 'Метка',

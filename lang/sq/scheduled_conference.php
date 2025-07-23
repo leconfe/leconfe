@@ -8,7 +8,7 @@ return [
 		'weight_input_label' => 'Pesha',
 		'weight_input_helper_full' => 'Shkruani peshën si përqindje. Kjo përcakton kontributin e këtij kriteri në rezultatin përfundimtar.',
 		'checkbox_options_input_label' => 'Opsionet e Kutisë së Kontrollit',
-		'radio_options_input_label' => 'Opsionet e Kutisë së Kontrollit',
+		'radio_options_input_label' => 'Opsionet e Radios',
 		'reviewer_required_input_label' => 'Recensuesit e nevojshëm për të plotësuar elementin'
 	],
 	'label' => 'Etiketë',
