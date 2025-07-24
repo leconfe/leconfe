@@ -12,6 +12,7 @@ use App\Panel\ScheduledConference\Livewire\Payment\ManualPaymentSetting;
 use App\Panel\ScheduledConference\Livewire\PaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\PaymentSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -83,23 +84,22 @@ class Payments extends Page
                                     ->schema([
                                         InfolistsVerticalTabs\Tab::make('General')
                                             ->schema([
-                                                LivewireEntry::make('submission_payment_settings')
-                                                    ->livewire(PaymentSetting::class),
+                                                Livewire::make(PaymentSetting::class)
+                                                    ->key('payment_settings'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Submission Fees')
                                             ->schema([
-                                                LivewireEntry::make('payment_fees')
-                                                    ->livewire(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE]),
+                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
+                                                    ->key('submission_payment_fees'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Participant Fees')
                                             ->schema([
-                                                LivewireEntry::make('participant_payment_fees')
-                                                    ->livewire(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE]),
+                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
+                                                    ->key('participant_payment_fees'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Invoice')
                                             ->schema([
-                                                LivewireEntry::make('invoice')
-                                                    ->livewire(InvoiceSetting::class),
+                                                Livewire::make(InvoiceSetting::class)->key('invoice'),
                                             ]),
                                     ]),
                             ]),
