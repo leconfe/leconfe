@@ -42,11 +42,8 @@ class QuickInstall
         ];
 
         try {
-
-            spin(
-                fn() => (new \App\Utils\Installer($data, $command))->run(),
-                'Installing Leconfe...'
-            );
+            'Installing Leconfe...'
+            (new \App\Utils\Installer($data, $command))->run();
         } catch (\Throwable $th) {
             throw $th;
         }
