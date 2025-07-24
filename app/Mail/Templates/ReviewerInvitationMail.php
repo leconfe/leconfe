@@ -32,10 +32,9 @@ class ReviewerInvitationMail extends TemplateMailable
 
         $this->name = $review->user->fullName;
         $this->submissionTitle = $review->submission->getMeta('title');
-        
+
         $this->responseDueDate = Carbon::parse($review->getMeta('response_due_date'))->format('d F Y');
         $this->reviewDueDate = Carbon::parse($review->getMeta('review_due_date'))->format('d F Y');
-        
 
         $this->loginLink = route('filament.scheduledConference.pages.dashboard', ['scheduledConference' => $scheduledConference, 'conference' => $scheduledConference->conference]);
 

@@ -5,10 +5,6 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Managers\PaymentManager;
 use App\Models\Participant;
 use App\Models\PaymentFee;
-use App\Models\Registration;
-use App\Models\RegistrationForm;
-use App\Models\RegistrationType;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -42,13 +38,13 @@ class ParticipantRegistration extends Page implements HasForms
             'given_name' => auth()->user()?->given_name,
             'family_name' => auth()->user()?->family_name,
             'email' => auth()->user()?->email,
-            'affiliation' => auth()->user()?->getMeta('affiliation')
+            'affiliation' => auth()->user()?->getMeta('affiliation'),
         ]);
     }
 
     public static function canAccess(): bool
     {
-        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && !auth()->user()?->isRegisteredAsParticipant();
+        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && ! auth()->user()?->isRegisteredAsParticipant();
     }
 
     /**
@@ -91,25 +87,25 @@ class ParticipantRegistration extends Page implements HasForms
                         TextInput::make('meta.city')
                             ->label('City'),
                         Select::make('meta.country')
-                            ->label("Country")
+                            ->label('Country')
                             ->searchable()
-                            ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->id => $country->flag . ' ' . $country->name]))
+                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
                             ->optionsLimit(250),
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
-                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                             ->required()
                             ->options(
-                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
                             )
                             ->descriptions(
-                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
                     ]),
             ])
@@ -124,13 +120,13 @@ class ParticipantRegistration extends Page implements HasForms
 
             $currentUser = auth()->user();
 
-            $participant = new Participant();
+            $participant = new Participant;
             $participant->fill(Arr::only($data, ['given_name', 'family_name']));
             $participant->email = $currentUser->email;
             $participant->save();
-            
+
             $meta = data_get($data, 'meta');
-            
+
             $participant->setManyMeta($meta);
             $currentUser->setManyMeta($meta);
 
@@ -147,9 +143,9 @@ class ParticipantRegistration extends Page implements HasForms
             );
 
             $payment->save();
-            
+
             $this->form->model($payment)->saveRelationships();
-            
+
             DB::commit();
         } catch (\Throwable $th) {
             Notification::make()

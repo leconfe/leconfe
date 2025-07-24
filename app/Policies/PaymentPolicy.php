@@ -9,7 +9,7 @@ class PaymentPolicy
 {
     public function view(User $user, Payment $payment)
     {
-		if($payment->user?->is($user) || $user->can('Payment:view')){
+        if ($payment->user?->is($user) || $user->can('Payment:view')) {
             return true;
         }
     }

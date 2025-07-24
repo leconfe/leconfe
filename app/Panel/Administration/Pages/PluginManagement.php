@@ -3,7 +3,6 @@
 namespace App\Panel\Administration\Pages;
 
 use App\Facades\Plugin as PluginFacade;
-use App\Infolists\Components\LivewireEntry;
 use App\Models\Plugin;
 use App\Panel\Administration\Livewire\PluginGalleryTable;
 use App\Panel\Administration\Livewire\PluginTable;
@@ -11,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -97,13 +97,11 @@ class PluginManagement extends Page implements HasForms, HasInfolists
                     ->tabs([
                         Tabs\Tab::make('Installed Plugins')
                             ->schema([
-                                LivewireEntry::make('plugin-installed')
-                                    ->livewire(PluginTable::class),
+                                Livewire::make(PluginTable::class),
                             ]),
                         Tabs\Tab::make('Plugin Gallery')
                             ->schema([
-                                LivewireEntry::make('plugin-gallery')
-                                    ->livewire(PluginGalleryTable::class)
+                                Livewire::make(PluginGalleryTable::class)
                                     ->lazy(),
                             ]),
                     ])

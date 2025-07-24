@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Facades\Setting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 class DiscussionTopic extends Model

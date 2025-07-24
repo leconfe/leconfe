@@ -2,9 +2,6 @@
 
 namespace App\Panel\Conference\Livewire\Forms\Conferences;
 
-use App\Models\Conference;
-use App\Models\ScheduledConference;
-use App\Models\Submission;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms;
 use Filament\Tables\Actions\ActionGroup;
@@ -13,7 +10,6 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\Unique;
 use Livewire\Component;
 use Squire\Models\Country;
 

@@ -4,7 +4,6 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussi
 
 use App\Actions\Submissions\CreateDiscussionTopic;
 use App\Actions\Submissions\UpdateDiscussionTopic;
-use App\Infolists\Components\LivewireEntry;
 use App\Models\DiscussionTopic as ModelsDiscussionTopic;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Submission;
@@ -17,6 +16,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Livewire;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -96,21 +96,19 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
                         ->modalSubmitAction(false)
                         ->infolist(function (Model $discussionTopic) {
                             return [
-                                LivewireEntry::make('discussion-detail')
-                                    ->livewire(
-                                        DiscussionDetail::class,
-                                        ['topic' => $discussionTopic]
-                                    )->lazy(),
+                                Livewire::make(
+                                    DiscussionDetail::class,
+                                    ['topic' => $discussionTopic]
+                                )->lazy(),
                                 Fieldset::make('form-discussion-detail')
                                     ->label(__('general.add_message'))
                                     ->columns(1)
                                     ->schema([
-                                        LivewireEntry::make('discussion-detail-form')
-                                            ->livewire(
-                                                DiscussionDetailForm::class,
-                                                ['topic' => $discussionTopic]
-                                            )->lazy(),
-                                    ]),
+                                    Livewire::make(
+                                        DiscussionDetailForm::class,
+                                        ['topic' => $discussionTopic]
+                                    )->lazy(),
+                                ]),
                             ];
                         }),
                     Action::make('update-topic')

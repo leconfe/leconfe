@@ -3,17 +3,13 @@
 namespace App\Classes;
 
 use App\Facades\Hook;
-use App\Forms\Form;
 use App\Models\Payment;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
 class ManualPaymentPlugin extends Plugin
@@ -34,11 +30,11 @@ class ManualPaymentPlugin extends Plugin
                         Placeholder::make('manual_payment_instructions')
                             ->hiddenLabel()
                             ->label('Payment Instructions')
-                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
-                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
+                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
                         Placeholder::make('amount')
                             ->label('Amount')
-                            ->content(fn(Payment $record) => $record->getFormattedFee()),
+                            ->content(fn (Payment $record) => $record->getFormattedFee()),
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
                             ->required()
@@ -58,13 +54,13 @@ class ManualPaymentPlugin extends Plugin
 
             Hook::add('PaymentManager::getPaymentMethodInfolist', function ($hookName, &$schemas) {
                 $schemas[] = Section::make(app()->getCurrentScheduledConference()->getMeta('manual_payment_name') ?? 'Manual Payment')
-                    ->visible(fn($record) => $record->hasMedia('manual_payment_proof'))
+                    ->visible(fn ($record) => $record->hasMedia('manual_payment_proof'))
                     ->schema([
                         TextEntry::make('payment_proof')
                             ->state('Download')
                             ->color('primary')
                             ->action(
-                                InfolistAction::make('download')->action(fn($record) => $record->getFirstMedia('manual_payment_proof'))
+                                InfolistAction::make('download')->action(fn ($record) => $record->getFirstMedia('manual_payment_proof'))
                             ),
                     ]);
 

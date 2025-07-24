@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Panel\Conference\Livewire\EmailSetting;
 use App\Panel\Conference\Livewire\PublisherLibrary;
@@ -69,38 +68,32 @@ class WorkflowSetting extends Page
                                         InfolistsVerticalTabs\Tab::make('Submission')
                                             ->label(__('general.submission'))
                                             ->schema([
-                                                LivewireEntry::make('submission-setting')
-                                                    ->livewire(SubmissionSetting::class),
+                                                Livewire::make(SubmissionSetting::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Components')
                                             ->label(__('general.components'))
                                             ->schema([
-                                                LivewireEntry::make('submission-file-type-table')
-                                                    ->livewire(SubmissionFileTypeTable::class),
+                                                Livewire::make(SubmissionFileTypeTable::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Author Guidance')
                                             ->label(__('general.author_guidance'))
                                             ->schema([
-                                                LivewireEntry::make('author-guidance')
-                                                    ->livewire(AuthorGuidance::class),
+                                                Livewire::make(AuthorGuidance::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Author Roles')
                                             ->label(__('general.author_roles'))
                                             ->schema([
-                                                LivewireEntry::make('author-roles')
-                                                    ->livewire(AuthorRoleTable::class),
+                                                Livewire::make(AuthorRoleTable::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Tracks')
                                             ->label(__('general.track'))
                                             ->schema([
-                                                LivewireEntry::make('tracks')
-                                                    ->livewire(TrackTable::class),
+                                                Livewire::make(TrackTable::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Topics')
                                             ->label(__('general.topic'))
                                             ->schema([
-                                                LivewireEntry::make('topics')
-                                                    ->livewire(TopicTable::class),
+                                                Livewire::make(TopicTable::class),
                                             ]),
                                     ]),
                             ]),
@@ -112,14 +105,12 @@ class WorkflowSetting extends Page
                                         InfolistsVerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))
                                             ->schema([
-                                                LivewireEntry::make('review-setup')
-                                                    ->livewire(ReviewSetupSetting::class),
+                                                Livewire::make(ReviewSetupSetting::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Reviewer Guidance')
                                             ->label(__('general.reviewer_guidance'))
                                             ->schema([
-                                                LivewireEntry::make('review-guidance')
-                                                    ->livewire(ReviewGuidance::class),
+                                                Livewire::make(ReviewGuidance::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Review Form')
                                             ->label(__('scheduled_conference.review_form'))
@@ -132,14 +123,12 @@ class WorkflowSetting extends Page
                         Tabs\Tab::make('Publisher Library')
                             ->label(__('general.publisher_library'))
                             ->schema([
-                                LivewireEntry::make('publisher-library')
-                                    ->livewire(PublisherLibrary::class),
+                                Livewire::make(PublisherLibrary::class),
                             ]),
                         Tabs\Tab::make('Emails')
                             ->label(__('general.email'))
                             ->schema([
-                                LivewireEntry::make('email-setting')
-                                    ->livewire(EmailSetting::class),
+                                Livewire::make(EmailSetting::class),
                             ]),
                     ]),
             ]);

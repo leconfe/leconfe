@@ -100,7 +100,7 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('email')
                                     ->required()
                                     ->label(__('general.email'))
-                                    ->columnSpan(['lg' => 2])   
+                                    ->columnSpan(['lg' => 2])
                                     ->unique(ignoreRecord: true),
                                 Forms\Components\TextInput::make('password')
                                     ->label(__('general.password'))

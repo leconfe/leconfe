@@ -282,6 +282,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
     public function render()
     {
+
         return view('panel.scheduledConference.livewire.submissions.call-for-abstract', [
             'submissionDecision' => in_array($this->submission->status, [
                 SubmissionStatus::OnPayment,

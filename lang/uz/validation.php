@@ -56,16 +56,16 @@ return [
     'file' => ':attribute maydoni fayl bo‘lishi kerak.',
     'filled' => ':attribute maydoni to‘ldirilishi shart.',
     'gt' => [
-         'array' => ':attribute maydonida :value tadan ortiq element bo‘lishi kerak.',
-         'file' => ':attribute fayli :value kilobaytdan katta bo‘lishi kerak.',
-          'numeric' => ':attribute maydoni :value dan katta bo‘lishi kerak.',
-          'string' => ':attribute maydoni :value belgidan ko‘p bo‘lishi kerak.',
+        'array' => ':attribute maydonida :value tadan ortiq element bo‘lishi kerak.',
+        'file' => ':attribute fayli :value kilobaytdan katta bo‘lishi kerak.',
+        'numeric' => ':attribute maydoni :value dan katta bo‘lishi kerak.',
+        'string' => ':attribute maydoni :value belgidan ko‘p bo‘lishi kerak.',
     ],
     'gte' => [
-          'array' => ':attribute maydonida kamida :value ta element bo‘lishi kerak.',
-          'file' => ':attribute maydoni hajmi kamida :value kilobayt bo‘lishi kerak.',
-          'numeric' => ':attribute maydoni qiymati kamida :value bo‘lishi kerak.',
-          'string' => ':attribute maydoni kamida :value ta belgidan iborat bo‘lishi kerak.',
+        'array' => ':attribute maydonida kamida :value ta element bo‘lishi kerak.',
+        'file' => ':attribute maydoni hajmi kamida :value kilobayt bo‘lishi kerak.',
+        'numeric' => ':attribute maydoni qiymati kamida :value bo‘lishi kerak.',
+        'string' => ':attribute maydoni kamida :value ta belgidan iborat bo‘lishi kerak.',
     ],
     'image' => ':attribute maydoni rasm bo‘lishi kerak.',
     'in' => 'Tanlangan :attribute noto‘g‘ri.',
@@ -95,7 +95,7 @@ return [
         'numeric' => ':attribute qiymati :max dan katta bo‘lmasligi kerak.',
         'string' => ':attribute matni :max belgidan oshmasligi kerak.',
     ],
-  'max_digits' => ':attribute kiruvi :max ta raqamdan oshmasligi kerak.',
+    'max_digits' => ':attribute kiruvi :max ta raqamdan oshmasligi kerak.',
     'mimes' => ':attribute fayli quyidagi turdagi bo‘lishi kerak: :values.',
     'mimetypes' => ':attribute fayli quyidagi turdagi bo‘lishi kerak: :values.',
     'min' => [
@@ -121,39 +121,39 @@ return [
         'symbols' => ':attribute kamida bitta maxsus belgini o‘z ichiga olishi kerak.',
         'uncompromised' => 'Kiritilgan :attribute ma’lumotlar bazasida sizib chiqqan. Iltimos, boshqa :attribute tanlang.',
     ],
-       'phone' => ':attribute maydoni haqiqiy raqam bo‘lishi kerak.',
-'present' => ':attribute maydoni mavjud bo‘lishi kerak.',
-'prohibited' => ':attribute maydonidan foydalanish taqiqlangan.',
-'prohibited_if' => ':other :value bo‘lsa, :attribute maydonidan foydalanish taqiqlanadi.',
-'prohibited_unless' => 'Faqat :other :values ichida bo‘lsa, :attribute maydoniga ruxsat beriladi.',
-'prohibits' => ':attribute maydoni :other maydonining bo‘lishiga to‘sqinlik qiladi.',
-'regex' => ':attribute maydonining formati noto‘g‘ri.',
-'required' => ':attribute maydoni to‘ldirilishi shart.',
-'required_array_keys' => ':attribute maydoni quyidagilarni o‘z ichiga olishi kerak: :values.',
-'required_if' => ':other :value bo‘lsa, :attribute maydoni to‘ldirilishi shart.',
-'required_if_accepted' => ':other qabul qilinganda :attribute maydoni majburiy.',
-'required_unless' => ':other :values ichida bo‘lmasa, :attribute maydoni majburiy.',
-'required_with' => ':values mavjud bo‘lsa, :attribute maydoni to‘ldirilishi shart.',
-'required_with_all' => ':values lar mavjud bo‘lsa, :attribute maydoni kerak.',
-'required_without' => ':values mavjud bo‘lmaganda :attribute maydoni kerak.',
-'required_without_all' => ':values larning hech biri mavjud bo‘lmasa, :attribute kerak.',
-'same' => ':attribute va :other bir xil bo‘lishi kerak.',
-'size' => [
-    'array' => ':attribute maydonida :size ta element bo‘lishi kerak.',
-    'file' => ':attribute fayli :size kilobayt bo‘lishi kerak.',
-    'numeric' => ':attribute qiymati :size bo‘lishi kerak.',
-    'string' => ':attribute maydoni :size ta belgidan iborat bo‘lishi kerak.'
-],
-'starts_with' => ':attribute quyidagilardan biri bilan boshlanishi kerak: :values.',
-'string' => ':attribute matn ko‘rinishida bo‘lishi kerak.',
-'timezone' => ':attribute haqiqiy vaqt mintaqasi bo‘lishi kerak.',
-'unique' => 'Bu :attribute allaqachon band.',
-'uploaded' => ':attribute yuklab bo‘lmadi.',
-'uppercase' => ':attribute faqat bosh harflardan iborat bo‘lishi kerak.',
-'url' => ':attribute haqiqiy URL bo‘lishi kerak.',
-'ulid' => ':attribute haqiqiy ULID bo‘lishi kerak.',
-'uuid' => ':attribute haqiqiy UUID bo‘lishi kerak.',
-     
+    'phone' => ':attribute maydoni haqiqiy raqam bo‘lishi kerak.',
+    'present' => ':attribute maydoni mavjud bo‘lishi kerak.',
+    'prohibited' => ':attribute maydonidan foydalanish taqiqlangan.',
+    'prohibited_if' => ':other :value bo‘lsa, :attribute maydonidan foydalanish taqiqlanadi.',
+    'prohibited_unless' => 'Faqat :other :values ichida bo‘lsa, :attribute maydoniga ruxsat beriladi.',
+    'prohibits' => ':attribute maydoni :other maydonining bo‘lishiga to‘sqinlik qiladi.',
+    'regex' => ':attribute maydonining formati noto‘g‘ri.',
+    'required' => ':attribute maydoni to‘ldirilishi shart.',
+    'required_array_keys' => ':attribute maydoni quyidagilarni o‘z ichiga olishi kerak: :values.',
+    'required_if' => ':other :value bo‘lsa, :attribute maydoni to‘ldirilishi shart.',
+    'required_if_accepted' => ':other qabul qilinganda :attribute maydoni majburiy.',
+    'required_unless' => ':other :values ichida bo‘lmasa, :attribute maydoni majburiy.',
+    'required_with' => ':values mavjud bo‘lsa, :attribute maydoni to‘ldirilishi shart.',
+    'required_with_all' => ':values lar mavjud bo‘lsa, :attribute maydoni kerak.',
+    'required_without' => ':values mavjud bo‘lmaganda :attribute maydoni kerak.',
+    'required_without_all' => ':values larning hech biri mavjud bo‘lmasa, :attribute kerak.',
+    'same' => ':attribute va :other bir xil bo‘lishi kerak.',
+    'size' => [
+        'array' => ':attribute maydonida :size ta element bo‘lishi kerak.',
+        'file' => ':attribute fayli :size kilobayt bo‘lishi kerak.',
+        'numeric' => ':attribute qiymati :size bo‘lishi kerak.',
+        'string' => ':attribute maydoni :size ta belgidan iborat bo‘lishi kerak.',
+    ],
+    'starts_with' => ':attribute quyidagilardan biri bilan boshlanishi kerak: :values.',
+    'string' => ':attribute matn ko‘rinishida bo‘lishi kerak.',
+    'timezone' => ':attribute haqiqiy vaqt mintaqasi bo‘lishi kerak.',
+    'unique' => 'Bu :attribute allaqachon band.',
+    'uploaded' => ':attribute yuklab bo‘lmadi.',
+    'uppercase' => ':attribute faqat bosh harflardan iborat bo‘lishi kerak.',
+    'url' => ':attribute haqiqiy URL bo‘lishi kerak.',
+    'ulid' => ':attribute haqiqiy ULID bo‘lishi kerak.',
+    'uuid' => ':attribute haqiqiy UUID bo‘lishi kerak.',
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -165,11 +165,11 @@ return [
     |
     */
 
-'custom' => [
-    'attribute-name' => [
-        'rule-name' => 'maxsus xabar',
+    'custom' => [
+        'attribute-name' => [
+            'rule-name' => 'maxsus xabar',
+        ],
     ],
-],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes

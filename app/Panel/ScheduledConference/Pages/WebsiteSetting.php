@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
 use App\Panel\Administration\Livewire\PartnerTable;
@@ -14,6 +13,7 @@ use App\Panel\ScheduledConference\Livewire\AppearanceSetupSetting;
 use App\Panel\ScheduledConference\Livewire\PrivacySetting;
 use App\Panel\ScheduledConference\Livewire\SetupSetting;
 use App\Panel\ScheduledConference\Livewire\ThemeSetting;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -69,23 +69,20 @@ class WebsiteSetting extends Page
                                             ->label(__('general.theme'))
                                             ->icon('heroicon-o-adjustments-horizontal')
                                             ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(ThemeSetting::class),
+                                                Livewire::make(ThemeSetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Appearance Setup')
                                             ->label(__('general.setup'))
                                             ->icon('heroicon-o-cog')
                                             ->schema([
-                                                LivewireEntry::make('appearance-setup-setting')
-                                                    ->livewire(AppearanceSetupSetting::class)
+                                                Livewire::make(AppearanceSetupSetting::class)
                                                     ->lazy(),
                                             ]),
                                         VerticalTabs\Tab::make('Sidebar')
                                             ->label(__('general.sidebar'))
                                             ->icon('heroicon-o-view-columns')
                                             ->schema([
-                                                LivewireEntry::make('sidebar-setting')
-                                                    ->livewire(SidebarSetting::class),
+                                                Livewire::make(SidebarSetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Supports')
                                             ->label(__('general.supports'))
@@ -96,20 +93,17 @@ class WebsiteSetting extends Page
                                                         Tabs\Tab::make('Sponsorship Levels')
                                                             ->label(__('general.sponsorship_levels'))
                                                             ->schema([
-                                                                LivewireEntry::make('sponsorship-level-table')
-                                                                    ->livewire(SponsorLevelTable::class),
+                                                                Livewire::make(SponsorLevelTable::class),
                                                             ]),
                                                         Tabs\Tab::make('Sponsors')
                                                             ->label(__('general.sponsors'))
                                                             ->schema([
-                                                                LivewireEntry::make('sponsor-table')
-                                                                    ->livewire(SponsorTable::class),
+                                                                Livewire::make(SponsorTable::class),
                                                             ]),
                                                         Tabs\Tab::make('Partners')
                                                             ->label(__('general.partners'))
                                                             ->schema([
-                                                                LivewireEntry::make('partner-table')
-                                                                    ->livewire(PartnerTable::class),
+                                                                Livewire::make(PartnerTable::class),
                                                             ]),
                                                     ]),
                                             ]),
@@ -124,22 +118,19 @@ class WebsiteSetting extends Page
                                             ->label(__('general.navigation_menu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
-                                                LivewireEntry::make('navigation-menu-setting')
-                                                    ->livewire(NavigationMenuSetting::class),
+                                                Livewire::make(NavigationMenuSetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Privacy Statement')
                                             ->label(__('general.privacy_statement'))
                                             ->icon('heroicon-o-shield-check')
                                             ->schema([
-                                                LivewireEntry::make('navigation-menu-setting')
-                                                    ->livewire(PrivacySetting::class),
+                                                Livewire::make(PrivacySetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))
                                             ->icon('heroicon-o-cog')
                                             ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(SetupSetting::class)
+                                                Livewire::make(SetupSetting::class)
                                                     ->lazy(),
                                             ]),
                                     ]),

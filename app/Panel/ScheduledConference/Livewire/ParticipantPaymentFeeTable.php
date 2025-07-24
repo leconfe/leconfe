@@ -2,27 +2,22 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Facades\Setting;
 use App\Forms\Components\TinyEditor;
 use App\Mail\MailUser;
 use App\Managers\PaymentManager;
 use App\Models\Payment;
 use App\Models\PaymentFee;
-use App\Models\PaymentFeeFormItem;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -62,7 +57,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
         return $table
             ->query($this->getTableQuery())
             ->queryStringIdentifier('participant_payment_fees')
-            ->recordUrl(fn(Payment $record) => PaymentDetail::getUrl(['record' => $record]))
+            ->recordUrl(fn (Payment $record) => PaymentDetail::getUrl(['record' => $record]))
 
             ->columns([
                 IndexColumn::make('No'),
@@ -74,7 +69,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
-                    ->description(fn(Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
+                    ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')
                     ->label('Registered at')

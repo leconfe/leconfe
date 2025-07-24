@@ -5,7 +5,6 @@ namespace App\Utils\UpgradeSchemas;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\Submission;
-use Exception;
 use Illuminate\Support\Facades\Artisan;
 
 class Upgrade130Beta3 extends UpgradeBase

@@ -4,14 +4,14 @@ namespace App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps;
 
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
-use Livewire\Component;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Livewire\Component;
 
-class ContributorsStep extends Component implements HasWizardStep, HasActions, HasForms
+class ContributorsStep extends Component implements HasActions, HasForms, HasWizardStep
 {
     use InteractsWithActions, InteractsWithForms;
 

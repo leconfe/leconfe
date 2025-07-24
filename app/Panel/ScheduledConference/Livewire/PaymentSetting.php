@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
-use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;

@@ -80,7 +80,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                         TextColumn::make('user.fullName')
                             ->label(__('general.full_name')),
                         TextColumn::make('affiliation')
-                            ->getStateUsing(fn($record) => $record->user->getMeta('affiliation'))
+                            ->getStateUsing(fn ($record) => $record->user->getMeta('affiliation'))
                             ->color('gray')
                             ->size('xs'),
                         TextColumn::make('role.name')

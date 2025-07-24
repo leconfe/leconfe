@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Hook;
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Managers\PaymentManager;
 use App\Panel\ScheduledConference\Livewire\InvoiceSetting;
@@ -55,8 +54,7 @@ class Payments extends Page
                 ->label(__('general.manual'))
                 ->icon('heroicon-o-credit-card')
                 ->schema([
-                    LivewireEntry::make('manual')
-                        ->livewire(ManualPaymentSetting::class),
+                    Livewire::make(ManualPaymentSetting::class),
                 ]),
         ];
 
@@ -70,13 +68,11 @@ class Payments extends Page
                     ->tabs([
                         Tabs\Tab::make('Submission Payment')
                             ->schema([
-                                LivewireEntry::make('payment_fees')
-                                    ->livewire(SubmissionPaymentTable::class),
+                                Livewire::make(SubmissionPaymentTable::class),
                             ]),
                         Tabs\Tab::make('Participant Payment')
                             ->schema([
-                                LivewireEntry::make('participant_payment_fees')
-                                    ->livewire(ParticipantPaymentFeeTable::class),
+                                Livewire::make(ParticipantPaymentFeeTable::class),
                             ]),
                         Tabs\Tab::make('Settings')
                             ->schema([
