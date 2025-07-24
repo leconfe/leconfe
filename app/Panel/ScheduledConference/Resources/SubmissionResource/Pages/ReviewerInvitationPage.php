@@ -19,6 +19,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -214,8 +215,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->color('gray')
                                     ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
-                        LivewireEntry::make('review-files')
-                            ->livewire(ReviewerAssignedFiles::class, [
+                        Livewire::make(ReviewerAssignedFiles::class, [
                                 'record' => $this->review,
                             ]),
                         Fieldset::make('Review Schedule')

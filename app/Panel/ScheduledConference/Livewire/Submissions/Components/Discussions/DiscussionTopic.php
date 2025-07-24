@@ -17,6 +17,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Livewire;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -96,8 +97,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
                         ->modalSubmitAction(false)
                         ->infolist(function (Model $discussionTopic) {
                             return [
-                                LivewireEntry::make('discussion-detail')
-                                    ->livewire(
+                                Livewire::make(
                                         DiscussionDetail::class,
                                         ['topic' => $discussionTopic]
                                     )->lazy(),
@@ -105,8 +105,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
                                     ->label(__('general.add_message'))
                                     ->columns(1)
                                     ->schema([
-                                        LivewireEntry::make('discussion-detail-form')
-                                            ->livewire(
+                                        Livewire::make(
                                                 DiscussionDetailForm::class,
                                                 ['topic' => $discussionTopic]
                                             )->lazy(),

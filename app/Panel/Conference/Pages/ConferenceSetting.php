@@ -2,7 +2,6 @@
 
 namespace App\Panel\Conference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Panel\Conference\Livewire\MastHeadSetting;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -53,8 +52,7 @@ class ConferenceSetting extends Page implements HasForms, HasInfolists
     {
         return $infolist
             ->schema([
-                LivewireEntry::make('mast-head')
-                    ->livewire(MastHeadSetting::class),
+                Livewire::make(MastHeadSetting::class),
             ]);
     }
 }

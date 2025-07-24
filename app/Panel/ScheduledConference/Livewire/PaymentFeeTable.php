@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Livewire;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -125,8 +126,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         ->modalSubmitAction(false)
                         ->modalHeading(false)
                         ->infolist(fn($record) => [
-                            LivewireEntry::make('form-items')
-                                ->livewire(PaymentFeeFormItemTable::class, ['record' => $record]),
+                            Livewire::make(PaymentFeeFormItemTable::class, ['record' => $record]),
                         ]),
                     DeleteAction::make()
                         ->hidden(fn(PaymentFee $record) => $record->payments->count()),

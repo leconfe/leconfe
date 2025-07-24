@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Infolists\Components\LivewireEntry;
 use App\Panel\ScheduledConference\Livewire\ContactSetting;
 use App\Panel\ScheduledConference\Livewire\MastHeadSetting;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -53,13 +54,11 @@ class ScheduledConferenceSetting extends Page
                         Tabs\Tab::make('Masthead')
                             ->label(__('general.masthead'))
                             ->schema([
-                                LivewireEntry::make('masthead')
-                                    ->livewire(MastHeadSetting::class),
+                                Livewire::make(MastHeadSetting::class),
                             ]),
                         Tabs\Tab::make(__('general.contact'))
                             ->schema([
-                                LivewireEntry::make('contact')
-                                    ->livewire(ContactSetting::class),
+                                Livewire::make(ContactSetting::class),
                             ]),
                     ]),
             ]);

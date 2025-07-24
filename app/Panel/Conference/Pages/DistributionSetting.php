@@ -2,7 +2,6 @@
 
 namespace App\Panel\Conference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Panel\Conference\Livewire\CitationSetting;
 use App\Panel\Conference\Livewire\Forms\Conferences\DOIRegistration;
@@ -11,6 +10,7 @@ use App\Panel\Conference\Livewire\Forms\Conferences\SearchEngineSetting;
 use App\Panel\Conference\Livewire\LicenseSetting;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -70,14 +70,12 @@ class DistributionSetting extends Page implements HasForms, HasInfolists
                                         InfolistsVerticalTabs\Tab::make('License')
                                             ->label('License')
                                             ->schema([
-                                                LivewireEntry::make('license')
-                                                    ->livewire(LicenseSetting::class),
+                                                Livewire::make(LicenseSetting::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Citation')
                                             ->label(__('general.citation'))
                                             ->schema([
-                                                LivewireEntry::make('citation')
-                                                    ->livewire(CitationSetting::class),
+                                                Livewire::make(CitationSetting::class),
                                             ]),
 
                                     ]),
@@ -90,14 +88,12 @@ class DistributionSetting extends Page implements HasForms, HasInfolists
                                         InfolistsVerticalTabs\Tab::make('Setup')
                                             ->label(__('general.setup'))
                                             ->schema([
-                                                LivewireEntry::make('doi-setting')
-                                                    ->livewire(DOISetup::class),
+                                                Livewire::make(DOISetup::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Registration')
                                             ->label(__('general.registration'))
                                             ->schema([
-                                                LivewireEntry::make('doi-registration')
-                                                    ->livewire(DOIRegistration::class),
+                                                Livewire::make(DOIRegistration::class),
                                             ]),
                                     ]),
                             ]),
@@ -105,8 +101,7 @@ class DistributionSetting extends Page implements HasForms, HasInfolists
                             ->label(__('general.search_indexing'))
                             ->icon('heroicon-o-magnifying-glass')
                             ->schema([
-                                LivewireEntry::make('sidebar-setting')
-                                    ->livewire(SearchEngineSetting::class),
+                                Livewire::make(SearchEngineSetting::class),
                             ]),
                     ])
                     ->contained(false),

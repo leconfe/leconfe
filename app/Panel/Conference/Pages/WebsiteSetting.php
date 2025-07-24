@@ -2,7 +2,6 @@
 
 namespace App\Panel\Conference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
 use App\Panel\Administration\Livewire\LanguageSetting;
@@ -10,6 +9,7 @@ use App\Panel\Administration\Livewire\SidebarSetting;
 use App\Panel\Conference\Livewire\DateAndTimeSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use App\Panel\Conference\Livewire\SetupSetting;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
@@ -65,16 +65,14 @@ class WebsiteSetting extends Page
                                             ->label(__('general.setup'))
                                             ->icon('heroicon-o-cog')
                                             ->schema([
-                                                LivewireEntry::make('setup-setting')
-                                                    ->livewire(SetupSetting::class)
+                                                Livewire::make(SetupSetting::class)
                                                     ->lazy(),
                                             ]),
                                         VerticalTabs\Tab::make('Sidebar')
                                             ->label(__('general.sidebar'))
                                             ->icon('heroicon-o-view-columns')
                                             ->schema([
-                                                LivewireEntry::make('sidebar-setting')
-                                                    ->livewire(SidebarSetting::class),
+                                                Livewire::make(SidebarSetting::class),
                                             ]),
                                     ]),
                             ]),
@@ -87,22 +85,19 @@ class WebsiteSetting extends Page
                                             ->label(__('general.navigation_menu'))
                                             ->icon('heroicon-o-list-bullet')
                                             ->schema([
-                                                LivewireEntry::make('navigation-menu-setting')
-                                                    ->livewire(NavigationMenuSetting::class),
+                                                Livewire::make(NavigationMenuSetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Languages')
                                             ->label(__('general.languages'))
                                             ->icon('heroicon-o-language')
                                             ->schema([
-                                                LivewireEntry::make('language-setting')
-                                                    ->livewire(LanguageSetting::class),
+                                                Livewire::make(LanguageSetting::class),
                                             ]),
                                         VerticalTabs\Tab::make('Date & Time')
                                             ->label(__('general.date_and_time'))
                                             ->icon('heroicon-o-clock')
                                             ->schema([
-                                                LivewireEntry::make('date_and_time')
-                                                    ->livewire(DateAndTimeSetting::class)
+                                                Livewire::make(DateAndTimeSetting::class)
                                                     ->lazy(),
                                             ]),
                                     ]),

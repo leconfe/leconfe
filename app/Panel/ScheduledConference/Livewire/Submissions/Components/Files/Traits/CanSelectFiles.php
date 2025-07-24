@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\Tr
 use App\Infolists\Components\LivewireEntry;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\SelectFiles;
 use Awcodes\Shout\Components\ShoutEntry;
+use Filament\Infolists\Components\Livewire;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Support\HtmlString;
@@ -31,8 +32,7 @@ trait CanSelectFiles
                     ShoutEntry::make('information')
                         ->color('info')
                         ->content('Choose the files to create duplicates.'),
-                    LivewireEntry::make('list-files')
-                        ->livewire(
+                    Livewire::make(
                             SelectFiles::class,
                             [
                                 'submission' => $this->submission,

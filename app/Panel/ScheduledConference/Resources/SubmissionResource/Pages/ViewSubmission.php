@@ -48,6 +48,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
 use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -383,8 +384,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->modalCancelActionLabel(__('general.close'))
                 ->infolist(function () {
                     return [
-                        LivewireEntry::make('activites-table')
-                            ->livewire(ActivityLogList::class, [
+                        Livewire::make(ActivityLogList::class, [
                                 'submission' => $this->record,
                                 'lazy' => true,
                             ]),
@@ -449,37 +449,35 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                             ->label(__('general.submission'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
-                                                LivewireEntry::make('call-for-abstract')
-                                                    ->livewire(CallforAbstract::class, [
-                                                        'submission' => $this->record,
-                                                    ]),
+                                                Livewire::make(CallforAbstract::class, ['submission' => $this->record])
+                                                    ->key('call-for-abstract'),
                                             ]),
                                         Tab::make('Peer Review')
                                             ->label(__('general.peer_review'))
                                             ->icon('iconpark-checklist-o')
                                             ->schema([
-                                                LivewireEntry::make('peer-review')
-                                                    ->livewire(PeerReview::class, [
+                                                Livewire::make(PeerReview::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('peer-review'),
                                             ]),
                                         Tab::make('Presentation')
                                             ->label(__('general.presentation'))
                                             ->icon('heroicon-o-presentation-chart-bar')
                                             ->schema([
-                                                LivewireEntry::make('presentation')
-                                                    ->livewire(Presentation::class, [
+                                                Livewire::make(Presentation::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('presentation'),
                                             ]),
                                         Tab::make('Editing')
                                             ->label(__('general.editing'))
                                             ->icon('heroicon-o-pencil')
                                             ->schema([
-                                                LivewireEntry::make('editing')
-                                                    ->livewire(Editing::class, [
+                                                Livewire::make(Editing::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('editing'),
                                             ]),
                                     ])
                                     ->maxWidth('full'),
@@ -504,57 +502,57 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                             ->label(__('general.details'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
-                                                LivewireEntry::make('detail-form')
-                                                    ->livewire(Detail::class, [
+                                                Livewire::make(Detail::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('detail-form'),
                                             ]),
                                         Tab::make('Contributors')
                                             ->label(__('general.contributors'))
                                             ->icon('heroicon-o-user-group')
                                             ->schema([
-                                                LivewireEntry::make('contributors')
-                                                    ->livewire(ContributorList::class, [
+                                                Livewire::make(ContributorList::class, [
                                                         'submission' => $this->record,
                                                         'viewOnly' => ! auth()->user()->can('editing', $this->record),
-                                                    ]),
+                                                    ])
+                                                    ->key('contributors'),
                                             ]),
                                         Tab::make('Galleys')
                                             ->label(__('general.galleys'))
                                             ->icon('heroicon-o-document-text')
                                             ->schema([
-                                                LivewireEntry::make('galleys')
-                                                    ->livewire(GalleyList::class, [
+                                                Livewire::make(GalleyList::class, [
                                                         'submission' => $this->record,
                                                         'viewOnly' => ! auth()->user()->can('editing', $this->record),
-                                                    ]),
+                                                    ])
+                                                    ->key('galleys'),
                                             ]),
                                         Tab::make('Proceeding')
                                             ->label(__('general.proceeding'))
                                             ->icon('heroicon-o-book-open')
                                             ->schema([
-                                                LivewireEntry::make('proceeding')
-                                                    ->livewire(SubmissionProceeding::class, [
+                                                Livewire::make(SubmissionProceeding::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('proceeding'),
                                             ]),
                                         Tab::make('Permissions and Disclosure')
                                             ->label(__('general.permissions_and_disclosure'))
                                             ->icon('heroicon-o-shield-exclamation')
                                             ->schema([
-                                                LivewireEntry::make('permissions-and-disclosure')
-                                                    ->livewire(PermissionsAndDisclosure::class, [
+                                                Livewire::make(PermissionsAndDisclosure::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('permissions-and-disclosure'),
                                             ]),
                                         Tab::make('References')
                                             ->label(__('general.references'))
                                             ->icon('iconpark-list')
                                             ->schema([
-                                                LivewireEntry::make('references')
-                                                    ->livewire(References::class, [
+                                                Livewire::make(References::class, [
                                                         'submission' => $this->record,
-                                                    ]),
+                                                    ])
+                                                    ->key('references'),
                                             ]),
                                     ]),
                             ]),
