@@ -85,7 +85,7 @@ class Payments extends Page
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Submission Fees')
                                             ->schema([
-                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
+                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
                                                     ->key('submission_payment_fees'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Participant Fees')
