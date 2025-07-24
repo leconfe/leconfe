@@ -180,6 +180,8 @@ class Installer
 
     private function removeEnvFile()
     {
+        if(!$this->readParam('is_configure_env')) return;
+
         $filesystem = app(Filesystem::class);
 
         $filesystem->delete(base_path('.env'));
