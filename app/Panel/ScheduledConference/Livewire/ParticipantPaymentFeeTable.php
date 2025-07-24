@@ -9,6 +9,7 @@ use App\Managers\PaymentManager;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
+use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -60,23 +61,30 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
+            ->queryStringIdentifier('participant_payment_fees')
+            ->recordUrl(fn(Payment $record) => PaymentDetail::getUrl(['record' => $record]))
+
             ->columns([
                 IndexColumn::make('No'),
+                TextColumn::make('invoice')
+                    ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                    ->searchable()
+                    ->wrap(),
                 TextColumn::make('model.full_name')
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
-                    ->label('Participant Fee')
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('amount')
-                    ->getStateUsing(fn (Payment $record) => $record->amount ? money($record->amount, $record->currency, true)->formatWithoutZeroes() : 0)
-                    ->toggleable(),
+                    ->description(fn(Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
+                    ->wrap(),
+                TextColumn::make('created_at')
+                    ->label('Registered at')
+                    ->sortable()
+                    ->toggleable()
+                    ->date(),
                 TextColumn::make('paid_at')
                     ->date()
+                    ->toggleable()
                     ->toggleable(),
-                TextColumn::make('payment_method')
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 Action::make('mail')
@@ -137,73 +145,6 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
-                    Action::make('payment')
-                        ->icon('heroicon-o-banknotes')
-                        ->modalWidth(MaxWidth::Large)
-                        ->modalCancelActionLabel(__('general.close'))
-                        ->mountUsing(function (Form $form, $record) {
-                            $form->fill([
-                                ...$record->attributesToArray(),
-                                'meta' => $record->getAllMeta()->toArray(),
-                            ]);
-                        })
-                        ->visible(fn (Payment $record) => ! $record->paid_at)
-                        ->form(function (Form $form, Payment $record) {
-                            return $form
-                                ->id('payment')
-                                ->model($record)
-                                ->schema([
-                                    Placeholder::make('type')
-                                        ->content($record->getPaymentType()),
-                                    Placeholder::make('amount')
-                                        ->content($record->getFormattedFee())
-                                        ->extraAttributes([
-                                            'style' => 'font-size:1rem;',
-                                        ]),
-                                    DatePicker::make('paid_at'),
-                                ]);
-                        })
-                        ->action(fn (array $data, Payment $record) => $record->update([...$data, 'payment_method' => 'manual'])),
-                    Action::make('detail')
-                        ->icon('heroicon-o-eye')
-                        ->mountUsing(function (Form $form, $record) {
-                            $form->fill([
-                                ...$record->attributesToArray(),
-                                'meta' => $record->getAllMeta()->toArray(),
-                            ]);
-                        })
-                        ->modalWidth(MaxWidth::Large)
-                        ->form(function (Form $form, Payment $record) {
-                            return $form
-                                ->id('paymentForm')
-                                ->disabled()
-                                ->model($record)
-                                ->schema([
-                                    Placeholder::make('title')
-                                        ->content($record->getMeta('title')),
-                                    Placeholder::make('type')
-                                        ->content($record->getPaymentType()),
-                                    Placeholder::make('amount')
-                                        ->content($record->getFormattedFee())
-                                        ->extraAttributes([
-                                            'style' => 'font-size:1rem;',
-                                        ]),
-                                    Placeholder::make('paid_at')
-                                        ->visible($record->paid_at ? true : false)
-                                        ->content($record->paid_at?->format(Setting::get('format_date').' '.Setting::get('format_time')))
-                                        ->extraAttributes([
-                                            'style' => 'font-size:1rem;',
-                                        ]),
-                                    Placeholder::make('description')
-                                        ->content($record->getMeta('description'))
-                                        ->visible($record->getMeta('description') ?? false),
-                                    ...$record->fee?->formItems?->map(fn (PaymentFeeFormItem $item) => $item->getFormField())->toArray(),
-                                    Radio::make('payment_method')
-                                        ->required()
-                                        ->reactive()
-                                        ->options(PaymentManager::get()->getPaymentMethodOptions()),
-                                ]);
-                        }),
                     DeleteAction::make()
                         ->hidden(fn (Payment $record) => $record->paid_at)
                         ->using(function (Payment $record) {

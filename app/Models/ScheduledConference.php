@@ -153,12 +153,16 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'review_mode' => Review::MODE_DOUBLE_ANONYMOUS,
             'review_invitation_response_deadline' => 21,
             'review_completion_deadline' => 28,
-            'timezone' => 'UTC',
             'theme' => 'DefaultTheme',
             'allowed_self_assign_roles' => ['Author', 'Reader'],
             'allow_registration' => true,
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
+            'invoice_number' => 1,
+            'invoice_enable' => false,
+            'receipt_enable' => false,
+            'submission_payment' => false,
+            'participant_payment' => false,
         ];
     }
 
@@ -291,5 +295,49 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopeState($query, ScheduledConferenceState $state)
     {
         return $query->where('state', $state);
+    }
+
+    public function isInvoiceEnabled() : bool
+    {
+        return $this->getMeta('invoice_enable');
+    }
+
+    public function isReceiptEnabled() : bool
+    {
+        return $this->getMeta('receipt_enable');
+    }
+
+    public function isSubmissionPaymentEnabled() : bool
+    {
+        return $this->getMeta('submission_payment');
+    }
+
+    public function isParticipantPaymentEnabled() : bool
+    {
+        return $this->getMeta('participant_payment');
+    }
+
+    public function isParticipantRegistrationEnabled() : bool
+    {
+        return $this->isParticipantPaymentEnabled();
+    }
+
+    public function generateInvoiceNumber(?int $number = null)
+    {
+        $number ??= $this->getMeta('invoice_number');
+
+        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
+
+        return $generatedNumber;
+    }
+
+    public function getLatestInvoiceNumber() : int
+    {
+        return $this->getMeta('invoice_number');
+    }
+
+    public function updateLatestInvoiceNumber(int $number) : void
+    {
+        $this->setMeta('invoice_number', $number);
     }
 }

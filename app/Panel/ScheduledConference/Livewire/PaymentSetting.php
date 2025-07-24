@@ -34,8 +34,8 @@ class PaymentSetting extends Component implements HasForms
                     ->schema([
                         Checkbox::make('meta.submission_payment')
                             ->label(__('general.enable_submission_payment')),
-                        TinyEditor::make('meta.payment_policy')
-                            ->label(__('general.payment_policy')),
+                        Checkbox::make('meta.participant_payment')
+                            ->label(__('general.enable_participant_payment')),
                     ]),
                 Actions::make([
                     Action::make('save')

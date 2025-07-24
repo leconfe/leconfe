@@ -12,6 +12,8 @@ class PaymentRequiredMail extends TemplateMailable
 
     public string $paymentLink;
 
+    public string $paymentName;
+
     public string $type;
 
     public string $description;
@@ -26,7 +28,7 @@ class PaymentRequiredMail extends TemplateMailable
 
         $this->scheduledConferenceTitle = $payment->scheduledConference->title;
 
-        $this->type = $payment->getPaymentType();
+        $this->paymentName = $payment->fee->name;
 
         $this->description = $payment->getMeta('description') ?? '-';
 
@@ -44,23 +46,23 @@ class PaymentRequiredMail extends TemplateMailable
             <p>You have due payment for : </p>
             <table>
                 <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
+                    <td style="width:200px;vertical-align: top">Submission Title</td>
+                    <td style="vertical-align: top">:</td>
                     <td>{{ title }}</td>
                 </tr>
                 <tr>
-                    <td style="width:100px;">Payment Type</td>
+                    <td style="width:200px;">Payment Name</td>
                     <td>:</td>
-                    <td>{{ type }}</td>
+                    <td>{{ paymentName }}</td>
                 </tr>
                 <tr>
-                    <td style="width:100px;">Fee</td>
+                    <td style="width:200px;">Fee</td>
                     <td>:</td>
                     <td>{{ fee }}</td>
                 </tr>
                 <tr>
-                    <td style="width:100px;">Description</td>
-                    <td>:</td>
+                    <td style="width:200px;vertical-align: top;" >Description</td>
+                    <td style="vertical-align: top">:</td>
                     <td>{{ description }}</td>
                 </tr>
             </table>
