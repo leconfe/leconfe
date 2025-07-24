@@ -22,6 +22,7 @@ FROM base as release
 COPY --chown=www-data:www-data . /var/www/html
 
 ENV SSL_MODE=mixed
+ENV APP_QUICK_SETUP=true
 
 USER www-data
 

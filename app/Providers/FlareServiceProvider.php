@@ -16,7 +16,7 @@ class FlareServiceProvider extends ServiceProvider
     public function register(): void
     {
         Flare::determineVersionUsing(function () {
-            return Application::APP_VERSION;
+            return Application::getCodeVersion();
         });
         Flare::group('Informations', [
             'url' => url(),

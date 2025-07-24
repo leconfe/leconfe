@@ -36,6 +36,7 @@ use App\Models\Track;
 use App\Models\Version;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 class Application extends LaravelApplication
 {
@@ -66,7 +67,7 @@ class Application extends LaravelApplication
 
     public function getCodeVersion(): string
     {
-        return static::APP_VERSION;
+        return File::get(base_path('version'));
     }
 
     public function getVersion()
@@ -74,7 +75,7 @@ class Application extends LaravelApplication
         $version = new Version;
         $version->product_name = 'Leconfe';
         $version->product_folder = 'leconfe';
-        $version->version = static::APP_VERSION;
+        $version->version = $this->getCodeVersion();
 
         return $version;
     }
