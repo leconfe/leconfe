@@ -144,6 +144,8 @@ class InstallAction
             return;
         }
 
+        $data['is_configure_env'] = true;
+
         try {
 
             spin(
