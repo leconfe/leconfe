@@ -123,7 +123,7 @@ class Review extends Model implements HasMedia
         ];
     }
 
-    public function calculateReviewScore(array $data) : float
+    public function  calculateReviewScore(array $data) : float
     {
         $reviewForms = ReviewFormItem::query()  
             ->with(['meta'])

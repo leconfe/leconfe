@@ -124,4 +124,15 @@ class ReviewFormItem extends Model implements Sortable
             'required' => false,
         ];
     }
+
+    public function getContentFromValue($value): mixed
+    {
+        return match ($this->type) {
+            static::TYPE_TEXT, static::TYPE_TEXTAREA => $value ?? '-',
+            static::TYPE_SELECT => optional(collect($this->getMeta('select_options') ?? [])->firstWhere('value', $value))['label'] ?? '-',
+            static::TYPE_CHECKBOX => collect($this->getMeta('checkbox_options') ?? [])->only($value ?? [])->implode(', '),
+            static::TYPE_RADIO => collect($this->getMeta('radio_options') ?? [])->get($value, '-'),
+        };
+    }
+
 }

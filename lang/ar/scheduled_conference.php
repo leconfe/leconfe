@@ -8,7 +8,7 @@ return [
 		'weight_input_label' => 'الوزن',
 		'weight_input_helper_full' => 'أدخل الوزن كنسبة مئوية. يحدد ذلك مساهمة هذا المعيار في الدرجة النهائية.',
 		'checkbox_options_input_label' => 'خيارات مربعات الاختيار',
-		'radio_options_input_label' => 'خيارات مربعات الاختيار',
+		'radio_options_input_label' => 'خيارات الراديو',
 		'reviewer_required_input_label' => 'المراجعون المطلوب منهم إكمال العنصر'
 	],
 	'label' => 'التسمية',

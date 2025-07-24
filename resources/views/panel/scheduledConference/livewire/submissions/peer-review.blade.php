@@ -71,7 +71,7 @@
                             SubmissionStatus::PaymentDeclined,
                         ]),
                     ]) x-show="!decision">
-                        @if ($user->can('requestRevision', $submission) && ! $submission->revision_required)
+                        @if ($user->can('requestRevision', $submission))
                             {{ $this->requestRevisionAction() }}
                         @endif
                         @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))

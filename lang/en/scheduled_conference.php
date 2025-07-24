@@ -8,7 +8,7 @@ return [
 		'weight_input_label' => 'Weight',
 		'weight_input_helper_full' => 'Enter the weight as a percentage. This determines the contribution of this criterion to the final score.',
 		'checkbox_options_input_label' => 'Checkbox Options',
-		'radio_options_input_label' => 'Checkbox Options',
+		'radio_options_input_label' => 'Radio Options',
 		'reviewer_required_input_label' => 'Reviewers required to complete item'
 	],
 	'label' => 'Label',

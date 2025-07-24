@@ -8,7 +8,7 @@ return [
 		'weight_input_label' => 'Bobot',
 		'weight_input_helper_full' => 'Masukkan bobot sebagai persentase. Ini menentukan kontribusi kriteria ini terhadap skor akhir.',
 		'checkbox_options_input_label' => 'Opsi Checkbox',
-		'radio_options_input_label' => 'Opsi Checkbox',
+		'radio_options_input_label' => 'Opsi Radio',
 		'reviewer_required_input_label' => 'Reviewer wajib menyelesaikan item'
 	],
 	'label' => 'Label',

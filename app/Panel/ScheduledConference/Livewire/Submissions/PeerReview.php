@@ -13,12 +13,16 @@ use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
+use App\Models\Review;
+use App\Models\ReviewFormItem;
 use App\Models\Submission;
 use App\Notifications\PaymentRequired;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -33,6 +37,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Squire\Models\Currency;
@@ -82,6 +87,11 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->minHeight(300)
                             ->profile('email')
                             ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('add_reviews_to_email')
+                                ->icon('heroicon-m-plus')
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
+                        ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
@@ -147,23 +157,28 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->minHeight(300)
                             ->profile('email')
                             ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('add_reviews_to_email')
+                                ->icon('heroicon-m-plus')
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
+                        ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
                     ]),
                 Grid::make()
-                    ->visible(fn () => ! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
+                    ->visible(fn() => ! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
                             ->options(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                fn() => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
                                     ->get()
                                     ->mapWithKeys(function ($record) {
                                         return [
-                                            $record->getKey() => $record->name.' ('.money($record->amount, $record->currency, true)->formatWithoutZeroes().')',
+                                            $record->getKey() => $record->name . ' (' . money($record->amount, $record->currency, true)->formatWithoutZeroes() . ')',
                                         ];
                                     })
                             )
@@ -179,15 +194,15 @@ class PeerReview extends Component implements HasActions, HasForms
                             })
                             ->reactive(),
                         Grid::make(1)
-                            ->visible(fn (Get $get) => $get('payment_fee_id'))
+                            ->visible(fn(Get $get) => $get('payment_fee_id'))
                             ->schema([
                                 Grid::make()
                                     ->schema([
                                         Select::make('currency')
                                             ->label(__('general.currency'))
-                                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
                                             ->options(
-                                                fn () => Currency::query()->orderBy('code_numeric', 'asc')
+                                                fn() => Currency::query()->orderBy('code_numeric', 'asc')
                                                     ->get()
                                                     ->mapWithKeys(function (?Currency $value, int $key) {
                                                         $currencyCode = Str::upper($value->id);
@@ -261,7 +276,6 @@ class PeerReview extends Component implements HasActions, HasForms
     {
         return Action::make('requestRevisionAction')
             ->authorize('requestRevision', $this->submission)
-            ->hidden(fn (): bool => $this->submission->revision_required)
             ->icon('lineawesome-list-alt-solid')
             ->outlined()
             ->color(Color::Orange)
@@ -291,6 +305,11 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->minHeight(300)
                             ->profile('email')
                             ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('add_reviews_to_email')
+                                ->icon('heroicon-m-plus')
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
+                        ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
