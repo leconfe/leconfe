@@ -6,7 +6,6 @@ use App\Actions\Review\ReviewUpdateAction;
 use App\Classes\Log;
 use App\Constants\ReviewerStatus;
 use App\Facades\Setting;
-use App\Infolists\Components\LivewireEntry;
 use App\Mail\Templates\ReviewerAcceptedInvitationMail;
 use App\Mail\Templates\ReviewerDeclinedInvitationMail;
 use App\Models\Review;
@@ -216,8 +215,8 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
                         Livewire::make(ReviewerAssignedFiles::class, [
-                                'record' => $this->review,
-                            ]),
+                            'record' => $this->review,
+                        ]),
                         Fieldset::make('Review Schedule')
                             ->columns([
                                 'default' => 1,

@@ -19,7 +19,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section as InfolistSection;
@@ -139,7 +138,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 Section::make()
                     ->heading('Review Form')
                     ->schema([
-                        ...ReviewFormItem::ordered()->lazy()->map(fn(ReviewFormItem $item) => $item->getFormField())->toArray(),
+                        ...ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
                         TinyEditor::make('meta.review_for_author_editor')
                             ->minHeight(300)
                             ->label('Review for Author and Editor'),
@@ -164,11 +163,11 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->action(function (Action $action) {
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
-                
+
                 if (isset($data['meta']['review_responses'])) {
                     $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses'] ?? []);
                 }
-                
+
                 try {
                     DB::beginTransaction();
 

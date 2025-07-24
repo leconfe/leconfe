@@ -41,9 +41,9 @@ class Payment extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        static::created(function(Payment $payment){
+        static::created(function (Payment $payment) {
             $scheduledConference = app()->getCurrentScheduledConference();
-            if($scheduledConference?->isInvoiceEnabled()){
+            if ($scheduledConference?->isInvoiceEnabled()) {
                 $number = $scheduledConference->getLatestInvoiceNumber();
 
                 $payment->update([
@@ -54,7 +54,6 @@ class Payment extends Model implements HasMedia
             }
         });
     }
-
 
     public function scopeType($query, $type): Builder
     {

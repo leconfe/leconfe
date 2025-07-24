@@ -123,17 +123,17 @@ class Review extends Model implements HasMedia
         ];
     }
 
-    public function  calculateReviewScore(array $data) : float
+    public function calculateReviewScore(array $data): float
     {
-        $reviewForms = ReviewFormItem::query()  
+        $reviewForms = ReviewFormItem::query()
             ->with(['meta'])
             ->whereIn('id', array_keys($data))
             ->get();
 
         return collect($data)
-            ->filter(fn($item, $key) => $reviewForms->find($key)?->isEnableScoring())
-            ->reduce(function(?int $carry, $value, int $key) use ($reviewForms){
-                $reviewForm = $reviewForms->find($key); 
+            ->filter(fn ($item, $key) => $reviewForms->find($key)?->isEnableScoring())
+            ->reduce(function (?int $carry, $value, int $key) use ($reviewForms) {
+                $reviewForm = $reviewForms->find($key);
 
                 $weight = $reviewForm->weight / 10;
 

@@ -3,7 +3,6 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Hook;
-use App\Infolists\Components\LivewireEntry;
 use App\Infolists\Components\VerticalTabs as InfolistsVerticalTabs;
 use App\Managers\PaymentManager;
 use App\Panel\ScheduledConference\Livewire\InvoiceSetting;

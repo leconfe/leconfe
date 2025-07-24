@@ -23,7 +23,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -115,12 +115,12 @@ class Paper extends Page
         });
 
         collect($this->paper->getMeta('keywords'))
-            ->each(fn($keyword) => MetaTag::add('citation_keywords', $keyword));
+            ->each(fn ($keyword) => MetaTag::add('citation_keywords', $keyword));
 
         collect(explode(PHP_EOL, $this->paper->getMeta('references')))
             ->filter()
             ->values()
-            ->each(fn($reference) => MetaTag::add('citation_reference', $reference));
+            ->each(fn ($reference) => MetaTag::add('citation_reference', $reference));
 
         MetaTag::add('og:title', e($this->paper->getMeta('title')));
         MetaTag::add('og:type', 'paper');
@@ -146,19 +146,19 @@ class Paper extends Page
         });
 
         MetaTag::add('eprints.title', e($this->paper->getMeta('title')));
-        MetaTag::add('eprints.ispublished', "pub");
-        MetaTag::add('eprints.full_text_status', "public");
-        MetaTag::add('eprints.type', "article");
+        MetaTag::add('eprints.ispublished', 'pub');
+        MetaTag::add('eprints.full_text_status', 'public');
+        MetaTag::add('eprints.type', 'article');
         MetaTag::add('eprints.abstract', strip_tags($this->paper->getMeta('abstract')));
         MetaTag::add('eprints.date', $this->paper->published_at?->format('Y/m/d'));
-        MetaTag::add('eprints.date_type', "published");
-        MetaTag::add('eprints.full_text_status', "public");
+        MetaTag::add('eprints.date_type', 'published');
+        MetaTag::add('eprints.full_text_status', 'public');
         MetaTag::add('eprints.document_url', route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
         MetaTag::add('eprints.publication', $this->paper->conference->name);
         MetaTag::add('eprints.publisher', strip_tags($site->getMeta('publisher_name')));
         MetaTag::add('eprints.institution', strip_tags($site->getMeta('publisher_name')));
         MetaTag::add('eprints.citation', trim(preg_replace('/\s+/', ' ', strip_tags(Citation::getCitation($this->paper, 'apa')))));
-        MetaTag::add('eprints.refereed', "TRUE");
+        MetaTag::add('eprints.refereed', 'TRUE');
         MetaTag::add('eprints.volume', e($this->paper->proceeding->volume));
         MetaTag::add('eprints.number', e($this->paper->proceeding->number));
         MetaTag::add('eprints.pagerange', $this->paper->getMeta('article_pages'));

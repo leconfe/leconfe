@@ -3,16 +3,11 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
-use App\Frontend\ScheduledConference\Pages\ParticipantForm;
-use App\Infolists\Components\LivewireEntry;
-use App\Managers\PaymentManager;
 use App\Models\PaymentFee;
 use App\Tables\Columns\IndexColumn;
-use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,9 +28,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Squire\Models\Currency;
@@ -65,7 +57,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
-            ->queryStringIdentifier('payment_fees_' . $this->paymentType)
+            ->queryStringIdentifier('payment_fees_'.$this->paymentType)
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('name')
@@ -75,19 +67,19 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         $description .= $record->opened_at?->format(Setting::get('format_date'));
 
                         if ($record->opened_at && $record->closed_at) {
-                            $description .= ' - ' . $record->closed_at->format(Setting::get('format_date'));
+                            $description .= ' - '.$record->closed_at->format(Setting::get('format_date'));
                         }
 
                         return $description;
                     }),
                 TextColumn::make('amount')
-                    ->getStateUsing(fn(Model $record) => money($record->amount, $record->currency, true)->formatWithoutZeroes()),
+                    ->getStateUsing(fn (Model $record) => money($record->amount, $record->currency, true)->formatWithoutZeroes()),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->form(fn(Form $form) => $this->form($form))
+                    ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {
                         $record = new PaymentFee;
                         $record->fill($data);
@@ -106,9 +98,10 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                     EditAction::make()
                         ->mutateRecordDataUsing(function (PaymentFee $record, array $data): array {
                             $data['meta'] = $record->getAllMeta();
+
                             return $data;
                         })
-                        ->form(fn(Form $form) => $this->form($form))
+                        ->form(fn (Form $form) => $this->form($form))
                         ->using(function (PaymentFee $record, array $data) {
                             $record->update($data);
 
@@ -125,11 +118,11 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                         ->modalCancelAction(false)
                         ->modalSubmitAction(false)
                         ->modalHeading(false)
-                        ->infolist(fn($record) => [
+                        ->infolist(fn ($record) => [
                             Livewire::make(PaymentFeeFormItemTable::class, ['record' => $record]),
                         ]),
                     DeleteAction::make()
-                        ->hidden(fn(PaymentFee $record) => $record->payments->count()),
+                        ->hidden(fn (PaymentFee $record) => $record->payments->count()),
                 ]),
             ]);
     }
@@ -157,8 +150,8 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                     ->schema([
                         Select::make('currency')
                             ->label(__('general.currency'))
-                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                            ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
+                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                            ->options(fn () => Currency::query()->orderBy('code_numeric', 'asc')->get()
                                 ->mapWithKeys(function (?Currency $value, int $key) {
                                     $currencyCode = Str::upper($value->id);
                                     $currencyName = $value->name;

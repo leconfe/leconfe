@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\Traits;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\SelectFiles;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Infolists\Components\Livewire;
@@ -33,15 +32,15 @@ trait CanSelectFiles
                         ->color('info')
                         ->content('Choose the files to create duplicates.'),
                     Livewire::make(
-                            SelectFiles::class,
-                            [
-                                'submission' => $this->submission,
-                                'targetCategory' => $this->getTargetCategory(),
-                                'selectableCategories' => $this->getSelectableCategories(),
-                                'allowedFileTypes' => config('media-library.accepted_file_types'),
-                                'lazy' => true,
-                            ]
-                        ),
+                        SelectFiles::class,
+                        [
+                            'submission' => $this->submission,
+                            'targetCategory' => $this->getTargetCategory(),
+                            'selectableCategories' => $this->getSelectableCategories(),
+                            'allowedFileTypes' => config('media-library.accepted_file_types'),
+                            'lazy' => true,
+                        ]
+                    ),
                 ]),
             Action::make('upload')
                 ->icon('iconpark-upload')

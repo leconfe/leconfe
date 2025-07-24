@@ -12,22 +12,20 @@ class Dashboard extends BaseDashboard
 
     public function mount()
     {
-        if(!static::show()){
+        if (! static::show()) {
             return redirect()->to(ManageSubmissions::getUrl());
         }
     }
 
-    public static function show() : bool
+    public static function show(): bool
     {
-        return !auth()->user()?->hasAnyRole([
+        return ! auth()->user()?->hasAnyRole([
             UserRole::ConferenceManager,
             UserRole::ScheduledConferenceEditor,
             UserRole::TrackEditor,
-            UserRole::Reviewer
+            UserRole::Reviewer,
         ]);
     }
-
-
 
     public static function shouldRegisterNavigation(): bool
     {

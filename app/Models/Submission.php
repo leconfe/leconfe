@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -188,7 +187,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
     public function editors()
     {
         return $this->participants()
-            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
+            ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
     }
 
     public function isPublishedOnExternal()
@@ -224,7 +223,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
     {
         return $this->participants()
             ->where('user_id', $user->getKey())
-            ->whereHas('role', fn(Builder $query) => $query->whereIn('name', [UserRole::Author]))
+            ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::Author]))
             ->count() > 0;
     }
 
@@ -337,9 +336,9 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             ->get()
             ->each(function ($review, $key) use (&$message) {
                 $data = [
-                    'reviewerName' => $review->getMeta('review_mode') != Review::MODE_OPEN ? 'Reviewer ' . $key + 1 : $review->user->fullName,
+                    'reviewerName' => $review->getMeta('review_mode') != Review::MODE_OPEN ? 'Reviewer '.$key + 1 : $review->user->fullName,
                     'reviewForAuthorEditor' => $review->getMeta('review_for_author_editor') ? new HtmlString($review->getMeta('review_for_author_editor')) : '-',
-                    'recommendation' => $review->recommendation
+                    'recommendation' => $review->recommendation,
                 ];
 
                 $reviewResponses = $review->getMeta('review_responses') ?? [];
@@ -349,12 +348,13 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
                     ->get();
 
                 $data['reviewResponses'] = collect($reviewResponses)
-                    ->filter(fn($item, $key) => $reviewForms->find($key))
+                    ->filter(fn ($item, $key) => $reviewForms->find($key))
                     ->mapWithKeys(function ($item, $key) use ($reviewForms) {
                         $reviewForm = $reviewForms->find($key);
 
                         $label = $reviewForm->label;
                         $content = $reviewForm->getContentFromValue($item);
+
                         return [$label => $content];
                     });
 

@@ -18,8 +18,8 @@ class WelcomeProspectiveParticipant extends Widget
 
         return $user->roles->isEmpty() || $user->hasRole([UserRole::Author]);
     }
-    
-        /**
+
+    /**
      * @return array<string, mixed>
      */
     protected function getViewData(): array
@@ -31,5 +31,4 @@ class WelcomeProspectiveParticipant extends Widget
             'participantPaymentUrl' => PaymentDetail::getUrl(),
         ];
     }
-
 }

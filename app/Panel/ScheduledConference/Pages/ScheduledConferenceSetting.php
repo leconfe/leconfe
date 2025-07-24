@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
-use App\Infolists\Components\LivewireEntry;
 use App\Panel\ScheduledConference\Livewire\ContactSetting;
 use App\Panel\ScheduledConference\Livewire\MastHeadSetting;
 use Filament\Infolists\Components\Livewire;

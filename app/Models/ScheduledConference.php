@@ -297,27 +297,27 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $query->where('state', $state);
     }
 
-    public function isInvoiceEnabled() : bool
+    public function isInvoiceEnabled(): bool
     {
         return $this->getMeta('invoice_enable');
     }
 
-    public function isReceiptEnabled() : bool
+    public function isReceiptEnabled(): bool
     {
         return $this->getMeta('receipt_enable');
     }
 
-    public function isSubmissionPaymentEnabled() : bool
+    public function isSubmissionPaymentEnabled(): bool
     {
         return $this->getMeta('submission_payment');
     }
 
-    public function isParticipantPaymentEnabled() : bool
+    public function isParticipantPaymentEnabled(): bool
     {
         return $this->getMeta('participant_payment');
     }
 
-    public function isParticipantRegistrationEnabled() : bool
+    public function isParticipantRegistrationEnabled(): bool
     {
         return $this->isParticipantPaymentEnabled();
     }
@@ -326,17 +326,17 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
 
-    public function getLatestInvoiceNumber() : int
+    public function getLatestInvoiceNumber(): int
     {
         return $this->getMeta('invoice_number');
     }
 
-    public function updateLatestInvoiceNumber(int $number) : void
+    public function updateLatestInvoiceNumber(int $number): void
     {
         $this->setMeta('invoice_number', $number);
     }

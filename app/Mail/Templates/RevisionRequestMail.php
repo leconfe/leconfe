@@ -21,7 +21,7 @@ class RevisionRequestMail extends TemplateMailable
     public function __construct(protected Submission $submission)
     {
         $this->title = $submission->getMeta('title');
-        $this->name  = $submission->user->full_name;
+        $this->name = $submission->user->full_name;
         $this->loginLink = route('livewirePageGroup.website.pages.login');
 
         $this->log = Log::make(

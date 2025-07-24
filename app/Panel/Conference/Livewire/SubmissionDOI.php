@@ -45,7 +45,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->wrap()
-                    ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
+                    ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
                             ->whereMeta('title', 'like', "%{$search}%");
@@ -62,7 +62,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                     ->options(DOIStatus::options())
                     ->attribute('doi.status')
                     ->modifyQueryUsing(function ($data, $query) {
-                        return ! $data['value'] ? $query : $query->whereHas('doi', fn($query) => $query->where('status', $data['value']));
+                        return ! $data['value'] ? $query : $query->whereHas('doi', fn ($query) => $query->where('status', $data['value']));
                     }),
             ])
             ->actions([
@@ -76,7 +76,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                         ];
                     })
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->modalHeading(fn($record) => $record->title)
+                    ->modalHeading(fn ($record) => $record->title)
                     ->form([
                         TextInput::make('doi')
                             ->label('DOI')
@@ -86,7 +86,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                                     ->button()
                                     // ->outlined()
                                     // ->color('secondary')
-                                    ->action(fn(Set $set) => $set('doi', DOIGenerator::generate()))
+                                    ->action(fn (Set $set) => $set('doi', DOIGenerator::generate()))
                             ),
                     ])
                     ->action(function (Submission $record, array $data) {

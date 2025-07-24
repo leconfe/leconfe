@@ -153,7 +153,7 @@ return [
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
     'phone' => 'The :attribute field must be a valid number.',
-    'weight_over' => 'Please ensure the total weight does not exceed 100%. Currently, it is :attribute%.', 
+    'weight_over' => 'Please ensure the total weight does not exceed 100%. Currently, it is :attribute%.',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

@@ -6,8 +6,6 @@ use App\Actions\Authors\AuthorCreateAction;
 use App\Actions\Authors\AuthorDeleteAction;
 use App\Actions\Authors\AuthorUpdateAction;
 use App\Models\Author;
-use App\Models\Conference;
-use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
@@ -25,16 +23,12 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\Unique;
 
 class ContributorList extends \Livewire\Component implements HasForms, HasTable
 {
@@ -74,13 +68,13 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                                 return Author::query()
                                     ->with(['media', 'meta'])
                                     ->whereNotIn('email', $authors)
-                                    ->where(fn($query) => $query->where('given_name', 'LIKE', "%{$search}%")
+                                    ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
                                         ->orWhere('family_name', 'LIKE', "%{$search}%")
                                         ->orWhere('email', 'LIKE', "%{$search}%"))
                                     ->orderBy('created_at', 'desc')
                                     ->get()
                                     ->unique('email')
-                                    ->mapWithKeys(fn(Author $author) => [$author->getKey() => static::renderSelectAuthor($author)])
+                                    ->mapWithKeys(fn (Author $author) => [$author->getKey() => static::renderSelectAuthor($author)])
                                     ->toArray();
                             }
                         )
@@ -92,7 +86,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
                             $form = $component->getContainer();
 
-                            $author = Author::with(['meta', 'role' => fn($query) => $query->withoutGlobalScopes()])->findOrFail($state);
+                            $author = Author::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
                             $role = AuthorRoleResource::getEloquentQuery()->whereName($author?->role?->name)->first();
 
                             $formData = [
@@ -145,9 +139,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             name: 'role',
                             titleAttribute: 'name',
                         )
-                        ->createOptionForm(fn($form) => AuthorRoleResource::form($form))
+                        ->createOptionForm(fn ($form) => AuthorRoleResource::form($form))
                         ->createOptionAction(
-                            fn(FormAction $action) => $action->color('primary')
+                            fn (FormAction $action) => $action->color('primary')
                                 ->modalWidth('xl')
                                 ->modalHeading(__('general.create_author_role'))
                         )
@@ -170,7 +164,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ->heading(__('general.contributors'))
             ->emptyStateDescription(__('general.no_contributors'))
             ->query(
-                fn(): Builder => $this->getQuery()
+                fn (): Builder => $this->getQuery()
             )
             ->reorderable('order_column')
             ->actions([
@@ -180,18 +174,19 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->mutateRecordDataUsing(function (array $data, Author $record) {
                             $data['meta'] = $record->getAllMeta();
                             $data['primary_contact'] = $record->isPrimaryContact($this->submission);
+
                             return $data;
                         })
-                        ->form(fn(Form $form) => $this->form($form))
+                        ->form(fn (Form $form) => $this->form($form))
                         ->using(function (array $data, Author $record) {
                             AuthorUpdateAction::run($data, $record);
 
-                            if($data['primary_contact']){
+                            if ($data['primary_contact']) {
                                 $this->submission->setPrimaryContact($record);
                             }
                         }),
                     DeleteAction::make()
-                        ->using(fn(array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
+                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
                 ])
                     ->hidden($this->viewOnly),
             ])
@@ -202,7 +197,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->icon('heroicon-o-user-plus')
                     ->modalHeading(__('general.add_contributor'))
                     ->successNotificationTitle(__('general.contributor_added'))
-                    ->form(fn(Form $form) => $this->form($form))
+                    ->form(fn (Form $form) => $this->form($form))
                     ->using(function (array $data) {
                         $author = AuthorCreateAction::run($this->submission, $data);
 
@@ -217,7 +212,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             ])
             ->columns([
                 TextColumn::make('name')
-                    ->getStateUsing(fn(Author $record) => $record->fullName),
+                    ->getStateUsing(fn (Author $record) => $record->fullName),
                 TextColumn::make('email')
                     ->size('xs')
                     ->color('gray')
@@ -225,13 +220,12 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                 TextColumn::make('role.name')
                     ->badge(),
                 IconColumn::make('primary_contact')
-                    ->getStateUsing(fn($record) => $record->isPrimaryContact($this->submission))
-                    ->icon(fn(bool $state): ?string => match ($state) {
+                    ->getStateUsing(fn ($record) => $record->isPrimaryContact($this->submission))
+                    ->icon(fn (bool $state): ?string => match ($state) {
                         true => 'heroicon-o-check-circle',
                         default => null,
                     })
                     ->color('success'),
-                
 
             ]);
     }

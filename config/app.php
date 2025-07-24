@@ -255,5 +255,5 @@ return [
 
     'report_errors' => env('REPORT_ERRORS', false),
 
-    'force_https' => env("APP_FORCE_HTTPS", false),
+    'force_https' => env('APP_FORCE_HTTPS', false),
 ];

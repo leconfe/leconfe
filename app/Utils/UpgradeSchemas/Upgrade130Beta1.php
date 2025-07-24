@@ -13,12 +13,12 @@ class Upgrade130Beta1 extends UpgradeBase
         $this->migrate();
     }
 
-    protected function updateAuthorPrimaryContact(): void 
+    protected function updateAuthorPrimaryContact(): void
     {
-         Submission::query()
+        Submission::query()
             ->with([
-                'authors' => fn($query) => $query->ordered(),
-                'meta'
+                'authors' => fn ($query) => $query->ordered(),
+                'meta',
             ])
             ->withoutGlobalScopes()
             ->lazy()

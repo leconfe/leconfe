@@ -19,12 +19,16 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class ReviewFormItem extends Model implements Sortable
 {
-    use HasFactory, Metable, Cachable, SortableTrait, BelongsToScheduledConference;
+    use BelongsToScheduledConference, Cachable, HasFactory, Metable, SortableTrait;
 
     public const TYPE_TEXT = 1;
+
     public const TYPE_TEXTAREA = 2;
+
     public const TYPE_CHECKBOX = 3;
+
     public const TYPE_RADIO = 4;
+
     public const TYPE_SELECT = 5;
 
     protected $table = 'submission_review_form_items';
@@ -60,7 +64,7 @@ class ReviewFormItem extends Model implements Sortable
 
     protected function getFieldId(): string
     {
-        return 'meta.review_responses.' . $this->getKey();
+        return 'meta.review_responses.'.$this->getKey();
     }
 
     public function getFormField(): Component
@@ -73,7 +77,6 @@ class ReviewFormItem extends Model implements Sortable
             static::TYPE_SELECT => $this->fieldSelect(),
         };
     }
-
 
     protected function fieldText(): TextInput
     {
@@ -115,7 +118,7 @@ class ReviewFormItem extends Model implements Sortable
             ->label($this->label)
             ->helperText(new HtmlString($this->getMeta('description')))
             ->required($this->getMeta('required'))
-            ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn($item, $key) => [$item['value'] => $item['label']])->toArray());
+            ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn ($item, $key) => [$item['value'] => $item['label']])->toArray());
     }
 
     protected function getAllDefaultMeta(): array
@@ -134,5 +137,4 @@ class ReviewFormItem extends Model implements Sortable
             static::TYPE_RADIO => collect($this->getMeta('radio_options') ?? [])->get($value, '-'),
         };
     }
-
 }
