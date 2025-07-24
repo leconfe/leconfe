@@ -87,6 +87,11 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->minHeight(300)
                             ->profile('email')
                             ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('add_reviews_to_email')
+                                ->icon('heroicon-m-plus')
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
+                        ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
@@ -152,6 +157,11 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->minHeight(300)
                             ->profile('email')
                             ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('add_reviews_to_email')
+                                ->icon('heroicon-m-plus')
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
+                        ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
                             ->columnSpanFull(),
@@ -298,44 +308,7 @@ class PeerReview extends Component implements HasActions, HasForms
                         Actions::make([
                             FormAction::make('add_reviews_to_email')
                                 ->icon('heroicon-m-plus')
-                                ->action(function (Set $set, Get $get) {
-                                    $message = $get('message');
-
-                                    $this->submission
-                                        ->reviews()
-                                        ->getQuery()
-                                        ->with(['user'])
-                                        ->whereNotNull('date_completed')
-                                        ->get()
-                                        ->each(function ($review, $key) use (&$message) {
-                                            $data = [
-                                                'reviewerName' => $review->getMeta('review_mode') != Review::MODE_OPEN ? 'Reviewer ' . $key + 1 : $review->user->fullName,
-                                                'reviewForAuthorEditor' => $review->getMeta('review_for_author_editor') ? new HtmlString($review->getMeta('review_for_author_editor')) : '-',
-                                                'recommendation' => $review->recommendation
-                                            ];
-
-                                            $reviewResponses = $review->getMeta('review_responses') ?? [];
-                                            $reviewForms = ReviewFormItem::query()
-                                                ->with(['meta'])
-                                                ->whereIn('id', array_keys($reviewResponses))
-                                                ->get();
-
-                                            $data['reviewResponses'] = collect($reviewResponses)
-                                                ->filter(fn($item, $key) => $reviewForms->find($key))
-                                                ->mapWithKeys(function ($item, $key) use ($reviewForms) {
-                                                    $reviewForm = $reviewForms->find($key);
-
-                                                    $label = $reviewForm->label;
-                                                    $content = $reviewForm->getContentFromValue($item);
-                                                    return [$label => $content];
-                                                });
-
-                                            $message .= view('panel.scheduledConference.livewire.submissions.components.review-message', $data)->render();
-                                        });
-
-
-                                    $set('message', $message);
-                                }),
+                                ->action(fn(Set $set, Get $get) => $set('message', $get('message') . $this->submission->getReviewsEmailMessage())),
                         ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))

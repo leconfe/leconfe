@@ -10,6 +10,4 @@
 	@endforeach
 	<p>For Author :</p>
 	<blockquote>{!! $reviewForAuthorEditor !!}</blockquote>
-
-	
 </div>
