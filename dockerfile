@@ -23,6 +23,7 @@ COPY --chown=www-data:www-data . /var/www/html
 
 ENV SSL_MODE=mixed
 ENV APP_QUICK_SETUP=true
+ENV SHOW_WELCOME_MESSAGE=false
 
 USER www-data
 
