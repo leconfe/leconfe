@@ -13,7 +13,6 @@ COPY ./.dockerdata/entrypoint.d /etc/entrypoint.d
 
 # Install the intl extension with root permissions
 RUN install-php-extensions intl bcmath gd exif
-RUN apk add --no-cache wget
 
 ############################################
 # Production Image
