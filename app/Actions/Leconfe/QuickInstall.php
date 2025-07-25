@@ -42,7 +42,7 @@ class QuickInstall
         ];
 
         try {
-            'Installing Leconfe...'
+            alert('Installing Leconfe...');
             (new \App\Utils\Installer($data, $command))->run();
         } catch (\Throwable $th) {
             throw $th;
