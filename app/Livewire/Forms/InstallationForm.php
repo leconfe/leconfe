@@ -159,6 +159,7 @@ class InstallationForm extends Form
         $final_features = array_filter($final_features, fn ($feature) => $feature !== 'other');
 
         $data['survey_important_features'] = $final_features;
+        $data['is_configure_env'] = true;
 
         return $data;
     }

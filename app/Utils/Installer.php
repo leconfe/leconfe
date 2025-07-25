@@ -87,6 +87,8 @@ class Installer
 
     private function configureEnv()
     {
+        if(!$this->readParam('is_configure_env')) return;
+
         $envs = [
             'APP_DEBUG' => 'false',
             'APP_URL' => $this->readParam('url') ?? url('/'),
@@ -178,6 +180,8 @@ class Installer
 
     private function removeEnvFile()
     {
+        if(!$this->readParam('is_configure_env')) return;
+
         $filesystem = app(Filesystem::class);
 
         $filesystem->delete(base_path('.env'));
