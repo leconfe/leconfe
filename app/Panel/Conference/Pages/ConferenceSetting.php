@@ -5,6 +5,7 @@ namespace App\Panel\Conference\Pages;
 use App\Panel\Conference\Livewire\MastHeadSetting;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
