@@ -14,7 +14,6 @@ COPY ./.dockerdata/entrypoint.d /etc/entrypoint.d
 # Install the intl extension with root permissions
 RUN install-php-extensions intl bcmath gd exif
 
-
 ############################################
 # Production Image
 ############################################
@@ -22,6 +21,8 @@ FROM base as release
 COPY --chown=www-data:www-data . /var/www/html
 
 ENV SSL_MODE=mixed
+ENV APP_QUICK_SETUP=true
+ENV SHOW_WELCOME_MESSAGE=false
 
 USER www-data
 

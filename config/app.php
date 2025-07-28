@@ -229,7 +229,6 @@ return [
         Filament\FilamentServiceProvider::class,
         App\Providers\FrontendServiceProvider::class,
         Rahmanramsi\LivewirePageGroup\LivewirePageGroupServiceProvider::class,
-        App\Providers\FlareServiceProvider::class,
         Plank\Metable\MetableServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
     ],
