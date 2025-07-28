@@ -10,15 +10,13 @@
         x-data="{focus: false}"
         x-on:click.outside="focus = false;"
         x-on:click="focus = true"
-        :class="{
-            'p-4 rounded-xl bg-gray-100': focus,
-        }"
     @endif
 >
     @foreach ($getChildComponentContainers() as $componentContainer)
         <div
             @if(!$loop->first) 
-            x-show="focus"
+            x-show="focus" 
+            x-transition.opacity
             @endif
             >
             {{ $componentContainer }}
