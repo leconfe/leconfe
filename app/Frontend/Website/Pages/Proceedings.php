@@ -30,6 +30,9 @@ class Proceedings extends Page
     {
         return [
             'proceedings' => Proceeding::query()
+                ->with([
+                    'conference'
+                ])
                 ->withoutGlobalScopes()
                 ->published()
                 ->ordered()
