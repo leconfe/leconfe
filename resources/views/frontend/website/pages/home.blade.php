@@ -6,6 +6,18 @@
             </div>
         @endif
 
+        @if($featuredScheduledConferences->isNotEmpty())
+            <div class="featured-scheduled-conference">
+                <x-website::heading-title title="{{ __('general.featured_scheduled_conference') }}" class="grow"/>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+                    @foreach ($featuredScheduledConferences as $scheduledConference)
+                        <x-website::scheduled-conference-summary :scheduledConference="$scheduledConference" />
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <div class="space-y-4 conferences">
 
             <x-website::heading-title title="{{ __('general.conference_list') }}" class="grow"/>

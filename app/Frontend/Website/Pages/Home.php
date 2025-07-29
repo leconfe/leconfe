@@ -76,6 +76,17 @@ class Home extends Page
 
     protected function getViewData(): array
     {
+        $featuredScheduledConferences = ScheduledConference::query()
+            ->withoutGlobalScopes()
+            ->with([
+                'conference',
+                'media',
+                'meta',
+            ])
+            ->whereNotNull('featured')
+            ->orderBy('featured', 'ASC')
+            ->get();
+
         $conferences = Conference::query()
             ->with([
                 'media',
@@ -168,6 +179,7 @@ class Home extends Page
             'stateSelected' => $this->filter['state']['value'],
             'topicSelected' => $this->filter['topic']['value'],
             'coordinatorSelected' => $this->filter['coordinator']['value'],
+            'featuredScheduledConferences' => $featuredScheduledConferences,
         ];
     }
 
