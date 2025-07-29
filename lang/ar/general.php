@@ -163,6 +163,7 @@ return [
     'trash' => 'سلة المهملات',
 
     'proceeding' => 'المداولات',
+    'proceedings' => 'المداولات',
     'identification' => 'الهوية',
     'volume' => 'المجلد',
     'number' => 'الرقم',

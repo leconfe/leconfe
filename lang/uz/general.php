@@ -160,6 +160,7 @@ return [
     'trash' => 'Chiqindi',
 
     'proceeding' => 'Materiallar to‘plami',
+    'proceedings' => "Materiallar to‘plami",
     'identification' => 'Identifikatsiya',
     'volume' => 'Jild',
     'number' => 'Son',

@@ -165,6 +165,7 @@ return [
     'trash' => 'Trash',
 
     'proceeding' => 'Proceeding',
+    'proceedings' => "Proceedings",
     'identification' => 'Identification',
     'volume' => 'Volume',
     'number' => 'Number',

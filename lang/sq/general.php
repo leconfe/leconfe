@@ -151,6 +151,7 @@ return [
     'trash' => 'Plehra',
 
     'proceeding' => 'Proceeding',
+    'proceedings' => "Procedurat",
     'identification' => 'Identifikimi',
     'volume' => 'Vëllimi',
     'number' => 'Numri',

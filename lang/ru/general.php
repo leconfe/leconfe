@@ -160,6 +160,7 @@ return [
     'trash' => 'Корзина',
 
     'proceeding' => 'Сборник материалов',
+    'proceedings' => "Сборники материалов",
     'identification' => 'Идентификация',
     'volume' => 'Том',
     'number' => 'Номер',

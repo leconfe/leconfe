@@ -152,6 +152,7 @@ return [
     'trash' => 'Sampah',
 
     'proceeding' => 'Prosiding',
+    'proceedings' => "Prosiding",
     'identification' => 'Identifikasi',
     'volume' => 'Volume',
     'number' => 'Nomor',
