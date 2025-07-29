@@ -15,7 +15,7 @@ trait LocalizedMetable
 	{
 		$data = $this->getMeta($key);
 		if (!is_array($data)) {
-			throw new Exception("Metadata for $key is not localized (in array)");
+			return $data;
 		}
 
 		if (isset($data[$key])) {
