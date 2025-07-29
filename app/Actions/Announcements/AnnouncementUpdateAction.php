@@ -2,6 +2,7 @@
 
 namespace App\Actions\Announcements;
 
+use App\Facades\Setting;
 use App\Models\Announcement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,27 @@ class AnnouncementUpdateAction
         try {
             DB::beginTransaction();
 
-            $announcement->update($data);
+            // Handle multilanguage data
+            $primaryLocale = Setting::get('default_language', app()->getLocale());
+            $processedData = $data;
 
-            if (data_get($data, 'meta')) {
-                $announcement->setManyMeta(data_get($data, 'meta'));
+            // Extract title for primary locale and save to main field
+            if (isset($data['title'][$primaryLocale])) {
+                $processedData['title'] = $data['title'][$primaryLocale];
+            }
+
+            // Prepare meta data for multilanguage
+            $metaData = data_get($data, 'meta', []);
+
+            // Store multilanguage title in meta
+            if (isset($data['title']) && is_array($data['title'])) {
+                $metaData['title'] = $data['title'];
+            }
+
+            $announcement->update($processedData);
+
+            if ($metaData) {
+                $announcement->setManyMeta($metaData);
             }
 
             DB::commit();

@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Resources;
 
 use App\Actions\Announcements\AnnouncementUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Announcement;
 use App\Panel\ScheduledConference\Resources\AnnouncementResource\Pages;
@@ -48,16 +49,18 @@ class AnnouncementResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                Textarea::make('meta.summary')
-                    ->label(__('general.summary'))
-                    ->autosize(),
-                TinyEditor::make('meta.content')
-                    ->label(__('general.announcement'))
-                    ->profile('basic')
-                    ->helperText(__('general.complete_announcement_content')),
+                MultilanguageComponent::make([
+                    TextInput::make('title')
+                        ->label(__('general.title'))
+                        ->required(),
+                    Textarea::make('meta.summary')
+                        ->label(__('general.summary'))
+                        ->autosize(),
+                    TinyEditor::make('meta.content')
+                        ->label(__('general.announcement'))
+                        ->profile('basic')
+                        ->helperText(__('general.complete_announcement_content')),
+                ]),
                 DatePicker::make('expires_at')
                     ->label(__('general.expires_at'))
                     ->minDate(today()->addDay()),
@@ -96,7 +99,26 @@ class AnnouncementResource extends Resource
                     ->color('gray'),
                 EditAction::make()
                     ->mutateRecordDataUsing(function (Announcement $record, array $data) {
-                        $data['meta'] = $record->getAllMeta()->toArray();
+                        $meta = $record->getAllMeta()->toArray();
+                        $data['meta'] = $meta;
+
+                        // Handle multilanguage data loading
+                        $locales = Setting::get('languages', [app()->getLocale()]);
+                        foreach ($locales as $locale) {
+                            if (isset($meta['title'][$locale])) {
+                                $data['title'][$locale] = $meta['title'][$locale];
+                            }
+                            if (isset($meta['summary'][$locale])) {
+                                $data['meta']['summary'][$locale] = $meta['summary'][$locale];
+                            }
+                            if (isset($meta['content'][$locale])) {
+                                $data['meta']['content'][$locale] = $meta['content'][$locale];
+                            }
+                        }
+
+                        // Set primary locale data from database fields
+                        $primaryLocale = Setting::get('default_language', app()->getLocale());
+                        $data['title'][$primaryLocale] = $record->title;
 
                         return $data;
                     })
