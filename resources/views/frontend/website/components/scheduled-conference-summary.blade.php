@@ -7,14 +7,14 @@
     @endif
     <div class="information flex-1 space-y-2">
         @if($scheduledConference->date_start || $scheduledConference->date_end)
-            <div class="flex items-center gap-2 text-sm text-gray-600">
+            <div class="flex items-center gap-1 text-sm text-gray-600">
                 <x-heroicon-c-calendar-days class="h-5 w-5" />
                 <div>
                     @if($scheduledConference->date_start)
                         @if($scheduledConference->date_end && $scheduledConference->date_start->format(Setting::get('format_date')) !== $scheduledConference->date_end->format(Setting::get('format_date')))
-                            <span class="font-semibold">{{ $scheduledConference->date_start->format(Setting::get('format_date')) }} - {{ $scheduledConference->date_end->format(Setting::get('format_date')) }}</span>
+                            <span class="">{{ $scheduledConference->date_start->format(Setting::get('format_date')) }} - {{ $scheduledConference->date_end->format(Setting::get('format_date')) }}</span>
                         @else
-                            <span class="font-semibold">{{ $scheduledConference->date_start->format(Setting::get('format_date')) }}</span>
+                            <span class="">{{ $scheduledConference->date_start->format(Setting::get('format_date')) }}</span>
                         @endif
                     @endif
                 </div>
