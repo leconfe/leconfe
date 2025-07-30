@@ -22,7 +22,6 @@ class Installation extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
-        RedirectToConference::class,
         ThemeActivator::class,
     ];
 

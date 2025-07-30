@@ -3,7 +3,6 @@
 namespace App\Frontend\Website\Pages;
 
 use App\Application;
-use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Conference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -12,10 +11,6 @@ use Spatie\Sitemap\Tags\Url;
 
 class Sitemap extends Page
 {
-    protected static string|array $withoutRouteMiddleware = [
-        RedirectToScheduledConference::class,
-    ];
-
     public function __invoke()
     {
         $sitemap = Cache::remember(

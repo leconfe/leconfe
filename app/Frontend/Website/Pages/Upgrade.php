@@ -15,7 +15,6 @@ class Upgrade extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
-        RedirectToConference::class,
     ];
 
     public function mount()
