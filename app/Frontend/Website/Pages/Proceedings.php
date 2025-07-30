@@ -35,7 +35,8 @@ class Proceedings extends Page
                 ])
                 ->withoutGlobalScopes()
                 ->published()
-                ->ordered()
+                ->orderBy('year', 'desc')
+                ->orderBy('published_at', 'desc')
                 ->get()
         ];
     }
