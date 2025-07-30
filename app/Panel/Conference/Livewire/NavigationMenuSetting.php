@@ -6,6 +6,7 @@ use App\Actions\NavigationMenu\CreateNavigationMenuAction;
 use App\Actions\NavigationMenu\CreateNavigationMenuItemAction;
 use App\Actions\NavigationMenu\UpdateNavigationMenuAction;
 use App\Actions\NavigationMenu\UpdateNavigationMenuItemAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\NavigationMenu;
 use App\Models\NavigationMenuItem;
 use Closure;
@@ -219,9 +220,12 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     {
         return function (array $arguments) {
             return [
-                TextInput::make('label')
+                // MultilanguageComponent::make([       MASIH TERJADI ERROR
+                    TextInput::make('label')
                     ->label(__('general.label'))
                     ->required(),
+                // ]),
+                
                 Select::make('type')
                     ->label(__('general.type'))
                     ->options(NavigationMenuItem::getTypeOptions())

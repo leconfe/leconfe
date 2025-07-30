@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Resources;
 
 use App\Actions\StaticPages\StaticPageUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\StaticPage;
 use App\Panel\Administration\Resources\StaticPageResource\Pages;
@@ -54,9 +55,12 @@ class StaticPageResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')
+                MultilanguageComponent::make([
+                    TextInput::make('title')
                     ->label(__('general.title'))
                     ->required(),
+                ]),
+                
                 TextInput::make('slug')
                     ->label(__('general.slug'))
                     ->alphaDash()
