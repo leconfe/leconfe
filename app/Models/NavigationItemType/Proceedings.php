@@ -19,11 +19,20 @@ class Proceedings extends BaseNavigationItemType
 
     public static function getIsDisplayed(NavigationMenuItem $navigationMenuItem): bool
     {
-        return app()->getCurrentConferenceId() && Proceeding::count() > 0;
+        $proceeding = Proceeding::query();
+
+        if(app()->getCurrentConferenceId()){
+            return $proceeding->count() > 0;
+        }
+        return $proceeding->withoutGlobalScopes()->count() > 0;
     }
 
     public static function getUrl(NavigationMenuItem $navigationMenuItem): string
-    {
-        return route('livewirePageGroup.conference.pages.proceedings');
+    { 
+        if(app()->getCurrentConferenceId()){
+            return route('livewirePageGroup.conference.pages.proceedings');
+        }
+
+        return route('livewirePageGroup.website.pages.proceedings');
     }
 }

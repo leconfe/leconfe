@@ -163,6 +163,7 @@ return [
     'trash' => 'سلة المهملات',
 
     'proceeding' => 'المداولات',
+    'proceedings' => 'المداولات',
     'identification' => 'الهوية',
     'volume' => 'المجلد',
     'number' => 'الرقم',
@@ -963,4 +964,5 @@ return [
     'view_current_event' => 'عرض الحدث الحالي',
     'system_information' => 'معلومات النظام',
     'submission_file_uploaded_activity' => 'تم تحميل الملف باسم ":name" في الفئة ":category" مع المعرف: :id.',
+    'featured_scheduled_conference' => 'المؤتمر المجدول المميز',
 ];

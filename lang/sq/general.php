@@ -151,6 +151,7 @@ return [
     'trash' => 'Plehra',
 
     'proceeding' => 'Proceeding',
+    'proceedings' => "Procedurat",
     'identification' => 'Identifikimi',
     'volume' => 'Vëllimi',
     'number' => 'Numri',
@@ -946,4 +947,6 @@ return [
     'view_current_event' => 'Shiko Ngjarjen Aktual',
     'system_information' => 'Informacioni i Sistemit',
     'submission_file_uploaded_activity' => 'Skedari me emrin ":name", u ngarkua në kategorinë ":category" me id : :id.',
+    'featured_scheduled_conference' => 'Konferenca e Planifikuar e Veçuar',
+    'conferences' => 'Konferencat',
 ];
