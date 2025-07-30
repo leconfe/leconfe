@@ -9,7 +9,9 @@
             @if(App\Models\Conference::exists())
                 @livewire(App\Livewire\GlobalNavigation::class)
             @endif
-            <x-website::navigation-menu :items="$primaryNavigationItems" class="text-gray-800" />
+            @if(!app()->getCurrentConference() && !app()->getCurrentScheduledConference())
+                <x-website::navigation-menu :items="$primaryNavigationItems" class="text-gray-800" />
+            @endif
         </div>
         
         <div class="navbar-end ms-auto gap-x-4 hidden lg:inline-flex">
