@@ -930,4 +930,5 @@ return [
     'system_information' => 'Informasi Sistem',
     'submission_file_uploaded_activity' => 'File dengan nama ":name", diunggah pada kategori ":category" dengan id : :id.',
     'featured_scheduled_conference' => 'Konferensi Terjadwal Unggulan',
+    'conferences' => 'Konferensi',
 ];

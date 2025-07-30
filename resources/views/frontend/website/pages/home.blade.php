@@ -20,7 +20,7 @@
 
         @if($scheduledConferences->isNotEmpty())
             <div class="featured-scheduled-conference">
-                <x-website::heading-title title="{{ __('general.scheduled_conference') }}" class="grow"/>
+                <x-website::heading-title title="{{ __('general.conferences') }}" class="grow"/>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-4">
                     @foreach ($scheduledConferences as $scheduledConference)

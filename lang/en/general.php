@@ -1007,4 +1007,5 @@ return [
     'submission_file_renamed_activity' => 'File with name ":oldName" and id :id, on category ":category" renamed to ":newName".',
     'submission_file_deleted_activity' => 'File with name ":name" and id :id deleted.',
     'featured_scheduled_conference' => 'Featured Scheduled Conference',
+    'conferences' => 'Conferences',
 ];
