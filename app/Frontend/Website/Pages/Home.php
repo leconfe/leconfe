@@ -6,6 +6,8 @@ use App\Models\Conference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
+use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Topic;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
@@ -27,10 +29,17 @@ class Home extends Page
         return __('general.home');
     }
 
+    public function getEloquentQuery()
+    {
+        return ScheduledConference::query()
+            ->withoutGlobalScopes([
+                ConferenceScope::class,
+            ]);
+    }
+
     protected function getViewData(): array
     {
-        $featuredScheduledConferences = ScheduledConference::query()
-            ->withoutGlobalScopes()
+        $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',
@@ -40,8 +49,7 @@ class Home extends Page
             ->orderBy('featured', 'ASC')
             ->get();
 
-        $scheduledConferences = ScheduledConference::query()
-            ->withoutGlobalScopes()
+        $scheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',
