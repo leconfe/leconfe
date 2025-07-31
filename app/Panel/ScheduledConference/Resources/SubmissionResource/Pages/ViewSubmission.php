@@ -92,7 +92,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     {
         return [
             Action::make('submission_payment')
-                ->hidden(fn (Submission $record) => $record->payment)
+                ->hidden(fn (Submission $record) => !app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled() || $record->status == SubmissionStatus::Incomplete || $record->payment)
                 ->label('Submission Payment')
                 ->form([
                     Radio::make('payment_fee_id')
