@@ -19,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 class ScheduledConferenceResource extends Resource
 {
@@ -50,7 +51,8 @@ class ScheduledConferenceResource extends Resource
                 TextInput::make('path')
                     ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
                     ->label(__('general.path'))
-                    ->rule('alpha_dash')
+                    ->rules(['alpha_dash'])
+                    ->unique(modifyRuleUsing: fn(Unique $rule) => $rule->where('conference_id', app()->getCurrentConferenceId()))
                     ->required(),
                 Grid::make()
                     ->schema([
@@ -81,6 +83,7 @@ class ScheduledConferenceResource extends Resource
                     ->sortable()
                     ->wrap()
                     ->wrapHeader(),
+                TextColumn::make('path'),
                 TextColumn::make('date_start')
                     ->label(__('general.start_date'))
                     ->date(Setting::get('format_date')),
