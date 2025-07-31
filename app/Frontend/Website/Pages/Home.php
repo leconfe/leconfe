@@ -29,12 +29,17 @@ class Home extends Page
         return __('general.home');
     }
 
-    protected function getViewData(): array
+    public function getEloquentQuery()
     {
-        $featuredScheduledConferences = ScheduledConference::query()
+        return ScheduledConference::query()
             ->withoutGlobalScopes([
                 ConferenceScope::class,
-            ])
+            ]);
+    }
+
+    protected function getViewData(): array
+    {
+        $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',
@@ -44,10 +49,7 @@ class Home extends Page
             ->orderBy('featured', 'ASC')
             ->get();
 
-        $scheduledConferences = ScheduledConference::query()
-            ->withoutGlobalScopes([
-                ConferenceScope::class,
-            ])
+        $scheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',

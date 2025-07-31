@@ -35,16 +35,18 @@ class FeaturedScheduledConferenceTable extends Component implements HasForms, Ha
         return view('tables.table');
     }
 
+    public function getEloquentQuery()
+    {
+        return ScheduledConference::query()
+            ->withoutGlobalScopes([
+                ConferenceScope::class,
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                ScheduledConference::query()
-                   ->withoutGlobalScopes([
-                        ConferenceScope::class,
-                    ])
-                    ->whereNotNull('featured')
-            )
+            ->query($this->getEloquentQuery()->whereNotNull('featured'))
             ->heading('Featured Scheduled Conferences')
             ->reorderable('featured')
             ->defaultSort('featured', 'asc')
@@ -69,14 +71,14 @@ class FeaturedScheduledConferenceTable extends Component implements HasForms, Ha
                         CheckboxList::make('featured_scheduled_conferences')
                             ->hiddenLabel()
                             ->searchable()
-                            ->options(fn() => ScheduledConference::query()->withoutGlobalScopes()->whereNull('featured')->orderBy('date_start', 'desc')->pluck('title', 'id'))
+                            ->options(fn() => $this->getEloquentQuery()->whereNull('featured')->orderBy('date_start', 'desc')->pluck('title', 'id'))
                     ])
                     ->action(function (array $data) {
                         // Get latest number of featured conferences
-                        $latestFeatured = ScheduledConference::query()->withoutGlobalScopes()->whereNotNull('featured')->count();
+                        $latestFeatured = $this->getEloquentQuery()->whereNotNull('featured')->count();
                         // Update the featured column for each selected conference
                         foreach ($data['featured_scheduled_conferences'] as $id) {
-                            ScheduledConference::query()->withoutGlobalScopes()->find($id)->update(['featured' => $latestFeatured + 1]);
+                            $this->getEloquentQuery()->find($id)->update(['featured' => $latestFeatured + 1]);
                             $latestFeatured++;
                         }
                     })
@@ -99,7 +101,7 @@ class FeaturedScheduledConferenceTable extends Component implements HasForms, Ha
                     ->requiresConfirmation()
                     ->icon('heroicon-o-trash')
                     ->action(function (Collection $records) {
-                        if($records->isEmpty()) {
+                        if ($records->isEmpty()) {
                             return;
                         }
                         $records->toQuery()->update(['featured' => null]);
