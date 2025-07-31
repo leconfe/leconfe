@@ -6,6 +6,8 @@ use App\Actions\Stakeholders\StakeholderCreateAction;
 use App\Actions\Stakeholders\StakeholderUpdateAction;
 use App\Facades\Setting;
 use App\Models\ScheduledConference;
+use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Stakeholder;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\CheckboxList;
@@ -38,7 +40,9 @@ class FeaturedScheduledConferenceTable extends Component implements HasForms, Ha
         return $table
             ->query(
                 ScheduledConference::query()
-                    ->withoutGlobalScopes()
+                   ->withoutGlobalScopes([
+                        ConferenceScope::class,
+                    ])
                     ->whereNotNull('featured')
             )
             ->heading('Featured Scheduled Conferences')
