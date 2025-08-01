@@ -24,7 +24,6 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
-use PhpParser\Node\Expr\AssignOp\Mul;
 
 class Profile extends Page implements HasForms
 {

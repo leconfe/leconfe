@@ -37,7 +37,7 @@ class ConferenceResource extends Resource
         return $form
             ->schema([
                 MultilanguageComponent::make([
-                    TextInput::make('name')
+                    TextInput::make('meta.name')
                     ->label(__('general.name'))
                     ->columnSpanFull()
                     ->required(),
