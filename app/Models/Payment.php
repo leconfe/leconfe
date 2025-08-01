@@ -112,7 +112,7 @@ class Payment extends Model implements HasMedia
 
         return now()->gte($this->expired_at);
     }
-
+    
     public function getPaymentType()
     {
         return PaymentManager::get()->getPaymentTypeName($this->type);
@@ -126,14 +126,5 @@ class Payment extends Model implements HasMedia
     public function isPaid(): bool
     {
         return $this->paid_at ? true : false;
-    }
-
-    public function getPaymentUrl()
-    {
-        return route(PaymentForm::getRouteName('scheduledConference'), [
-            'payment' => $this->getKey(),
-            'conference' => $this->conference->path,
-            'serie' => $this->scheduledConference->path,
-        ]);
     }
 }
