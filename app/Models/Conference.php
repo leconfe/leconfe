@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\ScheduledConferenceState;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Vite;
-use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -20,7 +20,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Conference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use Cachable, HasFactory, HasSlug, InteractsWithMedia, Metable;
+    use Cachable, HasFactory, HasSlug, InteractsWithMedia, LocalizedMetable;
 
     public const SCOPE_INTERNATIONAL = 'international';
 
@@ -155,7 +155,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->name;
+        return $this->getLocalizedMeta('name');
     }
 
     public function getFilamentAvatarUrl(): ?string

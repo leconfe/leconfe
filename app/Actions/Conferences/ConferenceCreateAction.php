@@ -13,22 +13,39 @@ class ConferenceCreateAction
     public function handle(array $data): Conference
     {
         try {
+
             DB::beginTransaction();
 
-            $conferenceData = data_get($data, 'conference_id')
-                ? ConferenceCloneAction::run($data)
-                : Conference::create($data);
+            
+            if (data_get($data, 'conference_id')) {
+                $conferenceData = ConferenceCloneAction::run($data);
+                 // kalo datanya dalam bentuk array (seperti multilanguage fields), simpan sebagai meta
+            } else {
+                // Jika name adalah array (multilanguage), pindahkan ke meta
+                $meta = [];
+                if (isset($data['name']) && is_array($data['name'])) {
+                    $meta['name'] = $data['name'];
+                    $data['name'] = null;
+                }
 
-            if (data_get($data, 'meta')) {
+                $conferenceData = Conference::create($data);
+
+                if (!empty($meta)) {
+                    $conferenceData->setManyMeta($meta);
+                }
+            }
+
+            // Extra meta dari form
+            if (isset($data['meta'])) {
                 $conferenceData->setManyMeta($data['meta']);
             }
 
             DB::commit();
+            return $conferenceData;
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
         }
-
-        return $conferenceData;
     }
+
 }

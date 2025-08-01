@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Resources;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Conference;
 use App\Panel\Administration\Resources\ConferenceResource\Pages;
 use App\Tables\Columns\IndexColumn;
@@ -35,10 +36,13 @@ class ConferenceResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('name')
                     ->label(__('general.name'))
                     ->columnSpanFull()
                     ->required(),
+                ]),
+                
                 TextInput::make('path')
                     ->label(__('general.path'))
                     ->helperText(__('general.url_path'))
@@ -58,6 +62,7 @@ class ConferenceResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn ($record) => $record->getLocalizedMeta('name'))
                     ->searchable(),
             ])
             ->actions([

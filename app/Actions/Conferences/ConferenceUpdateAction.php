@@ -15,19 +15,28 @@ class ConferenceUpdateAction
         try {
             DB::beginTransaction();
 
+            $meta = [];
+            if (isset($data['name']) && is_array($data['name'])) {
+                $meta['name'] = $data['name'];
+                $data['name'] = null;
+            }
+
             $conference->update($data);
 
-            if (data_get($data, 'meta')) {
-                $conference->setManyMeta(data_get($data, 'meta'));
+            if (!empty($meta)) {
+                $conference->setManyMeta($meta);
+            }
+
+            if (isset($data['meta'])) {
+                $conference->setManyMeta($data['meta']);
             }
 
             DB::commit();
+            return $conference;
         } catch (\Throwable $th) {
             DB::rollBack();
-
             throw $th;
         }
-
-        return $conference;
     }
+
 }

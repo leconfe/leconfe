@@ -220,11 +220,11 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     {
         return function (array $arguments) {
             return [
-                // MultilanguageComponent::make([       MASIH TERJADI ERROR
-                    TextInput::make('label')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.label')
                     ->label(__('general.label'))
                     ->required(),
-                // ]),
+                ]),
                 
                 Select::make('type')
                     ->label(__('general.type'))
