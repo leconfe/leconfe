@@ -9,6 +9,8 @@ use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -50,8 +52,6 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->wrap(),
                 TextColumn::make('title')
                     ->label('Submission Title')
-                    // ->color('primary')
-                    // ->url(fn (Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
                     ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
                     ->description(fn (Payment $record) => $record->user->full_name)
                     ->wrap(),
@@ -77,6 +77,12 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                 TernaryFilter::make('paid_at')
                     ->label('Paid')
                     ->nullable(),
+            ])
+            ->actions([
+                ActionGroup::make([
+                    DeleteAction::make()
+                        ->hidden(fn(Payment $record) => $record->isPaid()),
+                ])
             ]);
     }
 }

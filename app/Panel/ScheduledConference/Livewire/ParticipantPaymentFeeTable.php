@@ -58,7 +58,6 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ->query($this->getTableQuery())
             ->queryStringIdentifier('participant_payment_fees')
             ->recordUrl(fn (Payment $record) => PaymentDetail::getUrl(['record' => $record]))
-
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('invoice')
@@ -141,7 +140,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ->actions([
                 ActionGroup::make([
                     DeleteAction::make()
-                        ->hidden(fn (Payment $record) => $record->paid_at)
+                        ->hidden(fn (Payment $record) => $record->isPaid())
                         ->using(function (Payment $record) {
                             $record->delete();
 

@@ -14,7 +14,6 @@ use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
-use App\Notifications\PaymentRequired;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -236,29 +235,6 @@ class PeerReview extends Component implements HasActions, HasForms
                         $action->failure();
                     }
                 }
-
-                if (! $this->submission->payment && app()->getCurrentScheduledConference()->getMeta('submission_payment')) {
-                    $paymentFeeId = data_get($data, 'payment_fee_id');
-
-                    $paymentFee = PaymentFee::find($paymentFeeId);
-
-                    $paymentManager = PaymentManager::get();
-
-                    $paymentQueue = $paymentManager->queue(
-                        $this->submission,
-                        $paymentFee,
-                        $this->submission->user,
-                        PaymentManager::TYPE_SUBMISSION_FEE,
-                        $this->submission->getMeta('title'),
-                        SubmissionResource::getUrl('view', ['record' => $this->submission]),
-                        $data['description'],
-                        $data['amount'],
-                        $data['currency'],
-                    );
-
-                    $this->submission->user->notify(new PaymentRequired($paymentQueue));
-                }
-
                 $action->successRedirectUrl(
                     SubmissionResource::getUrl('view', [
                         'record' => $this->submission->getKey(),
