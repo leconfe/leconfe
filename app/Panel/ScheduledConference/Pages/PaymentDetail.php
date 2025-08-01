@@ -51,6 +51,13 @@ class PaymentDetail extends Page
         return 'Participant Payment';
     }
 
+    public function getBreadcrumbs(): array
+    {
+        return [
+           Payments::canAccess() ? Payments::getUrl() : 0 => 'Payments',
+        ];
+    }
+
     public function getTitle(): string|Htmlable
     {
         return match ($this->record->type) {
@@ -76,7 +83,16 @@ class PaymentDetail extends Page
             ActionGroup::make([
                 Action::make('edit_payment')
                     ->label('Edit Payment')
-                    ->visible(fn (Payment $record) => auth()->user()->can('update', $record) && ! $record->isPaid())
+                    ->visible(function (Payment $record) {
+                        if($record->type == PaymentManager::TYPE_SUBMISSION_FEE && !app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()){
+                            return false;
+                        }
+                        if($record->type == PaymentManager::TYPE_PARTICIPANT_FEE && !app()->getCurrentScheduledConference()->isParticipantPaymentEnabled()){
+                            return false;
+                        }
+
+                        return auth()->user()->can('update', $record) && ! $record->isPaid();
+                    })
                     ->color('gray')
                     ->record($this->record)
                     ->fillForm([
@@ -97,7 +113,6 @@ class PaymentDetail extends Page
                             }),
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                             ->required()
                             ->options(
                                 fn (Payment $record) => PaymentFee::type($record->type)
