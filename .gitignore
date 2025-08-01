@@ -22,5 +22,4 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
-.zencoder/rules
 package-lock.json
