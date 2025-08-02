@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -20,7 +21,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
+    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, LocalizedMetable, SoftDeletes;
 
     protected $fillable = [
         'conference_id',
@@ -235,7 +236,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->title;
+        return $this->getLocalizedMeta('name');
     }
 
     public function hasThumbnail(): bool
