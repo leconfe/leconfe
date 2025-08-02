@@ -45,9 +45,15 @@ class SetupSetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         Select::make('meta.scheduled_conference_redirect')
-                            ->label(__('general.scheduled_conference_redirect'))
-                            ->helperText(__('general.scheduled_conference_redirect_hint'))
-                            ->options(ScheduledConference::query()->pluck('title', 'id')),
+                        ->label(__('general.scheduled_conference_redirect'))
+                        ->helperText(__('general.scheduled_conference_redirect_hint'))
+                        ->options(
+                        ScheduledConference::all()
+                            ->mapWithKeys(fn ($scheduledConference) => [
+                                $scheduledConference->id => $scheduledConference->getLocalizedMeta('title')
+                            ])
+                            ->filter()
+                            ),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->label(__('general.logo'))
                             ->collection('logo')
