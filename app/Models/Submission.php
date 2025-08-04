@@ -7,6 +7,7 @@ use App\Interfaces\HasPayment;
 use App\Models\Concerns\HasDOI;
 use App\Models\Concerns\HasTopics;
 use App\Models\Concerns\InteractsWithPayment;
+use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
@@ -43,7 +44,7 @@ use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, LocalizedMetable, SortableTrait;
 
     /**
      * The attributes that are mass assignable.
