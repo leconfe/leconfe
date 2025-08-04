@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 use App\Actions\Authors\AuthorCreateAction;
 use App\Actions\Authors\AuthorDeleteAction;
 use App\Actions\Authors\AuthorUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Author;
 use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
@@ -118,22 +119,27 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->extraAlpineAttributes([
                             'x-on:update-profile-image.window' => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
                         ]),
-                    TextInput::make('given_name')
-                        ->label(__('general.given_name'))
-                        ->required(),
-                    TextInput::make('family_name')
-                        ->label(__('general.family_name')),
-                    TextInput::make('email')
+                    MultilanguageComponent::make([
+                        TextInput::make('meta.given_name')
+                            ->label(__('general.given_name'))
+                            ->required(),
+                        TextInput::make('meta.family_name')
+                            ->label(__('general.family_name')),
+                        ]),
+                        TextInput::make('email')
                         ->label(__('general.email'))
                         ->columnSpan([
                             'lg' => 2,
                         ])
                         ->required()
                         ->email(),
-                    TextInput::make('meta.public_name')
+                    MultilanguageComponent::make([
+                        TextInput::make('meta.public_name')
                         ->label(__('general.public_name'))
                         ->helperText(__('general.public_name_helper'))
                         ->columnSpan(['lg' => 2]),
+                    ]),
+                    
                     Select::make('author_role_id')
                         ->relationship(
                             name: 'role',
