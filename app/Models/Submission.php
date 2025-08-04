@@ -103,7 +103,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             $submission->participants->each->delete();
             $submission->reviews->each->delete();
             $submission->media->each->delete();
-            $submission->payment->delete();
+            $submission->payment?->delete();
         });
     }
 
