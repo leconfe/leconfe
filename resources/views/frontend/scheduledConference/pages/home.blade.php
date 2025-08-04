@@ -1,7 +1,7 @@
 <x-website::layouts.main>
     <div class="space-y-8">
         <x-scheduledConference::alert-scheduled-conference :scheduled-conference="$currentScheduledConference" />
-        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->getMeta('about')||$currentScheduledConference->getMeta('additional_content'))
+        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->getLocalizedMeta('about')||$currentScheduledConference->getLocalizedMeta('additional_content'))
             <section id="highlight" class="space-y-4">
                 <div class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 gap-4">
                     <div class="flex flex-col gap-4 flex-1">
@@ -12,14 +12,14 @@
                                     alt="{{ $currentScheduledConference->title }}" />
                             </div>
                         @endif
-                        @if ($currentScheduledConference->getMeta('about'))
+                        @if ($currentScheduledConference->getLocalizedMeta('about'))
                             <div class="user-content">
-                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getMeta('about')) }}
+                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getLocalizedMeta('about')) }}
                             </div>
                         @endif
-                        @if ($currentScheduledConference->getMeta('additional_content'))
+                        @if ($currentScheduledConference->getLocalizedMeta('additional_content'))
                             <div class="user-content">
-                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getMeta('additional_content')) }}
+                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getLocalizedMeta('additional_content')) }}
                             </div>
                         @endif
                     </div>
@@ -44,24 +44,24 @@
                                                 <div class="cf-speaker-name text-gray-900">
                                                     {{ $speaker->fullName }}
                                                 </div>
-                                                @if ($speaker->getMeta('affiliation'))
+                                                @if ($speaker->getLocalizedMeta('affiliation'))
                                                     <div class="cf-speaker-affiliation text-xs text-gray-700">
-                                                        {{ $speaker->getMeta('affiliation') }}</div>
+                                                        {{ $speaker->getLocalizedMeta('affiliation') }}</div>
                                                 @endif
-                                                @if($speaker->getMeta('scopus_url') || $speaker->getMeta('google_scholar_url') || $speaker->getMeta('orcid_url'))
+                                                @if($speaker->getLocalizedMeta('scopus_url') || $speaker->getLocalizedMeta('google_scholar_url') || $speaker->getLocalizedMeta('orcid_url'))
                                                     <div class="cf-committee-scholar flex flex-wrap items-center gap-1">
-                                                        @if($speaker->getMeta('orcid_url'))
-                                                        <a href="{{ $speaker->getMeta('orcid_url') }}" target="_blank">
+                                                        @if($speaker->getLocalizedMeta('orcid_url'))
+                                                        <a href="{{ $speaker->getLocalizedMeta('orcid_url') }}" target="_blank">
                                                             <x-academicon-orcid class="orcid-logo" />
                                                         </a>
                                                         @endif
-                                                        @if($speaker->getMeta('google_scholar_url'))
-                                                        <a href="{{ $speaker->getMeta('google_scholar_url') }}" target="_blank">
+                                                        @if($speaker->getLocalizedMeta('google_scholar_url'))
+                                                        <a href="{{ $speaker->getLocalizedMeta('google_scholar_url') }}" target="_blank">
                                                             <x-academicon-google-scholar class="google-scholar-logo" />
                                                         </a>
                                                         @endif
-                                                        @if($speaker->getMeta('scopus_url'))
-                                                        <a href="{{ $speaker->getMeta('scopus_url') }}" target="_blank">
+                                                        @if($speaker->getLocalizedMeta('scopus_url'))
+                                                        <a href="{{ $speaker->getLocalizedMeta('scopus_url') }}" target="_blank">
                                                             <x-academicon-scopus class="scopus-logo" />
                                                         </a>
                                                         @endif
