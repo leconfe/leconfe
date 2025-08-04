@@ -2,6 +2,8 @@
 
 namespace App\Panel\Conference\Resources\ProceedingResource\Pages;
 
+use App\Actions\Proceedings\ProceedingCreateAction;
+use App\Actions\Proceedings\ProceedingUpdateAction;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource;
 use Filament\Actions;
@@ -18,7 +20,10 @@ class ManageProceedings extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->modalWidth(MaxWidth::ExtraLarge),
+                ->modalWidth(MaxWidth::ExtraLarge)
+                ->using(function (array $data) {
+                    return ProceedingCreateAction::run($data);
+                }),
         ];
     }
 

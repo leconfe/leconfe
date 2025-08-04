@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Resources;
 
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
@@ -66,14 +67,17 @@ class ProceedingResource extends Resource
                             ->numeric()
                             ->minValue(0),
                     ]),
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                TinyEditor::make('description')
-                    ->label(__('general.description'))
-                    ->profile('basic')
-                    ->minHeight(300)
-                    ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
+                        ->label(__('general.title'))
+                        ->required(),
+                    TinyEditor::make('meta.description')
+                        ->label(__('general.description'))
+                        ->profile('basic')
+                        ->minHeight(300)
+                        ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                ]),
+                
                 SpatieMediaLibraryFileUpload::make('cover')
                     ->label(__('general.cover'))
                     ->collection('cover')
@@ -91,6 +95,7 @@ class ProceedingResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
+                    ->getStateUsing(fn (Proceeding $record) => $record->getLocalizedMeta('title') ?? '-')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('submissions_count')
@@ -113,7 +118,10 @@ class ProceedingResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()
-                        ->modalWidth('xl'),
+                        ->modalWidth('xl')
+                        ->using(function (Proceeding $record, array $data) {
+                            return \App\Actions\Proceedings\ProceedingUpdateAction::run($record, $data);
+                        }),
                     Tables\Actions\Action::make('preview')
                         ->label(__('general.preview'))
                         ->icon('heroicon-o-eye')

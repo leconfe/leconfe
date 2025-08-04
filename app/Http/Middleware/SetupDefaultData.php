@@ -70,7 +70,7 @@ class SetupDefaultData
 
         MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getLocalizedMeta('description')));
 
-        foreach ($currentConference->getLocalizedMeta('meta_tags') ?? [] as $name => $content) {
+        foreach ($currentConference->getMeta('meta_tags') ?? [] as $name => $content) {
             MetaTag::add($name, $content);
         }
     }
