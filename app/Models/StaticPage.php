@@ -5,11 +5,11 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Concerns\LocalizedMetable;
+use Plank\Metable\Metable;
 
 class StaticPage extends Model
 {
-    use BelongsToConference, BelongsToScheduledConference, LocalizedMetable;
+    use BelongsToConference, BelongsToScheduledConference, Metable;
 
     protected $fillable = [
         'title',
