@@ -17,8 +17,8 @@ class StaticPage extends Page
     protected function getViewData(): array
     {
         return [
-            'title' => $this->staticPage->title,
-            'content' => $this->staticPage->getMeta('content'),
+            'title' => $this->staticPage->getLocalizedMeta('title'),
+            'content' => $this->staticPage->getLocalizedMeta('content'),
         ];
     }
 
@@ -26,7 +26,7 @@ class StaticPage extends Page
     {
         return [
             route(Home::getRouteName()) => 'Home',
-            $this->staticPage->title,
+            $this->staticPage->getLocalizedMeta('title'),
         ];
     }
 
