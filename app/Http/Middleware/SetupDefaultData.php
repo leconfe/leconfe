@@ -48,13 +48,13 @@ class SetupDefaultData
         View::share('site', $site);
         View::share('homeUrl', route('livewirePageGroup.website.pages.home'));
         View::share('headerLogo', $site->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
-        View::share('headerLogoAltText', $site->getMeta('name'));
-        View::share('contextName', $site->getMeta('name'));
-        View::share('pageFooter', $site->getMeta('page_footer'));
+        View::share('headerLogoAltText', $site->getLocalizedMeta('name'));
+        View::share('contextName', $site->getLocalizedMeta('name'));
+        View::share('pageFooter', $site->getLocalizedMeta('page_footer'));
         View::share('favicon', $site->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $site->getFirstMediaUrl('styleSheet'));
 
-        MetaTag::add('description', $site->getMeta('description'));
+        MetaTag::add('description', $site->getLocalizedMeta('description'));
     }
 
     protected function setupConference(Request $request, $currentConference)
