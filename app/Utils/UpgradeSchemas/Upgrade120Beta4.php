@@ -105,11 +105,6 @@ class Upgrade120Beta4 extends UpgradeBase
 
                             $payment->setManyMeta([
                                 'title' => $paymentFee->name,
-                                'request_url' => route(ParticipantRegistrationSuccess::getRouteName('scheduledConference'), [
-                                    'participant' => $participant->uuid,
-                                    'serie' => $registrationType->scheduledConference->path,
-                                    'conference' => $registrationType->scheduledConference->conference->path,
-                                ]),
                                 'description' => $paymentFee->getMeta('description'),
                             ]);
                         }
