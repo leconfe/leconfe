@@ -4,6 +4,7 @@ namespace App\Panel\Conference\Resources;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\ScheduledConference;
 use App\Panel\Conference\Resources\ScheduledConferenceResource\Pages;
@@ -41,12 +42,15 @@ class ScheduledConferenceResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                TextInput::make('title')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
                     ->label(__('general.title'))
                     ->autofocus()
                     ->autocomplete()
                     ->required()
                     ->placeholder(__('general.enter_the_title_of_the_serie')),
+                ]),
+                
                 TextInput::make('path')
                     ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
                     ->label(__('general.path'))
@@ -76,6 +80,7 @@ class ScheduledConferenceResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
+                    ->getStateUsing(fn (ScheduledConference $record) => $record->getLocalizedMeta('title'))
                     ->searchable()
                     ->description(fn (ScheduledConference $record) => $record->current ? 'Current' : null)
                     ->sortable()
