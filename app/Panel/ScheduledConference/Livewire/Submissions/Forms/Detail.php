@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
 use Filament\Forms\Components\Select;
@@ -50,8 +51,11 @@ class Detail extends \Livewire\Component implements HasForms
                     ->url()
                     ->required()
                     ->placeholder('https://'),
-                TextInput::make('meta.title')
-                    ->label(__('general.title')),
+                    MultilanguageComponent::make([
+                        TextInput::make('meta.title')
+                        ->label(__('general.title')),
+                    ]),
+                
                 TextInput::make('meta.subtitle')
                     ->label(__('general.subtitle')),
                 Select::make('topics')
@@ -64,10 +68,13 @@ class Detail extends \Livewire\Component implements HasForms
                     ->label(__('general.keywords'))
                     ->splitKeys([','])
                     ->placeholder(''),
-                TinyEditor::make('meta.abstract')
+                MultilanguageComponent::make([
+                    TinyEditor::make('meta.abstract')
                     ->label(__('general.abstract'))
                     ->required()
                     ->minHeight(300),
+                ]),
+                
             ]);
     }
 
