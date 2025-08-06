@@ -39,8 +39,8 @@ class Author extends Model implements HasAvatar, HasMedia, Sortable
                     return $publicName;
                 }
 
-                $givenName = $this->getLocalizedMeta('given_name') ?? $this->given_name;
-                $familyName = $this->getLocalizedMeta('family_name') ?? $this->family_name;
+                $givenName = $this->getLocalizedMeta('given_name');
+                $familyName = $this->getLocalizedMeta('family_name');
 
                 return Str::squish($givenName.' '.$familyName);
             },
