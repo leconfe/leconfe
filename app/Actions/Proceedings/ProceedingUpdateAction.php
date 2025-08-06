@@ -21,16 +21,6 @@ class ProceedingUpdateAction
                 $proceedingData->setManyMeta($data['meta']);
             }
 
-            if (array_key_exists('cover', $data)) {
-                $proceedingData->clearMediaCollection('cover');
-
-                if (data_get($data, 'cover')) {
-                    foreach (data_get($data, 'cover', []) as $file) {
-                        $proceedingData->addMedia($file)->toMediaCollection('cover');
-                    }
-                }
-            }
-
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
