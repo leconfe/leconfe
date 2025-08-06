@@ -1,6 +1,6 @@
 <x-website::layouts.main>
     <div class="space-y-5">
-        @if ($site->getMeta('about'))
+        @if ($site->getLocalizedMeta('about'))
             <div class="description user-content">
                 {{ new Illuminate\Support\HtmlString($site->getMeta('about')) }}
             </div>
@@ -231,9 +231,9 @@
                                             class="font-bold conference-name link link-primary link-hover">{{ $conference->name }}</a>
                                     </h3>
 
-                                    @if ($conference->getMeta('summary'))
+                                    @if ($conference->getLocalizedMeta('summary'))
                                         <div class="conference-summary user-content">
-                                            {!! $conference->getMeta('summary') !!}
+                                            {!! $conference->getLocalizedMeta('summary') !!}
                                         </div>
                                     @endif
                                     <div class="flex items-center gap-2 text-sm">
