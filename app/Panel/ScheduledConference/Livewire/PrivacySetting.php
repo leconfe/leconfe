@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -40,9 +41,12 @@ class PrivacySetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        TinyEditor::make('meta.privacy_statement')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.privacy_statement')
                             ->label(__('general.privacy_statement'))
                             ->helperText(__('general.statement_user_registration')),
+                        ]),
+                        
                     ])
                     ->extraAttributes([
                         'class' => '!p-0',
