@@ -68,7 +68,7 @@ class SetupDefaultData
         View::share('favicon', $currentConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $currentConference->getFirstMediaUrl('styleSheet'));
 
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getMeta('description')));
+        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getMeta('descrip tion')));
 
         foreach ($currentConference->getMeta('meta_tags') ?? [] as $name => $content) {
             MetaTag::add($name, $content);
@@ -83,10 +83,10 @@ class SetupDefaultData
         View::share('headerLogo', $currentScheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
         View::share('headerLogoAltText', $currentScheduledConference->title);
         View::share('contextName', $currentScheduledConference->title);
-        View::share('pageFooter', $currentScheduledConference->getMeta('page_footer'));
+        View::share('pageFooter', $currentScheduledConference->getLocalizedMeta('page_footer'));
         View::share('favicon', $currentScheduledConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $currentScheduledConference->getFirstMediaUrl('styleSheet'));
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentScheduledConference->getMeta('description')));
+        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentScheduledConference->getLocalizedMeta('description')));
 
         foreach ($currentScheduledConference->getMeta('meta_tags') ?? [] as $name => $content) {
             MetaTag::add($name, $content);
