@@ -83,10 +83,10 @@ class Profile extends Page implements HasForms
                             ->avatar()
                             ->columnSpan(['lg' => 2]),
                         MultilanguageComponent::make([
-                            TextInput::make('given_name')
+                            TextInput::make('meta.given_name')
                             ->label(__('general.given_name'))
                             ->required(),
-                            TextInput::make('family_name')
+                            TextInput::make('meta.family_name')
                             ->label(__('general.family_name')),
                             TextInput::make('meta.public_name')
                             ->label(__('general.public_name'))
