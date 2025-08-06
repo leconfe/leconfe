@@ -49,7 +49,7 @@ class SetupSetting extends Component implements HasForms
                         Select::make('meta.conference_redirect')
                             ->label(__('general.conference_redirect'))
                             ->helperText(__('general.conference_redirect_hint'))
-                            ->options(Conference::query()->pluck('name', 'id')),
+                            ->options(Conference::all()->mapWithKeys(fn ($conference) => [$conference->id => $conference->getLocalizedMeta('name')])->filter()),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
                             ->label(__('general.logo'))
