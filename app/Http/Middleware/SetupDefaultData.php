@@ -68,7 +68,7 @@ class SetupDefaultData
         View::share('favicon', $currentConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $currentConference->getFirstMediaUrl('styleSheet'));
 
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getMeta('descrip tion')));
+        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getMeta('description')));
 
         foreach ($currentConference->getMeta('meta_tags') ?? [] as $name => $content) {
             MetaTag::add($name, $content);
