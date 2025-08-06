@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Pages;
 
 use App\Actions\User\UserUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Infolists\Components\BladeEntry;
 use App\Models\Enums\UserRole;
 use App\Models\User;
@@ -81,15 +82,18 @@ class Profile extends Page implements HasForms
                             ->collection('profile')
                             ->avatar()
                             ->columnSpan(['lg' => 2]),
-                        TextInput::make('given_name')
+                        MultilanguageComponent::make([
+                            TextInput::make('meta.given_name')
                             ->label(__('general.given_name'))
                             ->required(),
-                        TextInput::make('family_name')
+                            TextInput::make('meta.family_name')
                             ->label(__('general.family_name')),
-                        TextInput::make('meta.public_name')
+                            TextInput::make('meta.public_name')
                             ->label(__('general.public_name'))
                             ->helperText(__('general.public_name_helper'))
                             ->columnSpan(['lg' => 2]),
+                        ]),
+                        
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->columnSpan(['lg' => 2])

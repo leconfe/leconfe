@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Livewire\Forms\Conferences;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms;
 use Filament\Tables\Actions\ActionGroup;
@@ -57,13 +58,16 @@ class ContributorForm extends Component
                 ->columnSpan([
                     'lg' => 2,
                 ]),
-            Forms\Components\TextInput::make('meta.affiliation')
+            MultilanguageComponent::make([
+                Forms\Components\TextInput::make('meta.affiliation')
                 ->label(__('general.affiliation'))
                 ->prefixIcon('heroicon-s-building-library')
                 ->placeholder('University of Jakarta')
                 ->columnSpan([
                     'lg' => 2,
                 ]),
+            ]),
+            
             Forms\Components\Select::make('meta.country')
                 ->label(__('general.country'))
                 ->placeholder(__('general.select_a_country'))
