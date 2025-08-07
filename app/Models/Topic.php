@@ -20,8 +20,5 @@ class Topic extends Model
         return $this->morphedByMany(Submission::class, 'topicable');
     }
 
-    public function getNameAttribute(): ?string
-    {
-        return $this->getLocalizedMeta('name') ?? $this->attributes['name'] ?? null;
-    }
+    
 }

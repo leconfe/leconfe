@@ -38,6 +38,7 @@ class TopicTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn ($record) => $record->getLocalizedMeta('name'))
                     ->searchable(),
             ])
             ->headerActions([
