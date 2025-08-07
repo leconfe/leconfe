@@ -36,6 +36,6 @@ class AuthorRole extends Model implements Sortable
 
     public function getNameAttribute(): ?string
     {
-        return $this->getLocalizedMeta('name') ?? $this->attributes['name'] ?? null;
+        return $this->getLocalizedMeta('name');
     }
 }
