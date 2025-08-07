@@ -58,6 +58,6 @@ class Track extends Model implements Sortable
     
     public function getTitleAttribute(): ?string
     {
-        return $this->getLocalizedMeta('title') ?? $this->attributes['title'] ?? null;
+        return $this->getLocalizedMeta('title');
     }
 }
