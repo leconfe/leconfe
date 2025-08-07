@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class SubmissionFileType extends Model implements Sortable
 {
-    use BelongsToScheduledConference, Cachable, HasFactory, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasFactory, LocalizedMetable, SortableTrait;
 
     protected $fillable = [
         'name',
