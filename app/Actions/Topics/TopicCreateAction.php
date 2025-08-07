@@ -15,7 +15,16 @@ class TopicCreateAction
         try {
             DB::beginTransaction();
 
+            $meta = $data['meta'] ?? [];
+            unset($data['meta']);
+
             $topic = Topic::create($data);
+
+            foreach ($meta as $key => $values) {
+                if (is_array($values)) {
+                    $topic->setMeta($key, $values);
+                }
+            }
 
             DB::commit();
         } catch (\Throwable $th) {
