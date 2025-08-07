@@ -62,6 +62,7 @@ class AuthorRoleResource extends Resource
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn ( $record) => $record->getLocalizedMeta('name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('authors_count')

@@ -34,8 +34,4 @@ class AuthorRole extends Model implements Sortable
         $query->where('type', $type);
     }
 
-    public function getNameAttribute(): ?string
-    {
-        return $this->getLocalizedMeta('name');
-    }
 }
