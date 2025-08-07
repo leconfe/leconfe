@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -39,21 +40,24 @@ class AuthorGuidance extends Component implements HasForms
                 Section::make(__('general.author_guidance'))
                     ->columns(1)
                     ->schema([
-                        TinyEditor::make('meta.author_guidelines')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.author_guidelines')
                             ->label(__('general.author_guidelines'))
                             ->helperText(__('general.guidance_authors_might_need_to_know'))
                             ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist')
                             ->plugins('autoresize link wordcount lists'),
-                        TinyEditor::make('meta.before_you_begin')
+                            TinyEditor::make('meta.before_you_begin')
                             ->label(__('general.before_you_begin'))
                             ->helperText(__('general.brief_explanation'))
                             ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist')
                             ->plugins('autoresize link wordcount lists'),
-                        TinyEditor::make('meta.submission_checklist')
+                            TinyEditor::make('meta.submission_checklist')
                             ->label(__('general.submission_checklist'))
                             ->helperText(__('general.brief_explanation'))
                             ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist')
                             ->plugins('autoresize link wordcount lists'),
+                        ]),
+                        
                     ]),
                 Actions::make([
                     Action::make('save')
