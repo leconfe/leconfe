@@ -10,20 +10,15 @@ class TopicCreateAction
 {
     use AsAction;
 
-    public function handle($data): Topic
+    public function handle(array $data): Topic
     {
         try {
             DB::beginTransaction();
 
-            $meta = $data['meta'] ?? [];
-            unset($data['meta']);
-
             $topic = Topic::create($data);
 
-            foreach ($meta as $key => $values) {
-                if (is_array($values)) {
-                    $topic->setMeta($key, $values);
-                }
+            if (data_get($data, 'meta')) {
+                $topic->setManyMeta(data_get($data, 'meta'));
             }
 
             DB::commit();

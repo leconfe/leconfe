@@ -15,15 +15,10 @@ class TopicUpdateAction
         try {
             DB::beginTransaction();
 
-            $meta = $data['meta'] ?? [];
-            unset($data['meta']);
-
             $topic->update($data);
 
-            foreach ($meta as $key => $values) {
-                if (is_array($values)) {
-                    $topic->setMeta($key, $values);
-                }
+            if (data_get($data, 'meta')) {
+                $topic->setManyMeta(data_get($data, 'meta'));
             }
 
             DB::commit();
