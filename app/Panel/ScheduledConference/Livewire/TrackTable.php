@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\Tracks\TrackCreateAction;
 use App\Actions\Tracks\TrackUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
 use App\Models\Track;
@@ -95,17 +96,23 @@ class TrackTable extends Component implements HasForms, HasTable
             ->schema([
                 Grid::make()
                     ->schema([
-                        TextInput::make('title')
+                        MultilanguageComponent::make([
+                            TextInput::make('meta.title')
                             ->label(__('general.track_title'))
                             ->required(),
+                        ]),
+                        
                         TextInput::make('abbreviation')
                             ->label(__('general.abbreviation'))
                             ->alpha()
                             ->required(),
                     ]),
-                TinyEditor::make('meta.policy')
+                MultilanguageComponent::make([
+                    TinyEditor::make('meta.policy')
                     ->label(__('general.track_policy'))
                     ->profile('basic'),
+                ]),
+                
                 TextInput::make('meta.abstract_word_count')
                     ->label(__('general.track_abstract_word_count'))
                     ->helperText(__('general.track_abstract_word_count_helper'))
@@ -124,3 +131,4 @@ class TrackTable extends Component implements HasForms, HasTable
             ]);
     }
 }
+
