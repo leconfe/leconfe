@@ -132,10 +132,15 @@ class Register extends Page
             'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
         ]);
 
+        $allowedRoles = UserRole::getAllowedSelfAssignRoleNames();
+
+        // Filter only allowed roles to register
+        $selfAssignRoles = Arr::only($data['selfAssignRoles'], $allowedRoles);
+
         if (app()->getCurrentConference()) {
-            $user->assignRole($data['selfAssignRoles']);
+            $user->assignRole($selfAssignRoles);
         } else {
-            foreach ($data['selfAssignRoles'] as $conferenceId => $roles) {
+            foreach ($selfAssignRoles as $conferenceId => $roles) {
                 // get keys of roles where value is true
                 $roles = array_keys(array_filter($roles));
                 $user->assignRole($roles);
