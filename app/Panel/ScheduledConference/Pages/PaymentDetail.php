@@ -4,12 +4,16 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
+use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Notifications\ParticipantPayment;
+use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
@@ -37,7 +41,6 @@ class PaymentDetail extends Page
         }
 
         abort_unless($record && auth()->user()->can('view', $record), 403);
-
         $this->record = $record;
     }
 
@@ -126,8 +129,10 @@ class PaymentDetail extends Page
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
+                        Checkbox::make('dont_send_notification')
+                            ->label(__('general.dont_send_notification')),
                     ])
-                    ->action(function (Action $action, Payment $record, $data) {
+                    ->action(function (Action $action, Payment $record, array $data) {
                         $paymentFeeId = data_get($data, 'payment_fee_id');
 
                         $paymentFee = PaymentFee::find($paymentFeeId);
@@ -140,6 +145,15 @@ class PaymentDetail extends Page
 
                         if (array_key_exists('invoice', $data)) {
                             $updateData['invoice'] = $data['invoice'];
+                        }
+
+                        if(!$data['dont_send_notification']){
+                            if($this->record->type == PaymentManager::TYPE_SUBMISSION_FEE){
+                                $this->record?->user->notify(new SubmissionPayment($this->record->model));
+                            } else {
+                                $this->record?->user->notify(new ParticipantPayment($this->record->model));
+                            }
+                            
                         }
 
                         $record->update($updateData);

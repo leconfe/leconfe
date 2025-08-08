@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Managers\PaymentManager;
 use App\Models\Participant;
 use App\Models\PaymentFee;
+use App\Notifications\ParticipantPayment;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -145,6 +146,9 @@ class ParticipantRegistration extends Page implements HasForms
             $payment->save();
 
             $this->form->model($payment)->saveRelationships();
+
+            auth()->user()->notify(new ParticipantPayment($participant));
+
 
             DB::commit();
         } catch (\Throwable $th) {

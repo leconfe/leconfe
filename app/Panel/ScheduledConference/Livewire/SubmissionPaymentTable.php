@@ -2,14 +2,21 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Mail\Templates\ParticipantPaymentMail;
+use App\Mail\Templates\SubmissionPaymentMail;
 use App\Managers\PaymentManager;
+use App\Models\DefaultMailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -18,6 +25,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class SubmissionPaymentTable extends Component implements HasForms, HasTable
@@ -83,6 +92,45 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     DeleteAction::make()
                         ->hidden(fn(Payment $record) => $record->isPaid()),
                 ])
+            ])
+             ->bulkActions([
+                BulkAction::make('send-email')
+                    ->mountUsing(function (Form $form): void {
+                        $mailTemplate = DefaultMailTemplate::where('mailable', SubmissionPaymentMail::class)->first();
+                        $form->fill([
+                            'subject' => $mailTemplate ? $mailTemplate->subject : '',
+                            'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                        ]);
+                    })
+                    ->form([
+                        TextInput::make('subject')
+                            ->label(__('general.subject'))
+                            ->required(),
+                        RichEditor::make('message')
+                            ->label(__('general.message'))
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->required(),
+                    ])
+                    ->action(function (Collection $records, array $data, BulkAction $action) {
+                        $records->load(['model' => [
+                            'user',
+                            'payment' => ['scheduledConference']
+                        ]]);
+
+                        $records->each(function ($record) use ($data) {
+                            $submission = $record->model;
+
+
+                            $mailTemplate = new SubmissionPaymentMail($submission);
+                            
+                            $mailTemplate->subject($data['subject']);
+                            $mailTemplate->htmlTemplate($data['message']);
+                            Mail::to($submission->user)->send($mailTemplate);
+                        });
+
+                        $action->success();
+                    })
+                    ->successNotificationTitle('Success sending email.')
             ]);
     }
 }

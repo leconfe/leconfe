@@ -55,6 +55,11 @@ trait UsefulEnums
 
     public function is($value): bool
     {
+        // Check if the value is an instance of the enum
+        if ($value instanceof static) {
+            return $this->value === $value->value;
+        }
+
         return $this->value === $value;
     }
 }
