@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Livewire;
 
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Infolists\Components\BladeEntry;
 use App\Infolists\Components\VerticalTabs;
@@ -174,12 +175,15 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
             ->schema([
                 Section::make(__('general.layout_templates'))
                     ->schema([
-                        TinyEditor::make('mail_header')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.mail_header')
                             ->label(__('general.header'))
                             ->profile('email'),
-                        TinyEditor::make('mail_footer')
+                            TinyEditor::make('meta.mail_footer')
                             ->label(__('general.footer'))
                             ->profile('email'),
+                        ]),
+                        
                     ]),
                 Actions::make([
                     Action::make('saveLayoutForm')
