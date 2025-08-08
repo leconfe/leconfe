@@ -17,6 +17,10 @@ class TopicUpdateAction
 
             $topic->update($data);
 
+            if (data_get($data, 'meta')) {
+                $topic->setManyMeta(data_get($data, 'meta'));
+            }
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
