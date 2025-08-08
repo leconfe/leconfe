@@ -134,7 +134,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->disableToolbarButtons(['attachFiles'])
                             ->required(),
                     ])
-                    ->action(function (Collection $records, $data) {
+                    ->action(function (Collection $records, array $data, BulkAction $action) {
                         $records->load(['model.payment' => [
                             'scheduledConference',
                             'fee'
@@ -146,11 +146,12 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
 
                             $mailTemplate = new ParticipantPaymentMail($participant);
                             
-                            // $mailTemplate->getMailTemplate()->subject = $data['subject'];
                             $mailTemplate->subject($data['subject']);
                             $mailTemplate->htmlTemplate($data['message']);
                             Mail::to($participant->email)->send($mailTemplate);
                         });
+
+                        $action->success();
                     })
                     ->successNotificationTitle('Success sending email.')
             ]);

@@ -111,7 +111,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                             ->disableToolbarButtons(['attachFiles'])
                             ->required(),
                     ])
-                    ->action(function (Collection $records, $data) {
+                    ->action(function (Collection $records, array $data, BulkAction $action) {
                         $records->load(['model' => [
                             'user',
                             'payment' => ['scheduledConference']
@@ -127,6 +127,8 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                             $mailTemplate->htmlTemplate($data['message']);
                             Mail::to($submission->user)->send($mailTemplate);
                         });
+
+                        $action->success();
                     })
                     ->successNotificationTitle('Success sending email.')
             ]);
