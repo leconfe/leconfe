@@ -11,6 +11,7 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Squire\Models\Country;
 
 class Register extends Page
@@ -98,7 +99,8 @@ class Register extends Page
         ];
 
         $rules['selfAssignRoles'] = [
-            'array', 'required',
+            'array',
+            'required',
         ];
 
         return $rules;
@@ -125,22 +127,38 @@ class Register extends Page
 
             return null;
         }
-
+        
         $data = $this->validate();
-        $user = UserCreateAction::run([
-            ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
-            'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
-        ]);
+        $allowedRoles = array_values(UserRole::getAllowedSelfAssignRoleNames());
+        
+        // Filter only allowed roles to register
+        $selfAssignRoles = collect($data['selfAssignRoles'])
+            ->filter(fn ($role) => in_array($role, $allowedRoles))
+            ->toArray();
 
-        if (app()->getCurrentConference()) {
-            $user->assignRole($data['selfAssignRoles']);
-        } else {
-            foreach ($data['selfAssignRoles'] as $conferenceId => $roles) {
-                // get keys of roles where value is true
-                $roles = array_keys(array_filter($roles));
-                $user->assignRole($roles);
+        try {
+            DB::beginTransaction();
+            $user = UserCreateAction::run([
+                ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
+                'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
+            ]);
+
+            if (app()->getCurrentConference()) {
+                $user->assignRole($selfAssignRoles);
+            } else {
+                foreach ($selfAssignRoles as $conferenceId => $roles) {
+                    // get keys of roles where value is true
+                    $roles = array_keys(array_filter($roles));
+                    $user->assignRole($roles);
+                }
             }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
+
 
         Filament::auth()->login($user);
 
