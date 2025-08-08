@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -14,13 +15,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Vite;
-use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
+    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, LocalizedMetable, SoftDeletes;
 
     protected $fillable = [
         'conference_id',
@@ -236,7 +236,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function getFilamentName(): string
     {
         return $this->getLocalizedMeta('title') ?? '' ;
-    }
+        
 
     public function hasThumbnail(): bool
     {

@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Conference;
 use Filament\Forms\Components\Actions;
@@ -48,21 +49,27 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.information_about_scheduled_conference'))
                             ->aside()
                             ->schema([
-                                TextInput::make('name')
+                                MultilanguageComponent::make([
+                                    TextInput::make('meta.name')
                                     ->label(__('general.name'))
                                     ->autofocus()
                                     ->autocomplete()
                                     ->required(),
+                                ]),
+                                
                                 TextInput::make('meta.issn')
                                     ->label(__('general.ISSN'))
                                     ->helperText(__('general.the_issn_of_the_conference')),
-                                Textarea::make('meta.description')
+                                MultilanguageComponent::make([
+                                    Textarea::make('meta.description')
                                     ->label(__('general.description'))
                                     ->rows(3)
                                     ->autosize()
                                     ->columnSpanFull()
                                     ->hint(__('general.recommended_description_length'))
                                     ->helperText(__('general.short_description_of_the_website')),
+                                ]),
+                                
                                 Select::make('meta.scope')
                                     ->options([
                                         Conference::SCOPE_INTERNATIONAL => __('general.international'),
@@ -74,17 +81,23 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.provide_short_description_your_conference'))
                             ->aside()
                             ->schema([
-                                TinyEditor::make('meta.summary')
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.summary')
                                     ->label(__('general.conference_summary')),
+                                ]),
+                                
 
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
                             ->description(__('general.include_about_your_conference'))
                             ->schema([
-                                TinyEditor::make('meta.about')
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.about')
                                     ->label(__('general.about_the_conference'))
                                     ->profile('basic'),
+                                ]),
+                                
                             ]),
                     ]),
                 Actions::make([

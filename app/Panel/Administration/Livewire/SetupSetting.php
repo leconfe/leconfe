@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Livewire;
 
 use App\Actions\Site\SiteUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Conference;
 use Filament\Forms\Components\Actions;
@@ -43,13 +44,16 @@ class SetupSetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        TextInput::make('meta.name')
+                        MultilanguageComponent::make([
+                            TextInput::make('meta.name')
                             ->label(__('general.website_name'))
                             ->required(),
+                        ]),
+                        
                         Select::make('meta.conference_redirect')
                             ->label(__('general.conference_redirect'))
                             ->helperText(__('general.conference_redirect_hint'))
-                            ->options(Conference::query()->pluck('name', 'id')),
+                            ->options(Conference::all()->mapWithKeys(fn ($conference) => [$conference->id => $conference->getLocalizedMeta('name')])->filter()),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
                             ->label(__('general.logo'))
@@ -64,12 +68,15 @@ class SetupSetting extends Component implements HasForms
                             ->image()
                             ->imageResizeUpscale(false)
                             ->conversion('thumb'),
-                        Textarea::make('meta.description')
+                        MultilanguageComponent::make([
+                            Textarea::make('meta.description')
                             ->label(__('general.description'))
                             ->rows(3)
                             ->autosize()
                             ->hint(__('general.recommended_description_length'))
                             ->helperText(__('general.short_description_of_the_website')),
+                        ]),
+                        
                         Section::make(__('general.publishing_details'))
                             ->description(__('general.publishing_detail_included_in_metadata'))
                             ->schema([
@@ -89,17 +96,20 @@ class SetupSetting extends Component implements HasForms
                                     ])
                                     ->label(__('general.url')),
                             ]),
-                        TinyEditor::make('meta.about')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.about')
                             ->label(__('general.about_site'))
                             ->profile('advanced')
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
-                        TinyEditor::make('meta.page_footer')
+                            TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
                             ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist | image | code')
                             ->plugins('paste link lists image code')
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        ]),
+                        
                     ])
                     ->columns(1),
                 Actions::make([

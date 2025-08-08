@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -60,11 +61,14 @@ class AppearanceSetupSetting extends Component implements HasForms
                             ->helperText(__('general.image_representation_of_the_serie_will_uses'))
                             ->image()
                             ->conversion('thumb'),
-                        TinyEditor::make('meta.page_footer')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
                             ->profile('advanced')
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        ]),
+                        
                     ]),
 
                 Actions::make([
