@@ -85,7 +85,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn (Submission $record) => $record->getLocalizedMeta('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->reviews->where('user_id', auth()->id())->first();
                                 if ($review) {
