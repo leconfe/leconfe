@@ -32,20 +32,26 @@ class ContributorForm extends Component
                 ->extraAlpineAttributes([
                     'x-on:update-profile-image.window' => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
                 ]),
-            Forms\Components\TextInput::make('given_name')
+            MultilanguageComponent::make([
+                Forms\Components\TextInput::make('meta.given_name')
                 ->label(__('general.given_name'))
                 ->required(),
-            Forms\Components\TextInput::make('family_name')
+                Forms\Components\TextInput::make('meta.family_name')
                 ->label(__('general.family_name')),
+            ]),
+            
             Forms\Components\TextInput::make('email')
                 ->label(__('general.email'))
                 ->columnSpan([
                     'lg' => 2,
                 ]),
-            Forms\Components\TextInput::make('meta.public_name')
+            MultilanguageComponent::make([
+                Forms\Components\TextInput::make('meta.public_name')
                 ->label(__('general.public_name'))
                 ->helperText(__('general.public_name_helper'))
                 ->columnSpan(['lg' => 2]),
+            ]),
+            
         ];
     }
 
