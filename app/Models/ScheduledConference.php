@@ -235,9 +235,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->getLocalizedMeta('name');
+        return $this->getLocalizedMeta('title') ?? '' ;
     }
-
     public function hasThumbnail(): bool
     {
         return $this->getMedia('thumbnail')->isNotEmpty();
