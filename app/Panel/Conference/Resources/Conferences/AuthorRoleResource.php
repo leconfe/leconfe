@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Resources\Conferences;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\AuthorRole;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource\Pages;
 use App\Tables\Columns\IndexColumn;
@@ -40,13 +41,16 @@ class AuthorRoleResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
                     ->label(__('general.name'))
                     ->required()
                     ->unique(modifyRuleUsing: function (Unique $rule) {
                         return $rule
                             ->where('conference_id', app()->getCurrentConference()->getKey());
                     }, ignoreRecord: true),
+                ]),
+                
             ]);
     }
 
@@ -58,6 +62,7 @@ class AuthorRoleResource extends Resource
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn ( $record) => $record->getLocalizedMeta('name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('authors_count')

@@ -50,7 +50,7 @@
                                 </li>
                                 <li class="w-full p-4 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.title') }}</div>
-                                    <div class="text-gray-500">{{ $this->record->getMeta('title') }}</div>
+                                    <div class="text-gray-500">{{ $this->record->getLocalizedMeta('title') }}</div>
                                 </li>
                                 <li class="w-full p-4 space-y-2 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.keywords') }}</div>
@@ -70,7 +70,7 @@
                                 <li class="w-full p-4 border-gray-800 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.abstract') }}</div>
                                     <div class="text-gray-500">
-                                        {!! $this->record->getMeta('abstract') !!}
+                                        {!! $this->record->getLocalizedMeta('abstract') !!}
                                     </div>
                                 </li>
                             </ul>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use Database\Factories\SpeakerFactory;
 use Filament\Models\Contracts\HasAvatar;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -23,7 +24,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Speaker extends Model implements HasAvatar, HasMedia, Sortable
 {
-    use BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, Metable, Notifiable, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, LocalizedMetable, Notifiable, SortableTrait;
 
     protected $table = 'speakers';
 
@@ -39,7 +40,7 @@ class Speaker extends Model implements HasAvatar, HasMedia, Sortable
     {
         return Attribute::make(
             get: function () {
-                if ($publicName = $this->getMeta('public_name')) {
+                if ($publicName = $this->getLocalizedMeta('public_name')) {
                     return $publicName;
                 }
 

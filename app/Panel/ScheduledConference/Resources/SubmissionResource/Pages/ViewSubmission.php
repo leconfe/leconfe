@@ -411,7 +411,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return new HtmlString('<span class="text-xl ">'.$this->record->getMeta('title').'</span>');
+        return new HtmlString('<span class="text-xl ">'.$this->record->getLocalizedMeta('title').'</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -558,7 +558,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             return __('general.submission_wizard');
         }
 
-        return $this->record->getMeta('title') ?? __('general.submission');
+        return $this->record->getLocalizedMeta('title') ?? __('general.submission');
     }
 
     public function getBreadcrumb(): ?string

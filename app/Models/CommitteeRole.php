@@ -13,7 +13,9 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class CommitteeRole extends Model implements Sortable
 {
+  
     use BelongsToScheduledConference, HasFactory, SortableTrait, LocalizedMetable;
+    
 
     protected $table = 'committee_roles';
 

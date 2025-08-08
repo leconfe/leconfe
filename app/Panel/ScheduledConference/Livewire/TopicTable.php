@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\Topics\TopicCreateAction;
 use App\Actions\Topics\TopicUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Topic;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -37,6 +38,7 @@ class TopicTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn ($record) => $record->getLocalizedMeta('name'))
                     ->searchable(),
             ])
             ->headerActions([
@@ -64,9 +66,12 @@ class TopicTable extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
                     ->label(__('general.name'))
                     ->required(),
+                ]),
+                
             ]);
     }
 }

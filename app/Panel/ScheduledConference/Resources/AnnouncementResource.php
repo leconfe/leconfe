@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Resources;
 
 use App\Actions\Announcements\AnnouncementUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Announcement;
 use App\Panel\ScheduledConference\Resources\AnnouncementResource\Pages;
@@ -48,16 +49,20 @@ class AnnouncementResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
                     ->label(__('general.title'))
                     ->required(),
-                Textarea::make('meta.summary')
+                    Textarea::make('meta.summary')
                     ->label(__('general.summary'))
                     ->autosize(),
-                TinyEditor::make('meta.content')
+                    TinyEditor::make('meta.content')
                     ->label(__('general.announcement'))
                     ->profile('basic')
                     ->helperText(__('general.complete_announcement_content')),
+                ]),
+                
+                
                 DatePicker::make('expires_at')
                     ->label(__('general.expires_at'))
                     ->minDate(today()->addDay()),
@@ -76,6 +81,7 @@ class AnnouncementResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
+                    ->getStateUsing(fn ($record) => $record->getLocalizedMeta('title'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('expires_at')

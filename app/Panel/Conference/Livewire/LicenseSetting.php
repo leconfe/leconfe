@@ -4,6 +4,7 @@ namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
 use App\Facades\License;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -73,9 +74,12 @@ class LicenseSetting extends Component implements HasForms
                                 'proceeding' => __('general.copyright_year_use_proceeding_date'),
                                 'paper' => __('general.copyright_year_use_paper_date'),
                             ]),
-                        TinyEditor::make('meta.license_terms')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.license_terms')
                             ->label(__('general.license_terms'))
                             ->helperText(__('general.license_terms_helper')),
+                        ]),
+                        
                     ]),
                 Actions::make([
                     Action::make('save')

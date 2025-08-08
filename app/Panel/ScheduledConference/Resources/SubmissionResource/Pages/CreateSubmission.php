@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Submissions\SubmissionCreateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
@@ -73,8 +74,11 @@ class CreateSubmission extends Page implements HasForms
                     ->extraAttributes(['class' => 'prose prose-sm max-w-none'])
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
                     ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
-                TextInput::make('meta.title')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
                     ->required(),
+                ]),
+                
                 Radio::make('payment_fee_id')
                     ->label('Payment Fee')
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
