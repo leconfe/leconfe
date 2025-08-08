@@ -53,9 +53,6 @@ class DeclinePaperMail extends TemplateMailable
                     <td>{{ title }}</td>
                 </tr>
             </table>
-            <p>
-                Please <a href="{{ loginLink }}"> log in</a> to the system to proceed with the revision process.
-            </p>
         HTML;
     }
 }
