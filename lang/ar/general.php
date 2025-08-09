@@ -963,4 +963,15 @@ return [
     'view_current_event' => 'عرض الحدث الحالي',
     'system_information' => 'معلومات النظام',
     'submission_file_uploaded_activity' => 'تم تحميل الملف باسم ":name" في الفئة ":category" مع المعرف: :id.',
+    'publisher_library' => 'مكتبة الناشر',
+    'no_publisher_library_available' => 'لا توجد مكتبة ناشر متاحة',
+    'add_a_file' => 'إضافة ملف',
+    'view_page' => 'عرض الصفحة',
+    'allow_public_access' => 'السماح للجمهور بالوصول',
+    'download' => 'تنزيل',
+    'no' => 'لا',
+    'name' => 'الاسم',
+    'public_access' => 'الوصول العام',
+
+
 ];

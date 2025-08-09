@@ -1005,4 +1005,5 @@ return [
     'submission_file_uploaded_activity' => 'File with name ":name", was uploaded on category ":category" with id :id.',
     'submission_file_renamed_activity' => 'File with name ":oldName" and id :id, on category ":category" renamed to ":newName".',
     'submission_file_deleted_activity' => 'File with name ":name" and id :id deleted.',
+    'public_access' => 'Public Access',
 ];

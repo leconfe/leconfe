@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizedMetable;
 use DateTimeInterface;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as Model;
 
 class Media extends Model
 {
-    use Cachable;
+    use Cachable, LocalizedMetable;
 
     public static function booted()
     {

@@ -946,4 +946,13 @@ return [
     'view_current_event' => 'Shiko Ngjarjen Aktual',
     'system_information' => 'Informacioni i Sistemit',
     'submission_file_uploaded_activity' => 'Skedari me emrin ":name", u ngarkua në kategorinë ":category" me id : :id.',
+    'publisher_library' => 'Biblioteka e Botuesit',
+    'no_publisher_library_available' => 'Nuk ka bibliotekë botuesi të disponueshme',
+    'add_a_file' => 'Shto Skedar',
+    'view_page' => 'Shiko Faqen',
+    'allow_public_access' => 'Lejo Qasje Publike',
+    'download' => 'Shkarko',
+    'no' => 'Jo',
+    'name' => 'Emri',
+    'public_access' => 'Qasje Publike',
 ];

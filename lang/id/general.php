@@ -928,4 +928,15 @@ return [
     'view_current_event' => 'Lihat Acara Saat Ini',
     'system_information' => 'Informasi Sistem',
     'submission_file_uploaded_activity' => 'File dengan nama ":name", diunggah pada kategori ":category" dengan id : :id.',
+    'publisher_library' => 'Perpustakaan Penerbit',
+    'no_publisher_library_available' => 'Tidak ada perpustakaan penerbit yang tersedia',
+    'add_a_file' => 'Tambahkan File',
+    'view_page' => 'Lihat Halaman',
+    'allow_public_access' => 'Izinkan Akses Publik',
+    'download' => 'Unduh',
+    'no' => 'No',
+    'name' => 'Nama',
+    'public_access' => 'Akses Publik',
+
+
 ];
