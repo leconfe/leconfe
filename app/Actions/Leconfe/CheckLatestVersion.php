@@ -18,7 +18,7 @@ class CheckLatestVersion
 
     public function handle()
     {
-        return Cache::remember('get_latest_version', now()->endOfDay(), fn () => $this->getLatestVersion());
+        return Cache::remember('get_latest_version', now()->addHour(6), fn () => $this->getLatestVersion());
     }
 
     public static function isUpdateAvailable()
