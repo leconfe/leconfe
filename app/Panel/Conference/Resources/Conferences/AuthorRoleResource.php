@@ -2,6 +2,8 @@
 
 namespace App\Panel\Conference\Resources\Conferences;
 
+use App\Actions\AuthorRoles\AuthorRoleCreateAction;
+use App\Actions\AuthorRoles\AuthorRoleUpdateAction;
 use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\AuthorRole;
 use App\Panel\Conference\Resources\Conferences\AuthorRoleResource\Pages;
@@ -76,7 +78,15 @@ class AuthorRoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->fillForm(function (AuthorRole $record) {
+                        return array_merge($record->toArray(), [
+                            'meta' => $record->getAllMeta(),
+                        ]);
+                    })
+                    ->using(function (AuthorRole $record, array $data) {
+                        return AuthorRoleUpdateAction::run($record, $data);
+                    }),
                 Tables\Actions\DeleteAction::make()
                     ->using(function (AuthorRole $record, Tables\Actions\DeleteAction $action) {
                         try {
@@ -98,9 +108,7 @@ class AuthorRoleResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        return $data;
-                    })
+                    ->using(fn (array $data) => AuthorRoleCreateAction::run($data))
                     ->label(__('general.new_author_role'))
                     ->modalHeading(__('general.new_author_role')),
             ]);
