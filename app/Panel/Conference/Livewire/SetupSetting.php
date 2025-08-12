@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\ScheduledConference;
 use Filament\Forms\Components\Actions;
@@ -46,8 +47,14 @@ class SetupSetting extends Component implements HasForms
                     ->schema([
                         Select::make('meta.scheduled_conference_redirect')
                             ->label(__('general.scheduled_conference_redirect'))
-                            ->helperText(__('general.scheduled_conference_redirect_hint'))
-                            ->options(ScheduledConference::query()->pluck('title', 'id')),
+                        ->helperText(__('general.scheduled_conference_redirect_hint'))
+                        ->options(
+                        ScheduledConference::all()
+                            ->mapWithKeys(fn ($scheduledConference) => [
+                                $scheduledConference->id => $scheduledConference->getLocalizedMeta('title')
+                            ])
+                            ->filter()
+                            ),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->label(__('general.logo'))
                             ->collection('logo')
@@ -66,11 +73,14 @@ class SetupSetting extends Component implements HasForms
                             ->helperText(__('general.image_representation_of_the_serie_will_uses'))
                             ->image()
                             ->conversion('thumb'),
-                        TinyEditor::make('meta.page_footer')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
                             ->profile('advanced')
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        ]),
+                        
                     ]),
 
                 Actions::make([

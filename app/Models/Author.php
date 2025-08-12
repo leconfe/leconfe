@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizedMetable;
 use Filament\Models\Contracts\HasAvatar;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\MediaLibrary\HasMedia;
@@ -19,7 +19,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Author extends Model implements HasAvatar, HasMedia, Sortable
 {
-    use Cachable, InteractsWithMedia, Metable, Notifiable, SortableTrait;
+    use Cachable, InteractsWithMedia, LocalizedMetable, Notifiable, SortableTrait;
 
     protected $table = 'authors';
 
@@ -35,11 +35,14 @@ class Author extends Model implements HasAvatar, HasMedia, Sortable
     {
         return Attribute::make(
             get: function () {
-                if ($publicName = $this->getMeta('public_name')) {
+                if ($publicName = $this->getLocalizedMeta('public_name')) {
                     return $publicName;
                 }
 
-                return Str::squish($this->given_name.' '.$this->family_name);
+                $givenName = $this->getLocalizedMeta('given_name');
+                $familyName = $this->getLocalizedMeta('family_name');
+
+                return Str::squish($givenName.' '.$familyName);
             },
         );
     }

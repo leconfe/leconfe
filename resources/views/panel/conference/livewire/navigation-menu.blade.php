@@ -21,7 +21,7 @@
                                     <x-heroicon-s-arrows-up-down class="w-4 h-4" />
                                 </button>
                                 <button class="flex cursor-pointer" wire:click="mountAction('editNavigationMenuItemAction', {{ Js::from(['id' => $navigationMenuItem->id]) }})">
-                                    {{ $navigationMenuItem->label }}
+                                    {{ $navigationMenuItem->getLabel() }}
                                     {{ ($this->editNavigationMenuItemAction)(['id' => $navigationMenuItem->id]) }}
                                 </button>
                                 @if($navigationMenuItem->children->isNotEmpty())
@@ -80,7 +80,7 @@
                                         <button
                                             class="flex cursor-pointer"
                                             wire:click="mountAction('editNavigationMenuItemAction', {{ Js::from(['id' => $child->id]) }})">
-                                            {{ $child->label }}
+                                            {{ $child->getLabel() }}
                                             {{ $this->editNavigationMenuItemAction }}
                                         </button>
                                     </div>

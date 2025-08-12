@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use Database\Factories\CommitteeFactory;
 use Filament\Models\Contracts\HasAvatar;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -23,7 +24,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Committee extends Model implements HasAvatar, HasMedia, Sortable
 {
-    use BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, Metable, Notifiable, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, LocalizedMetable, Notifiable, SortableTrait;
 
     protected $table = 'committees';
 
@@ -39,7 +40,7 @@ class Committee extends Model implements HasAvatar, HasMedia, Sortable
     {
         return Attribute::make(
             get: function () {
-                if ($publicName = $this->getMeta('public_name')) {
+                if ($publicName = $this->getLocalizedMeta('public_name')) {
                     return $publicName;
                 }
 
@@ -78,6 +79,8 @@ class Committee extends Model implements HasAvatar, HasMedia, Sortable
         if ($profilePicture = $this->getFirstMedia('profile')?->getAvailableUrl(['thumb', 'thumb-xl'])) {
             return $profilePicture;
         }
+
+        
 
         $name = Str::of($this->fullName)
             ->trim()

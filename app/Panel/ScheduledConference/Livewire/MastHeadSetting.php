@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -48,12 +49,15 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.information_about_the_scheduled_conference'))
                             ->aside()
                             ->schema([
-                                TextInput::make('title')
+                                MultilanguageComponent::make([
+                                    TextInput::make('meta.title')
                                     ->label(__('general.title'))
                                     ->autofocus()
                                     ->autocomplete()
                                     ->required()
                                     ->placeholder(__('general.enter_the_title_of_the_scheduled_conference')),
+                                ]),
+                                
                                 Grid::make()
                                     ->schema([
                                         DatePicker::make('date_start')
@@ -66,13 +70,16 @@ class MastHeadSetting extends Component implements HasForms
                                             ->requiredWith('date_start')
                                             ->placeholder(__('general.enter_the_end_date_of_the_serie')),
                                     ]),
-                                Textarea::make('meta.description')
+                                MultilanguageComponent::make([
+                                    Textarea::make('meta.description')
                                     ->label(__('general.description'))
                                     ->rows(3)
                                     ->autosize()
                                     ->columnSpanFull()
                                     ->hint(__('general.recommended_description_length'))
                                     ->helperText(__('general.short_description_of_the_website')),
+                                ]),
+                                
                                 TextInput::make('meta.acronym')
                                     ->label(__('general.acronym'))
                                     ->rule('alpha_dash')
@@ -92,21 +99,27 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.key_information_pricide_a_short_description'))
                             ->aside()
                             ->schema([
-                                TinyEditor::make('meta.summary')
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.summary')
                                     ->label(__('general.conference_summary')),
-                                TinyEditor::make('meta.editorial_team')
+                                    TinyEditor::make('meta.editorial_team')
                                     ->label(__('general.editorial_team'))
                                     ->profile('basic')
                                     ->minHeight(100),
+                                ]),
+                                
 
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
                             ->description(__('general.include_about_your_conference'))
                             ->schema([
-                                TinyEditor::make('meta.about')
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.about')
                                     ->label(__('general.about_the_scheduled_conference'))
                                     ->profile('advanced'),
+                                ]),
+                                
                             ]),
                     ]),
                 Actions::make([
