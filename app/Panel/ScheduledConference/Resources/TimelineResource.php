@@ -2,6 +2,9 @@
 
 namespace App\Panel\ScheduledConference\Resources;
 
+use App\Actions\Timeline\TimelineCreateAction;
+use App\Actions\Timeline\TimelineUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 use Filament\Forms\Components\DatePicker;
@@ -40,12 +43,15 @@ class TimelineResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
                     ->label(__('general.name'))
                     ->required(),
-                Textarea::make('description')
+                    Textarea::make('meta.description')
                     ->label(__('general.description'))
                     ->maxLength(255),
+                ]),
+                
                 Grid::make()
                     ->schema([
                         DatePicker::make('date')
@@ -79,7 +85,10 @@ class TimelineResource extends Resource
                     ->label(__('general.date'))
                     ->sortable(),
                 TextColumn::make('name')
-                    ->label(__('general.name')),
+                    ->label(__('general.name'))
+                    ->getStateUsing(fn (Timeline $record) => $record->getLocalizedMeta('name'))
+                    ->searchable()
+                    ->sortable(),
                 ToggleColumn::make('hide')
                     ->label(__('general.hidden')),
             ])
@@ -88,7 +97,15 @@ class TimelineResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->modalWidth(MaxWidth::ExtraLarge),
+                    ->modalWidth(MaxWidth::ExtraLarge)
+                    ->fillForm(function (Timeline $record) {
+                        return array_merge($record->toArray(), [
+                            'meta' => $record->getAllMeta(),
+                        ]);
+                    })
+                    ->using(function (Timeline $record, array $data) {
+                        return TimelineUpdateAction::run($record, $data);
+                    }),
                 ActionGroup::make([
                     DeleteAction::make(),
                 ]),
