@@ -13,7 +13,7 @@
                 <ul>
                     @foreach($publisherLibraries as $media)
                         <li>
-                            <a href="{{ route(App\Frontend\ScheduledConference\Pages\PublisherLibraryDownload::getRouteName(), ['media' => $media->uuid]) }}">{{ $media->name }}</a>
+                            <a href="{{ route(App\Frontend\ScheduledConference\Pages\PublisherLibraryDownload::getRouteName(), ['media' => $media->uuid]) }}">{{ $media->getLocalizedMeta('name') }}</a>
                         </li>
                     @endforeach
                 </ul>

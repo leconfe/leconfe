@@ -961,4 +961,13 @@ return [
     'files' => 'Fayllar',
     'mailing_address' => 'Pochta manzili',
     'slug_helper' => "Ushbu sahifa uchun URLga mos yagona identifikator kiriting. Faqat kichik harflar, raqamlar, tire va pastki chiziqlardan foydalaning. Masalan: 'biz-haqimizda' yoki 'aloqa-malumotlari'",
+    'publisher_library' => 'Nashriyot kutubxonasi',
+    'no_publisher_library_available' => 'Mavjud nashriyot kutubxonasi yo‘q',
+    'add_a_file' => 'Fayl qoʻshish',
+    'view_page' => 'Sahifani koʻrish',
+    'allow_public_access' => 'Ommaviy kirishga ruxsat berish',
+    'download' => 'Yuklab olish',
+    'no' => 'Yo‘q',
+    'name' => 'Ism',
+    'public_access' => 'Ommaviy kirish',
 ];
