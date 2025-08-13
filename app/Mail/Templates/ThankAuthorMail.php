@@ -21,7 +21,7 @@ class ThankAuthorMail extends TemplateMailable
     {
         $this->title = $submission->getLocalizedMeta('title');
         $this->author = $submission->user->fullName;
-        $this->conferenceName = $submission->conference->name;
+        $this->conferenceName = $submission->conference->getLocalizedMeta('name');
         $this->loginLink = route('livewirePageGroup.website.pages.login');
 
         $this->log = Log::make(
