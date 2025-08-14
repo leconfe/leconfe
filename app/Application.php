@@ -40,13 +40,12 @@ use Illuminate\Support\Facades\File;
 
 class Application extends LaravelApplication
 {
-    public const APP_VERSION = '1.3.0-beta.3';
-
     public const PHP_MIN_VERSION = '8.1';
 
     public const CONTEXT_WEBSITE = 0;
 
-    public const API_URL = 'https://panel.leconfe.com/api/';
+    // public const API_URL = 'https://panel.leconfe.com/api/';
+    public const API_URL = 'http://leconfe-control-panel.test/api/';
 
     protected ?int $currentConferenceId = null;
 
