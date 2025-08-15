@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Application;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -121,7 +123,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
@@ -327,7 +329,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
@@ -340,5 +342,34 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function updateLatestInvoiceNumber(int $number): void
     {
         $this->setMeta('invoice_number', $number);
+    }
+
+    public function getEntityUniqueId(): ?string
+    {
+        return $this->getMeta('entity_unique_id');
+    }
+
+    public function getEntityToken(): ?string
+    {
+        return $this->getMeta('entity_token');
+    }
+
+    public function registerEntity(): void
+    {
+        $response = Http::acceptJson()->post(Application::API_URL . 'leconfe/auth/register', [
+            'name' => $this->title,
+            'url' => $this->getUrl(),
+        ]);
+
+        if ($response->failed()) {
+            $response->throw();
+        }
+
+        $data = $response->json();
+
+        $this->setManyMeta([
+            'entity_unique_id' => $data['unique_id'],
+            'entity_token' => $data['token'],
+        ]);
     }
 }
