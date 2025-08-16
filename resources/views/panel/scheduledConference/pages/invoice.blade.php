@@ -57,7 +57,7 @@
 <body class="text-sm">
     <div class="page">
         @if($scheduledConference->hasMedia('logo'))
-        <img class="max-w-72"
+        <img class="max-h-72"
             src="{{ $scheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']) }}"
             alt="{{ $scheduledConference->title }}">
         @endif

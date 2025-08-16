@@ -256,13 +256,12 @@ class PaymentDetail extends Page
                                 TextEntry::make('paid_at')
                                     ->visible(fn (Payment $record) => $record->paid_at)
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
-                                // ->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
-                                // TextEntry::make('receipt')
-                                // 	->state('Download')
-                                // 	->color('primary')
-                                // 	->visible(fn(Registration $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->paid_at)
-                                // 	->url(fn(Registration $record) => Receipt::getUrl(['record' => $record]))
-                                // 	->openUrlInNewTab(),
+                                TextEntry::make('receipt')
+                                	->state('Download')
+                                	->color('primary')
+                                	->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
+                                	->url(fn(Payment $record) => Receipt::getUrl(['record' => $record]))
+                                	->openUrlInNewTab(),
                             ]),
                         ...PaymentManager::get()->getPaymentMethodInfolist(),
                     ]),
