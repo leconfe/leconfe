@@ -259,7 +259,7 @@ class PaymentDetail extends Page
                                 TextEntry::make('receipt')
                                 	->state('Download')
                                 	->color('primary')
-                                	->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->paid_at)
+                                	->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
                                 	->url(fn(Payment $record) => Receipt::getUrl(['record' => $record]))
                                 	->openUrlInNewTab(),
                             ]),

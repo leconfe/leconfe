@@ -46,10 +46,10 @@ class InvoiceSetting extends Component implements HasForms
                         Checkbox::make('meta.invoice_enable')
                             ->label('Enable Invoice')
                             ->live(),
-                        Checkbox::make('meta.receipt_enable')
-                            ->label('Enable Receipt'),
                         Grid::make(1)
                             ->schema([
+                                Checkbox::make('meta.receipt_enable')
+                                    ->label('Enable Receipt'),
                                 TextInput::make('meta.organizer')
                                     ->label('Organizer')
                                     ->required(),
@@ -69,7 +69,7 @@ class InvoiceSetting extends Component implements HasForms
                                             ->label('Suffix Number of Invoice'),
                                     ]),
                             ])
-                            ->visible(fn (Get $get) => $get('meta.invoice_enable')),
+                            ->visible(fn(Get $get) => $get('meta.invoice_enable')),
                     ]),
                 Actions::make([
                     ActionForm::make('save')

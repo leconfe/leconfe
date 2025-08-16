@@ -307,7 +307,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isReceiptEnabled(): bool
     {
-        return $this->getMeta('receipt_enable');
+        return $this->isInvoiceEnabled() && $this->getMeta('receipt_enable');
     }
 
     public function isSubmissionPaymentEnabled(): bool
