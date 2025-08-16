@@ -20,7 +20,7 @@ class AnnouncementBroadcastMail
         $users = User::query()
             ->with('meta')
             ->whereHas('roles', fn ($query) => $query->where('name', '!=', UserRole::Admin))
-            ->whereMeta('notification.enable_new_announcement_email', true)
+            ->whereMeta('enable_new_announcement_email', true)
             ->notBanned()
             ->lazy();
 

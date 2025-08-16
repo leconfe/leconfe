@@ -318,7 +318,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     protected function getAllDefaultMeta(): array
     {
         return [
-            'notification.enable_new_announcement_email' => true
+            'enable_new_announcement_email' => true
         ];
     }
 }
