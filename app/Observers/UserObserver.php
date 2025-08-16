@@ -11,9 +11,6 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        $user->setManyMeta([
-            'notification.enable_new_announcement_email' => true,
-        ]);
     }
 
     /**

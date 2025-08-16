@@ -3,6 +3,7 @@
 namespace App\Actions\Announcements;
 
 use App\Models\Announcement;
+use App\Models\ScheduledConference;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -10,7 +11,7 @@ class AnnouncementCreateAction
 {
     use AsAction;
 
-    public function handle($data, $sendEmail = false)
+    public function handle(array $data, bool $sendEmail = false)
     {
         try {
             DB::beginTransaction();

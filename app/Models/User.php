@@ -314,4 +314,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     {
         return $this->hasOne(Participant::class, 'email', 'email');
     }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'notification.enable_new_announcement_email' => true
+        ];
+    }
 }
