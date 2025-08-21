@@ -949,4 +949,6 @@ return [
     'submission_file_uploaded_activity' => 'Skedari me emrin ":name", u ngarkua në kategorinë ":category" me id : :id.',
     'featured_scheduled_conference' => 'Konferenca e Planifikuar e Veçuar',
     'conferences' => 'Konferencat',
+    'discussion_not_submission_participant' => 'Një pjesëmarrës i zgjedhur nuk është caktuar në këtë dorëzim.',
+    'discussion_error_anonymous_review' => 'Nuk mund të krijohet një diskutim me pjesëmarrësit e zgjedhur pasi mund të komprometojë anonimitetin e rishikuesit.',
 ];

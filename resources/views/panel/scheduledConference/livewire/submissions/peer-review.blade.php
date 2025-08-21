@@ -24,7 +24,7 @@
             @livewire(Components\Files\RevisionFiles::class, ['submission' => $submission])
 
             {{-- Discussions --}}
-            @livewire(Components\Discussions\DiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::PeerReview, 'lazy' => true])
+            @livewire(Components\Discussions\PeerReviewDiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::PeerReview, 'lazy' => true])
         </div>
 
         @can('actAsEditor', $submission)

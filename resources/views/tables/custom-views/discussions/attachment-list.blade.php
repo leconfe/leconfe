@@ -7,7 +7,7 @@
                 {{ $attachment->name }}
             </a>
         @empty
-            <span class="text-sm text-gray-600">{{ __('no_attachments_found') }}</span>
+            <span class="text-sm text-gray-600">-</span>
         @endforelse
     </div>
 

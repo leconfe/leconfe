@@ -424,6 +424,8 @@ class SubmissionPolicy
 
     public function actAsEditor(User $user, Submission $submission)
     {
+        if($user->can('review', $submission)) return false;
+
         if ($user->can('submitAs', Submission::class) && ! $submission->isParticipantAuthor($user)) {
             return true;
         }
