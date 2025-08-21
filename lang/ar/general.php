@@ -965,4 +965,7 @@ return [
     'system_information' => 'معلومات النظام',
     'submission_file_uploaded_activity' => 'تم تحميل الملف باسم ":name" في الفئة ":category" مع المعرف: :id.',
     'featured_scheduled_conference' => 'المؤتمر المجدول المميز',
+    'conferences' => 'المؤتمرات',
+    'discussion_not_submission_participant' => 'المشارك المحدد غير معين لهذا التقديم.',
+    'discussion_error_anonymous_review' => 'لا يمكن إنشاء نقاش مع المشاركين المحددين لأنه قد يؤدي إلى كشف هوية المراجع.',
 ];

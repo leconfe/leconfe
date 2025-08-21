@@ -1008,4 +1008,6 @@ return [
     'submission_file_deleted_activity' => 'File with name ":name" and id :id deleted.',
     'featured_scheduled_conference' => 'Featured Scheduled Conference',
     'conferences' => 'Conferences',
+    'discussion_not_submission_participant' => 'A selected participant is not assigned to this submission.',
+    'discussion_error_anonymous_review' => 'Cannot create a discussion with the selected participants as it may compromise reviewer anonymity.',
 ];

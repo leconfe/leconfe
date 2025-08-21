@@ -4,18 +4,23 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussi
 
 use App\Actions\Submissions\CreateDiscussionTopic;
 use App\Actions\Submissions\UpdateDiscussionTopic;
-use App\Models\DiscussionTopic as ModelsDiscussionTopic;
+use App\Models\Discussion;
+use App\Models\DiscussionTopic;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\UserRole;
+use App\Models\Review;
 use App\Models\Submission;
+use App\Models\User;
 use App\Notifications\NewDiscussionTopic;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use Closure;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Livewire;
 use Filament\Tables\Actions\Action;
@@ -28,7 +33,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
+class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
 
@@ -38,9 +43,89 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
 
     public function mount(Submission $submission, SubmissionStage $stage) {}
 
+    protected function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label(__('general.topic_name'))
+                    ->placeholder(__('general.topic_name'))
+                    ->required(),
+                CheckboxList::make('user_id')
+                    ->label(__('general.participants'))
+                    ->default([Auth::id()])
+                    ->rules('required|array|min:2')
+                    ->rules([
+                        fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                            $reviewUserIds = $this->submission->reviews->pluck('user_id');
+                            $participantUserIds = $this->submission->participants->pluck('user_id');
+                            $users = User::query()
+                                ->with(['roles'])
+                                ->whereIn('id', $value)
+                                ->lazy();
+
+                			$participantsToConsider = $blindReviewerCount = 0;
+
+                            foreach ($users as $user) {
+                                // if participant has no role in this stage and is not a reviewer
+                                if(!$participantUserIds->contains($user->getKey()) && !$reviewUserIds->contains($user->getKey())){
+                                    // ignore user, if participant is current user and the user can view without being an assigned user
+                                    if($user->is(auth()->user()) && $user->can('Submission:view')){
+                                        continue;
+                                    } else {
+                                        $fail(__('general.discussion_not_submission_participant'));
+                                    }
+                                }
+
+                                $blindReviewer = false;
+                                // is participant a blind reviewer
+                                $review = $this->submission->reviews->where('user_id', $user->getKey())->first();
+                                if($review && $review->getMeta('review_mode') !== Review::MODE_OPEN){
+                                    $blindReviewer = true;
+                                    $blindReviewerCount++;
+                                }
+
+                                // if participant is not a blind reviewer and has a role different than editor or assistant
+                                if (!$blindReviewer && !$user->can('actAsEditor', $this->submission)) {
+                                    $participantsToConsider++;
+                                }
+
+                                // if anonymity is impacted, display error
+                                if (($blindReviewerCount > 1) || ($blindReviewerCount > 0 && $participantsToConsider > 0)) {
+                                    $fail(__('general.discussion_error_anonymous_review'));
+                                    break;
+                                }
+                            }
+                        },
+                    ])
+                    ->options(function () {
+
+                        $reviewUsers = $this->submission->reviews()
+                            ->with(['user.meta'])
+                            ->get()
+                            ->mapWithKeys(fn(Review $review) => [$review->user->getKey() => $review->user->fullName . ' (' . $review->reviewMode . ')']);
+
+                        $participantUsers = $this->submission->participants()
+                            ->with(['user.meta', 'role'])
+                            ->get()
+                            ->mapWithKeys(fn($participant) => [$participant->user->getKey() => $participant->user->fullName . ' (' . $participant->role->name . ')']);
+
+
+                        $mergedUsers = $participantUsers->union($reviewUsers);
+
+                        if (! isset($mergedUsers[Auth::id()])) {
+                            $mergedUsers[Auth::id()] = Auth::user()->fullName . ' (Unassigned)';
+                        }
+
+                        return $mergedUsers;
+                    })
+                    ->rule(function () {})
+            ]);
+    }
+
     public function getEloquentQuery()
     {
-        return ModelsDiscussionTopic::query()
+        return DiscussionTopic::query()
             ->with(['discussions'])
             ->where('submission_id', $this->submission->getKey())
             ->where('stage', $this->stage)
@@ -48,33 +133,6 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
                 !auth()->user()->can('actAsEditor', $this->submission),
                 fn($query) => $query->whereHas('participants', fn($query) => $query->where('user_id', auth()->user()->getKey()))
             );
-    }
-
-    protected function form(Form $form): Form
-    {
-        return $form->schema([
-            TextInput::make('name')
-                ->label(__('general.topic_name'))
-                ->placeholder(__('general.topic_name'))
-                ->required(),
-            CheckboxList::make('user_id')
-                ->label(__('general.participants'))
-                ->default([Auth::id()])
-                ->rules('required|array|min:2')
-                ->options(function () {
-                    $submissionParticipant = $this->submission->participants()
-                        ->with(['user', 'role'])
-                        ->get()
-                        ->mapWithKeys(fn($participant) => [$participant->user->getKey() => $participant->user->fullName . ' (' . $participant->role->name . ')'])
-                        ->toArray();
-
-                    if (! isset($submissionParticipant[Auth::id()])) {
-                        $submissionParticipant[Auth::id()] = Auth::user()->fullName . ' (Unassigned)';
-                    }
-
-                    return $submissionParticipant;
-                }),
-        ]);
     }
 
     public function table(Table $table): Table
@@ -146,7 +204,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
             ])
             ->headerActions([
                 Action::make('create-topic')
-                    ->authorize('create', ModelsDiscussionTopic::class)
+                    ->authorize('create', DiscussionTopic::class)
                     ->icon('lineawesome-plus-solid')
                     ->outlined()
                     ->label(__('general.topic'))

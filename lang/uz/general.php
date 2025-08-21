@@ -964,4 +964,6 @@ return [
     'slug_helper' => "Ushbu sahifa uchun URLga mos yagona identifikator kiriting. Faqat kichik harflar, raqamlar, tire va pastki chiziqlardan foydalaning. Masalan: 'biz-haqimizda' yoki 'aloqa-malumotlari'",
     'featured_scheduled_conference' => 'Tanlangan rejalashtirilgan konferensiya',
     'conferences' => 'Konferensiyalar',
+    'discussion_not_submission_participant' => 'Tanlangan ishtirokchi ushbu taqdimotga biriktirilmagan.',
+    'discussion_error_anonymous_review' => 'Tanlangan ishtirokchilar bilan muhokama yaratib bo‘lmaydi, chunki bu retsenzent anonimligini buzishi mumkin.',
 ];

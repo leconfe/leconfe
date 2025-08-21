@@ -17,12 +17,17 @@ class DiscussionTopicParticipant extends Model
     public function getRoleName(): string
     {
         $participant = $this->topic->submission->participants()->where('user_id', $this->user->getKey())->first();
+        $review      = $this->topic->submission->reviews()->where('user_id', $this->user->getKey())->first();
 
-        if (! $participant) {
-            return 'Unassigned';
+        if($review){
+            return $review->reviewMode;
         }
 
-        return $participant->role->name;
+        if($participant){
+            return $participant->role->name;
+        }
+
+        return 'Unassigned';
     }
 
     public function topic()
