@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
+use App\Mail\Templates\UserPayPaymentMail;
 use App\Managers\PaymentManager;
 use App\Models\Participant;
 use App\Models\Payment;
@@ -23,6 +24,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentDetail extends Page
 {
@@ -39,7 +41,7 @@ class PaymentDetail extends Page
         if (! $record) {
             $record = auth()->user()->participant?->payment;
         }
-
+        
         abort_unless($record && auth()->user()->can('view', $record), 403);
         $this->record = $record;
     }
