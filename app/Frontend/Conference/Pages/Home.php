@@ -3,6 +3,7 @@
 namespace App\Frontend\Conference\Pages;
 
 use App\Frontend\Website\Pages\Page;
+use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\ScheduledConference;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,10 @@ use Rahmanramsi\LivewirePageGroup\PageGroup;
 class Home extends Page
 {
     protected static string $view = 'frontend.conference.pages.home';
+
+    protected static string|array $routeMiddleware = [
+        RedirectToScheduledConference::class
+    ];
 
     public function mount() {}
 

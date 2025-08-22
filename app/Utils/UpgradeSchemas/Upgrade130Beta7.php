@@ -18,10 +18,10 @@ class Upgrade130Beta7 extends UpgradeBase
     {
         $scheduledConferences = ScheduledConference::query()
             ->withoutGlobalScopes()
-            ->lazy();
+            ->get();
 
         foreach ($scheduledConferences as $sc) {
-            ScheduledConferenceRegisterEntityAction::dispatch($sc);
+            ScheduledConferenceRegisterEntityAction::run($sc);
         }
     }
 
