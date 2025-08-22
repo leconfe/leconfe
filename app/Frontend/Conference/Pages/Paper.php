@@ -23,7 +23,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -115,18 +115,21 @@ class Paper extends Page
         });
 
         collect($this->paper->getMeta('keywords'))
-            ->each(fn ($keyword) => MetaTag::add('citation_keywords', $keyword));
+            ->each(fn($keyword) => MetaTag::add('citation_keywords', $keyword));
 
         collect(explode(PHP_EOL, $this->paper->getMeta('references')))
             ->filter()
             ->values()
-            ->each(fn ($reference) => MetaTag::add('citation_reference', $reference));
+            ->each(fn($reference) => MetaTag::add('citation_reference', $reference));
 
-        MetaTag::add('og:title', e($this->paper->getMeta('title')));
-        MetaTag::add('og:type', 'paper');
-        MetaTag::add('og:url', route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
+
+        MetaTag::add(property: 'og:site_name', content: e($conference->name));
+        MetaTag::add(property: 'og:description', content: e($conference->getMeta('description')));
+        MetaTag::add(property: 'og:title', content: e($this->paper->getMeta('title')));
+        MetaTag::add(property: 'og:type', content: 'paper');
+        MetaTag::add(property: 'og:url', content: route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
         if ($this->paper->getFirstMedia('cover')) {
-            MetaTag::add('og:image', $this->paper->getFirstMedia('cover')->getAvailableUrl(['thumb']));
+            MetaTag::add(property: 'og:image', content: $this->paper->getFirstMedia('cover')->getAvailableUrl(['thumb']));
         }
 
         $this->addEprintMetadata();

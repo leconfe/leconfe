@@ -9,12 +9,25 @@ class MetaTagManager
 {
     protected array $metas = [];
 
-    public function add(string $name, ?string $content): self
+    /**
+     * Add a meta tag.
+     * You can specify either 'name' or 'property' (or both).
+     */
+    public function add(?string $name = null, ?string $content = null, ?string $property = null): self
     {
-        $this->metas[] = [
-            'name' => $name,
+        $meta = [
             'content' => e($content),
         ];
+
+        if ($name) {
+            $meta['name'] = $name;
+        }
+
+        if ($property) {
+            $meta['property'] = $property;
+        }
+
+        $this->metas[] = $meta;
 
         return $this;
     }
@@ -29,12 +42,16 @@ class MetaTagManager
         return new HtmlString(
             $this->all()
                 ->map(function ($meta) {
-                    $name = $meta['name'];
-                    $content = $meta['content'];
+                    $attributes = [];
+                    if (isset($meta['name'])) {
+                        $attributes[] = 'name="' . $meta['name'] . '"';
+                    }
+                    if (isset($meta['property'])) {
+                        $attributes[] = 'property="' . $meta['property'] . '"';
+                    }
+                    $attributes[] = 'content="' . $meta['content'] . '"';
 
-                    return <<<HTML
-                        <meta name="{$name}" content="$content">
-                    HTML;
+                    return '<meta ' . implode(' ', $attributes) . '>';
                 })
                 ->implode("\n")
         );
