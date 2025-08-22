@@ -2,6 +2,8 @@
 
 namespace App\Frontend\Website\Pages;
 
+use App\Http\Middleware\RedirectToConference;
+use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Conference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Meta;
@@ -23,6 +25,10 @@ class Home extends Page
     use WithoutUrlPagination, WithPagination;
 
     protected static string $view = 'frontend.website.pages.home';
+
+    protected static string|array $routeMiddleware = [
+        RedirectToConference::class
+    ];
 
     public function getTitle(): string|Htmlable
     {

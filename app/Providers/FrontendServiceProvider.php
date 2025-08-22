@@ -63,7 +63,6 @@ class FrontendServiceProvider extends ServiceProvider
             ->layout('frontend.website.components.layouts.app')
             ->middleware([
                 'web',
-                RedirectToConference::class,
             ], true)
             ->discoverPages(in: app_path('Frontend/Website/Pages'), for: 'App\\Frontend\\Website\\Pages');
 
@@ -81,7 +80,6 @@ class FrontendServiceProvider extends ServiceProvider
             ->middleware([
                 'web',
                 IdentifyConference::class,
-                RedirectToScheduledConference::class,
             ], true)
             ->discoverPages(in: app_path('Frontend/Conference/Pages'), for: 'App\\Frontend\\Conference\\Pages');
 
