@@ -5,9 +5,6 @@ namespace App\Utils\UpgradeSchemas;
 use App\Application;
 use App\Models\NavigationMenu;
 use App\Models\NavigationMenuItem;
-use App\Models\Participant;
-use App\Models\Payment;
-use App\Models\Submission;
 use Illuminate\Support\Facades\Artisan;
 
 class Upgrade130Beta4 extends UpgradeBase

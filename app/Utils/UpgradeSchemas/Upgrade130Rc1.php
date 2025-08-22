@@ -6,7 +6,7 @@ use App\Actions\ScheduledConferences\ScheduledConferenceRegisterEntityAction;
 use App\Models\ScheduledConference;
 use App\Models\User;
 
-class Upgrade130Beta7 extends UpgradeBase
+class Upgrade130Rc1 extends UpgradeBase
 {
     public function run(): void
     {
@@ -17,6 +17,7 @@ class Upgrade130Beta7 extends UpgradeBase
     public function registerScheduledConferences()
     {
         $scheduledConferences = ScheduledConference::query()
+            ->with(['conference'])
             ->withoutGlobalScopes()
             ->get();
 

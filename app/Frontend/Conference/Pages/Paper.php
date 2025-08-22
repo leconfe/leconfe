@@ -38,6 +38,7 @@ class Paper extends Page
             abort(404);
         }
 
+        $this->addHead();
         $this->addMetadata();
     }
 
@@ -51,6 +52,15 @@ class Paper extends Page
     public function getTitle(): string|Htmlable
     {
         return $this->paper->getMeta('title');
+    }
+
+    public function addHead()
+    {
+        Hook::add('Frontend::Views::Head', function ($hookName, &$output) {
+            if($licenseUrl = $this->paper->getMeta('license_url')){
+                $output .= '<link rel="license" href="'. $licenseUrl .'">';
+            }
+        });
     }
 
     public function addMetadata(): void
