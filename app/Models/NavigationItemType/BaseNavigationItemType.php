@@ -3,9 +3,8 @@
 namespace App\Models\NavigationItemType;
 
 use App\Models\NavigationMenuItem;
-use Illuminate\Database\Eloquent\Model;
 
-abstract class BaseNavigationItemType extends Model
+abstract class BaseNavigationItemType
 {
     abstract public static function getId(): string;
 

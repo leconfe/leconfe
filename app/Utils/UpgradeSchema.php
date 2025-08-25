@@ -34,7 +34,6 @@ class UpgradeSchema
         '1.3.0-beta.1' => Upgrade130Beta1::class,
         '1.3.0-beta.3' => Upgrade130Beta3::class,
         '1.4.0' => Upgrade140::class,
-        // end of schemas
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)
