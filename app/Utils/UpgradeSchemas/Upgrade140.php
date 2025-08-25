@@ -302,7 +302,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertSpeakerMeta(string $locale)
     {
         Speaker::withoutGlobalScopes()->lazy()->each(function (Speaker $speaker) use ($locale) {
-            dd($originalGivenNameSpeaker = $speaker->given_name ?? null);
+            $originalGivenNameSpeaker = $speaker->given_name ?? null;
             if (filled($originalGivenNameSpeaker)) {
                 $speaker->setMeta('given_name', [$locale => $originalGivenNameSpeaker]);
             }
