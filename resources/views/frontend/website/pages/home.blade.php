@@ -222,13 +222,13 @@
                             <div class="gap-4 conference sm:flex">
                                 @if ($conference->hasThumbnail())
                                     <div class="cover max-w-40">
-                                        <img src="{{ $conference->getThumbnailUrl() }}" alt="{{ $conference->name }}">
+                                        <img src="{{ $conference->getThumbnailUrl() }}" alt="{{ $conference->getLocalizedMeta('name') }}">
                                     </div>
                                 @endif
                                 <div class="flex-1 space-y-2 information">
                                     <h3>
                                         <a href="{{ $conference->getHomeUrl() }}"
-                                            class="font-bold conference-name link link-primary link-hover">{{ $conference->name }}</a>
+                                            class="font-bold conference-name link link-primary link-hover">{{ $conference->getLocalizedMeta('name') }}</a>
                                     </h3>
 
                                     @if ($conference->getLocalizedMeta('summary'))

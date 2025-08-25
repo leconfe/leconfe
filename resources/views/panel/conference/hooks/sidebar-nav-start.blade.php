@@ -14,7 +14,7 @@
                         tooltip = $store.sidebar.isOpen
                             ? false
                             : {
-                                content: @js($currentConference->name),
+                                content: @js($currentConference->getLocalizedMeta('name')),
                                 placement: document.dir === 'rtl' ? 'left' : 'right',
                                 theme: $store.theme,
                             }
@@ -37,7 +37,7 @@
 
 
                     <span class="text-gray-950 dark:text-white">
-                        {{ $currentConference->name }}
+                        {{ $currentConference->getLocalizedMeta('name') }}
                     </span>
                 </span>
 
@@ -71,7 +71,7 @@
                         :icon="filament()->getTenantAvatarUrl($conference)"
                         tag="a"
                     >
-                        {{ $conference->name }}
+                        {{ $conference->getLocalizedMeta('name') }}
                     </x-filament::dropdown.list.item>
                 @endforeach
             </div>

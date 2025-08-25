@@ -37,7 +37,7 @@
                 :icon="filament()->getTenantAvatarUrl($conference)"
                 tag="a"
             >
-                {{ $conference->name }}
+                {{ $conference->getLocalizedMeta('name') }}
             </x-filament::dropdown.list.item>
         @endforeach
     </x-filament::dropdown.list>

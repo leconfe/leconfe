@@ -150,7 +150,7 @@
                                 @foreach ($conferences as $conference)
                                     <div class="gap-2 conference form-control">
                                         <label
-                                            class="font-medium conference-name label-text">{{ $conference->name }}</label>
+                                            class="font-medium conference-name label-text">{{ $conference->getLocalizedMeta('name') }}</label>
                                         @foreach ($roles as $role)
                                             <div class="conference-roles form-control">
                                                 <div class="inline-flex items-center gap-2 cursor">

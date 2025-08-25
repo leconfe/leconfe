@@ -156,11 +156,6 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->getLocalizedMeta('name');
-    }
-    
-    public function getNameAttribute(): string
-    {
         return $this->getLocalizedMeta('name') ?? '';
     }
 
@@ -192,7 +187,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
         return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('path')
-            ->skipGenerateWhen(fn () => $this->path !== null);
+            ->skipGenerateWhen(fn() => $this->path !== null);
     }
 
     public function getPanelUrl(): string
@@ -229,7 +224,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
     {
         return match ($this->getMeta('copyright_holder')) {
             'author' => $submission->authors->reduce(function ($carry, $author) {
-                $carry .= $author->fullName.'; ';
+                $carry .= $author->fullName . '; ';
 
                 return $carry;
             }),
