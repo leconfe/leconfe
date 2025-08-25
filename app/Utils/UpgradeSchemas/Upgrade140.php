@@ -66,7 +66,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertNavigationMenuItem(string $locale)
     {
         NavigationMenuItem::withoutGlobalScopes()->lazy()->each(function (NavigationMenuItem $item) use ($locale) {
-            $originalLabel = $item->getAttributes()['label'] ?? null;
+            $originalLabel = $item->label ?? null;
             if (filled($originalLabel)) {
                 $item->setMeta('label', [$locale => $originalLabel]);
 
@@ -80,7 +80,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertStaticPageMeta(string $locale)
     {
         StaticPage::withoutGlobalScopes()->lazy()->each(function (StaticPage $page) use ($locale) {
-            $originalTitle = $page->getAttributes()['title'] ?? null;
+            $originalTitle = $page->title ?? null;
             if (filled($originalTitle)) {
                 $page->setMeta('title', [$locale => $originalTitle]);
 
@@ -94,7 +94,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertConferenceMeta(string $locale)
     {
         Conference::withoutGlobalScopes()->lazy()->each(function (Conference $conference) use ($locale) {
-            $originalName = $conference->getAttributes()['name'] ?? null;
+            $originalName = $conference->name ?? null;
             if (filled($originalName)) {
                 $conference->setMeta('name', [$locale => $originalName]);
 
@@ -109,19 +109,19 @@ class Upgrade140 extends UpgradeBase
     {
         User::withoutGlobalScopes()->lazy()->each(function (User $user) use ($locale) {
             // given name
-            $originalGivenNameUser = $user->getAttributes()['given_name'] ?? null;
+            $originalGivenNameUser = $user->given_name ?? null;
             if (filled($originalGivenNameUser)) {
                 $user->setMeta('given_name', [$locale => $originalGivenNameUser]);
             }
 
             // family name
-            $originalFamilyNameUser = $user->getAttributes()['family_name'] ?? null;
+            $originalFamilyNameUser = $user->family_name ?? null;
             if (filled($originalFamilyNameUser)) {
                 $user->setMeta('family_name', [$locale => $originalFamilyNameUser]);
             }
 
             // public name
-            $originalPublicNameUser = $user->getAttributes()['public_name'] ?? null;
+            $originalPublicNameUser = $user->public_name ?? null;
             if (filled($originalPublicNameUser)) {
                 $user->setMeta('public_name', [$locale => $originalPublicNameUser]);
             }
@@ -133,14 +133,11 @@ class Upgrade140 extends UpgradeBase
         });
     }
 
-
-
-
     // CONFERENCE PANEL
     protected function convertScheduledConferenceMeta(string $locale)
     {
         ScheduledConference::withoutGlobalScopes()->lazy()->each(function (ScheduledConference $scheduledConference) use ($locale) {
-            $originalTitle = $scheduledConference->getAttributes()['title'] ?? null;
+            $originalTitle = $scheduledConference->title ?? null;
             if (filled($originalTitle)) {
                 $scheduledConference->setMeta('title', [$locale => $originalTitle]);
 
@@ -151,26 +148,21 @@ class Upgrade140 extends UpgradeBase
         });
     }
 
-
-
-
-
-
     // SCHEDULED CONFERENCE PANEL
     protected function convertAuthorMeta(string $locale)
     {
         Author::withoutGlobalScopes()->lazy()->each(function (Author $author) use ($locale) {
-            $originalGivenNameAuthor = $author->getAttributes()['given_name'] ?? null;
+            $originalGivenNameAuthor = $author->given_name ?? null;
             if (filled($originalGivenNameAuthor)) {
                 $author->setMeta('given_name', [$locale => $originalGivenNameAuthor]);
             }
 
-            $originalFamilyNameAuthor = $author->getAttributes()['family_name'] ?? null;
+            $originalFamilyNameAuthor = $author->family_name ?? null;
             if (filled($originalFamilyNameAuthor)) {
                 $author->setMeta('family_name', [$locale => $originalFamilyNameAuthor]);
             }
 
-            $originalPublicNameAuthor = $author->getAttributes()['public_name'] ?? null;
+            $originalPublicNameAuthor = $author->public_name ?? null;
             if (filled($originalPublicNameAuthor)) {
                 $author->setMeta('public_name', [$locale => $originalPublicNameAuthor]);
             }
@@ -184,7 +176,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertWorkflowSubmissionComponentsMeta(string $locale)
     {
         SubmissionFileType::withoutGlobalScopes()->lazy()->each(function (SubmissionFileType $type) use ($locale) {
-            $originalNameSubmissionFileType = $type->getAttributes()['name'] ?? null;
+            $originalNameSubmissionFileType = $type->name ?? null;
             if (filled($originalNameSubmissionFileType)) {
                 $type->setMeta('name', [$locale => $originalNameSubmissionFileType]);
 
@@ -198,7 +190,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertWorkflowAuthorRolesMeta(string $locale)
     {
         AuthorRole::withoutGlobalScopes()->lazy()->each(function (AuthorRole $authorRole) use ($locale) {
-            $originalNameAuthorRole = $authorRole->getAttributes()['name'] ?? null;
+            $originalNameAuthorRole = $authorRole->name ?? null;
             if (filled($originalNameAuthorRole)) {
                 $authorRole->setMeta('name', [$locale => $originalNameAuthorRole]);
 
@@ -212,7 +204,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertWorkflowSubmissionTrackMeta(string $locale)
     {
         Track::withoutGlobalScopes()->lazy()->each(function (Track $track) use ($locale) {
-            $originalNameTrack = $track->getAttributes()['title'] ?? null;
+            $originalNameTrack = $track->title ?? null;
             if (filled($originalNameTrack)) {
                 $track->setMeta('title', [$locale => $originalNameTrack]);
 
@@ -226,7 +218,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertWorkflowSubmissionTopicMeta(string $locale)
     {
         Topic::withoutGlobalScopes()->lazy()->each(function (Topic $topic) use ($locale) {
-            $originalNameTopic = $topic->getAttributes()['name'] ?? null;
+            $originalNameTopic = $topic->name ?? null;
             if (filled($originalNameTopic)) {
                 $topic->setMeta('name', [$locale => $originalNameTopic]);
 
@@ -243,7 +235,7 @@ class Upgrade140 extends UpgradeBase
             ->where('model_type', ScheduledConference::class)
             ->where('collection_name', 'publisher-library')->lazy()->each(function (Media $media) use ($locale) {
 
-                $originalName = $media->getAttributes()['name'] ?? null;
+                $originalName = $media->name ?? null;
                 if (filled($originalName)) {
                     $media->setMeta('name', [$locale => $originalName]);
 
@@ -257,7 +249,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertAnnouncementMeta(string $locale)
     {
         Announcement::withoutGlobalScopes()->lazy()->each(function (Announcement $announcement) use ($locale) {
-            $originalNameAnnouncement = $announcement->getAttributes()['title'] ?? null;
+            $originalNameAnnouncement = $announcement->title ?? null;
             if (filled($originalNameAnnouncement)) {
                 $announcement->setMeta('title', [$locale => $originalNameAnnouncement]);
 
@@ -271,17 +263,17 @@ class Upgrade140 extends UpgradeBase
     protected function convertCommitteesMeta(string $locale)
     {
         Committee::withoutGlobalScopes()->lazy()->each(function (Committee $committee) use ($locale) {
-            $originalGivenNameCommittee = $committee->getAttributes()['given_name'] ?? null;
+            $originalGivenNameCommittee = $committee->given_name ?? null;
             if (filled($originalGivenNameCommittee)) {
                 $committee->setMeta('given_name', [$locale => $originalGivenNameCommittee]);
             }
 
-            $originalFamilyNameCommittee = $committee->getAttributes()['family_name'] ?? null;
+            $originalFamilyNameCommittee = $committee->family_name ?? null;
             if (filled($originalFamilyNameCommittee)) {
                 $committee->setMeta('family_name', [$locale => $originalFamilyNameCommittee]);
             }
 
-            $originalPublicNameCommittee = $committee->getAttributes()['public_name'] ?? null;
+            $originalPublicNameCommittee = $committee->public_name ?? null;
             if (filled($originalPublicNameCommittee)) {
                 $committee->setMeta('public_name', [$locale => $originalPublicNameCommittee]);
             }
@@ -295,7 +287,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertCommitteesRolesMeta(string $locale)
     {
         CommitteeRole::withoutGlobalScopes()->lazy()->each(function (CommitteeRole $committeeRole) use ($locale) {
-            $originalPositionCommitteeRole = $committeeRole->getAttributes()['name'] ?? null;
+            $originalPositionCommitteeRole = $committeeRole->name ?? null;
             if (filled($originalPositionCommitteeRole)) {
                 $committeeRole->setMeta('name', [$locale => $originalPositionCommitteeRole]);
 
@@ -310,17 +302,17 @@ class Upgrade140 extends UpgradeBase
     protected function convertSpeakerMeta(string $locale)
     {
         Speaker::withoutGlobalScopes()->lazy()->each(function (Speaker $speaker) use ($locale) {
-            $originalGivenNameSpeaker = $speaker->getAttributes()['given_name'] ?? null;
+            dd($originalGivenNameSpeaker = $speaker->given_name ?? null);
             if (filled($originalGivenNameSpeaker)) {
                 $speaker->setMeta('given_name', [$locale => $originalGivenNameSpeaker]);
             }
 
-            $originalFamilyNameSpeaker = $speaker->getAttributes()['family_name'] ?? null;
+            $originalFamilyNameSpeaker = $speaker->family_name ?? null;
             if (filled($originalFamilyNameSpeaker)) {
                 $speaker->setMeta('family_name', [$locale => $originalFamilyNameSpeaker]);
             }
 
-            $originalPublicNameSpeaker = $speaker->getAttributes()['public_name'] ?? null;
+            $originalPublicNameSpeaker = $speaker->public_name ?? null;
             if (filled($originalPublicNameSpeaker)) {
                 $speaker->setMeta('public_name', [$locale => $originalPublicNameSpeaker]);
             }
@@ -334,7 +326,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertSpeakerRolesMeta(string $locale)
     {
         SpeakerRole::withoutGlobalScopes()->lazy()->each(function (SpeakerRole $speakerRole) use ($locale) {
-            $originalPositionSpeakerRole = $speakerRole->getAttributes()['name'] ?? null;
+            $originalPositionSpeakerRole = $speakerRole->name ?? null;
             if (filled($originalPositionSpeakerRole)) {
                 $speakerRole->setMeta('name', [$locale => $originalPositionSpeakerRole]);
 
@@ -348,7 +340,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertTimelinesMeta(string $locale)
     {
         Timeline::withoutGlobalScopes()->lazy()->each(function (Timeline $timeline) use ($locale) {
-            $originalNameTimeline = $timeline->getAttributes()['name'] ?? null;
+            $originalNameTimeline = $timeline->name ?? null;
 
             if (filled($originalNameTimeline)) {
                 $timeline->setMeta('name', [$locale => $originalNameTimeline]);
