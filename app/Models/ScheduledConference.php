@@ -120,7 +120,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
@@ -235,11 +235,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getFilamentName(): string
     {
-        return $this->getLocalizedMeta('title') ?? '' ;
-    }
-
-    public function getTitleAttribute(): string
-    {
         return $this->getLocalizedMeta('title') ?? '';
     }
 
@@ -331,7 +326,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
