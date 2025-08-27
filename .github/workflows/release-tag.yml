@@ -35,6 +35,16 @@ jobs:
             echo "No composer.json found in $name, skipping..."
           fi
         '
+      
+    - name: Cleanup submodules (remove non-production files)
+      run: |
+        git submodule foreach --recursive '
+          echo "Cleaning $name..."
+          rm -rf tests test spec \
+                 .git .github .docker .dockerdata node_modules \
+                 phpunit.xml* phpstan.neon* \
+                 .editorconfig .env.example
+        '
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
