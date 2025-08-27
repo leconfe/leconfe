@@ -41,7 +41,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
     public function getEloquentQuery()
     {
         return ModelsDiscussionTopic::query()
-            ->with(['discussions'])
+            ->with(['discussions.user'])
             ->where('submission_id', $this->submission->getKey())
             ->where('stage', $this->stage)
             ->when(
