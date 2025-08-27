@@ -12,6 +12,7 @@ use App\Models\Conference;
 use App\Models\Media;
 use App\Models\NavigationMenuItem;
 use App\Models\ScheduledConference;
+use App\Models\Site;
 use App\Models\Speaker;
 use App\Models\SpeakerRole;
 use App\Models\StaticPage;
@@ -33,6 +34,7 @@ class Upgrade140 extends UpgradeBase
         try {
 
             // ADMINISTRATION PANEL
+            $this->convertSiteSetupMeta($defaultLocale);
             $this->convertNavigationMenuItem($defaultLocale);
             $this->convertStaticPageMeta($defaultLocale);
             $this->convertConferenceMeta($defaultLocale);
@@ -59,6 +61,20 @@ class Upgrade140 extends UpgradeBase
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    protected function convertSiteSetupMeta(string $locale)
+    {
+        $site = app()->getSite();
+        $originalName = $site->getMeta('name') ?? null;
+
+        if (filled($originalName)) {
+            $site->setMeta('name', [$locale => $originalName]);
+
+            if ($site->isDirty('meta')) {
+                $site->saveQuietly();
+            }
         }
     }
 
@@ -302,7 +318,7 @@ class Upgrade140 extends UpgradeBase
     protected function convertSpeakerMeta(string $locale)
     {
         Speaker::withoutGlobalScopes()->lazy()->each(function (Speaker $speaker) use ($locale) {
-            dd($originalGivenNameSpeaker = $speaker->given_name ?? null);
+            $originalGivenNameSpeaker = $speaker->given_name ?? null;
             if (filled($originalGivenNameSpeaker)) {
                 $speaker->setMeta('given_name', [$locale => $originalGivenNameSpeaker]);
             }
