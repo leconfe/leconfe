@@ -16,7 +16,7 @@ class PluginGallery extends Model
 {
     use Sushi;
 
-    public static $cacheTtl = 1800;
+    public static $cacheTtl = 3600;
 
     protected $schema = [
         'id' => 'integer',
