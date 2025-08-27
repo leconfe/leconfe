@@ -1,0 +1,21 @@
+[submodule "plugins/GoogleScholarMetadata"]
+	path = plugins/GoogleScholarMetadata
+	url = https://github.com/leconfe/GoogleScholarMetadata
+[submodule "plugins/CustomSidebarManager"]
+	path = plugins/CustomSidebarManager
+	url = https://github.com/leconfe/CustomSidebarManager
+[submodule "plugins/CustomHeader"]
+	path = plugins/CustomHeader
+	url = https://github.com/leconfe/CustomHeader
+[submodule "plugins/PdfJs"]
+	path = plugins/PdfJs
+	url = https://github.com/leconfe/PdfJs
+[submodule "plugins/DefaultSidebar"]
+	path = plugins/DefaultSidebar
+	url = https://github.com/leconfe/DefaultSidebar
+[submodule "plugins/QuickSubmit"]
+	path = plugins/QuickSubmit
+	url = https://github.com/leconfe/QuickSubmit
+[submodule "plugins/SubmissionReport"]
+	path = plugins/SubmissionReport
+	url = https://github.com/leconfe/SubmissionReport
