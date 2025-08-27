@@ -372,4 +372,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'entity_token' => $data['token'],
         ]);
     }
+
+    public function getContextString() : string
+    {
+        return 'scheduled-conference';
+    }
 }

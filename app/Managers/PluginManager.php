@@ -29,7 +29,7 @@ class PluginManager
         $this->plugins = collect();
     }
 
-    protected function getCurrentContextString() : string
+    public function getCurrentContextString() : string
     {
         if(app()->isOnScheduledConference()){
             return 'scheduled-conference';
@@ -52,7 +52,7 @@ class PluginManager
         if (! app()->isInstalled()) {
             return;
         }
-        
+
         $disk = $this->getDisk();
 
         $context = $this->getCurrentContextString();

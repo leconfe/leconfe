@@ -275,4 +275,9 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
             'theme' => 'DefaultTheme',
         ];
     }
+
+    public function getContextString() : string
+    {
+        return 'conference';
+    }
 }

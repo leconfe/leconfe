@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Actions\Authors\AuthorRolePopulateDefaultDataAction;
+use App\Actions\Plugins\PluginPopulateDefaultSettingAction;
 use App\Actions\Roles\RolePopulateConferenceAction;
 use App\Models\Conference;
 use App\Models\Enums\UserRole;
@@ -116,6 +117,7 @@ class ConferenceObserver
         if ($conferenceManager && auth()->id()) {
             $conferenceManager->users()->attach(auth()->id(), ['conference_id' => $conference->getKey()]);
         }
+        PluginPopulateDefaultSettingAction::run($conference);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Actions\Committees\CommitteeRolePopulateDefaultDataAction;
+use App\Actions\Plugins\PluginPopulateDefaultSettingAction;
 use App\Actions\Roles\RolePopulateScheduledConferenceAction;
 use App\Actions\ScheduledConferences\ScheduledConferenceRegisterEntityAction;
 use App\Actions\Speakers\SpeakerRolePopulateDefaultDataAction;
@@ -127,5 +128,6 @@ class ScheduledConferenceObserver
         RolePopulateScheduledConferenceAction::run($scheduledConference);
         FilesTypePopulateAction::run($scheduledConference);
         ScheduledConferenceRegisterEntityAction::dispatch($scheduledConference);
+        PluginPopulateDefaultSettingAction::run($scheduledConference);
     }
 }
