@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository with submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive   # Ensures submodules are fetched
+        fetch-depth: 0          # Ensures full history for tags and submodules
     
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -21,6 +25,17 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
     
+    - name: Install PHP dependencies in submodules
+      run: |
+        git submodule foreach --recursive '
+          if [ -f composer.json ]; then
+            echo "Installing dependencies in $name..."
+            composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
+          else
+            echo "No composer.json found in $name, skipping..."
+          fi
+        '
+
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
@@ -62,7 +77,6 @@ jobs:
         prerelease: false
         generate_release_notes: true
 
-    
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
