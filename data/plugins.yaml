@@ -20,5 +20,5 @@ plugins:
     version: 1.0.3
 
   - name: QuickSubmit
-    repo: leconfe/SubmissionReport
+    repo: leconfe/QuickSubmit
     version: 1.0.0  
