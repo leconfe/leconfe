@@ -66,16 +66,16 @@ class Upgrade140 extends UpgradeBase
 
     protected function convertSiteSetupMeta(string $locale)
     {
-        $site = app()->getSite();
-        $originalName = $site->getMeta('name') ?? null;
+        Site::withoutGlobalScopes()->lazy()->each(function (Site $site) use ($locale) {
+            $originalName = $site->getMeta('name') ?? null;
+            if (filled($originalName)) {
+                $site->setMeta('name', [$locale => $originalName]);
 
-        if (filled($originalName)) {
-            $site->setMeta('name', [$locale => $originalName]);
-
-            if ($site->isDirty('meta')) {
-                $site->saveQuietly();
+                if ($site->isDirty('meta')) {
+                    $site->saveQuietly();
+                }
             }
-        }
+        });
     }
 
     // ADMINISTRATION PANEL 
