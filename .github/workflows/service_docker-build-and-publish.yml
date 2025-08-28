@@ -29,6 +29,32 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
       
+      - name: Download default plugins
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p plugins
+          count=$(yq '.plugins | length' data/plugins.yaml)
+
+          for i in $(seq 0 $((count - 1))); do
+            repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
+            version=$(yq ".plugins[$i].version" data/plugins.yaml)
+
+            echo "Downloading from $repo @ $version..."
+
+            asset="${repo##*/}-${version}.zip" # example: leconfe-plugin-custom-header-v1.0.0.zip
+
+            # download release asset
+            gh release download "$version" \
+              --repo "$repo" \
+              --pattern "$asset" \
+              --dir "plugins"
+
+            # extract zip ke plugins/
+            unzip -q "plugins/$asset" -d "plugins"
+            rm "plugins/$asset"
+          done
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
