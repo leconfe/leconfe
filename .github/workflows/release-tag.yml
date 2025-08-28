@@ -26,9 +26,12 @@ jobs:
       run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
     
     - name: Download default plugins
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         mkdir -p plugins
         count=$(yq '.plugins | length' data/plugins.yaml)
+
         for i in $(seq 0 $((count - 1))); do
           name=$(yq ".plugins[$i].name" data/plugins.yaml)
           repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
@@ -36,10 +39,20 @@ jobs:
 
           echo "Downloading $name ($repo @ $version)..."
 
-          url="https://github.com/$repo/archive/refs/tags/$version.tar.gz"
+          asset="${repo##*/}-${version}.zip" # ambil nama file release, ex: leconfe-plugin-custom-header-v1.0.0.zip
           mkdir -p "plugins/$name"
-          curl -sL $url | tar -xz --strip-components=1 -C "plugins/$name"
+
+          # download release asset dengan nama file sesuai
+          gh release download "$version" \
+            --repo "$repo" \
+            --pattern "$asset" \
+            --dir "plugins/$name"
+
+          # extract zip & hapus zip
+          unzip -q "plugins/$name/$asset" -d "plugins/$name"
+          rm "plugins/$name/$asset"
         done
+
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
