@@ -33,25 +33,24 @@ jobs:
         count=$(yq '.plugins | length' data/plugins.yaml)
 
         for i in $(seq 0 $((count - 1))); do
-          name=$(yq ".plugins[$i].name" data/plugins.yaml)
           repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
           version=$(yq ".plugins[$i].version" data/plugins.yaml)
 
-          echo "Downloading $name ($repo @ $version)..."
+          echo "Downloading from $repo @ $version..."
 
-          asset="${repo##*/}-${version}.zip" # ambil nama file release, ex: leconfe-plugin-custom-header-v1.0.0.zip
-          mkdir -p "plugins/$name"
+          asset="${repo##*/}-${version}.zip" # example: leconfe-plugin-custom-header-v1.0.0.zip
 
-          # download release asset dengan nama file sesuai
+          # download release asset
           gh release download "$version" \
             --repo "$repo" \
             --pattern "$asset" \
-            --dir "plugins/$name"
+            --dir "plugins"
 
-          # extract zip & hapus zip
-          unzip -q "plugins/$name/$asset" -d "plugins/$name"
-          rm "plugins/$name/$asset"
+          # extract zip ke plugins/
+          unzip -q "plugins/$asset" -d "plugins"
+          rm "plugins/$asset"
         done
+
 
 
     - name: Setup Bun
