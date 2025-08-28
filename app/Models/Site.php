@@ -51,4 +51,9 @@ class Site extends Model implements HasMedia
             'featured_scheduled_conferences' => [],
         ];
     }
+
+    public function getContextString() : string
+    {
+        return 'site';
+    }
 }

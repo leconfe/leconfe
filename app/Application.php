@@ -295,4 +295,24 @@ class Application extends LaravelApplication
     {
         return static::API_URL.$path;
     }
+
+    public function isOnScheduledConference() : bool
+    {
+        return (bool) $this->getCurrentScheduledConferenceId();
+    }
+
+    public function isOnConference() : bool
+    {
+        if($this->isOnScheduledConference()) return false;
+
+
+        return (bool) $this->getCurrentConferenceId();
+    }
+
+    public function isOnSite() : bool
+    {
+        if($this->isOnConference() || $this->isOnScheduledConference()) return false;
+
+        return true;
+    }
 }
