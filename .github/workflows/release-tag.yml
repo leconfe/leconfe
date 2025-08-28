@@ -25,26 +25,20 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
     
-    - name: Install PHP dependencies in submodules (production only)
+    - name: Download default plugins
       run: |
-        for path in $(git config --file .gitmodules --get-regexp path | awk '{ print $2 }'); do
-          if [ -f "$path/composer.json" ]; then
-            echo "Installing dependencies in $path..."
-            (cd "$path" && composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader)
-          else
-            echo "No composer.json found in $path, skipping..."
-          fi
-        done
+        mkdir -p plugins
+        count=$(yq '.plugins | length' data/plugins.yaml)
+        for i in $(seq 0 $((count - 1))); do
+          name=$(yq ".plugins[$i].name" data/plugins.yaml)
+          repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
+          version=$(yq ".plugins[$i].version" data/plugins.yaml)
 
-    - name: Cleanup submodules (remove non-production files)
-      run: |
-        for path in $(git config --file .gitmodules --get-regexp path | awk '{ print $2 }'); do
-          echo "Cleaning $path..."
-          rm -rf "$path/tests" "$path/test" "$path/spec" \
-                 "$path/.git" "$path/.github" "$path/.docker" "$path/.dockerdata" \
-                 "$path/node_modules" \
-                 "$path/phpunit.xml"* "$path/phpstan.neon"* \
-                 "$path/.editorconfig" "$path/.env.example"
+          echo "Downloading $name ($repo @ $version)..."
+
+          url="https://github.com/$repo/archive/refs/tags/$version.tar.gz"
+          mkdir -p "plugins/$name"
+          curl -sL $url | tar -xz --strip-components=1 -C "plugins/$name"
         done
 
     - name: Setup Bun

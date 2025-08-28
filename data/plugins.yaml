@@ -1,0 +1,24 @@
+plugins:
+  - name: GoogleScholarMetadata
+    repo: leconfe/GoogleScholarMetadata
+    version: 1.0.0
+
+  - name: CustomSidebarManager
+    repo: leconfe/CustomSidebarManager
+    version: 1.0.0
+
+  - name: CustomHeader
+    repo: leconfe/CustomHeader
+    version: 1.0.0
+
+  - name: PdfJs
+    repo: leconfe/PdfJs
+    version: 1.0.0
+
+  - name: SubmissionReport
+    repo: leconfe/SubmissionReport
+    version: 1.0.3
+
+  - name: QuickSubmit
+    repo: leconfe/SubmissionReport
+    version: 1.0.0  
