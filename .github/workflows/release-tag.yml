@@ -10,11 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository with submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive   # Ensures submodules are fetched
-        fetch-depth: 0          # Ensures full history for tags and submodules
+    - uses: actions/checkout@v3
     
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
