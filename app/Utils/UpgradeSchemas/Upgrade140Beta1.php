@@ -24,7 +24,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Lazy;
 
-class Upgrade140 extends UpgradeBase
+class Upgrade140Beta1 extends UpgradeBase
 {
     public function run(): void
     {
