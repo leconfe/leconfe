@@ -94,7 +94,6 @@ class ParticipantRegistration extends Page implements HasForms
                             ->optionsLimit(250),
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                             ->required()
                             ->options(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
