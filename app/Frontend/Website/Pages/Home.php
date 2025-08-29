@@ -2,10 +2,14 @@
 
 namespace App\Frontend\Website\Pages;
 
+use App\Http\Middleware\RedirectToConference;
+use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Conference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
+use App\Models\Scopes\ConferenceScope;
+use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Topic;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
@@ -22,30 +26,8 @@ class Home extends Page
 
     protected static string $view = 'frontend.website.pages.home';
 
-    public const STATE_CURRENT = 'current';
-
-    public const STATE_INCOMING = 'incoming';
-
-    public const STATE_ARCHIVED = 'archived';
-
-    public array $filter = [
-        'search' => [
-            'value' => '',
-        ],
-        'scope' => [
-            'value' => '',
-        ],
-        'state' => [
-            'value' => [],
-        ],
-        'topic' => [
-            'search' => '',
-            'value' => [],
-        ],
-        'coordinator' => [
-            'search' => '',
-            'value' => [],
-        ],
+    protected static string|array $routeMiddleware = [
+        RedirectToConference::class
     ];
 
     public function getTitle(): string|Htmlable
@@ -53,121 +35,43 @@ class Home extends Page
         return __('general.home');
     }
 
-    public function resetFilter(string $filterName): void
+    public function getEloquentQuery()
     {
-        if (is_string($this->filter[$filterName]['value'])) {
-
-            $this->filter[$filterName]['value'] = '';
-
-        } elseif (is_array($this->filter[$filterName]['value'])) {
-
-            $this->filter[$filterName]['value'] = [];
-
-        }
-    }
-
-    public function resetFilters(): void
-    {
-        $this->filter['scope']['value'] = '';
-        $this->filter['state']['value'] = [];
-        $this->filter['topic']['value'] = [];
-        $this->filter['coordinator']['value'] = [];
+        return ScheduledConference::query()
+            ->withoutGlobalScopes([
+                ConferenceScope::class,
+            ]);
     }
 
     protected function getViewData(): array
     {
-        $conferences = Conference::query()
+        $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
+                'conference',
                 'media',
                 'meta',
-                'topics',
-                'scheduledConferences',
-                'currentScheduledConference' => fn (Builder $query) => $query->with('conference')->withoutGlobalScopes(),
-            ]);
-
-        $topicList = Topic::withoutGlobalScopes()
-            ->with(['conference'])
-            ->select('name')
-            ->where('name', 'LIKE', "%{$this->filter['topic']['search']}%")
-            ->orderBy('name', 'ASC')
-            ->limit(20)
-            ->distinct()
+            ])
+            ->whereNotNull('featured')
+            ->orderBy('featured', 'ASC')
             ->get();
 
-        $coordinatorList = Meta::query()
-            ->where('metable_type', ScheduledConference::class)
-            ->where('key', 'coordinator')
-            ->whereRaw('value != ""')
-            ->whereNotNull('value')
-            ->tobase()
+        $scheduledConferences = $this->getEloquentQuery()
+            ->with([
+                'conference',
+                'media',
+                'meta',
+            ])
+            ->whereIn('state', [
+                ScheduledConferenceState::Archived,
+                ScheduledConferenceState::Published,
+                ScheduledConferenceState::Current,
+            ])
+            ->orderBy('date_start', 'DESC')
             ->get();
-
-        // data filter
-
-        if (($search = $this->filter['search']['value']) > 0) {
-            $conferences->where('name', 'LIKE', "%{$search}%");
-        }
-
-        if ($scope = $this->filter['scope']['value']) {
-            $conferences
-                ->whereHas('meta', function ($query) use ($scope) {
-                    $query
-                        ->where('key', 'scope')
-                        ->where('value', $scope);
-                });
-        }
-
-        if ($states = $this->filter['state']['value']) {
-            $stateOption = Arr::map($states, function ($value) {
-                return match (Str::lower($value)) {
-                    self::STATE_CURRENT => ScheduledConferenceState::Current,
-                    self::STATE_INCOMING => ScheduledConferenceState::Published,
-                    self::STATE_ARCHIVED => ScheduledConferenceState::Archived,
-                };
-            });
-
-            $conferences
-                ->whereHas('scheduledConferences', function ($query) use ($stateOption) {
-                    $query
-                        ->withTrashed()
-                        ->withoutGlobalScopes()
-                        ->whereIn('state', $stateOption);
-                });
-
-        }
-
-        if (! empty($topics = $this->filter['topic']['value'])) {
-            $conferences
-                ->whereHas('topics', function ($query) use ($topics) {
-                    $query
-                        ->withoutGlobalScopes()
-                        ->whereIn('name', $topics);
-                });
-        }
-
-        if (! empty($coordinators = $this->filter['coordinator']['value'])) {
-            $conferences
-                ->whereHas('scheduledConferences', function ($query) use ($coordinators) {
-                    $query
-                        ->withTrashed()
-                        ->withoutGlobalScopes()
-                        ->whereHas('meta', function ($query) use ($coordinators) {
-                            $query
-                                ->where('key', 'coordinator')
-                                ->whereIn('value', $coordinators);
-                        });
-                });
-        }
 
         return [
-            'topics' => $topicList,
-            'conferences' => $conferences->get(),
-            'coordinatorList' => $coordinatorList,
-            // Selected Filter Data
-            'scopeSelected' => $this->filter['scope']['value'],
-            'stateSelected' => $this->filter['state']['value'],
-            'topicSelected' => $this->filter['topic']['value'],
-            'coordinatorSelected' => $this->filter['coordinator']['value'],
+            'scheduledConferences' => $scheduledConferences,
+            'featuredScheduledConferences' => $featuredScheduledConferences,
         ];
     }
 

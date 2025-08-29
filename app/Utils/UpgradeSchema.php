@@ -12,6 +12,9 @@ use App\Utils\UpgradeSchemas\Upgrade125;
 use App\Utils\UpgradeSchemas\Upgrade128;
 use App\Utils\UpgradeSchemas\Upgrade130Beta1;
 use App\Utils\UpgradeSchemas\Upgrade130Beta3;
+use App\Utils\UpgradeSchemas\Upgrade130Beta4;
+use App\Utils\UpgradeSchemas\Upgrade130Beta7;
+use App\Utils\UpgradeSchemas\Upgrade130Rc1;
 use App\Utils\UpgradeSchemas\Upgrade140;
 use App\Utils\UpgradeSchemas\UpgradeBeta3;
 use App\Utils\UpgradeSchemas\UpgradeBeta4;
@@ -33,6 +36,8 @@ class UpgradeSchema
         '1.2.8' => Upgrade128::class,
         '1.3.0-beta.1' => Upgrade130Beta1::class,
         '1.3.0-beta.3' => Upgrade130Beta3::class,
+        '1.3.0-beta.4' => Upgrade130Beta4::class,
+        '1.3.0-rc.1' => Upgrade130Rc1::class,
         '1.4.0' => Upgrade140::class,
     ];
 

@@ -160,6 +160,7 @@ return [
     'trash' => 'Chiqindi',
 
     'proceeding' => 'Materiallar to‘plami',
+    'proceedings' => "Materiallar to‘plami",
     'identification' => 'Identifikatsiya',
     'volume' => 'Jild',
     'number' => 'Son',
@@ -961,6 +962,10 @@ return [
     'files' => 'Fayllar',
     'mailing_address' => 'Pochta manzili',
     'slug_helper' => "Ushbu sahifa uchun URLga mos yagona identifikator kiriting. Faqat kichik harflar, raqamlar, tire va pastki chiziqlardan foydalaning. Masalan: 'biz-haqimizda' yoki 'aloqa-malumotlari'",
+    'featured_scheduled_conference' => 'Tanlangan rejalashtirilgan konferensiya',
+    'conferences' => 'Konferensiyalar',
+    'discussion_not_submission_participant' => 'Tanlangan ishtirokchi ushbu taqdimotga biriktirilmagan.',
+    'discussion_error_anonymous_review' => 'Tanlangan ishtirokchilar bilan muhokama yaratib bo‘lmaydi, chunki bu retsenzent anonimligini buzishi mumkin.',
     'publisher_library' => 'Nashriyot kutubxonasi',
     'no_publisher_library_available' => 'Mavjud nashriyot kutubxonasi yo‘q',
     'add_a_file' => 'Fayl qoʻshish',

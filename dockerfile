@@ -4,7 +4,7 @@
 
 # Learn more about the Server Side Up PHP Docker Images at:
 # https://serversideup.net/open-source/docker-php/
-FROM serversideup/php:8.1-fpm-nginx-alpine as base
+FROM serversideup/php:8.1-fpm-nginx-alpine-v3.5.2 as base
 
 # Switch to root so we can do root things
 USER root

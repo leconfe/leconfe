@@ -44,6 +44,14 @@ class SiteObserver
                 'updated_at' => now(),
             ],
             [
+                'navigation_menu_id' => $primaryNavigationMenu->getKey(),
+                'label' => 'Proceedings',
+                'type' => 'proceedings',
+                'order_column' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'navigation_menu_id' => $userNavigationMenu->getKey(),
                 'label' => 'Register',
                 'type' => 'register',

@@ -97,11 +97,13 @@ class PluginManagement extends Page implements HasForms, HasInfolists
                     ->tabs([
                         Tabs\Tab::make('Installed Plugins')
                             ->schema([
-                                Livewire::make(PluginTable::class),
+                                Livewire::make(PluginTable::class)
+                                    ->key('plugin-table'),
                             ]),
                         Tabs\Tab::make('Plugin Gallery')
                             ->schema([
                                 Livewire::make(PluginGalleryTable::class)
+                                    ->key('plugin-gallery-table')
                                     ->lazy(),
                             ]),
                     ])

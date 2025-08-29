@@ -163,6 +163,7 @@ return [
     'trash' => 'سلة المهملات',
 
     'proceeding' => 'المداولات',
+    'proceedings' => 'المداولات',
     'identification' => 'الهوية',
     'volume' => 'المجلد',
     'number' => 'الرقم',
@@ -963,6 +964,10 @@ return [
     'view_current_event' => 'عرض الحدث الحالي',
     'system_information' => 'معلومات النظام',
     'submission_file_uploaded_activity' => 'تم تحميل الملف باسم ":name" في الفئة ":category" مع المعرف: :id.',
+    'featured_scheduled_conference' => 'المؤتمر المجدول المميز',
+    'conferences' => 'المؤتمرات',
+    'discussion_not_submission_participant' => 'المشارك المحدد غير معين لهذا التقديم.',
+    'discussion_error_anonymous_review' => 'لا يمكن إنشاء نقاش مع المشاركين المحددين لأنه قد يؤدي إلى كشف هوية المراجع.',
     'publisher_library' => 'مكتبة الناشر',
     'no_publisher_library_available' => 'لا توجد مكتبة ناشر متاحة',
     'add_a_file' => 'إضافة ملف',

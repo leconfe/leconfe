@@ -36,7 +36,7 @@ class DiscussionTopic extends Model
 
     public function getLastDiscussions()
     {
-        return $this->discussions()->orderBy('created_at', 'desc')->first();
+        return $this->discussions->last();
     }
 
     public function getLastSender()

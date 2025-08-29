@@ -48,6 +48,12 @@ class Site extends Model implements HasMedia
             'page_footer' => view('frontend.examples.footer')->render(),
             'theme' => 'DefaultTheme',
             'newsletter' => true,
+            'featured_scheduled_conferences' => [],
         ];
+    }
+
+    public function getContextString() : string
+    {
+        return 'site';
     }
 }

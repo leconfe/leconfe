@@ -16,7 +16,7 @@ class PluginGallery extends Model
 {
     use Sushi;
 
-    public static $cacheTtl = 1800;
+    public static $cacheTtl = 3600;
 
     protected $schema = [
         'id' => 'integer',
@@ -28,10 +28,12 @@ class PluginGallery extends Model
         'homepage' => 'string',
         'releases' => 'string',
         'author' => 'string',
+        'targets' => 'string',
     ];
-
+    
     protected $casts = [
         'releases' => 'array',
+        'targets' => 'array',
     ];
 
     public function getRows(): array
@@ -75,6 +77,7 @@ class PluginGallery extends Model
                     'homepage' => $plugin['homepage'],
                     'releases' => json_encode($plugin['releases']),
                     'author' => $plugin['author'],
+                    'targets' => json_encode($plugin['targets']),
                 ],
             )
             ->values()

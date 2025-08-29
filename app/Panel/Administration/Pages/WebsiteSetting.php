@@ -4,6 +4,7 @@ namespace App\Panel\Administration\Pages;
 
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
+use App\Panel\Administration\Livewire\FeaturedScheduledConferenceTable;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
@@ -77,6 +78,11 @@ class WebsiteSetting extends Page implements HasInfolists
                                             ->icon('heroicon-o-language')
                                             ->schema([
                                                 Livewire::make(LanguageSetting::class),
+                                            ]),
+                                        VerticalTabs\Tab::make('Featured')
+                                            ->icon('heroicon-o-bookmark')
+                                            ->schema([
+                                                Livewire::make(FeaturedScheduledConferenceTable::class),
                                             ]),
                                     ]),
                             ]),

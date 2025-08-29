@@ -2,7 +2,6 @@
     $primaryNavigationItems = app()->getNavigationItems('primary-navigation-menu');
     $userNavigationMenu = app()->getNavigationItems('user-navigation-menu');
 @endphp
-
 <div class="navbar-publisher navbar-container bg-white shadow z-[51] text-gray-800 sticky top-0">
     <div class="navbar mx-auto max-w-7xl items-center h-full">
         <div class="navbar-start items-center gap-x-4 w-max">
@@ -10,7 +9,9 @@
             @if(App\Models\Conference::exists())
                 @livewire(App\Livewire\GlobalNavigation::class)
             @endif
-
+            @if(!app()->getCurrentConference() && !app()->getCurrentScheduledConference())
+                <x-website::navigation-menu :items="$primaryNavigationItems" class="text-gray-800" />
+            @endif
         </div>
         
         <div class="navbar-end ms-auto gap-x-4 hidden lg:inline-flex">

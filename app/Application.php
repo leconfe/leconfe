@@ -40,8 +40,6 @@ use Illuminate\Support\Facades\File;
 
 class Application extends LaravelApplication
 {
-    public const APP_VERSION = '1.3.0-beta.3';
-
     public const PHP_MIN_VERSION = '8.1';
 
     public const CONTEXT_WEBSITE = 0;
@@ -296,5 +294,25 @@ class Application extends LaravelApplication
     public function getApiUrl(?string $path = null): string
     {
         return static::API_URL.$path;
+    }
+
+    public function isOnScheduledConference() : bool
+    {
+        return (bool) $this->getCurrentScheduledConferenceId();
+    }
+
+    public function isOnConference() : bool
+    {
+        if($this->isOnScheduledConference()) return false;
+
+
+        return (bool) $this->getCurrentConferenceId();
+    }
+
+    public function isOnSite() : bool
+    {
+        if($this->isOnConference() || $this->isOnScheduledConference()) return false;
+
+        return true;
     }
 }

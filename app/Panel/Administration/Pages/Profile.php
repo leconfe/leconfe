@@ -45,19 +45,18 @@ class Profile extends Page implements HasForms
     {
         $user = auth()->user();
         $meta = $user->getAllMeta()->toArray();
-
         $this->informationForm->fill([
             ...$user->attributesToArray(),
             'meta' => $meta,
         ]);
 
         $this->rolesForm->fill([
-            'roles' => $user->roles->filter(fn ($role) => in_array($role->name, UserRole::getAllowedSelfAssignRoleNames()))->pluck('name')->toArray(),
+            'roles' => $user->roles->filter(fn($role) => in_array($role->name, UserRole::getAllowedSelfAssignRoleNames()))->pluck('name')->toArray(),
             'meta' => $meta,
         ]);
 
         $this->notificationForm->fill([
-            'meta' => $meta,
+            'meta' => ['enable_new_announcement_email' => $user->getMeta('enable_new_announcement_email')],
         ]);
     }
 
@@ -100,10 +99,10 @@ class Profile extends Page implements HasForms
                             ->unique(ignoreRecord: true),
                         TextInput::make('password')
                             ->label(__('general.password'))
-                            ->required(fn (?User $record) => ! $record)
+                            ->required(fn(?User $record) => ! $record)
                             ->password()
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                            ->dehydrated(fn ($state) => filled($state))
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state))
                             ->confirmed(),
                         TextInput::make('password_confirmation')
                             ->label(__('general.password_confirmation'))
@@ -193,7 +192,7 @@ class Profile extends Page implements HasForms
                 Section::make(__('general.new_announcement'))
                     ->description(__('general.notifications_announcement_send'))
                     ->schema([
-                        Checkbox::make('meta.notification.enable_new_announcement_email')
+                        Checkbox::make('meta.enable_new_announcement_email')
                             ->label(__('general.enable_email_notification')),
                     ])
                     ->aside(),

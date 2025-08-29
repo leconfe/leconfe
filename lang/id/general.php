@@ -152,6 +152,7 @@ return [
     'trash' => 'Sampah',
 
     'proceeding' => 'Prosiding',
+    'proceedings' => "Prosiding",
     'identification' => 'Identifikasi',
     'volume' => 'Volume',
     'number' => 'Nomor',
@@ -928,6 +929,10 @@ return [
     'view_current_event' => 'Lihat Acara Saat Ini',
     'system_information' => 'Informasi Sistem',
     'submission_file_uploaded_activity' => 'File dengan nama ":name", diunggah pada kategori ":category" dengan id : :id.',
+    'featured_scheduled_conference' => 'Konferensi Terjadwal Unggulan',
+    'conferences' => 'Konferensi',
+    'discussion_not_submission_participant' => 'A selected participant is not assigned to this submission.',
+    'discussion_error_anonymous_review' => 'Cannot create a discussion with the selected participants as it may compromise reviewer anonymity.',
     'publisher_library' => 'Perpustakaan Penerbit',
     'no_publisher_library_available' => 'Tidak ada perpustakaan penerbit yang tersedia',
     'add_a_file' => 'Tambahkan File',

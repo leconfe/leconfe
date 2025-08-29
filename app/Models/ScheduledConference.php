@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Application;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\ScheduledConferenceState;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -30,6 +32,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_end',
         'state',
         'type',
+        'featured',
     ];
 
     protected $casts = [
@@ -304,7 +307,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isReceiptEnabled(): bool
     {
-        return $this->getMeta('receipt_enable');
+        return $this->isInvoiceEnabled() && $this->getMeta('receipt_enable');
     }
 
     public function isSubmissionPaymentEnabled(): bool
@@ -339,5 +342,39 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function updateLatestInvoiceNumber(int $number): void
     {
         $this->setMeta('invoice_number', $number);
+    }
+
+    public function getEntityUniqueId(): ?string
+    {
+        return $this->getMeta('entity_unique_id');
+    }
+
+    public function getEntityToken(): ?string
+    {
+        return $this->getMeta('entity_token');
+    }
+
+    public function registerEntity(): void
+    {
+        $response = Http::acceptJson()->post(Application::API_URL . 'leconfe/auth/register', [
+            'name' => $this->title,
+            'url' => $this->getUrl(),
+        ]);
+
+        if ($response->failed()) {
+            $response->throw();
+        }
+
+        $data = $response->json();
+
+        $this->setManyMeta([
+            'entity_unique_id' => $data['unique_id'],
+            'entity_token' => $data['token'],
+        ]);
+    }
+
+    public function getContextString() : string
+    {
+        return 'scheduled-conference';
     }
 }

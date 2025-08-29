@@ -3,13 +3,18 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
+use App\Mail\Templates\UserPayPaymentMail;
 use App\Managers\PaymentManager;
+use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Notifications\ParticipantPayment;
+use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +24,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentDetail extends Page
 {
@@ -35,9 +41,8 @@ class PaymentDetail extends Page
         if (! $record) {
             $record = auth()->user()->participant?->payment;
         }
-
+        
         abort_unless($record && auth()->user()->can('view', $record), 403);
-
         $this->record = $record;
     }
 
@@ -49,6 +54,13 @@ class PaymentDetail extends Page
     public static function getNavigationLabel(): string
     {
         return 'Participant Payment';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+           Payments::canAccess() ? Payments::getUrl() : 0 => 'Payments',
+        ];
     }
 
     public function getTitle(): string|Htmlable
@@ -76,7 +88,16 @@ class PaymentDetail extends Page
             ActionGroup::make([
                 Action::make('edit_payment')
                     ->label('Edit Payment')
-                    ->visible(fn (Payment $record) => auth()->user()->can('update', $record) && ! $record->isPaid())
+                    ->visible(function (Payment $record) {
+                        if($record->type == PaymentManager::TYPE_SUBMISSION_FEE && !app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()){
+                            return false;
+                        }
+                        if($record->type == PaymentManager::TYPE_PARTICIPANT_FEE && !app()->getCurrentScheduledConference()->isParticipantPaymentEnabled()){
+                            return false;
+                        }
+
+                        return auth()->user()->can('update', $record) && ! $record->isPaid();
+                    })
                     ->color('gray')
                     ->record($this->record)
                     ->fillForm([
@@ -97,7 +118,6 @@ class PaymentDetail extends Page
                             }),
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                             ->required()
                             ->options(
                                 fn (Payment $record) => PaymentFee::type($record->type)
@@ -111,8 +131,10 @@ class PaymentDetail extends Page
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
+                        Checkbox::make('dont_send_notification')
+                            ->label(__('general.dont_send_notification')),
                     ])
-                    ->action(function (Action $action, Payment $record, $data) {
+                    ->action(function (Action $action, Payment $record, array $data) {
                         $paymentFeeId = data_get($data, 'payment_fee_id');
 
                         $paymentFee = PaymentFee::find($paymentFeeId);
@@ -125,6 +147,15 @@ class PaymentDetail extends Page
 
                         if (array_key_exists('invoice', $data)) {
                             $updateData['invoice'] = $data['invoice'];
+                        }
+
+                        if(!$data['dont_send_notification']){
+                            if($this->record->type == PaymentManager::TYPE_SUBMISSION_FEE){
+                                $this->record?->user->notify(new SubmissionPayment($this->record->model));
+                            } else {
+                                $this->record?->user->notify(new ParticipantPayment($this->record->model));
+                            }
+                            
                         }
 
                         $record->update($updateData);
@@ -227,13 +258,12 @@ class PaymentDetail extends Page
                                 TextEntry::make('paid_at')
                                     ->visible(fn (Payment $record) => $record->paid_at)
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
-                                // ->dateTime(Setting::get('format_date') . ' ' . Setting::get('format_time')),
-                                // TextEntry::make('receipt')
-                                // 	->state('Download')
-                                // 	->color('primary')
-                                // 	->visible(fn(Registration $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->paid_at)
-                                // 	->url(fn(Registration $record) => Receipt::getUrl(['record' => $record]))
-                                // 	->openUrlInNewTab(),
+                                TextEntry::make('receipt')
+                                	->state('Download')
+                                	->color('primary')
+                                	->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
+                                	->url(fn(Payment $record) => Receipt::getUrl(['record' => $record]))
+                                	->openUrlInNewTab(),
                             ]),
                         ...PaymentManager::get()->getPaymentMethodInfolist(),
                     ]),

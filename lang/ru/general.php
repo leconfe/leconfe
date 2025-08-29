@@ -160,6 +160,7 @@ return [
     'trash' => 'Корзина',
 
     'proceeding' => 'Сборник материалов',
+    'proceedings' => "Сборники материалов",
     'identification' => 'Идентификация',
     'volume' => 'Том',
     'number' => 'Номер',
@@ -961,6 +962,10 @@ return [
     'files' => 'Файлы',
     'mailing_address' => 'Почтовый адрес',
     'slug_helper' => "Введите уникальный идентификатор страницы для URL. Используйте только строчные буквы, цифры, дефисы и нижние подчёркивания. Например: 'o-nas' или 'kontakt-info'",
+    'featured_scheduled_conference' => 'Избранная запланированная конференция',
+    'conferences' => 'Конференции',
+    'discussion_not_submission_participant' => 'Выбранный участник не назначен на эту подачу.',
+    'discussion_error_anonymous_review' => 'Невозможно создать обсуждение с выбранными участниками, так как это может нарушить анонимность рецензента.',
     'publisher_library' => 'Библиотека издателя',
     'no_publisher_library_available' => 'Библиотека издателя недоступна',
     'add_a_file' => 'Добавить файл',

@@ -23,11 +23,13 @@
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-8 space-y-4">
             @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles::class, ['record' => $review])
+            
             <form>
                 {{ $this->form }}
             </form>
             
             @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerFiles::class, ['record' => $review, 'viewOnly' => $review->reviewSubmitted()])
+            @livewire(App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic::class, ['submission' => $record, 'stage' => App\Models\Enums\SubmissionStage::PeerReview, 'lazy' => true])
 
             @if(!$review->reviewSubmitted())
                 <div class="flex items-center gap-3">
