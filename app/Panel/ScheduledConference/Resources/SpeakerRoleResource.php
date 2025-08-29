@@ -2,6 +2,9 @@
 
 namespace App\Panel\ScheduledConference\Resources;
 
+use App\Actions\SpeakerRoles\SpeakerRoleCreateAction;
+use App\Actions\SpeakerRoles\SpeakerRoleUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\SpeakerRole;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\TextInput;
@@ -10,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\Rules\Unique;
 
 class SpeakerRoleResource extends Resource
 {
@@ -32,13 +34,12 @@ class SpeakerRoleResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
                     ->label(__('general.name'))
                     ->required()
-                    ->unique(modifyRuleUsing: function (Unique $rule) {
-                        return $rule
-                            ->where('scheduled_conference_id', app()->getCurrentScheduledConference()->getKey());
-                    }, ignoreRecord: true),
+                ]),
+                
             ]);
     }
 
@@ -50,6 +51,7 @@ class SpeakerRoleResource extends Resource
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->getStateUsing(fn (SpeakerRole $record) => $record->getLocalizedMeta('name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('speakers_count')
@@ -63,7 +65,15 @@ class SpeakerRoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->fillForm(function (SpeakerRole $record) {
+                        return array_merge($record->toArray(), [
+                            'meta' => $record->getAllMeta(),
+                        ]);
+                    })
+                    ->using(function (SpeakerRole $record, array $data) {
+                        return SpeakerRoleUpdateAction::run($record, $data);
+                    }),
                 Tables\Actions\DeleteAction::make()
                     ->using(function (SpeakerRole $record, Tables\Actions\DeleteAction $action) {
                         try {
@@ -86,9 +96,7 @@ class SpeakerRoleResource extends Resource
             ->heading(__('general.speaker_roles_table'))
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        return $data;
-                    })
+                    ->using(fn (array $data) => SpeakerRoleCreateAction::run($data))
                     ->label(__('general.new_speaker_role'))
                     ->modalHeading(__('general.new_speaker_role')),
             ]);

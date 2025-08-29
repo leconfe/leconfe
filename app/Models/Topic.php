@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Topic extends Model
 {
-    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory;
+    use BelongsToConference, BelongsToScheduledConference, Cachable, LocalizedMetable, HasFactory;
 
     protected $fillable = ['name', 'conference_id'];
 
@@ -18,4 +19,6 @@ class Topic extends Model
     {
         return $this->morphedByMany(Submission::class, 'topicable');
     }
+
+    
 }

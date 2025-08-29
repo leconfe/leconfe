@@ -1,8 +1,8 @@
 <x-website::layouts.main>
     <div class="space-y-5">
-        @if ($site->getMeta('about'))
+        @if ($site->getLocalizedMeta('about'))
             <div class="description user-content">
-                {{ new Illuminate\Support\HtmlString($site->getMeta('about')) }}
+                {{ new Illuminate\Support\HtmlString($site->getLocalizedMeta('about')) }}
             </div>
         @endif
 

@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 
+use App\Actions\Timeline\TimelineCreateAction;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource;
 use Filament\Actions;
@@ -19,6 +20,7 @@ class ManageTimeline extends ListRecords
                 ->modalHeading(__('general.add_timeline'))
                 ->modalWidth(MaxWidth::ExtraLarge)
                 ->model(Timeline::class)
+                ->using(fn (array $data) => TimelineCreateAction::run($data))
                 ->authorize('create', Timeline::class),
         ];
     }

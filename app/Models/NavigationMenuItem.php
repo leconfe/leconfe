@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizedMetable;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 class NavigationMenuItem extends Model implements Sortable
 {
-    use Cachable, HasFactory, Metable, SortableTrait;
+    use Cachable, HasFactory, LocalizedMetable, SortableTrait;
 
     protected $fillable = [
         'label',
@@ -80,7 +80,7 @@ class NavigationMenuItem extends Model implements Sortable
     public static function getTypeOptions(): array
     {
         return collect(self::getTypes())
-            ->mapWithKeys(fn ($type) => [$type::getId() => $type::getLabel()])
+            ->mapWithKeys(fn($type) => [$type::getId() => $type::getLabel()])
             ->toArray();
     }
 
@@ -91,12 +91,13 @@ class NavigationMenuItem extends Model implements Sortable
 
     public function getLabel(): string
     {
+        $label = $this->getLocalizedMeta('label') ?? '';
         // replace {$username} with the user's name
-        if (auth()->check() && strpos($this->label, '{$username}') !== false) {
-            $this->label = str_replace('{$username}', auth()->user()->fullName, $this->label);
+        if (auth()->check() && strpos($label, '{$username}') !== false) {
+            $label = str_replace('{$username}', auth()->user()->fullName, $label);
         }
 
-        return $this->label;
+        return $label;
     }
 
     public function isDisplayed(): bool

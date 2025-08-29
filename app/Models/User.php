@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Mail\Templates\VerifyUserEmail;
+use App\Models\Concerns\LocalizedMetable;
 use App\Models\Enums\RegistrationPaymentState;
 use App\Models\Enums\UserRole;
 use Exception;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Mchev\Banhammer\Traits\Bannable;
-use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -36,7 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         HasFactory,
         HasRoles,
         InteractsWithMedia,
-        Metable,
+        LocalizedMetable,
         Notifiable;
 
     /**
@@ -89,7 +89,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     {
         return Attribute::make(
             get: function () {
-                if ($publicName = $this->getMeta('public_name')) {
+                if ($publicName = $this->getLocalizedMeta('public_name')) {
                     return $publicName;
                 }
 

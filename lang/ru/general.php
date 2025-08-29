@@ -966,4 +966,13 @@ return [
     'conferences' => 'Конференции',
     'discussion_not_submission_participant' => 'Выбранный участник не назначен на эту подачу.',
     'discussion_error_anonymous_review' => 'Невозможно создать обсуждение с выбранными участниками, так как это может нарушить анонимность рецензента.',
+    'publisher_library' => 'Библиотека издателя',
+    'no_publisher_library_available' => 'Библиотека издателя недоступна',
+    'add_a_file' => 'Добавить файл',
+    'view_page' => 'Просмотреть страницу',
+    'allow_public_access' => 'Разрешить публичный доступ',
+    'download' => 'Скачать',
+    'no' => 'Нет',
+    'name' => 'Имя',
+    'public_access' => 'Публичный доступ',
 ];

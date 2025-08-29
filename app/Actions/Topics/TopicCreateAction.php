@@ -10,12 +10,16 @@ class TopicCreateAction
 {
     use AsAction;
 
-    public function handle($data): Topic
+    public function handle(array $data): Topic
     {
         try {
             DB::beginTransaction();
 
             $topic = Topic::create($data);
+
+            if (data_get($data, 'meta')) {
+                $topic->setManyMeta(data_get($data, 'meta'));
+            }
 
             DB::commit();
         } catch (\Throwable $th) {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class SpeakerRole extends Model implements Sortable
 {
-    use BelongsToScheduledConference, Cachable, HasFactory, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasFactory, SortableTrait, LocalizedMetable;
 
     protected $table = 'speaker_roles';
 

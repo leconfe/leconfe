@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\LocalizedMetable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,9 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class CommitteeRole extends Model implements Sortable
 {
-    use BelongsToScheduledConference, HasFactory, SortableTrait;
+  
+    use BelongsToScheduledConference, HasFactory, SortableTrait, LocalizedMetable;
+    
 
     protected $table = 'committee_roles';
 

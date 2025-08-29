@@ -2,6 +2,9 @@
 
 namespace App\Panel\Conference\Livewire;
 
+use App\Actions\PublisherLibrary\PublisherLibraryCreateAction;
+use App\Actions\PublisherLibrary\PublisherLibraryUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Frontend\ScheduledConference\Pages\PublisherLibrary as PublisherLibraryPage;
 use App\Models\Media;
 use App\Models\ScheduledConference;
@@ -45,11 +48,15 @@ class PublisherLibrary extends Component implements HasForms, HasTable
             ->defaultSort('order_column', 'asc')
             ->reorderable('order_column')
             ->columns([
-                IndexColumn::make('no'),
+                IndexColumn::make('no')
+                    ->label(__('general.no')),
                 TextColumn::make('name')
+                    ->label(__('general.name'))
+                    ->getStateUsing(fn (Media $record) => $record->getLocalizedMeta('name'))
                     ->searchable()
                     ->action(fn (Media $record) => $record),
                 ToggleColumn::make('public_access')
+                    ->label(__('general.public_access'))
                     ->getStateUsing(fn (Media $record) => $record->getCustomProperty('is_public'))
                     ->updateStateUsing(function (Media $record, $state) {
                         $record->setCustomProperty('is_public', $state);
@@ -69,47 +76,23 @@ class PublisherLibrary extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->icon('heroicon-o-plus')
                     ->action(function (array $data) {
-                        $currentScheduledConference = app()->getCurrentScheduledConference();
-                        $currentScheduledConference->addMediaFromDisk($data['file_name'], 'local')
-                            ->usingName($data['name'])
-                            ->withCustomProperties($data['custom'])
-                            ->toMediaCollection('publisher-library', 'private-files');
+                        PublisherLibraryCreateAction::run($data);
                     })
                     ->form(fn ($form) => $this->form($form)),
             ])
             ->actions([
                 ActionGroup::make([
-                    EditAction::make()
-                        ->fillForm(function (Media $record, array $data): array {
-                            $data['name'] = $record->name;
-                            $data['file_name'] = [$record->file_name];
-                            $data['custom']['is_public'] = $record->getCustomProperty('is_public');
+                   EditAction::make()
+                    ->modalWidth(MaxWidth::ExtraLarge)
+                    ->form(fn ($form, $record) => $this->form($form))
+                    ->mutateRecordDataUsing(function (array $data, Media $record) {
+                        $data['meta'] = $record->getAllMeta();
+                        $data['file_name'] = [$record->file_name];
+                        $data['custom']['is_public'] = $record->getCustomProperty('is_public');
+                        return $data;
+                    })
+                    ->action(fn (Media $record, array $data) => PublisherLibraryUpdateAction::run($record, $data)),
 
-                            return $data;
-                        })
-                        ->modalWidth(MaxWidth::ExtraLarge)
-                        ->form(fn ($form, $record) => $this->form($form))
-                        ->using(function (Media $record, $data) {
-                            $currentScheduledConference = app()->getCurrentScheduledConference();
-
-                            if (Storage::disk('local')->exists($data['file_name'])) {
-                                $media = $currentScheduledConference->addMediaFromDisk($data['file_name'], 'local')
-                                    ->usingName($data['name'])
-                                    ->withCustomProperties($data['custom'])
-                                    ->toMediaCollection('publisher-library', 'private-files');
-
-                                $record->delete();
-
-                                $media->uuid = $record->uuid;
-                                $media->order_column = $record->order_column;
-                                $media->created_at = $record->created_at;
-                                $media->save();
-                            } else {
-                                $record->name = $data['name'];
-                                $record->setCustomProperty('is_public', $data['custom']['is_public']);
-                                $record->save();
-                            }
-                        }),
                     Action::make('download')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('primary')
@@ -127,11 +110,14 @@ class PublisherLibrary extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
                     ->required(),
+                ]),
+                
                 FileUpload::make('file_name')
                     ->disk('local')
-                    // ->preserveFilenames()
+                    ->preserveFilenames()
                     ->afterStateHydrated(static function (BaseFileUpload $component, ?Media $record): void {
                         if (blank($record)) {
                             $component->state([]);
@@ -141,7 +127,6 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 
                         $component->state([((string) Str::uuid()) => $record->file_name]);
                     })
-                    ->downloadable()
                     ->getUploadedFileUsing(static function (BaseFileUpload $component, ?Media $record): ?array {
                         if (blank($record)) {
                             return null;

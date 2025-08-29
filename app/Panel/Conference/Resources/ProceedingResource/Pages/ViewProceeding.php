@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Resources\ProceedingResource\Pages;
 
+use App\Actions\Proceedings\ProceedingUpdateAction;
 use App\Models\Proceeding;
 use App\Models\Submission;
 use App\Panel\Conference\Resources\ProceedingResource;
@@ -69,7 +70,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
     public function getTitle(): string|Htmlable
     {
-        return $this->record->title;
+        return $this->record->getLocalizedMeta('title');
     }
 
     public function form(Form $form): Form
@@ -88,7 +89,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
         $data = $this->form->getState();
 
-        $this->record->update($data);
+        ProceedingUpdateAction::run($this->record, $data);
 
         $this->form->saveRelationships();
     }

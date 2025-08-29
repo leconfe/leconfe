@@ -966,4 +966,13 @@ return [
     'conferences' => 'Konferensiyalar',
     'discussion_not_submission_participant' => 'Tanlangan ishtirokchi ushbu taqdimotga biriktirilmagan.',
     'discussion_error_anonymous_review' => 'Tanlangan ishtirokchilar bilan muhokama yaratib bo‘lmaydi, chunki bu retsenzent anonimligini buzishi mumkin.',
+    'publisher_library' => 'Nashriyot kutubxonasi',
+    'no_publisher_library_available' => 'Mavjud nashriyot kutubxonasi yo‘q',
+    'add_a_file' => 'Fayl qoʻshish',
+    'view_page' => 'Sahifani koʻrish',
+    'allow_public_access' => 'Ommaviy kirishga ruxsat berish',
+    'download' => 'Yuklab olish',
+    'no' => 'Yo‘q',
+    'name' => 'Ism',
+    'public_access' => 'Ommaviy kirish',
 ];

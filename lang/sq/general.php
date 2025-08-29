@@ -951,4 +951,13 @@ return [
     'conferences' => 'Konferencat',
     'discussion_not_submission_participant' => 'Një pjesëmarrës i zgjedhur nuk është caktuar në këtë dorëzim.',
     'discussion_error_anonymous_review' => 'Nuk mund të krijohet një diskutim me pjesëmarrësit e zgjedhur pasi mund të komprometojë anonimitetin e rishikuesit.',
+    'publisher_library' => 'Biblioteka e Botuesit',
+    'no_publisher_library_available' => 'Nuk ka bibliotekë botuesi të disponueshme',
+    'add_a_file' => 'Shto Skedar',
+    'view_page' => 'Shiko Faqen',
+    'allow_public_access' => 'Lejo Qasje Publike',
+    'download' => 'Shkarko',
+    'no' => 'Jo',
+    'name' => 'Emri',
+    'public_access' => 'Qasje Publike',
 ];

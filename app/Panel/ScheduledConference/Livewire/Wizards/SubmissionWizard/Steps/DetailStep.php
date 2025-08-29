@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
@@ -70,18 +71,24 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->label(__('general.topic'))
                             ->searchable()
                             ->relationship('topics', 'name'),
-                        TextInput::make('meta.title')
+                        MultilanguageComponent::make([
+                            TextInput::make('meta.title')
                             ->label(__('general.title'))
                             ->required(),
+                        ]),
+                        
                         TagsInput::make('meta.keywords')
                             ->label(__('general.keywords'))
                             ->splitKeys([','])
                             ->placeholder(''),
-                        TinyEditor::make('meta.abstract')
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.abstract')
                             ->label(__('general.abstract'))
                             ->minHeight(300)
                             ->minLength($this->record?->track->getMeta('abstract_word_count') ?? 0)
                             ->required(! $this->record?->track->getMeta('do_not_require_abstracts') ?? true),
+                        ]),
+                        
                     ]),
             ]),
         ];

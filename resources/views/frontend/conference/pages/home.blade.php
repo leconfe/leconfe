@@ -5,9 +5,9 @@
                 alt="{{ $conference->title }}" />
         </div>
     @endif
-    @if ($conference->getMeta('about'))
+    @if ($conference->getLocalizedMeta('about'))
         <div class="conference-about user-content mb-4">
-            {!! $conference->getMeta('about') !!}
+            {!! $conference->getLocalizedMeta('about') !!}
         </div>
     @endif
     @if($nextScheduledConference || $pastScheduledConferences->isNotEmpty())
@@ -37,9 +37,9 @@
                             </div>
                         </div>
 
-                        @if ($nextScheduledConference->getMeta('summary'))
+                        @if ($nextScheduledConference->getLocalizedMeta('summary'))
                             <div class="scheduled-conference-summary user-content">
-                                {!! $nextScheduledConference->getMeta('summary') !!}
+                                {!! $nextScheduledConference->getLocalizedMeta('summary') !!}
                             </div>
                         @endif
                         <div class="next-scheduled-conference-link">
@@ -77,9 +77,9 @@
                                     </div>
                                 </div>
 
-                                @if ($scheduledConference->getMeta('summary'))
+                                @if ($scheduledConference->getLocalizedMeta('summary'))
                                     <div class="scheduled-conference-summary user-content">
-                                        {!! $scheduledConference->getMeta('summary') !!}
+                                        {!! $scheduledConference->getLocalizedMeta('summary') !!}
                                     </div>
                                 @endif
                                 <div class="scheduled-conference-link">
@@ -119,9 +119,9 @@
                                     </div>
                                 </div>
 
-                                @if ($scheduledConference->getMeta('summary'))
+                                @if ($scheduledConference->getLocalizedMeta('summary'))
                                     <div class="scheduled-conference-summary user-content">
-                                        {!! $scheduledConference->getMeta('summary') !!}
+                                        {!! $scheduledConference->getLocalizedMeta('summary') !!}
                                     </div>
                                 @endif
                                 <div class="scheduled-conference-link">

@@ -968,4 +968,15 @@ return [
     'conferences' => 'المؤتمرات',
     'discussion_not_submission_participant' => 'المشارك المحدد غير معين لهذا التقديم.',
     'discussion_error_anonymous_review' => 'لا يمكن إنشاء نقاش مع المشاركين المحددين لأنه قد يؤدي إلى كشف هوية المراجع.',
+    'publisher_library' => 'مكتبة الناشر',
+    'no_publisher_library_available' => 'لا توجد مكتبة ناشر متاحة',
+    'add_a_file' => 'إضافة ملف',
+    'view_page' => 'عرض الصفحة',
+    'allow_public_access' => 'السماح للجمهور بالوصول',
+    'download' => 'تنزيل',
+    'no' => 'لا',
+    'name' => 'الاسم',
+    'public_access' => 'الوصول العام',
+
+
 ];
