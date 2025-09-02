@@ -16,6 +16,7 @@ use App\Models\Site;
 use App\Models\Speaker;
 use App\Models\SpeakerRole;
 use App\Models\StaticPage;
+use App\Models\Submission;
 use App\Models\SubmissionFileType;
 use App\Models\Timeline;
 use App\Models\Topic;
@@ -44,6 +45,7 @@ class Upgrade140Beta1 extends UpgradeBase
             $this->convertScheduledConferenceMeta($defaultLocale);
 
             // SCHEDULED CONFERENCE PANEL
+            $this->convertSubmissionDetailMeta($defaultLocale);
             $this->convertAuthorMeta($defaultLocale);
             $this->convertWorkflowSubmissionComponentsMeta($defaultLocale);
             $this->convertWorkflowAuthorRolesMeta($defaultLocale);
@@ -165,6 +167,32 @@ class Upgrade140Beta1 extends UpgradeBase
     }
 
     // SCHEDULED CONFERENCE PANEL
+
+    protected function convertSubmissionDetailMeta(string $locale)
+    {
+        Submission::withoutGlobalScopes()->lazy()->each(function (Submission $submission) use ($locale) {
+            $originalTitle = $submission->getMeta('title') ?? null;
+            if (filled($originalTitle)) {
+                $submission->setMeta('title', [$locale => $originalTitle]);
+            }
+
+            $originalAbstract = $submission->getMeta('abstract') ?? null;
+            if (filled($originalAbstract)) {
+                $submission->setMeta('abstract', [$locale => $originalAbstract]);
+            }
+
+            $originalKeywords = $submission->getMeta('keywords') ?? null;
+            if (filled($originalKeywords) && is_array($originalKeywords)) {
+                $submission->setMeta('keywords', [$locale => $originalKeywords]);
+            }
+
+            // simpan jika ada perubahan pada meta
+            if ($submission->isDirty('meta')) {
+                $submission->saveQuietly();
+            }
+        });
+    }
+
     protected function convertAuthorMeta(string $locale)
     {
         Author::withoutGlobalScopes()->lazy()->each(function (Author $author) use ($locale) {
