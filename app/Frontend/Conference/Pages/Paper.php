@@ -51,7 +51,7 @@ class Paper extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return $this->paper->getMeta('title');
+        return $this->paper->getLocalizedMeta('title');
     }
 
     public function addHead()
@@ -69,7 +69,7 @@ class Paper extends Page
 
         MetaTag::add(property: 'og:site_name', content: e($conference->name));
         MetaTag::add(property: 'og:description', content: e($conference->getMeta('description')));
-        MetaTag::add(property: 'og:title', content: e($this->paper->getMeta('title')));
+        MetaTag::add(property: 'og:title', content: e($this->paper->getLocalizedMeta('title')));
         MetaTag::add(property: 'og:type', content: 'paper');
         MetaTag::add(property: 'og:url', content: route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
         if ($this->paper->getFirstMedia('cover')) {

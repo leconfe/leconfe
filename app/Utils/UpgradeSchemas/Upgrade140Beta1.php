@@ -11,6 +11,7 @@ use App\Models\CommitteeRole;
 use App\Models\Conference;
 use App\Models\Media;
 use App\Models\NavigationMenuItem;
+use App\Models\Proceeding;
 use App\Models\ScheduledConference;
 use App\Models\Site;
 use App\Models\Speaker;
@@ -43,6 +44,7 @@ class Upgrade140Beta1 extends UpgradeBase
 
             // CONFERENCE PANEL
             $this->convertScheduledConferenceMeta($defaultLocale);
+            $this->convertProceedingMeta($defaultLocale);
 
             // SCHEDULED CONFERENCE PANEL
             $this->convertSubmissionDetailMeta($defaultLocale);
@@ -166,6 +168,20 @@ class Upgrade140Beta1 extends UpgradeBase
         });
     }
 
+    protected function convertProceedingMeta(string $locale)
+    {
+        Proceeding::withoutGlobalScopes()->lazy()->each(function (Proceeding $proceeding) use ($locale) {
+            $originalProceedingTitle = $proceeding->title ?? null;
+            if (filled($originalProceedingTitle)) {
+                $proceeding->setMeta('title', [$locale => $originalProceedingTitle]);
+
+                if ($proceeding->isDirty('meta')) {
+                    $proceeding->saveQuietly();
+                }
+            }
+        });
+    }
+
     // SCHEDULED CONFERENCE PANEL
 
     protected function convertSubmissionDetailMeta(string $locale)
@@ -179,11 +195,6 @@ class Upgrade140Beta1 extends UpgradeBase
             $originalAbstract = $submission->getMeta('abstract') ?? null;
             if (filled($originalAbstract)) {
                 $submission->setMeta('abstract', [$locale => $originalAbstract]);
-            }
-
-            $originalKeywords = $submission->getMeta('keywords') ?? null;
-            if (filled($originalKeywords) && is_array($originalKeywords)) {
-                $submission->setMeta('keywords', [$locale => $originalKeywords]);
             }
 
             // simpan jika ada perubahan pada meta

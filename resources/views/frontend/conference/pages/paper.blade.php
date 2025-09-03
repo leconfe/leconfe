@@ -14,7 +14,7 @@
                 </div>
             </div>
         @endif
-        <x-website::heading-title tag="h1" :title="$paper->getMeta('title')" />
+        <x-website::heading-title tag="h1" :title="$paper->getLocalizedMeta('title')" />
         <div class="mb-4 text-sm text-slate-400">
             <span class="flex items-center ">
                 <x-lineawesome-calendar-check-solid class="w-3 h-3 mr-0.5" />
@@ -127,7 +127,7 @@
                     {{ __('general.abstract') }}
                 </h2>
                 <div class="citation_abstract content user-content text-sm">
-                    {!! $paper->getMeta('abstract') !!}
+                    {!! $paper->getLocalizedMeta('abstract') !!}
                 </div>
             </section>
             <section class="references">

@@ -16,7 +16,7 @@
                 href="{{ $paper->getPublicUrl() }}" 
                 class="font-semibold text-gray-700 hover:text-primary flex items-center"
                 >
-                {{ $paper->getMeta('title') }}
+                {{ $paper->getLocalizedMeta('title') }}
                 @if($paper->isPublishedOnExternal())
                     <x-lineawesome-external-link-alt-solid class="w-4 h-4 ml-1" />
                 @endif

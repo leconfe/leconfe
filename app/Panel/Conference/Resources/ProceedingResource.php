@@ -119,6 +119,10 @@ class ProceedingResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()
                         ->modalWidth('xl')
+                        ->mutateRecordDataUsing(function (array $data, Proceeding $record) {
+                            $data['meta'] = $record->getAllMeta();
+                            return $data;
+                        })
                         ->using(function (Proceeding $record, array $data) {
                             return \App\Actions\Proceedings\ProceedingUpdateAction::run($record, $data);
                         }),

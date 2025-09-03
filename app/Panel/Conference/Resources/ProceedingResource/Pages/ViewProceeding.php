@@ -39,7 +39,10 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
         $this->authorizeAccess();
 
-        $this->form->fill($this->record->attributesToArray());
+        $this->form->fill([
+            ...$this->record->attributesToArray(),
+            'meta' => $this->record->getAllMeta()->toArray(),
+        ]);
     }
 
     protected function getHeaderActions(): array
@@ -115,7 +118,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
                 TextColumn::make('title')
                     ->wrap()
                     ->label(__('general.title'))
-                    ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                    ->getStateUsing(fn (Submission $record) => $record->getLocalizedMeta('title'))
                     ->url(fn (Submission $record) => route('filament.scheduledConference.resources.submissions.view', ['record' => $record->id, 'serie' => $record->scheduledConference]))
                     ->searchable()
                     ->color('primary'),
