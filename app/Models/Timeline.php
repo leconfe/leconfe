@@ -50,12 +50,11 @@ class Timeline extends Model
     {
         $timelineSubmissionOpen = self::where('type', self::TYPE_SUBMISSION_OPEN)->first();
         $timelineSubmissionClose = self::where('type', self::TYPE_SUBMISSION_CLOSE)->first();
-
         if (! $timelineSubmissionOpen) {
             return false;
         }
 
-        if ($timelineSubmissionOpen->date->isPast() && (! $timelineSubmissionClose || $timelineSubmissionClose->date->isFuture())) {
+        if ($timelineSubmissionOpen->date?->startOfDay()?->isPast() && (! $timelineSubmissionClose || $timelineSubmissionClose->date?->endOfDay()->isFuture())) {
             return true;
         }
 
