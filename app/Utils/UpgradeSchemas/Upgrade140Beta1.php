@@ -11,11 +11,13 @@ use App\Models\CommitteeRole;
 use App\Models\Conference;
 use App\Models\Media;
 use App\Models\NavigationMenuItem;
+use App\Models\Proceeding;
 use App\Models\ScheduledConference;
 use App\Models\Site;
 use App\Models\Speaker;
 use App\Models\SpeakerRole;
 use App\Models\StaticPage;
+use App\Models\Submission;
 use App\Models\SubmissionFileType;
 use App\Models\Timeline;
 use App\Models\Topic;
@@ -42,8 +44,10 @@ class Upgrade140Beta1 extends UpgradeBase
 
             // CONFERENCE PANEL
             $this->convertScheduledConferenceMeta($defaultLocale);
+            $this->convertProceedingMeta($defaultLocale);
 
             // SCHEDULED CONFERENCE PANEL
+            $this->convertSubmissionDetailMeta($defaultLocale);
             $this->convertAuthorMeta($defaultLocale);
             $this->convertWorkflowSubmissionComponentsMeta($defaultLocale);
             $this->convertWorkflowAuthorRolesMeta($defaultLocale);
@@ -164,7 +168,42 @@ class Upgrade140Beta1 extends UpgradeBase
         });
     }
 
+    protected function convertProceedingMeta(string $locale)
+    {
+        Proceeding::withoutGlobalScopes()->lazy()->each(function (Proceeding $proceeding) use ($locale) {
+            $originalProceedingTitle = $proceeding->title ?? null;
+            if (filled($originalProceedingTitle)) {
+                $proceeding->setMeta('title', [$locale => $originalProceedingTitle]);
+
+                if ($proceeding->isDirty('meta')) {
+                    $proceeding->saveQuietly();
+                }
+            }
+        });
+    }
+
     // SCHEDULED CONFERENCE PANEL
+
+    protected function convertSubmissionDetailMeta(string $locale)
+    {
+        Submission::withoutGlobalScopes()->lazy()->each(function (Submission $submission) use ($locale) {
+            $originalTitle = $submission->getMeta('title') ?? null;
+            if (filled($originalTitle)) {
+                $submission->setMeta('title', [$locale => $originalTitle]);
+            }
+
+            $originalAbstract = $submission->getMeta('abstract') ?? null;
+            if (filled($originalAbstract)) {
+                $submission->setMeta('abstract', [$locale => $originalAbstract]);
+            }
+
+            // simpan jika ada perubahan pada meta
+            if ($submission->isDirty('meta')) {
+                $submission->saveQuietly();
+            }
+        });
+    }
+
     protected function convertAuthorMeta(string $locale)
     {
         Author::withoutGlobalScopes()->lazy()->each(function (Author $author) use ($locale) {

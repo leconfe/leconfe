@@ -43,7 +43,7 @@ class CitationStyleLanguage extends Component
         }
 
         $citation = trim(strip_tags(Citation::getCitation($this->submission, $citationStyle)));
-        $encodedFilename = $this->submission->getMeta('title').'.'.$styleConfig['fileExtension'];
+        $encodedFilename = $this->submission->getLocalizedMeta('title') . '.' . $styleConfig['fileExtension'];
         $headers = [
             'Content-Type' => $styleConfig['contentType'],
         ];

@@ -142,7 +142,7 @@ class CitationManager
         $citationData = new \stdClass;
         $citationData->type = 'paper-conference';
         $citationData->id = $paper->getKey();
-        $citationData->title = $paper->getMeta('title');
+        $citationData->title = $paper->getLocalizedMeta('title');
         $citationData->{'container-title'} = $paper->conference->name;
         $citationData->volume = $paper->proceeding->volume;
         $citationData->issue = $paper->proceeding->number;
@@ -151,8 +151,8 @@ class CitationManager
         }
 
         $citationData->section = $paper->track->title;
-        $citationData->keywords = $paper->getMeta('keywords') ?? [];
-        $citationData->abstract = strip_tags($paper->getMeta('abstract'));
+        $citationData->keywords = $paper->getLocalizedMeta('keywords') ?? [];
+        $citationData->abstract = strip_tags($paper->getLocalizedMeta('abstract'));
         foreach ($paper->authors as $author) {
             $currentAuthor = new \stdClass;
 
