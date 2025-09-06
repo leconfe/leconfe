@@ -19,7 +19,7 @@ class ReviewerCancelationMail extends TemplateMailable
     public function __construct(Review $review)
     {
         $this->name = $review->user->fullName;
-        $this->submissionTitle = $review->submission->getMeta('title');
+        $this->submissionTitle = $review->submission->getLocalizedMeta('title');
 
         $this->log = Log::make(
             name: 'email',

@@ -265,7 +265,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                     ->visible(fn (Review $record): bool => $record->reviewSubmitted())
                     ->modalWidth('2xl')
                     ->modalSubmitActionLabel('Confirm')
-                    ->modalHeading(fn () => 'Review: '.$this->record->getMeta('title'))
+                    ->modalHeading(fn () => 'Review: '.$this->record->getLocalizedMeta('title'))
                     ->icon('lineawesome-eye')
                     ->disabledForm()
                     ->when(
@@ -494,7 +494,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 subject: $this->record,
                                 description: __('general.submission_review_assign_canceled', [
                                     'submissionId' => $this->record->getKey(),
-                                    'submissionName' => $this->record->getMeta('title'),
+                                    'submissionName' => $this->record->getLocalizedMeta('title'),
                                     'name' => $record->user->full_name,
                                 ]),
                             )
@@ -623,7 +623,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                             subject: $this->record,
                             description: __('general.submission_review_assigned', [
                                 'submissionId' => $this->record->getKey(),
-                                'submissionName' => $this->record->getMeta('title'),
+                                'submissionName' => $this->record->getLocalizedMeta('title'),
                                 'name' => $reviewAssignment->user->full_name,
                             ]),
                         )
@@ -637,7 +637,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                         (new ReviewerInvitationMail($reviewAssignment))
                                             ->subjectUsing($data['subject'])
                                             ->contentUsing($data['message'])
-                                    );
+                                        );
                             } catch (\Exception $e) {
                                 $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
                                 $action->failure();
