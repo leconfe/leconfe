@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Support\MediaStream;
 
 abstract class SubmissionFilesTable extends \Livewire\Component implements HasForms, HasTable
@@ -53,12 +54,22 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     public function tableColumns(): array
     {
         return [
+            TextColumn::make('id')
+                ->wrap(),
             TextColumn::make('media.file_name')
                 ->wrap()
                 ->label(__('general.filename'))
                 ->color('primary')
-                ->action(fn (Model $record) => $record->media)
-                ->description(fn (Model $record) => $record->type->name),
+                ->action(function (SubmissionFile $record){
+                    $name = implode('-', [
+                        $record->getKey(),
+                        $record->user->full_name,
+                        Str::limit(basename($record->media->name), 20, '')
+                    ]);
+
+                    return response()->download($record->media->getPath(), $name . '.' . $record->media->extension);
+                })
+                ->description(fn (SubmissionFile $record) => $record->type->name),
         ];
     }
 
@@ -73,7 +84,12 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->action(function (TableAction $action) {
                 $files = $this->submission->media()->where('collection_name', $this->category)->get();
                 if ($files->count()) {
-                    return MediaStream::create('files.zip')->addMedia($files);
+                    $name = implode('-' , [
+                        $this->submission->getKey(),
+                        'files',
+                    ]);
+
+                    return MediaStream::create($name . '.zip')->addMedia($files);
                 }
                 $action->failureNotificationTitle(__('general.nothing_to_download'));
                 $action->failure();
