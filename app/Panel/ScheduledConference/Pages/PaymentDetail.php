@@ -8,6 +8,7 @@ use App\Managers\PaymentManager;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\PaymentFormItem;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -236,6 +237,7 @@ class PaymentDetail extends Page
                                     ->label('Payment Fee Name'),
                                 TextEntry::make('amount')
                                     ->state(fn ($record) => $record->getFormattedFee()),
+                                ...PaymentFormItem::buildInfolistSchema($this->record->type),
                             ]),
                     ]),
                 Grid::make()

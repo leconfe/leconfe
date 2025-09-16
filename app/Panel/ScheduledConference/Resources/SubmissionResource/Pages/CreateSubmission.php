@@ -6,6 +6,7 @@ use App\Actions\Submissions\SubmissionCreateAction;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
+use App\Models\PaymentFormItem;
 use App\Models\Role;
 use App\Models\Submission;
 use App\Models\Timeline;
@@ -13,6 +14,7 @@ use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -75,22 +77,26 @@ class CreateSubmission extends Page implements HasForms
                     ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
                 TextInput::make('meta.title')
                     ->required(),
-                Radio::make('payment_fee_id')
-                    ->label('Payment Fee')
+                Grid::make(1)
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
-                    ->required()
-                    ->options(
-                        fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
-                            ->active()
-                            ->get()
-                            ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
-                    )
-                    ->descriptions(
-                        fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
-                            ->active()
-                            ->get()
-                            ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
-                    ),
+                    ->schema([
+                        Radio::make('payment_fee_id')
+                            ->label('Payment Fee')
+                            ->required()
+                            ->options(
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                            )
+                            ->descriptions(
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
+                            ),
+                        ...PaymentFormItem::buildFormSchema(PaymentManager::TYPE_SUBMISSION_FEE),
+                    ]),
                 Radio::make('track_id')
                     ->label(__('general.track'))
                     ->required()
@@ -202,7 +208,7 @@ class CreateSubmission extends Page implements HasForms
 
                 $paymentFee = PaymentFee::find($paymentFeeId);
 
-                $paymentQueue = $paymentManager->queue(
+                $payment = $paymentManager->queue(
                     $submission,
                     $paymentFee,
                     $submission->user,
@@ -213,6 +219,10 @@ class CreateSubmission extends Page implements HasForms
                     $paymentFee->amount,
                     $paymentFee->currency,
                 );
+
+                if(isset($data['form_responses'])){
+                    $payment->setMeta('form_responses', $data['form_responses']);
+                }
             }
 
             DB::commit();

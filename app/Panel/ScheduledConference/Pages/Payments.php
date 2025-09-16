@@ -9,6 +9,7 @@ use App\Panel\ScheduledConference\Livewire\InvoiceSetting;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\Payment\ManualPaymentSetting;
 use App\Panel\ScheduledConference\Livewire\PaymentFeeTable;
+use App\Panel\ScheduledConference\Livewire\PaymentFormItemTable;
 use App\Panel\ScheduledConference\Livewire\PaymentSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
 use Filament\Infolists\Components\Livewire;
@@ -85,13 +86,39 @@ class Payments extends Page
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Submission Fees')
                                             ->schema([
-                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
-                                                    ->key('submission_payment_fees'),
+                                                Tabs::make()
+                                                    ->contained(false)
+                                                    ->tabs([
+                                                        Tabs\Tab::make('Fees')
+                                                            ->schema([
+                                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
+                                                                    ->key('submission_payment_fees'),
+                                                            ]),
+                                                        Tabs\Tab::make('Form')
+                                                            ->schema([
+                                                                Livewire::make(PaymentFormItemTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
+                                                                    ->key('submission_payment_form_item'),
+
+                                                            ]),
+                                                    ])
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Participant Fees')
                                             ->schema([
-                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
-                                                    ->key('participant_payment_fees'),
+                                                Tabs::make()
+                                                    ->contained(false)
+                                                    ->tabs([
+                                                        Tabs\Tab::make('Fees')
+                                                            ->schema([
+                                                                Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
+                                                                    ->key('participant_payment_fees'),
+                                                            ]),
+                                                        Tabs\Tab::make('Form')
+                                                            ->schema([
+                                                                Livewire::make(PaymentFormItemTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
+                                                                    ->key('participant_payment_form_item'),
+
+                                                            ]),
+                                                    ]),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Invoice')
                                             ->schema([
