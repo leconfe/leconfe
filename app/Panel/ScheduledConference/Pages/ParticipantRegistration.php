@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Managers\PaymentManager;
 use App\Models\Participant;
 use App\Models\PaymentFee;
+use App\Models\PaymentFormItem;
 use App\Notifications\ParticipantPayment;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
@@ -90,22 +91,23 @@ class ParticipantRegistration extends Page implements HasForms
                         Select::make('meta.country')
                             ->label('Country')
                             ->searchable()
-                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                            ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->id => $country->flag . ' ' . $country->name]))
                             ->optionsLimit(250),
+                        ...PaymentFormItem::buildFormSchema(PaymentManager::TYPE_PARTICIPANT_FEE),
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
                             ->options(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
                             )
                             ->descriptions(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
+                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
                             ),
                     ]),
             ])
@@ -143,6 +145,8 @@ class ParticipantRegistration extends Page implements HasForms
             );
 
             $payment->save();
+
+            $payment->setMeta('form_responses', $data['form_responses']);
 
             $this->form->model($payment)->saveRelationships();
 
