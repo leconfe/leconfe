@@ -4,12 +4,12 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussi
 
 use App\Actions\Submissions\CreateDiscussionTopic;
 use App\Actions\Submissions\UpdateDiscussionTopic;
-use App\Models\Discussion;
 use App\Models\DiscussionTopic;
 use App\Models\Enums\SubmissionStage;
-use App\Models\Enums\UserRole;
+use App\Models\Participant;
 use App\Models\Review;
 use App\Models\Submission;
+use App\Models\SubmissionParticipant;
 use App\Models\User;
 use App\Notifications\NewDiscussionTopic;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
@@ -56,7 +56,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ->default([Auth::id()])
                     ->rules('required|array|min:2')
                     ->rules([
-                        fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) {
                             $reviewUserIds = $this->submission->reviews->pluck('user_id');
                             $participantUserIds = $this->submission->participants->pluck('user_id');
                             $users = User::query()
@@ -64,13 +64,13 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                                 ->whereIn('id', $value)
                                 ->lazy();
 
-                			$participantsToConsider = $blindReviewerCount = 0;
+                            $participantsToConsider = $blindReviewerCount = 0;
 
                             foreach ($users as $user) {
                                 // if participant has no role in this stage and is not a reviewer
-                                if(!$participantUserIds->contains($user->getKey()) && !$reviewUserIds->contains($user->getKey())){
+                                if (! $participantUserIds->contains($user->getKey()) && ! $reviewUserIds->contains($user->getKey())) {
                                     // ignore user, if participant is current user and the user can view without being an assigned user
-                                    if($user->is(auth()->user()) && $user->can('Submission:view')){
+                                    if ($user->is(auth()->user()) && $user->can('Submission:view')) {
                                         continue;
                                     } else {
                                         $fail(__('general.discussion_not_submission_participant'));
@@ -80,13 +80,13 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                                 $blindReviewer = false;
                                 // is participant a blind reviewer
                                 $review = $this->submission->reviews->where('user_id', $user->getKey())->first();
-                                if($review && $review->getMeta('review_mode') !== Review::MODE_OPEN){
+                                if ($review && $review->getMeta('review_mode') !== Review::MODE_OPEN) {
                                     $blindReviewer = true;
                                     $blindReviewerCount++;
                                 }
 
                                 // if participant is not a blind reviewer and has a role different than editor or assistant
-                                if (!$blindReviewer && !$user->can('actAsEditor', $this->submission)) {
+                                if (! $blindReviewer && ! $user->can('actAsEditor', $this->submission)) {
                                     $participantsToConsider++;
                                 }
 
@@ -100,26 +100,39 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ])
                     ->options(function () {
 
-                        $reviewUsers = $this->submission->reviews()
-                            ->with(['user.meta'])
-                            ->get()
-                            ->mapWithKeys(fn(Review $review) => [$review->user->getKey() => $review->user->fullName . ' (' . $review->reviewMode . ')']);
+                        $this->submission->load([
+                            'reviews' => ['meta','user.meta'],
+                            'participants' => ['user.meta', 'role'],
+                        ]);
 
-                        $participantUsers = $this->submission->participants()
-                            ->with(['user.meta', 'role'])
-                            ->get()
-                            ->mapWithKeys(fn($participant) => [$participant->user->getKey() => $participant->user->fullName . ' (' . $participant->role->name . ')']);
+                        $users = collect();
+                        $participantUsers = $this->submission->participants
+                            ->filter(function (SubmissionParticipant $participant) {
 
+                                $review = $this->submission->reviews->where('user_id', Auth::id())->first();
 
-                        $mergedUsers = $participantUsers->union($reviewUsers);
+                                if ($review && $review->getMeta('review_mode') != Review::MODE_OPEN && $this->submission->isAuthor($participant->user)) {
+                                    return false;
+                                }
 
-                        if (! isset($mergedUsers[Auth::id()])) {
-                            $mergedUsers[Auth::id()] = Auth::user()->fullName . ' (Unassigned)';
+                                return true;
+                            })
+                            ->mapWithKeys(fn ($participant) => [$participant->user->getKey() => $participant->user->fullName.' ('.$participant->role->name.')']);
+
+                        $users = $users->union($participantUsers);
+
+                        $reviewUsers = $this->submission->reviews
+                            ->when($this->submission->isAuthor(Auth::user()) || $this->submission->isReviewer(Auth::user()), fn ($reviews) => $reviews->filter(fn ($review) => $review->user->is(Auth::user()) ?: $review->getMeta('review_mode') == Review::MODE_OPEN))
+                            ->mapWithKeys(fn (Review $review) => [$review->user->getKey() => $review->user->fullName.' ('.$review->reviewMode.')']);
+
+                        $users = $users->union($reviewUsers);
+
+                        if (! isset($users[Auth::id()])) {
+                            $users[Auth::id()] = Auth::user()->fullName.' (Unassigned)';
                         }
 
-                        return $mergedUsers;
-                    })
-                    ->rule(function () {})
+                        return $users;
+                    }),
             ]);
     }
 
@@ -130,8 +143,8 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
             ->where('submission_id', $this->submission->getKey())
             ->where('stage', $this->stage)
             ->when(
-                !auth()->user()->can('actAsEditor', $this->submission),
-                fn($query) => $query->whereHas('participants', fn($query) => $query->where('user_id', auth()->user()->getKey()))
+                ! auth()->user()->can('actAsEditor', $this->submission),
+                fn ($query) => $query->whereHas('participants', fn ($query) => $query->where('user_id', auth()->user()->getKey()))
             );
     }
 
@@ -139,7 +152,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
     {
         return $table
             ->heading(__('general.discussion'))
-            ->query(fn() => $this->getEloquentQuery())
+            ->query(fn () => $this->getEloquentQuery())
             ->recordAction('open-discussion-detail')
             ->actions([
                 ActionGroup::make([
@@ -147,7 +160,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                         ->icon('lineawesome-eye-solid')
                         ->label(__('general.details'))
                         ->modalWidth('6xl')
-                        ->modalHeading(fn(Model $discussionTopic): string => __('general.discussion_for_topic', ['variable' => $discussionTopic->name]))
+                        ->modalHeading(fn (Model $discussionTopic): string => __('general.discussion_for_topic', ['variable' => $discussionTopic->name]))
                         ->modalSubmitAction(false)
                         ->infolist(function (Model $discussionTopic) {
                             return [
@@ -176,8 +189,8 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                                 'user_id' => $record->participants()->pluck('user_id')->toArray(),
                             ]);
                         })
-                        ->authorize(fn($record) => auth()->user()->can('update', $record))
-                        ->form(fn(Form $form) => $this->form($form))
+                        ->authorize(fn ($record) => auth()->user()->can('update', $record))
+                        ->form(fn (Form $form) => $this->form($form))
                         ->successNotificationTitle(__('general.topic_updated_successfully'))
                         ->action(function (Action $action, array $data, Model $record) {
                             UpdateDiscussionTopic::run(
@@ -188,10 +201,10 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                             $action->success();
                         }),
                     Action::make('close')
-                        ->authorize(fn($record) => auth()->user()->can('close', $record))
-                        ->label(fn($record): string => $record->open ? __('general.close') : __('general.open'))
-                        ->color(fn($record): string => $record->open ? 'warning' : 'success')
-                        ->icon(fn($record): string => $record->open ? 'lineawesome-lock-solid' : 'lineawesome-unlock-solid')
+                        ->authorize(fn ($record) => auth()->user()->can('close', $record))
+                        ->label(fn ($record): string => $record->open ? __('general.close') : __('general.open'))
+                        ->color(fn ($record): string => $record->open ? 'warning' : 'success')
+                        ->icon(fn ($record): string => $record->open ? 'lineawesome-lock-solid' : 'lineawesome-unlock-solid')
                         ->requiresConfirmation()
                         ->successNotificationTitle(__('general.topic_updated_successfully'))
                         ->action(function (Action $action, $record) {
@@ -209,7 +222,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ->outlined()
                     ->label(__('general.topic'))
                     ->modalWidth('xl')
-                    ->form(fn($form) => $this->form($form))
+                    ->form(fn ($form) => $this->form($form))
                     ->successNotificationTitle(__('general.topic_created_successfully'))
                     ->failureNotificationTitle(__('general.topic_createtion_failed'))
                     ->action(function (Action $action, array $data, Form $form) {
@@ -246,13 +259,13 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ->label(__('general.name'))
                     ->suffixBadges([
                         Badge::make('status')
-                            ->label(fn($record) => $record->open ? __('general.open') : __('general.closed'))
-                            ->color(fn($record) => $record->open ? 'success' : 'danger'),
+                            ->label(fn ($record) => $record->open ? __('general.open') : __('general.closed'))
+                            ->color(fn ($record) => $record->open ? 'success' : 'danger'),
                     ]),
                 TextColumn::make('Last Update')
                     ->label(__('general.last_update'))
-                    ->getStateUsing(fn($record) => $record->getLastSender()?->fullName ?? '-')
-                    ->description(fn($record): ?string => $record->getLastUpdate()),
+                    ->getStateUsing(fn ($record) => $record->getLastSender()?->fullName ?? '-')
+                    ->description(fn ($record): ?string => $record->getLastUpdate()),
             ]);
     }
 
