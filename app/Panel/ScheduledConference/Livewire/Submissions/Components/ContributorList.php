@@ -139,16 +139,8 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             name: 'role',
                             titleAttribute: 'name',
                         )
-                        ->createOptionForm(fn ($form) => AuthorRoleResource::form($form))
-                        ->createOptionAction(
-                            fn (FormAction $action) => $action->color('primary')
-                                ->modalWidth('xl')
-                                ->modalHeading(__('general.create_author_role'))
-                        )
-                        ->preload()
                         ->required()
-                        ->columnSpanFull()
-                        ->searchable(),
+                        ->columnSpanFull(),
                     ...ContributorForm::additionalFormField(),
                     Checkbox::make('primary_contact'),
                 ])
