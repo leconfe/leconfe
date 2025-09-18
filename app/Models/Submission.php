@@ -363,4 +363,14 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
 
         return $message;
     }
+
+    public function isReviewer(User $user) : bool
+    {
+        return $this->reviews->where('user_id', $user->getKey())->isNotEmpty();
+    }
+
+    public function isAuthor(User $user) : bool
+    {
+        return $this->user->is($user);
+    }
 }
