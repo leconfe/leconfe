@@ -266,6 +266,8 @@ class Role extends Model
                 UserRole::Reviewer->value => [
                     'Submission:review',
                     'Submission:viewAny',
+                    'DiscussionTopic:create',
+                    'DiscussionTopic:update',
                 ],
                 UserRole::Reader->value => [],
             ];
