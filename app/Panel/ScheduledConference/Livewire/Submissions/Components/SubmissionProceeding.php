@@ -120,6 +120,8 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                     ->required()
                     ->relationship('track', 'title')
                     ->label(__('general.track')),
+                TextInput::make('meta.isbn')
+                    ->label("ISBN"),
                 SpatieMediaLibraryFileUpload::make('media.cover')
                     ->label(__('general.cover_image'))
                     ->collection('cover')
