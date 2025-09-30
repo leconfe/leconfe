@@ -96,6 +96,7 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
                             TinyEditor::make('html_template')
                                 ->label(__('general.body'))
                                 ->minHeight(500)
+                                ->setRelativeUrls(true)
                                 ->required()
                                 ->profile('email')
                                 ->rules('required'),
