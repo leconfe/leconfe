@@ -2,13 +2,16 @@
 
 namespace App\Forms\Components;
 
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor as BaseTinyEditor;
+use AmidEsfahani\FilamentTinyEditor\TinyEditor as BaseTinyEditor;
 
 class TinyEditor extends BaseTinyEditor
 {
     protected string $toolbar = '';
 
     protected string $plugins = '';
+
+    protected int $minWidth = 300;
+    protected int $minHeight = 300;
 
     public function toolbar(string $toolbar)
     {

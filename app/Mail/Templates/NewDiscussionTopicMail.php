@@ -3,6 +3,7 @@
 namespace App\Mail\Templates;
 
 use App\Models\DiscussionTopic;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class NewDiscussionTopicMail extends TemplateMailable
 {
@@ -14,9 +15,11 @@ class NewDiscussionTopicMail extends TemplateMailable
 
     public function __construct(DiscussionTopic $discussionTopic)
     {
-        $this->topicName = $discussionTopic->name;
-        $this->submissionTitle = $discussionTopic->submission->getMeta('title');
-        $this->linkLogin = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Submission Title' => $discussionTopic->submission->getMeta('title'),
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $discussionTopic->submission]),
+            'Topic Name' =>  $discussionTopic->name,
+        ]);
     }
 
     public static function getDefaultSubject(): string
@@ -36,14 +39,14 @@ class NewDiscussionTopicMail extends TemplateMailable
          <table>
                 <tr>
                     <td style="width:100px;">Submission</td>
-                    <td>: {{ submissionTitle }}</td>
+                    <td>: {{ Submission Title }}</td>
                 </tr>
                 <tr>
                     <td style="width:100px;">Topic</td>
-                    <td>: {{ topicName }}</td>
+                    <td>: {{ Topic Name }}</td>
                 </tr>
             </table>
-            <p>To access additional information, You can <a href="{{ linkLogin }}" target="_blank">login here</a></p>
+            <p><a href="{{ Submission URL }}" target="_blank">Click here</a> to access the discussion.</p>
         HTML;
     }
 }

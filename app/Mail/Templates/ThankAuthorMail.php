@@ -4,26 +4,22 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class ThankAuthorMail extends TemplateMailable
 {
-    public string $author;
-
-    public string $title;
-
-    public string $conferenceName;
-
-    public string $loginLink;
-
     public Log $log;
 
     public function __construct(Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->author = $submission->user->fullName;
-        $this->conferenceName = $submission->conference->name;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
-
+        $this->setAdditionalData([
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission ID' => $submission->getKey(),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
+        
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
@@ -33,7 +29,7 @@ class ThankAuthorMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Thank you for your submission to {{ conferenceName }}';
+        return 'Thank you for your submission to {{ Conference Title }}';
     }
 
     public static function getDefaultDescription(): string
@@ -44,21 +40,10 @@ class ThankAuthorMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ author }},</p>
-            <p>Thank you for your recent submission to the Leconfe System for the {{ conferenceName }}. We appreciate your interest in participating in our conference.</p>
-
-            <p>Submission Details:</p>
-
-            <table>
-                <tr>
-                    <td style="width: 100px">Title</td>
-                    <td>:</td>
-                    <td>{{ title }}</td>
-                </tr>
-            </table>
-
-            <p>We have received your submission and it is currently being reviewed by our team. You will be notified of the outcome of the review process in due course.</p>
-
+            <p>Dear {{ Submission Author }},</p>
+            <p>Thank you for your recent submission with title "{{ Submission Title }}" to {{ Conference Title }}. We appreciate your interest in participating in our conference.</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
+            <p>We have received your submission and it will be reviewed by our team. You will be notified of the outcome of the review process in due course.</p>
             <p>If you have any questions or need further information, please do not hesitate to contact us.</p>
         HTML;
     }

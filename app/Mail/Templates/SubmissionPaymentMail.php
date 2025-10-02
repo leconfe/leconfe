@@ -12,7 +12,7 @@ class SubmissionPaymentMail extends TemplateMailable
     {
         $this->setAdditionalData([
             'Conference Title' => $submission->payment->scheduledConference->title,
-            'Full Name' => $submission->user->full_name,
+            'Submission Author' => $submission->user->full_name,
             'Submission Title' => $submission->getMeta('title'),
             'Submission ID' => $submission->getKey(),
             'Payment Amount' => $submission->payment->getFormattedFee(),
@@ -28,7 +28,7 @@ class SubmissionPaymentMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ Full Name }},</p>
+            <p>Dear {{ Submission Author }},</p>
             <p>We would like to inform you that a payment requirement has been added to your submission for {{ Conference Title }}.</p>
             <p>Submission Details:</p>
             <ul>

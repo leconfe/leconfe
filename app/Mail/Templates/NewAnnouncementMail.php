@@ -7,12 +7,6 @@ use App\Models\Announcement;
 
 class NewAnnouncementMail extends TemplateMailable
 {
-    public string $title;
-
-    public string $content;
-
-    public string $announcementUrl;
-
     public Log $log;
 
     /**
@@ -20,10 +14,11 @@ class NewAnnouncementMail extends TemplateMailable
      */
     public function __construct(Announcement $announcement)
     {
-        $this->title = $announcement->title;
-        $this->content = $announcement->getMeta('content');
-        $this->announcementUrl = $announcement->getUrl();
-
+        $this->setAdditionalData([
+            'Announcement Title' => $announcement->title,
+            'Announcement Summary' => $announcement->getMeta('summary'),
+            'Announcement URL' => $announcement->getUrl(),
+        ]);
         $this->log = Log::make(
             name: 'email',
             subject: $announcement,
@@ -33,14 +28,14 @@ class NewAnnouncementMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return '{{ title }}';
+        return '{{ Announcement Title }}';
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-        {{{  content  }}}
-        <p>Click <a href="{{ announcementUrl }}">here</a> to read the full announcement.</p>
+        {{{  Announcement Summary  }}}
+        <p>Click <a href="{{ Announcement URL }}">here</a> to read the full announcement.</p>
         HTML;
     }
 

@@ -4,16 +4,20 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class SubmissionWithdrawnRequestMail extends TemplateMailable
 {
-    public string $title;
-
     public Log $log;
 
     public function __construct(Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
 
         $this->log = Log::make(
             name: 'email',
@@ -35,7 +39,8 @@ class SubmissionWithdrawnRequestMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>This is an automated notification. We wanted to inform you that your submission titled "{{ title }}" has been requested to be withdrawn.</p>
+            <p>We wanted to inform you that the submission "{{ Submission Title }}" has been requested to be withdrawn.</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
         HTML;
     }
 }

@@ -58,10 +58,6 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                         new ThankAuthorMail($this->record)
                     );
 
-                    User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
-                        ->lazy()
-                        ->each(fn($user) => $user->notify(new NewSubmission($this->record)));
-
                     $trackRole = Role::where('name', UserRole::TrackEditor)->first();
 
                     if (! empty($this->record->track->getMeta('track_editors'))) {
@@ -70,6 +66,10 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->whereIn('id', $this->record->track->getMeta('track_editors'))
                             ->lazy()
                             ->each(fn($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
+                    } else {
+                        User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
+                            ->lazy()
+                            ->each(fn($user) => $user->notify(new NewSubmission($this->record)));
                     }
 
                     if ($this->record->payment) {

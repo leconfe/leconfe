@@ -5,24 +5,23 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class RevisionRequestMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
 
-    public string $title;
-
-    public string $loginLink;
-
-    public string $name;
-
     public Log $log;
 
     public function __construct(protected Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->name = $submission->user->full_name;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission ID' => $submission->getKey(),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
 
         $this->log = Log::make(
             name: 'email',
@@ -33,7 +32,7 @@ class RevisionRequestMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Revision Requested for {{ title }}';
+        return 'Revision Requested for {{ Submission Title }}';
     }
 
     public static function getDefaultDescription(): string
@@ -44,18 +43,9 @@ class RevisionRequestMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ name }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that your submission has been requested for revision.</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ title }}</td>
-                </tr>
-            </table>
-            <p>
-                Please <a href="{{ loginLink }}"> log in</a> to the system to proceed with the revision process.
-            </p>
+            <p>Dear {{ Submission Author }},</p>
+            <p>Your submission with title "{{ Submission Title }}" on  has been requested to be <b>Revised</b></p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a> and upload your submission revision.</p>
         HTML;
     }
 }

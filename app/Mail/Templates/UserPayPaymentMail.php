@@ -14,7 +14,6 @@ class UserPayPaymentMail extends TemplateMailable
     {
         $this->setAdditionalData([
             'Conference Title' => $payment->scheduledConference->title,
-            'Full Name' => $payment->type == PaymentManager::TYPE_SUBMISSION_FEE ? $payment->user->full_name : $payment->model->full_name,
             'Payment Amount' => $payment->getFormattedFee(),
             'Payment Link' => PaymentDetail::getUrl(['record' => $payment]),
             'Payment Fee Name' => $payment->fee->name,

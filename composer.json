@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.1",
         "ext-gd": "*",
+        "amidesfahani/filament-tinyeditor": "^3.0",
         "awcodes/filament-badgeable-column": "^2.3",
         "awcodes/shout": "^2.0",
         "calebporzio/sushi": "^2.4",
@@ -35,7 +36,6 @@
         "luizbills/css-generator": "^4.0",
         "matthieumastadenis/couleur": "^0.1.2",
         "mchev/banhammer": "^2",
-        "mohamedsabil83/filament-forms-tinyeditor": "^2.0",
         "plank/laravel-metable": "^5.4",
         "propaganistas/laravel-disposable-email": "^2.2",
         "propaganistas/laravel-phone": "^5.0",
