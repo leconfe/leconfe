@@ -13,6 +13,13 @@ class TinyEditor extends BaseTinyEditor
     protected int $minWidth = 300;
     protected int $minHeight = 300;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setRelativeUrls(true);
+    }
+
     public function toolbar(string $toolbar)
     {
         $this->toolbar = $toolbar;
