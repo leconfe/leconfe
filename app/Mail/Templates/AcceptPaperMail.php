@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class AcceptPaperMail extends TemplateMailable
 {
@@ -20,9 +21,13 @@ class AcceptPaperMail extends TemplateMailable
 
     public function __construct(protected Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->authorName = $submission->user->fullName;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission ID' => $submission->getKey(),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
 
         $this->log = Log::make(
             name: 'email',
@@ -33,7 +38,8 @@ class AcceptPaperMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Paper Accepted: {{ title }}';
+        return 'Your submission {{ Submission Title }} on {{ Conference Title }} is accepted.';
+
     }
 
     public static function getDefaultDescription(): string
@@ -44,15 +50,10 @@ class AcceptPaperMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ authorName }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that your submission paper has been accepted.</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ title }}</td>
-                </tr>
-            </table>
-        HTML;
+            <p>Dear {{ Submission Author }},</p>
+            <p>We have reached a decision regarding your submission with title "{{ Submission Title }}"  to {{ Conference Title }}</p>
+            <p>Our decision is to <b>accept the submission</b>.</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
+    HTML;
     }
 }

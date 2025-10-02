@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Review;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Carbon\Carbon;
 
 class ReviewerInvitationMail extends TemplateMailable
@@ -28,16 +29,16 @@ class ReviewerInvitationMail extends TemplateMailable
     public function __construct(Review $review)
     {
         $submission = $review->submission;
-        $scheduledConference = $submission->scheduledConference;
 
-        $this->name = $review->user->fullName;
-        $this->submissionTitle = $review->submission->getMeta('title');
-
-        $this->responseDueDate = Carbon::parse($review->getMeta('response_due_date'))->format('d F Y');
-        $this->reviewDueDate = Carbon::parse($review->getMeta('review_due_date'))->format('d F Y');
-
-        $this->loginLink = route('filament.scheduledConference.pages.dashboard', ['scheduledConference' => $scheduledConference, 'conference' => $scheduledConference->conference]);
-
+        $this->setAdditionalData([
+            'Reviewer Name' => $review->user->fullName,
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission Invitation URL' => SubmissionResource::getUrl('reviewer-invitation', ['record' => $submission]),
+            'Response Due Date' => Carbon::parse($review->getMeta('response_due_date'))->format('d F Y'),
+            'Review Due Date' => Carbon::parse($review->getMeta('review_due_date'))->format('d F Y'),
+        ]);
+        
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
@@ -58,29 +59,15 @@ class ReviewerInvitationMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ name }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that you have been assigned as a reviewer for the following submission:</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ submissionTitle }}</td>
-                </tr>
-            </table>
-            And here is the review details:
-            <table>
-                <tr>
-                    <td>Response Due Date</td>
-                    <td>:</td>
-                    <td>{{ responseDueDate }}</td>
-                </tr>
-                <tr>
-                    <td>Review Due Date</td>
-                    <td>:</td>
-                    <td>{{ reviewDueDate }}</td>
-                </tr>
-            </table>
-            <p>Please <a href="{{ loginLink }}"> log in</a> to the system to proceed with the evaluation process.</p>
+            <p>Dear {{ Reviewer Name }},</p>
+
+            <p>I would like to invite you to review the paper "{{ Submission Title }}," which has been submitted to {{ Conference Title }}.</p>
+
+            <p>Please log into the conference website by {{ Response Due Date }} to indicate whether you are able to undertake the review. Through the site, you can access the submission, record your review, and provide your recommendation: {{ Submission Invitation URL }}</p>
+
+            <p>The completed review is due by {{ Review Due Date }}.</p>
+
+            <p>Thank you very much for considering this request.</p>
         HTML;
     }
 }

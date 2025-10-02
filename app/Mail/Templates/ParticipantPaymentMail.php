@@ -13,7 +13,7 @@ class ParticipantPaymentMail extends TemplateMailable
     {
         $this->setAdditionalData([
             'Conference Title' => $participant->payment->scheduledConference->title,
-            'Full Name' => $participant->full_name,
+            'Participant Name' => $participant->full_name,
             'Payment Amount' => $participant->payment->getFormattedFee(),
             'Payment Link' => PaymentDetail::getUrl(['record' => $participant->payment]),
             'Payment Fee Name' => $participant->payment->fee->name,
@@ -28,7 +28,7 @@ class ParticipantPaymentMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ Full Name }},</p>
+            <p>Dear {{ Participant Name }},</p>
             <p>We would like to inform you that a payment requirement has been added to your participant registration for {{ Conference Title }}.</p>
             <p>Participant Payment Details:</p>
             <ul>

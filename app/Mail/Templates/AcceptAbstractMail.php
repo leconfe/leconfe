@@ -5,24 +5,23 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class AcceptAbstractMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
 
-    public string $title;
-
-    public string $author;
-
-    public string $loginLink;
-
     public Log $log;
 
     public function __construct(Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->author = $submission->user->fullName;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->payment->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission ID' => $submission->getKey(),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
 
         $this->log = Log::make(
             name: 'email',
@@ -33,35 +32,21 @@ class AcceptAbstractMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Abstract Accepted';
+        return 'Your submission {{ Submission Title }} has entered the review stage';
     }
 
     public static function getDefaultDescription(): string
     {
-        return 'This is an automated notification from System to inform you about a new submission.';
+        return 'Abstract Accepted and Send to Review';
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-
         return <<<'HTML'
-            <p> This is an automated notification from the Leconfe System to inform you about a new submission.</p>
-            <p>
-                Submission Details:
-            </p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ title }}</td>
-                </tr>
-                <tr>
-                    <td style="width:100px;">Author</td>
-                    <td>:</td>
-                    <td>{{ author }}</td>
-                </tr>
-            </table>
-            <p>The submission is now available for your review and can be accessed through the System using your login credentials. Please <a href="{{ loginLink }}">log in</a> to the system to proceed with the evaluation process.</p>
-        HTML;
+            <p>Dear {{ Submission Author }},</p>
+            <p>We have reached a decision regarding your submission with title "{{ Submission Title }}"  to {{ Conference Title }}</p>
+            <p>Our decision is to <b>proceed your submission to review stage.</b></p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
+    HTML;
     }
 }

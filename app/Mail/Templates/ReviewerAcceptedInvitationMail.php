@@ -4,19 +4,19 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\Review;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class ReviewerAcceptedInvitationMail extends TemplateMailable
 {
-    public string $reviewer;
-
-    public string $submissionTitle;
-
     public Log $log;
 
     public function __construct(Review $review)
     {
-        $this->reviewer = $review->user->fullName;
-        $this->submissionTitle = $review->submission->getMeta('title');
+        $this->setAdditionalData([
+            'Reviewer Name' => $review->user->fullName,
+            'Submission Title' => $review->submission->getMeta('title'),
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $review->submission]),
+        ]);
 
         $this->log = Log::make(
             name: 'email',
@@ -38,7 +38,8 @@ class ReviewerAcceptedInvitationMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>This is a automatic notification to let you know that {{ reviewer }} has accepted the invitation to review the submission titled "{{ submissionTitle }}".</p>
+            <p>Reviewer {{ Reviewer Name }} has accepted the invitation to review the submission {{ Submission Title }}</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
         HTML;
     }
 }

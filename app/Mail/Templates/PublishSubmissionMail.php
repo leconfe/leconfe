@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class PublishSubmissionMail extends TemplateMailable
 {
@@ -20,9 +21,12 @@ class PublishSubmissionMail extends TemplateMailable
 
     public function __construct(protected Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->authorName = $submission->user->fullName;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->payment->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
 
         $this->log = Log::make(
             subject: $submission,
@@ -44,18 +48,9 @@ class PublishSubmissionMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ authorName }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that your submission has been published.</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ title }}</td>
-                </tr>
-            </table>
-            <p>
-                You can <a href="{{ loginLink }}">log in</a> to the system to see the details of the submission.
-            </p>
+            <p>Dear {{ Submission Author }},</p>
+            <p>Your submission "{{ Submission Title }}" has been published on {{ Conference Title }}</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
         HTML;
     }
 }

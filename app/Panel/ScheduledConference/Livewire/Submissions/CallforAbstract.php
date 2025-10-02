@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions;
 use App\Constants\SubmissionFileCategory;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptAbstractMail;
+use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
@@ -24,6 +25,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -63,7 +65,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->disabled()
-                            ->formatStateUsing(fn (Submission $record): string => $record->user->email),
+                            ->formatStateUsing(fn(Submission $record): string => $record->user->email),
                         TextInput::make('subject')
                             ->label(__('general.subject'))
                             ->required(),
@@ -77,7 +79,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                     ]),
             ])
             ->successNotificationTitle(__('general.submission_declined'))
-            ->successRedirectUrl(fn (): string => SubmissionResource::getUrl('view', ['record' => $this->submission]))
+            ->successRedirectUrl(fn(): string => SubmissionResource::getUrl('view', ['record' => $this->submission]))
             ->action(function (Action $action, array $data) {
                 $this->submission->state()->decline();
 
@@ -118,10 +120,53 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->icon('lineawesome-check-circle-solid')
             ->color('gray')
             ->outlined()
-            ->requiresConfirmation()
+            ->mountUsing(function (Form $form) {
+                $mailTemplate = DefaultMailTemplate::where('mailable', AcceptPaperMail::class)->first();
+                $form->fill([
+                    'email' => $this->submission->user->email,
+                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
+                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                ]);
+            })
+            ->form([
+                Fieldset::make('Notification')
+                    ->label(__('general.notification'))
+                    ->columns(1)
+                    ->schema([
+                        TextInput::make('email')
+                            ->label(__('general.email'))
+                            ->readOnly()
+                            ->dehydrated(),
+                        TextInput::make('subject')
+                            ->label(__('general.subject'))
+                            ->required(),
+                        TinyEditor::make('message')
+                            ->label(__('general.message'))
+                            ->minHeight(300)
+                            ->profile('email')
+                            ->columnSpanFull(),
+                        Checkbox::make('do-not-notify-author')
+                            ->label(__('general.dont_send_notification_to_author'))
+                            ->columnSpanFull(),
+                    ]),
+            ])
             ->extraAttributes(['class' => 'w-full'])
-            ->action(function (Action $action) {
+            ->action(function (Action $action, array $data) {
                 $this->submission->state()->acceptAndSkipReview();
+
+                if (! $data['do-not-notify-author']) {
+                    try {
+                        Mail::to($this->submission->user->email)
+                            ->send(
+                                (new AcceptPaperMail($this->submission))
+                                    ->subjectUsing($data['subject'])
+                                    ->contentUsing($data['message'])
+                            );
+                    } catch (\Exception $e) {
+                        $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
+                        $action->failure();
+                    }
+                }
 
                 $action->successRedirectUrl(
                     SubmissionResource::getUrl('view', [
@@ -167,7 +212,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                     $paper->getKey() => new HtmlString(
                                         Action::make($paper->media->file_name)
                                             ->label($paper->media->file_name)
-                                            ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
+                                            ->url(fn() => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                             ->link()
                                             ->toHtml()
                                     ),
@@ -197,7 +242,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->disabled()
-                            ->formatStateUsing(fn (Submission $record): string => $record->user->email),
+                            ->formatStateUsing(fn(Submission $record): string => $record->user->email),
                         TextInput::make('subject')
                             ->label(__('general.subject'))
                             ->required(),

@@ -5,22 +5,22 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Review;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class ReviewerCancelationMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
 
-    public string $name;
-
-    public string $submissionTitle;
-
     public Log $log;
 
     public function __construct(Review $review)
     {
-        $this->name = $review->user->fullName;
-        $this->submissionTitle = $review->submission->getMeta('title');
-
+        $this->setAdditionalData([
+            'Reviewer Name' => $review->user->fullName,
+            'Conference Title' => $review->submission->scheduledConference->title,
+            'Submission Title' => $review->submission->getMeta('title'),
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $review->submission]),
+        ]);
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
@@ -41,18 +41,9 @@ class ReviewerCancelationMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ name }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that you have been cancelled as a reviewer for the following submission:</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ submissionTitle }}</td>
-                </tr>
-            </table>
-            <p>
-                Thank you for your interest in reviewing for the Leconfe System. We hope that you will consider reviewing for us again in the future.
-            </p>
+            <p>Dear {{ Reviewer Name }},</p>
+            <p>We have decided to withdraw our request for you to review the submission, "{{ Submission Title }}," for {{ Conference Title }}.</p>
+            <p>We apologize for any inconvenience and truly hope to have the opportunity to invite you to assist with the review process of future conferences.</p>
         HTML;
     }
 }

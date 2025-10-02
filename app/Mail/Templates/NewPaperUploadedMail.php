@@ -4,6 +4,7 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\SubmissionFile;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 /**
  * If the author has already uploaded a new paper, please notify the editor.
@@ -18,9 +19,11 @@ class NewPaperUploadedMail extends TemplateMailable
 
     public function __construct(SubmissionFile $submissionFile)
     {
-        $this->submissionTitle = $submissionFile->submission->getMeta('title');
-        $this->uploader = $submissionFile->submission->user->fullName;
-
+        $this->setAdditionalData([
+            'Submission Title' => $submissionFile->submission->getMeta('title'),
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submissionFile->submission]),
+        ]);
+        
         $this->log = Log::make(
             name: 'email',
             subject: $submissionFile->submission,
@@ -41,7 +44,7 @@ class NewPaperUploadedMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>This is a automatic notification to let you know that "{{ uploader }}" has uploaded a new paper for the submission titled "{{ submissionTitle }}".</p>
+            <p>There's a new paper uploaded on {{ Submission Title }}, <a href="{{ Submission URL }}">click here</a> to access the submission.</p>
         HTML;
     }
 }

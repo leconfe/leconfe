@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\SubmissionParticipant;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class ParticipantAssignedMail extends TemplateMailable
 {
@@ -23,6 +24,15 @@ class ParticipantAssignedMail extends TemplateMailable
         $this->submissionTitle = $participant->submission->getMeta('title');
         $this->name = $participant->user->fullName;
         $this->position = $participant->role->name;
+
+        $this->setAdditionalData([
+            'Participant Name' => $participant->user->fullName,
+            'Participant Role' => $participant->role->name,
+            'Conference Title' => $participant->submission->scheduledConference->title,
+            'Submission Title' => $participant->submission->getMeta('title'),
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $participant->submission]),
+        ]);
+        
 
         $this->log = Log::make(
             name: 'email',
@@ -44,23 +54,10 @@ class ParticipantAssignedMail extends TemplateMailable
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p>Dear {{ name }},</p>
-            <p>This is an automated notification from the Leconfe System to inform you that you have been assigned as a participant for the following submission:</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ submissionTitle }}</td>
-                </tr>
-                <tr>
-                    <td style="width:100px;">Position</td>
-                    <td>:</td>
-                    <td>{{ position }}</td>
-                </tr>
-            </table>
-            <p>
-                You can <a href="{{ loginLink }}">log in</a> to the system to see the details of the submission.
-            </p>
+            <p>Dear {{ Participant Name }},</p>
+            <p>You have been assigned as {{ Participant Role }} for "{{ Submission Title }}" on {{ Conference Title }}.</p>
+            <p>Please guide the submission through the editorial process.</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
         HTML;
     }
 }

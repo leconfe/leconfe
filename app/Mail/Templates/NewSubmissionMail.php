@@ -4,22 +4,22 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class NewSubmissionMail extends TemplateMailable
 {
-    public string $title;
-
-    public string $author;
-
-    public string $loginLink;
-
     public Log $log;
 
     public function __construct(Submission $submission)
     {
-        $this->title = $submission->getMeta('title');
-        $this->author = $submission->user->fullName;
-        $this->loginLink = route('livewirePageGroup.website.pages.login');
+        $this->setAdditionalData([
+            'Conference Title' => $submission->scheduledConference->title,
+            'Submission Title' => $submission->getMeta('title'),
+            'Submission ID' => $submission->getKey(),
+            'Submission Author' => $submission->user->fullName,
+            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
+        ]);
+
 
         $this->log = Log::make(
             name: 'email',
@@ -30,27 +30,26 @@ class NewSubmissionMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'New Submission: {{ title }}';
+        return 'New Submission: {{ Submission Title }} from {{ Conference Title }}.';
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
-            <p> This is an automated notification from the Leconfe System to inform you about a new submission.</p>
-            Submission Details:
+            <p> A new article has been submitted and requires an editor assignment.</p>
             <table>
                 <tr>
                     <td style="width:100px;">Title</td>
                     <td>:</td>
-                    <td>{{ title }}</td>
+                    <td>{{ Submission Title }}</td>
                 </tr>
                 <tr>
                     <td style="width:100px;">Author</td>
                     <td>:</td>
-                    <td>{{ author }}</td>
+                    <td>{{ Submission Author }}</td>
                 </tr>
             </table>
-            <p>The submission is now available for your review and can be accessed through the System using your login credentials. Please <a href="{{ loginLink }}">log in</a> to the system to proceed with the evaluation process.</p>
+            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
         HTML;
     }
 
