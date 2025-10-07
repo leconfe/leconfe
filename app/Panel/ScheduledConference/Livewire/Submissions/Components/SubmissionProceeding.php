@@ -42,6 +42,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
         $this->form->fill([
             'meta' => [
                 'article_pages' => $this->submission->getMeta('article_pages'),
+                'isbn' => $this->submission->getMeta('isbn'),
             ],
         ]);
     }
