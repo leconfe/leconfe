@@ -401,7 +401,7 @@ class SubmissionPolicy
     public function preview(User $user, Submission $submission)
     {
         $editorIds = $submission->participants()
-            ->whereHas('role', fn (Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor]))
+            ->whereHas('role', fn (Builder $query) => $query->withoutGlobalScopes()->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor]))
             ->pluck('user_id');
 
         if (in_array($user->getKey(), $editorIds->toArray())) {
