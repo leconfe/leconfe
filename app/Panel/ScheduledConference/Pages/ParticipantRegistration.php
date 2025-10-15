@@ -146,7 +146,9 @@ class ParticipantRegistration extends Page implements HasForms
 
             $payment->save();
 
-            $payment->setMeta('form_responses', $data['form_responses']);
+            if (data_get($data, 'form_responses')) {
+                $payment->setMeta('form_responses', $data['form_responses']);
+            }
 
             $this->form->model($payment)->saveRelationships();
 
