@@ -4,36 +4,38 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Models\Submission;
+use App\Models\SubmissionFormItem;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 
-class References extends \Livewire\Component implements HasForms
+class AdditionalData extends \Livewire\Component implements HasForms
 {
     use InteractsWithForms;
 
     public Submission $submission;
 
-    public array $meta = [];
+    public array $data = [];
 
     public function mount(Submission $submission)
     {
         $this->form->fill([
-            'meta' => $this->submission->getAllMeta()->toArray(),
+            'submission_form_responses' => $this->submission->getMeta('submission_form_responses'),
         ]);
     }
 
     public function submit()
     {
-        SubmissionUpdateAction::run(
-            $this->form->getState(),
-            $this->submission
-        );
+        $data = $this->form->getState();
+
+        if ($submissionFormResponses = data_get($data, 'submission_form_responses')) {
+            $this->submission->setMeta('submission_form_responses', $submissionFormResponses);
+        }
 
         Notification::make()
-            ->title(__('general.saved_successfuly'))
+            ->body(__('general.saved_successfuly'))
             ->success()
             ->send();
     }
@@ -44,16 +46,15 @@ class References extends \Livewire\Component implements HasForms
             ->disabled(function (): bool {
                 return ! auth()->user()->can('editing', $this->submission);
             })
+            ->statePath('data')
+            ->model($this->submission)
             ->schema([
-                Textarea::make('meta.references')
-                    ->label(__('general.references'))
-                    ->hiddenLabel()
-                    ->autosize(),
+                ...SubmissionFormItem::buildFormSchema(),
             ]);
     }
 
     public function render()
     {
-        return view('panel.scheduledConference.livewire.submissions.forms.references');
+        return view('panel.scheduledConference.livewire.submissions.forms.additional-data');
     }
 }

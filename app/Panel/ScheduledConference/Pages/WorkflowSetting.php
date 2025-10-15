@@ -11,6 +11,7 @@ use App\Panel\ScheduledConference\Livewire\ReviewFormTable;
 use App\Panel\ScheduledConference\Livewire\ReviewGuidance;
 use App\Panel\ScheduledConference\Livewire\ReviewSetupSetting;
 use App\Panel\ScheduledConference\Livewire\SubmissionFileTypeTable;
+use App\Panel\ScheduledConference\Livewire\SubmissionFormItemTable;
 use App\Panel\ScheduledConference\Livewire\SubmissionSetting;
 use App\Panel\ScheduledConference\Livewire\TopicTable;
 use App\Panel\ScheduledConference\Livewire\TrackTable;
@@ -74,6 +75,11 @@ class WorkflowSetting extends Page
                                             ->label(__('general.components'))
                                             ->schema([
                                                 Livewire::make(SubmissionFileTypeTable::class),
+                                            ]),
+                                        InfolistsVerticalTabs\Tab::make('Form')
+                                            ->label(__('general.form'))
+                                            ->schema([
+                                                Livewire::make(SubmissionFormItemTable::class),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Author Guidance')
                                             ->label(__('general.author_guidance'))

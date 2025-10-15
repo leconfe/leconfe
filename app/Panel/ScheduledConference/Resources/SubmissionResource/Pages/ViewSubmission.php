@@ -16,6 +16,7 @@ use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
 use App\Models\Submission;
+use App\Models\SubmissionFormItem;
 use App\Models\User;
 use App\Notifications\SubmissionWithdrawn;
 use App\Notifications\SubmissionWithdrawRequested;
@@ -26,6 +27,7 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Components\GalleyList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\PermissionsAndDisclosure;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
 use App\Panel\ScheduledConference\Livewire\Submissions\Editing;
+use App\Panel\ScheduledConference\Livewire\Submissions\Forms\AdditionalData;
 use App\Panel\ScheduledConference\Livewire\Submissions\Forms\Detail;
 use App\Panel\ScheduledConference\Livewire\Submissions\Forms\References;
 use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
@@ -545,6 +547,16 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                     'submission' => $this->record,
                                                 ])
                                                     ->key('references'),
+                                            ]),
+                                        Tab::make('Additional Data')
+                                            ->visible(SubmissionFormItem::exists())
+                                            ->label(__('general.additional_data'))
+                                            ->icon('heroicon-o-numbered-list')
+                                            ->schema([
+                                                Livewire::make(AdditionalData::class, [
+                                                    'submission' => $this->record,
+                                                ])
+                                                    ->key('additional_data'),
                                             ]),
                                     ]),
                             ]),

@@ -968,4 +968,5 @@ return [
     'conferences' => 'المؤتمرات',
     'discussion_not_submission_participant' => 'المشارك المحدد غير معين لهذا التقديم.',
     'discussion_error_anonymous_review' => 'لا يمكن إنشاء نقاش مع المشاركين المحددين لأنه قد يؤدي إلى كشف هوية المراجع.',
+    'additional_data' => 'بيانات إضافية',
 ];
