@@ -16,8 +16,6 @@ class TinyEditor extends BaseTinyEditor
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->setRelativeUrls(true);
     }
 
     public function toolbar(string $toolbar)
