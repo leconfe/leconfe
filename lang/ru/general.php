@@ -966,4 +966,5 @@ return [
     'conferences' => 'Конференции',
     'discussion_not_submission_participant' => 'Выбранный участник не назначен на эту подачу.',
     'discussion_error_anonymous_review' => 'Невозможно создать обсуждение с выбранными участниками, так как это может нарушить анонимность рецензента.',
+    'view_as_editor' => "View as Editor",
 ];
