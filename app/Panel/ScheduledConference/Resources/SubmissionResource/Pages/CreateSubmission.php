@@ -9,6 +9,7 @@ use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
 use App\Models\Role;
 use App\Models\Submission;
+use App\Models\SubmissionFormItem;
 use App\Models\Timeline;
 use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -76,7 +77,12 @@ class CreateSubmission extends Page implements HasForms
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
                     ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
                 TextInput::make('meta.title')
-                    ->required(),
+                    ->required(),                
+                Grid::make(1)
+                    ->visible(SubmissionFormItem::exists())
+                    ->schema([
+                        ...SubmissionFormItem::buildFormSchema(),
+                    ]),
                 Grid::make(1)
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
@@ -172,7 +178,6 @@ class CreateSubmission extends Page implements HasForms
     public function submit()
     {
         $data = $this->form->getState();
-
         if (! auth()->user()->hasRole(UserRole::Author)) {
             auth()->user()->assignRole(UserRole::Author);
         }
@@ -202,6 +207,10 @@ class CreateSubmission extends Page implements HasForms
                 'user_id' => $submission->user_id,
                 'role_id' => $submitAsRole->getKey(),
             ]);
+
+            if($submissionFormResponses = data_get($data, 'submission_form_responses')){
+                $submission->setMeta('submission_form_responses', $submissionFormResponses);
+            }
 
             if ($paymentFeeId = data_get($data, 'payment_fee_id')) {
                 $paymentManager = PaymentManager::get();
