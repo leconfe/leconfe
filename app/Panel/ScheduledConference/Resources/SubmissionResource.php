@@ -47,9 +47,9 @@ class SubmissionResource extends Resource
             ->withCount([
                 'editors',
                 'reviews',
-                'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
+                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed'),
             ])
-            ->with(['meta', 'user', 'reviews', 'participants'])
+            ->with(['meta', 'user', 'reviews', 'participants', 'editors'])
             ->orderBy('updated_at', 'desc');
     }
 
@@ -85,7 +85,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->reviews->where('user_id', auth()->id())->first();
                                 if ($review) {
@@ -97,16 +97,21 @@ class SubmissionResource extends Resource
                             ->searchable(query: function (Builder $query, string $search): Builder {
                                 return $query
                                     ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                    ->orWhereHas('user', fn($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
                             }),
                         Tables\Columns\TextColumn::make('status')
                             ->extraAttributes([
                                 'class' => 'mt-2',
                             ])
                             ->badge()
-                            ->formatStateUsing(
-                                fn (Submission $record) => $record->status?->value
-                            ),
+                            ->getStateUsing(fn(Submission $record) => $record->status?->value),
+                        // Tables\Columns\TextColumn::make('editorial_also_as_reviewer')
+                        //     ->extraAttributes([
+                        //         'class' => 'mt-2',
+                        //     ])
+                        //     ->html()
+                        //     ->url('#')
+                        //     ->getStateUsing(fn(Submission $record) => view('panel.conference.resources.submission-resource.reviewer-editor', ['record' => $record])),
                     ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('editor-assigned-badges')
@@ -129,7 +134,7 @@ class SubmissionResource extends Resource
                             ->extraCellAttributes([
                                 'style' => 'width: 1px',
                             ])
-                            ->getStateUsing(fn ($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
+                            ->getStateUsing(fn($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
                                 'reviews_count' => $record->reviews_count,
                                 'completed_reviews_count' => $record->completed_reviews_count,
                             ]) : ''),
@@ -167,7 +172,31 @@ class SubmissionResource extends Resource
                     ->authorize(function (Submission $record) {
                         return auth()->user()->can('view', $record);
                     })
-                    ->url(fn (Submission $record) => static::getUrl('view', [
+                    ->url(function (Submission $record) {
+                        $review = $record->reviews->where('user_id', auth()->id())->first();
+                        if ($review) {
+                            if ($review->needConfirmation() || $review->status == ReviewerStatus::DECLINED) {
+                                return static::getUrl('reviewer-invitation', [
+                                    'record' => $record->id,
+                                ]);
+                            } else {
+                                return static::getUrl('review', [
+                                    'record' => $record->id,
+                                ]);
+                            }
+                        }
+
+                        return static::getUrl('view', [
+                            'record' => $record->id,
+                            // 'stage' => '-'.str($record->stage->value)->slug('-').'-tab',
+                        ]);
+                    }),
+                Tables\Actions\Action::make('view_as_editor')
+                    ->label(__('general.view_as_editor'))
+                    ->icon('lineawesome-eye-solid')
+                    ->color('warning')
+                    ->visible(fn (Submission $record) => $record->isParticipantEditor(auth()->user()) && $record->isReviewer(auth()->user()))
+                    ->url(fn(Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),
                 Tables\Actions\DeleteAction::make(),

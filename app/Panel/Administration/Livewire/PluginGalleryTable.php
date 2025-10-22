@@ -32,7 +32,7 @@ class PluginGalleryTable extends Component implements HasForms, HasTable
     {
         return $table
             ->queryStringIdentifier('gallery')
-            ->query(PluginGallery::query()->whereRaw("EXISTS (SELECT 1 FROM json_each(targets) WHERE value = ?)", Plugin::getCurrentContextString()))
+            ->query(PluginGallery::query()->whereRaw('targets LIKE ?', ['%"' . Plugin::getCurrentContextString() . '"%']))
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('name')
