@@ -163,6 +163,7 @@ class SubmissionFormItem extends Model implements Sortable
     public static function buildFormSchema(): array
     {
         return static::query()
+            ->ordered()
             ->lazy()
             ->map(fn(self $item) => $item->getFormField())
             ->toArray();
