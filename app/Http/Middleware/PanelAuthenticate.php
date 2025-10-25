@@ -13,7 +13,7 @@ class PanelAuthenticate extends Authenticate
         }
 
         if (app()->getCurrentConference()) {
-            return route('livewirePageGroup.website.pages.login');
+            return route('livewirePageGroup.conference.pages.login');
         }
 
         return route('livewirePageGroup.website.pages.login');
