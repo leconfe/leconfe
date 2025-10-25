@@ -96,8 +96,7 @@ class SetupSetting extends Component implements HasForms
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                         TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
-                            ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist | image | code')
-                            ->plugins('paste link lists image code')
+                            ->profile('advanced')
                             ->minHeight(300)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                     ])
