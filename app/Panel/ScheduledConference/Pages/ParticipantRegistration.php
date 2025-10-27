@@ -3,10 +3,13 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Managers\PaymentManager;
+use App\Models\Enums\UserRole;
 use App\Models\Participant;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
+use App\Models\User;
 use App\Notifications\ParticipantPayment;
+use App\Notifications\ParticipantRegistered;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -154,6 +157,9 @@ class ParticipantRegistration extends Page implements HasForms
 
             auth()->user()->notify(new ParticipantPayment($participant));
 
+            User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
+                ->lazy()
+                ->each(fn($user) => $user->notify(new ParticipantRegistered($participant)));
 
             DB::commit();
         } catch (\Throwable $th) {
