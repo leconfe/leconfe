@@ -50,4 +50,11 @@ class PaymentPolicy
             return true;
         }
     }
+
+    public function setUnpaid(User $user, Payment $payment)
+    {
+        if ($user->can('Payment:setUnpaid')) {
+            return true;
+        }
+    }
 }
