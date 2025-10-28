@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
 use App\Notifications\ParticipantPayment;
+use App\Notifications\PaymentConfirmed;
 use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Closure;
@@ -185,6 +186,8 @@ class PaymentDetail extends Page
 
                         $action->successNotificationTitle('Payment Marked as Paid');
                         $action->success();
+
+                        $record->user->notify(new PaymentConfirmed($record));
                     })
                     ->visible(fn (Payment $record) => ! $record->isPaid()),
                 Action::make('mark_as_unpaid')
