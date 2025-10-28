@@ -187,6 +187,21 @@ class PaymentDetail extends Page
                         $action->success();
                     })
                     ->visible(fn (Payment $record) => ! $record->isPaid()),
+                Action::make('mark_as_unpaid')
+                    ->label('Mark as Unpaid')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->authorize(fn (Payment $record) => auth()->user()->can('setUnpaid', $record))
+                    ->record($this->record)
+                    ->visible(fn(Payment $record) => $record->isPaid())
+                    ->action(function(Action $action, Payment $record){
+                        $record->update([
+                            'paid_at' => null,
+                        ]);
+
+                        $action->successNotificationTitle('Payment Marked as Paid');
+                        $action->success();
+                    }),
             ])
                 ->button()
                 ->label('Actions')
