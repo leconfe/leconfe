@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as Model;
@@ -27,9 +28,9 @@ class Media extends Model
         });
     }
 
-    public function getOriginalFilename()
+    protected function originalFileName() : Attribute
     {
-        return $this->name . '.' . $this->extension;
+        return Attribute::get(fn () => $this->name . '.' . $this->extension);
     }
 
     public function submissionFiles(): HasMany

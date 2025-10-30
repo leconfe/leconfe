@@ -56,10 +56,9 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TextColumn::make('id')
                 ->wrap(),
-            TextColumn::make('media.file_name')
+            TextColumn::make('media.original_file_name')
                 ->wrap()
                 ->label(__('general.filename'))
-                ->getStateUsing(fn(SubmissionFile $record) => $record->media->getOriginalFilename())
                 ->color('primary')
                 ->action(function (SubmissionFile $record){
                     $name = implode('-', [
