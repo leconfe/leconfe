@@ -139,7 +139,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 subject: $this->submission,
                 description: __('general.submission_file_uploaded_activity', [
                     'id' => $submissionFile->getKey(),
-                    'name' => $file->file_name,
+                    'name' => $file->original_file_name,
                     'category' => $this->category,
                 ]),
                 event: 'submission-file-upload',
