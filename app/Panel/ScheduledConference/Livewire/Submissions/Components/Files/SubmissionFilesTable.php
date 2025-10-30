@@ -110,7 +110,6 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->downloadable()
                 ->reorderable()
                 ->disk('private-files')
-                ->preserveFilenames()
                 ->collection($this->category)
                 ->visibility('private')
                 ->model(fn () => $this->submission)
