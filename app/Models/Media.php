@@ -27,6 +27,11 @@ class Media extends Model
         });
     }
 
+    public function getOriginalFilename()
+    {
+        return $this->name . '.' . $this->extension;
+    }
+
     public function submissionFiles(): HasMany
     {
         return $this->hasMany(SubmissionFile::class);

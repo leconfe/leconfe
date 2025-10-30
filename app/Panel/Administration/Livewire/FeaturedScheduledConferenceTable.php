@@ -11,7 +11,7 @@ use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Stakeholder;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;

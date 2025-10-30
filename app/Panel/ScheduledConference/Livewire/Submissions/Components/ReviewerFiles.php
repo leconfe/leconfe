@@ -5,7 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 use App\Constants\SubmissionFileCategory;
 use App\Models\Media;
 use App\Models\Review;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;

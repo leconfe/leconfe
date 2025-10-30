@@ -4,7 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussi
 
 use App\Models\DiscussionTopic;
 use Awcodes\Shout\Components\Shout;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;

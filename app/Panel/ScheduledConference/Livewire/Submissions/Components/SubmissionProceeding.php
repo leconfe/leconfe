@@ -6,7 +6,7 @@ use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Models\Proceeding;
 use App\Models\Submission;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;

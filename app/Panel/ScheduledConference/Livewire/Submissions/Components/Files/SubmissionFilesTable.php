@@ -8,7 +8,7 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -59,12 +59,13 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             TextColumn::make('media.file_name')
                 ->wrap()
                 ->label(__('general.filename'))
+                ->getStateUsing(fn(SubmissionFile $record) => $record->media->getOriginalFilename())
                 ->color('primary')
                 ->action(function (SubmissionFile $record){
                     $name = implode('-', [
                         $record->getKey(),
                         $record->user->full_name,
-                        Str::limit(basename($record->media->name), 20, '')
+                        Str::limit(basename($record->media->name), 100, '')
                     ]);
 
                     return response()->download($record->media->getPath(), $name . '.' . $record->media->extension);

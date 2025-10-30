@@ -2,17 +2,23 @@
 
 namespace App\Forms\Components;
 
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload as FileUpload;
+use Illuminate\Support\Str;
+use function Livewire\invade;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\BaseFileUpload;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use function Livewire\invade;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload as FileUpload;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
 	protected function setUp(): void
 	{
 		parent::setUp();
+
+		$this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
+			return $component->shouldPreserveFilenames() ?  static::getClientOriginalName($file) : (Str::ulid() . '.' . $file->getClientOriginalExtension());
+		});
 
 		$this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): ?string {
 			if (! method_exists($record, 'addMediaFromString')) {
@@ -34,7 +40,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 			$media = $mediaAdder
 				->addCustomHeaders($component->getCustomHeaders())
 				->usingFileName($filename)
-				->usingName($component->getMediaName($file) ?? static::getClientOriginalName($file))
+				->usingName($component->getMediaName($file) ??  pathinfo(static::getClientOriginalName($file), PATHINFO_FILENAME))
 				->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
 				->withCustomProperties($component->getCustomProperties())
 				->withManipulations($component->getManipulations())
@@ -54,10 +60,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 	static function getMetaFileData(TemporaryUploadedFile $file)
 	{
 		$metaFileData = [];
-		
+
 		$inv = invade($file);
 
-		if ($contents = $inv->storage->get($inv->path.'.json')) {
+		if ($contents = $inv->storage->get($inv->path . '.json')) {
 			$metaFileData = json_decode($contents, true);
 		}
 		return $metaFileData;
