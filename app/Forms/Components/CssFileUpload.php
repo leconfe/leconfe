@@ -4,7 +4,7 @@ namespace App\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\BaseFileUpload;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Contracts\Support\Arrayable;
 
 class CssFileUpload extends SpatieMediaLibraryFileUpload

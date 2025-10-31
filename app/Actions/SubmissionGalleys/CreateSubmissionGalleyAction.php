@@ -6,7 +6,7 @@ use App\Constants\SubmissionFileCategory;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionGalley;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 

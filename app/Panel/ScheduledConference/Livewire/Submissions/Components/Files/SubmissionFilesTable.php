@@ -8,7 +8,7 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -56,7 +56,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TextColumn::make('id')
                 ->wrap(),
-            TextColumn::make('media.file_name')
+            TextColumn::make('media.original_file_name')
                 ->wrap()
                 ->label(__('general.filename'))
                 ->color('primary')
@@ -64,7 +64,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                     $name = implode('-', [
                         $record->getKey(),
                         $record->user->full_name,
-                        Str::limit(basename($record->media->name), 20, '')
+                        Str::limit(basename($record->media->name), 100, '')
                     ]);
 
                     return response()->download($record->media->getPath(), $name . '.' . $record->media->extension);
@@ -110,7 +110,6 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->downloadable()
                 ->reorderable()
                 ->disk('private-files')
-                ->preserveFilenames()
                 ->collection($this->category)
                 ->visibility('private')
                 ->model(fn () => $this->submission)
@@ -139,7 +138,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 subject: $this->submission,
                 description: __('general.submission_file_uploaded_activity', [
                     'id' => $submissionFile->getKey(),
-                    'name' => $file->file_name,
+                    'name' => $file->original_file_name,
                     'category' => $this->category,
                 ]),
                 event: 'submission-file-upload',

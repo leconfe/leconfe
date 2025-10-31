@@ -9,7 +9,7 @@ use App\Models\Payment;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;

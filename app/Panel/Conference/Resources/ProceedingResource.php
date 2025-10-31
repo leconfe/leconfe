@@ -8,7 +8,7 @@ use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
