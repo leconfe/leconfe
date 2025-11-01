@@ -73,7 +73,7 @@ class InstallationForm extends Form
             $this->resetErrorBag('error');
             $this->reconnectDbWithNewData();
         } catch (\Throwable $th) {
-            $this->addError('error', 'Connection failed: '.$th->getMessage());
+            $this->addError('error', 'Connection failed: ' . $th->getMessage());
 
             return false;
         }
@@ -95,7 +95,7 @@ class InstallationForm extends Form
                 'password' => $this->db_password,
                 'host' => $this->db_host,
             ]);
-    }
+        }
 
 
         return $connectionArray;
@@ -131,7 +131,7 @@ class InstallationForm extends Form
         if (in_array('other', $this->important_features) && ! empty($this->other_important_feature)) {
             $final_features[] = $this->other_important_feature;
         }
-        $final_features = array_filter($final_features, fn ($feature) => $feature !== 'other');
+        $final_features = array_filter($final_features, fn($feature) => $feature !== 'other');
 
         $data['survey_important_features'] = $final_features;
         $data['is_configure_env'] = true;
