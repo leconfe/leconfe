@@ -37,10 +37,19 @@
                                     <span>Current Version : <b>{{ PHP_VERSION }}</b></span>
                                 </div>
                             </li>
+                            <li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg flex justify-between flex-wrap">
+                                <div>
+                                    <a class="link link-primary link-hover" target="_blank"
+                                        href="https://en.wikipedia.org/wiki/MySQL#Release_history">MySQL</a> >= 5.7
+                                    or
+                                    <a class="link link-primary link-hover" target="_blank"
+                                        href="https://www.postgresql.org/support/versioning/">PostgreSQL</a> >= 11.0
+                                </div>
+                            </li>
                             <li class="w-full px-4 py-2 border-gray-200 rounded-t-lg flex justify-between flex-wrap">
                                 <div>
                                     <a class="link link-primary link-hover" target="_blank"
-                                        href="https://mysql.com">MySQL</a> >= 5.7
+                                        href="https://www.sqlite.org/changes.html">SQLite</a> >= 3.26.0
                                 </div>
                             </li>
                         </ul>
@@ -181,6 +190,7 @@
                                 <select class="select select-sm select-bordered" wire:model="form.db_connection"
                                     required>
                                     <option value="mysql">MySQL</option>
+                                    <option value="pgsql">PostgreSQL</option>
                                 </select>
                                 @error('form.db_connection')
                                     <div class="text-red-600 text-sm">
@@ -214,10 +224,10 @@
                             </div>
                             <div class="form-control gap-2">
                                 <label class="label-text">
-                                    Database Password <span class="text-red-500">*</span>
+                                    Database Password
                                 </label>
                                 <input type="password" class="input input-bordered input-sm"
-                                    wire:model="form.db_password" required />
+                                    wire:model="form.db_password"/>
                                 @error('form.db_password')
                                     <div class="text-red-600 text-sm">
                                         {{ $message }}
@@ -235,18 +245,6 @@
                                     <input type="text" class="input input-bordered input-sm"
                                         wire:model="form.db_host" required />
                                     @error('form.db_host')
-                                        <div class="text-red-600 text-sm">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="form-control gap-2">
-                                    <label class="label-text">
-                                        Database Port <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="number" class="input input-bordered input-sm"
-                                        wire:model="form.db_port" required />
-                                    @error('form.db_port')
                                         <div class="text-red-600 text-sm">
                                             {{ $message }}
                                         </div>

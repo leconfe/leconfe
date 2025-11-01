@@ -103,10 +103,6 @@ class Installation extends Page
             return false;
         }
 
-        if (! $this->form->createDatabase()) {
-            return false;
-        }
-
         return true;
     }
 }

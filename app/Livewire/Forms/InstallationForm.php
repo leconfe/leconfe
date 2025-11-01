@@ -40,7 +40,7 @@ class InstallationForm extends Form
     #[Rule('required', onUpdate: false)]
     public $db_username = null;
 
-    #[Rule('required', onUpdate: false)]
+    #[Rule('nullable', onUpdate: false)]
     public $db_password = null;
 
     #[Rule('required', onUpdate: false)]
@@ -81,26 +81,6 @@ class InstallationForm extends Form
         return true;
     }
 
-    public function createDatabase(): bool
-    {
-        $dbName = $this->db_name;
-
-        try {
-            $this->resetErrorBag('error');
-            $this->reconnectDbWithNewData();
-
-            if (! $this->checkDatabaseExists($dbName)) {
-                Schema::createDatabase($dbName);
-            }
-        } catch (\Throwable $th) {
-            $this->addError('error', 'Create database failed: Please manually create your database '.$th->getMessage());
-
-            return false;
-        }
-
-        return true;
-    }
-
     private function prepareDatabaseConnection(): array
     {
         $connectionArray = config("database.connections.{$this->db_connection}", []);
@@ -109,28 +89,23 @@ class InstallationForm extends Form
             'driver' => $this->db_connection,
             'database' => $this->db_name,
         ]);
-
-        if (! empty($this->db_username) && ! empty($this->db_password)) {
+        if (! empty($this->db_username)) {
             $connectionArray = array_merge($connectionArray, [
                 'username' => $this->db_username,
                 'password' => $this->db_password,
                 'host' => $this->db_host,
-                'port' => $this->db_port,
             ]);
-        }
-
-        return $connectionArray;
     }
 
-    private function checkDatabaseExists($dbName): bool
-    {
-        return ! empty(DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbName'"));
+
+        return $connectionArray;
     }
 
     protected function reconnectDbWithNewData()
     {
         $connectionArray = $this->prepareDatabaseConnection();
 
+        Config::set("database.default", $this->db_connection);
         Config::set("database.connections.{$this->db_connection}", $connectionArray);
 
         DB::purge();
