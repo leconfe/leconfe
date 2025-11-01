@@ -17,6 +17,7 @@ use function Laravel\Prompts\search;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\table;
 use function Laravel\Prompts\text;
+use function Laravel\Prompts\select;
 
 class InstallAction
 {
@@ -115,12 +116,18 @@ class InstallAction
         info('Database information');
 
         while (true) {
-            $data['db_connection'] = 'mysql';
+            $data['db_connection'] = select(
+                label: "What is your Database ?",
+                options: [
+                    'mysql' => 'MySQL',
+                    'pgsql' => 'PostgreSQL'
+                ],
+                required: true,
+            );
             $data['db_username'] = text('What is your database username?', required: true);
-            $data['db_password'] = password('What is your database password?', required: true);
+            $data['db_password'] = password('What is your database password?', required: false);
             $data['db_name'] = text('What is your database name?', default: 'leconfe', required: true);
             $data['db_host'] = text('What is your database host?', default: '127.0.0.1', required: true);
-            $data['db_port'] = text('What is your database port?', default: '3306', required: true);
 
             try {
                 spin(fn () => $this->reconnectDbWithNewData($data), 'Testing database connection...');
@@ -161,13 +168,12 @@ class InstallAction
 
     private function prepareDatabaseConnection($data): array
     {
-        $connectionArray = config('database.connections.mysql', []);
+        $connectionArray = config('database.connections.' . $data['db_connection'], []);
 
         return array_merge($connectionArray, [
             'driver' => $data['db_connection'],
             'database' => $data['db_name'],
             'host' => $data['db_host'],
-            'port' => $data['db_port'],
             'username' => $data['db_username'],
             'password' => $data['db_password'],
         ]);
@@ -177,7 +183,8 @@ class InstallAction
     {
         $connectionArray = $this->prepareDatabaseConnection($data);
 
-        Config::set('database.connections.mysql', $connectionArray);
+        Config::set("database.default", $data['db_connection']);
+        Config::set("database.connections.{$data['db_connection']}", $connectionArray);
 
         DB::purge();
 
