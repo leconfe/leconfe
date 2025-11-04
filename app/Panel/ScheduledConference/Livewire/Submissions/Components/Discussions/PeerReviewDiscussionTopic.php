@@ -257,6 +257,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
             ->columns([
                 BadgeableColumn::make('name')
                     ->label(__('general.name'))
+                    ->wrap()
                     ->suffixBadges([
                         Badge::make('status')
                             ->label(fn ($record) => $record->open ? __('general.open') : __('general.closed'))
