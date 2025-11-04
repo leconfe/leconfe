@@ -44,8 +44,6 @@ class Application extends LaravelApplication
 
     public const CONTEXT_WEBSITE = 0;
 
-    public const API_URL = 'https://panel.leconfe.com/api/';
-
     protected ?int $currentConferenceId = null;
 
     protected ?Site $site = null;
@@ -293,25 +291,25 @@ class Application extends LaravelApplication
 
     public function getApiUrl(?string $path = null): string
     {
-        return static::API_URL.$path;
+        return config('app.api_url') . $path;
     }
 
-    public function isOnScheduledConference() : bool
+    public function isOnScheduledConference(): bool
     {
         return (bool) $this->getCurrentScheduledConferenceId();
     }
 
-    public function isOnConference() : bool
+    public function isOnConference(): bool
     {
-        if($this->isOnScheduledConference()) return false;
+        if ($this->isOnScheduledConference()) return false;
 
 
         return (bool) $this->getCurrentConferenceId();
     }
 
-    public function isOnSite() : bool
+    public function isOnSite(): bool
     {
-        if($this->isOnConference() || $this->isOnScheduledConference()) return false;
+        if ($this->isOnConference() || $this->isOnScheduledConference()) return false;
 
         return true;
     }

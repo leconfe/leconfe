@@ -356,7 +356,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        $response = Http::acceptJson()->post(Application::API_URL . 'leconfe/auth/register', [
+        $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
             'url' => $this->getUrl(),
         ]);
