@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Enums\ScheduledConferenceState;
 use App\Models\ScheduledConference;
 use App\Models\User;
 
@@ -20,9 +21,22 @@ class ScheduledConferencePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ScheduledConference $scheduledConference)
+    public function view(?User $user, ScheduledConference $scheduledConference)
     {
-        if ($user->can('ScheduledConference:view')) {
+        if($scheduledConference->state->is(ScheduledConferenceState::Draft) && $user?->can('viewDraft', $scheduledConference)){
+            return true;
+        }
+        
+        if ($scheduledConference->state->isOneOf(ScheduledConferenceState::Current, ScheduledConferenceState::Published)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function viewDraft(User $user, ScheduledConference $scheduledConference)
+    {
+        if ($user->can('ScheduledConference:viewDraft')) {
             return true;
         }
     }

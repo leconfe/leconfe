@@ -24,6 +24,7 @@ class Dashboard extends BaseDashboard
             UserRole::ScheduledConferenceEditor,
             UserRole::TrackEditor,
             UserRole::Reviewer,
+            UserRole::Admin,
         ]);
     }
 

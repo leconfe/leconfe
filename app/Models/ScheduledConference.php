@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Application;
+use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -373,8 +375,32 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         ]);
     }
 
-    public function getContextString() : string
+    public function getContextString(): string
     {
         return 'scheduled-conference';
+    }
+
+    protected function fullDate(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $start = $this->date_start?->format(Setting::get('format_date'));
+                $end = $this->date_end?->format(Setting::get('format_date'));
+
+                if ($start && $end) {
+                    return "{$start} - {$end}";
+                }
+
+                if ($start) {
+                    return $start;
+                }
+
+                if ($end) {
+                    return $end;
+                }
+
+                return '';
+            },
+        );
     }
 }

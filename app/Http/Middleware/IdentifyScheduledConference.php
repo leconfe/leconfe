@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Enums\ScheduledConferenceState;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class IdentifyScheduledConference
@@ -15,10 +17,15 @@ class IdentifyScheduledConference
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app()->getCurrentScheduledConferenceId()) {
+        $scheduledConference = app()->getCurrentScheduledConference();
+        if (! $scheduledConference) {
             return abort(404);
         }
+        
+        if(Gate::allows('view', $scheduledConference)){
+            return $next($request);
+        }
 
-        return $next($request);
+        return abort(404);
     }
 }

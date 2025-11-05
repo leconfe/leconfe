@@ -16,6 +16,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +53,7 @@ class ScheduledConferenceResource extends Resource
                     ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
                     ->label(__('general.path'))
                     ->rules(['alpha_dash'])
-                    ->unique(modifyRuleUsing: fn(Unique $rule) => $rule->where('conference_id', app()->getCurrentConferenceId()))
+                    ->unique(modifyRuleUsing: fn(Unique $rule) => $rule->where('conference_id', app()->getCurrentConferenceId()), ignoreRecord: true)
                     ->required(),
                 Grid::make()
                     ->schema([
@@ -63,7 +64,6 @@ class ScheduledConferenceResource extends Resource
                         DatePicker::make('date_end')
                             ->label(__('general.end_date'))
                             ->afterOrEqual('date_start')
-                            ->requiredWith('date_start')
                             ->placeholder(__('general.enter_the_end_date_of_the_serie')),
                     ]),
             ]);
@@ -83,14 +83,10 @@ class ScheduledConferenceResource extends Resource
                     ->sortable()
                     ->wrap()
                     ->wrapHeader(),
-                TextColumn::make('path'),
-                TextColumn::make('date_start')
-                    ->label(__('general.start_date'))
-                    ->date(Setting::get('format_date')),
-                TextColumn::make('date_end')
-                    ->label(__('general.end_date'))
-                    ->date(Setting::get('format_date')),
-
+                TextColumn::make('state')
+                    ->badge(),
+                TextColumn::make('full_date')
+                    ->label(__('general.date')),
             ])
             ->filters([
                 //
