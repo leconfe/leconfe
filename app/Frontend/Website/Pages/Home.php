@@ -5,7 +5,6 @@ namespace App\Frontend\Website\Pages;
 use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Conference;
-use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
@@ -61,11 +60,7 @@ class Home extends Page
                 'media',
                 'meta',
             ])
-            ->whereIn('state', [
-                ScheduledConferenceState::Archived,
-                ScheduledConferenceState::Published,
-                ScheduledConferenceState::Current,
-            ])
+            ->published()
             ->orderBy('date_start', 'DESC')
             ->get();
 

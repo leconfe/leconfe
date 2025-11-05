@@ -6,7 +6,6 @@ use App\Frontend\ScheduledConference\Pages as ScheduledConferencePages;
 use App\Frontend\Website\Pages\Page;
 use App\Http\Middleware\RedirectToScheduledConference;
 use App\Models\Announcement;
-use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Proceeding;
 use App\Models\ScheduledConference;
 use App\Models\StaticPage;
@@ -107,7 +106,7 @@ class Sitemap extends Page
 
         ScheduledConference::query()
             ->with(['conference', 'announcements.scheduledConference', 'staticPages'])
-            ->whereIn('state', [ScheduledConferenceState::Current, ScheduledConferenceState::Archived, ScheduledConferenceState::Published])
+            ->published()
             ->orderBy('date_start', 'desc')
             ->lazy()
             ->each(function (ScheduledConference $scheduledConference) use ($sitemap) {

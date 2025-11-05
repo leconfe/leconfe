@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Enums\ScheduledConferenceState;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;

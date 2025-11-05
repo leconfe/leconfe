@@ -34,12 +34,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_end',
         'state',
         'type',
+        'is_published',
         'featured',
     ];
 
     protected $casts = [
-        'published' => 'boolean',
-        'published_at' => 'datetime',
+        'is_published' => 'boolean',
         'current' => 'boolean',
         'date_start' => 'date',
         'date_end' => 'date',
@@ -52,16 +52,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
      */
     protected static function booted(): void
     {
-        static::updating(function (ScheduledConference $scheduledConference) {
-            if ($scheduledConference->isDirty('state') && $scheduledConference->state == ScheduledConferenceState::Current) {
-                static::query()
-                    ->where('conference_id', $scheduledConference->conference_id)
-                    ->where('state', ScheduledConferenceState::Current->value)
-                    ->where('id', '!=', $scheduledConference->id)
-                    ->update(['state' => ScheduledConferenceState::Archived]);
-            }
-        });
-
         static::deleting(function (ScheduledConference $scheduledConference) {
             Announcement::query()
                 ->withoutGlobalScopes()
@@ -180,6 +170,11 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         return $this->hasMany(Submission::class);
     }
+    
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class);
+    }
 
     public function committees(): HasMany
     {
@@ -267,39 +262,13 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('submission_payment');
     }
 
-    public function isCurrent(): bool
-    {
-        return $this->state == ScheduledConferenceState::Current;
-    }
-
-    public function isDraft(): bool
-    {
-        return $this->state == ScheduledConferenceState::Draft;
-    }
-
-    public function isPublished(): bool
-    {
-        return $this->state == ScheduledConferenceState::Published;
-    }
-
-    public function isUpcoming(): bool
-    {
-        return $this->isPublished();
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->state == ScheduledConferenceState::Archived;
-    }
-
     public function scopeType($query, ScheduledConferenceType $type)
     {
         return $query->where('type', $type);
     }
 
-    public function scopeState($query, ScheduledConferenceState $state)
-    {
-        return $query->where('state', $state);
+    public function scopePublished($query, bool $isPublished = true){
+        return $query->where('is_published', $isPublished);
     }
 
     public function isInvoiceEnabled(): bool
