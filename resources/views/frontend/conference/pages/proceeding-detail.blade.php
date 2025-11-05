@@ -32,7 +32,7 @@
                 </div>
             </div>
             
-            <div class="tracks space-y-6">
+            <div class="tracks space-y-12">
                 @foreach ($tracks as $track)    
                     <div class="track space-y-4">
                         <x-website::heading-title :title="$track->title" class="track-title"/>
