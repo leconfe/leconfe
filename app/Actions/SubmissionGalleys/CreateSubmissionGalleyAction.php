@@ -57,7 +57,7 @@ class CreateSubmissionGalleyAction
         $media = $mediaAdder
             ->addCustomHeaders($component->getCustomHeaders())
             ->usingFileName($filename)
-            ->usingName($customFileName ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+            ->usingName($customFileName ?? pathinfo(SpatieMediaLibraryFileUpload::getClientOriginalName($file), PATHINFO_FILENAME))
             ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
             ->withCustomProperties($component->getCustomProperties())
             ->withManipulations($component->getManipulations())
