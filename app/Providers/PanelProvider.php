@@ -26,6 +26,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TimePicker;
 use App\Http\Middleware\PanelAuthenticate;
 use App\Http\Middleware\IdentifyConference;
+use App\Http\Middleware\IdentifyScheduledConference;
 use App\Panel\Administration\Pages\Profile;
 use Filament\Support\Facades\FilamentColor;
 use App\Http\Middleware\RedirectPanelIfCannotAccess;
@@ -70,6 +71,7 @@ class PanelProvider extends ServiceProvider
             )
             ->middleware([
                 ...static::getMiddleware(),
+                IdentifyScheduledConference::class,
             ], true)
             ->authMiddleware(static::getAuthMiddleware(), true);
 

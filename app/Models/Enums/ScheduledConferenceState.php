@@ -24,8 +24,8 @@ enum ScheduledConferenceState: int implements HasColor, HasLabel
     {
         return match ($this) {
             self::Draft => 'gray',
-            self::Published => 'grenn',
-            self::Current => 'primary',
+            self::Published => 'primary',
+            self::Current => 'success',
             self::Archived => 'warning',
         };
     }
