@@ -112,7 +112,7 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                     }
                 })
                 ->afterStateUpdated(function ($state, Set $set) {
-                    $set('media.name', pathinfo($state->getClientOriginalName(), PATHINFO_FILENAME));
+                    $set('media.name', pathinfo(SpatieMediaLibraryFileUpload::getClientOriginalName($state), PATHINFO_FILENAME));
                 }),
             Checkbox::make('media.is_custom_name')
                 ->label(__('general.manually_set_file_name'))
@@ -136,9 +136,8 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                     if (! $mediaFile) {
                         return null;
                     }
-
                     $mediaFile = reset($mediaFile) instanceof TemporaryUploadedFile
-                        ? reset($mediaFile)->getClientOriginalName()
+                        ? SpatieMediaLibraryFileUpload::getClientOriginalName(reset($mediaFile))
                         : $record->file?->media->file_name;
 
                     return pathinfo($mediaFile, PATHINFO_EXTENSION) ?: null;

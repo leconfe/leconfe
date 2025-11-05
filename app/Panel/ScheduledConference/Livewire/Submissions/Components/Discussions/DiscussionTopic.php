@@ -186,6 +186,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
             ->columns([
                 BadgeableColumn::make('name')
                     ->label(__('general.name'))
+                    ->wrap()
                     ->suffixBadges([
                         Badge::make('status')
                             ->label(fn($record) => $record->open ? __('general.open') : __('general.closed'))
