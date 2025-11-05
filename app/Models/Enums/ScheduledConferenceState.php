@@ -6,6 +6,9 @@ use App\Models\Enums\Concern\UsefulEnums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
+/**
+ * @deprecated
+ */
 enum ScheduledConferenceState: int implements HasColor, HasLabel
 {
     use UsefulEnums;

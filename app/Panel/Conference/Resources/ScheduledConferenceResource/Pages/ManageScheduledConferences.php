@@ -3,7 +3,6 @@
 namespace App\Panel\Conference\Resources\ScheduledConferenceResource\Pages;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceCreateAction;
-use App\Models\Enums\ScheduledConferenceState;
 use App\Panel\Conference\Resources\ScheduledConferenceResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
