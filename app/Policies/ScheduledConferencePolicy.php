@@ -40,6 +40,14 @@ class ScheduledConferencePolicy
         }
     }
 
+    
+    public function viewDashboardOverview(User $user, ScheduledConference $scheduledConference)
+    {
+        if ($user->can('ScheduledConference:viewDashboardOverview')) {
+            return true;
+        }
+    }
+
     /**
      * Determine whether the user can create models.
      */

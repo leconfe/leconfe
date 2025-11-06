@@ -16,7 +16,7 @@ class WelcomeProspectiveParticipant extends Widget
     {
         $user = auth()->user();
 
-        return $user->roles->isEmpty() || $user->hasRole([UserRole::Author]);
+        return $user->roles->isEmpty() || $user->cannot('update', app()->getCurrentScheduledConference());
     }
 
     /**

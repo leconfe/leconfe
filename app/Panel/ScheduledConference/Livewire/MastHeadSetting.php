@@ -63,7 +63,6 @@ class MastHeadSetting extends Component implements HasForms
                                         DatePicker::make('date_end')
                                             ->label(__('general.end_date'))
                                             ->afterOrEqual('date_start')
-                                            ->requiredWith('date_start')
                                             ->placeholder(__('general.enter_the_end_date_of_the_serie')),
                                     ]),
                                 Textarea::make('meta.description')
