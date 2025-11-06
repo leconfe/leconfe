@@ -13,6 +13,7 @@ use Illuminate\Support\Benchmark;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
@@ -209,7 +210,7 @@ class PluginManager
 
     public function cleanTempPlugins()
     {
-        $this->getTempDisk()->deleteDirectory('');
+        File::cleanDirectory($this->getTempDisk()->path(''));
     }
 
     public function install(string $file)
@@ -224,7 +225,7 @@ class PluginManager
 
         $fileSystem = new Filesystem;
         $fileSystem->copyDirectory($pluginTempDisk->path($folderName), $this->getDisk()->path($folderName));
-        $fileSystem->delete($pluginTempDisk->path($folderName));
+        $this->cleanTempPlugins();
 
         try {
             $plugin = $this->initiatePlugin($this->getDisk()->path($folderName), true);
