@@ -69,7 +69,7 @@ class ScheduledConferenceResource extends Resource
     {
         return $table
             ->recordUrl(fn(ScheduledConference $record) => route('filament.scheduledConference.pages.dashboard', ['serie' => $record]))
-            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('date_start', "ASC"))
+            ->defaultSort('date_start', 'desc')
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
@@ -88,7 +88,9 @@ class ScheduledConferenceResource extends Resource
                         false => 'gray',
                     })
                     ->badge(),
-                TextColumn::make('full_date')
+                TextColumn::make('date_start')
+                    ->getStateUsing(fn($record) => $record->full_date)
+                    ->sortable()
                     ->label(__('general.date'))
                     ->wrap(),
                 TextColumn::make('submissions_count')
@@ -107,7 +109,7 @@ class ScheduledConferenceResource extends Resource
                         ->label(__('general.publish'))
                         ->requiresConfirmation()
                         ->icon('heroicon-o-arrow-up-on-square')
-                        ->color('primary')
+                        ->color('success')
                         ->hidden(fn(ScheduledConference $record) => $record->is_published)
                         ->action(function (ScheduledConference $record, array $data, Tables\Actions\Action $action) {
                             ScheduledConferenceUpdateAction::run($record, ['is_published' => true]);

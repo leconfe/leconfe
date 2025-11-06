@@ -28,8 +28,7 @@ class ManageScheduledConferences extends ManageRecords
         return [
             'all' => Tab::make()
                 ->label("All")
-                ->badge(fn () => ScheduledConferenceResource::getEloquentQuery()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('date_start', 'DESC')),
+                ->badge(fn () => ScheduledConferenceResource::getEloquentQuery()->count()),
             'trash' => Tab::make()
                 ->label(__('general.trash'))
                 ->badge(fn () => ScheduledConferenceResource::getEloquentQuery()->onlyTrashed()->count())
