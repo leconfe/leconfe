@@ -100,3 +100,7 @@ body {
         first:*:mt-0 last:*:mb-0;
     --tw-prose-body: unset;
 }
+
+.fi-in-entry-wrp-label > span {
+    @apply text-gray-600
+}
