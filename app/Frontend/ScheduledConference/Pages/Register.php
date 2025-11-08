@@ -160,6 +160,10 @@ class Register extends Page
         }
 
 
+        if(config('app.must_verify_email')){
+            $user->sendEmailVerificationNotification();
+        }
+
         Filament::auth()->login($user);
 
         session()->regenerate();
