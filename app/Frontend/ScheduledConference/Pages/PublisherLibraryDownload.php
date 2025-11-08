@@ -30,7 +30,7 @@ class PublisherLibraryDownload extends Page
             abort(404);
         }
 
-        return response()->download($media->getPath(), $media->file_name);
+        return response()->download($media->getPath(), $media->originalFileName);
     }
 
     public static function routes(PageGroup $pageGroup): void
