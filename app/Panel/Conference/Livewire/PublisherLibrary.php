@@ -114,7 +114,7 @@ class PublisherLibrary extends Component implements HasForms, HasTable
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('primary')
                         ->label(__('general.download'))
-                        ->action(fn (Media $record) => $record),
+                        ->action(fn (Media $record) => response()->download($record->getPath(), $record->originalFileName)),
                     DeleteAction::make(),
                 ]),
             ])
@@ -141,7 +141,6 @@ class PublisherLibrary extends Component implements HasForms, HasTable
 
                         $component->state([((string) Str::uuid()) => $record->file_name]);
                     })
-                    ->downloadable()
                     ->getUploadedFileUsing(static function (BaseFileUpload $component, ?Media $record): ?array {
                         if (blank($record)) {
                             return null;

@@ -36,11 +36,8 @@
                         <x-filament::loading-indicator class="h-5 w-5 animate-spin" />
                     </div>
                     <div class="p-2 overflow-hidden text-gray-700" wire:loading.remove.delay>
-                        @foreach ($searchResults as $category => $results)
-                            <div class="py-1 text-xs font-medium text-gray-500">{{ $category }}</div>
-                            @foreach ($results as $result)
-                                {!! $result !!}
-                            @endforeach
+                        @foreach ($searchResults as $result)
+                            {!! $result !!}
                         @endforeach
                     </div>
                 </div>
