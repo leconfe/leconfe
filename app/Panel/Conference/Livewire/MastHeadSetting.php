@@ -45,7 +45,7 @@ class MastHeadSetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         Section::make(__('general.conference_identity'))
-                            ->description(__('general.information_about_scheduled_conference'))
+                            ->description(__('general.information_about_conference'))
                             ->aside()
                             ->schema([
                                 TextInput::make('name')
