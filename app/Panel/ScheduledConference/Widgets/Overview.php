@@ -13,6 +13,7 @@ use App\Models\PaymentFee;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Pages\Payments;
+use App\Panel\ScheduledConference\Pages\ScheduledConferenceSetting;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -57,6 +58,8 @@ class Overview extends Widget implements HasForms, HasInfolists
                 Section::make('Overview')
                     ->columnSpanFull()
                     ->headerActions([
+                        Action::make('setting')
+                            ->url(ScheduledConferenceSetting::getUrl()),
                         Action::make('publish')
                             ->color('success')
                             ->hidden(fn(ScheduledConference $record) => auth()->user()->can('update', $record) && $record->is_published)
