@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Livewire\Forms\Conferences;
 
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms;
 use Filament\Tables\Actions\ActionGroup;
@@ -18,7 +19,7 @@ class ContributorForm extends Component
     public static function generalFormField(Model $modelType): array
     {
         return [
-            Forms\Components\SpatieMediaLibraryFileUpload::make('profile')
+            SpatieMediaLibraryFileUpload::make('profile')
                 ->label(__('general.profile_picture'))
                 ->image()
                 ->key('profile')
