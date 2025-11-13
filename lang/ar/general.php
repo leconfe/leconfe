@@ -970,4 +970,7 @@ return [
     'discussion_error_anonymous_review' => 'لا يمكن إنشاء نقاش مع المشاركين المحددين لأنه قد يؤدي إلى كشف هوية المراجع.',
     'view_as_editor' => 'عرض كمحرر',
     'additional_data' => 'بيانات إضافية',
+    'support' => 'الدعم',
+    'documentation' => 'التوثيق',
+    'forum' => 'المنتدى',
 ];
