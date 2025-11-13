@@ -5,6 +5,7 @@ namespace App\Panel\Conference\Resources;
 use App\Actions\User\UserDeleteAction;
 use App\Actions\User\UserMailAction;
 use App\Facades\Setting;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
@@ -82,7 +83,7 @@ class UserResource extends Resource
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('profile')
+                                SpatieMediaLibraryFileUpload::make('profile')
                                     ->label(__('general.profile_photo'))
                                     ->collection('profile')
                                     ->alignCenter()
