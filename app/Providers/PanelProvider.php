@@ -31,6 +31,7 @@ use Filament\Support\Facades\FilamentColor;
 use App\Http\Middleware\RedirectPanelIfCannotAccess;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 
 class PanelProvider extends ServiceProvider
 {
@@ -188,6 +189,18 @@ class PanelProvider extends ServiceProvider
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->url(fn(): string => Profile::getUrl()),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Documentation')
+                    ->url('https://leconfe.com/docs', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-document-text')
+                    ->group('Support')
+                    ->sort(999),
+                NavigationItem::make('Forum')
+                    ->url('https://forum.leconfe.com', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->group('Support')
+                    ->sort(999),
             ])
             ->darkMode(false)
             ->databaseNotifications()
