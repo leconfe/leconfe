@@ -1012,4 +1012,7 @@ return [
     'discussion_error_anonymous_review' => 'Cannot create a discussion with the selected participants as it may compromise reviewer anonymity.',
     'additional_data' => "Additional Data",
     'view_as_editor' => "View as Editor",
+    'support' => 'Support',
+    'documentation' => 'Documentation',
+    'forum' => 'Forum',
 ];

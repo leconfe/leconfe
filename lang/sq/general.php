@@ -953,4 +953,7 @@ return [
     'discussion_error_anonymous_review' => 'Nuk mund të krijohet një diskutim me pjesëmarrësit e zgjedhur pasi mund të komprometojë anonimitetin e rishikuesit.',
     'additional_data' => "Të dhëna shtesë",
     'view_as_editor' => 'Shiko si Redaktor',
+    'support' => 'Mbështetje',
+    'documentation' => 'Dokumentacion',
+    'forum' => 'Forumi',
 ];

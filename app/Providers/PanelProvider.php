@@ -191,15 +191,15 @@ class PanelProvider extends ServiceProvider
                     ->url(fn(): string => Profile::getUrl()),
             ])
             ->navigationItems([
-                NavigationItem::make('Documentation')
+                NavigationItem::make(fn() => __('general.documentation'))
                     ->url('https://leconfe.com/docs', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-document-text')
-                    ->group('Support')
+                    ->group(fn() => __('general.support'))
                     ->sort(999),
-                NavigationItem::make('Forum')
+                NavigationItem::make(fn() => __('general.forum'))
                     ->url('https://forum.leconfe.com', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-chat-bubble-left-right')
-                    ->group('Support')
+                    ->group(fn() => __('general.support'))
                     ->sort(999),
             ])
             ->darkMode(false)
