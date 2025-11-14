@@ -30,6 +30,7 @@ use App\Models\StakeholderLevel;
 use App\Models\StaticPage;
 use App\Models\Submission;
 use App\Models\SubmissionFileType;
+use App\Models\SubmissionFormItem;
 use App\Models\Timeline;
 use App\Models\Topic;
 use App\Models\Track;
@@ -173,6 +174,7 @@ class Application extends LaravelApplication
             SubmissionFileType::class,
             Track::class,
             Submission::class,
+            SubmissionFormItem::class,
             Stakeholder::class,
             StakeholderLevel::class,
             RegistrationType::class,
