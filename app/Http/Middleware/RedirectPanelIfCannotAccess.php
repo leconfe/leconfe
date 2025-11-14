@@ -42,8 +42,9 @@ class RedirectPanelIfCannotAccess
             if ($user->can('view', $conference)) {
                 return $next($request);
             }
-
-            return redirect()->to($conference->currentScheduledConference->getPanelUrl());
+            if($conference->currentScheduledConference){
+                return redirect()->to($conference->currentScheduledConference->getPanelUrl());
+            }
         }
 
         if ($panel->getId() === PanelProvider::PANEL_ADMINISTRATION) {
