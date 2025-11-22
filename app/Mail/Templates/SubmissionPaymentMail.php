@@ -2,12 +2,15 @@
 
 namespace App\Mail\Templates;
 
+use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Payment;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class SubmissionPaymentMail extends TemplateMailable
 {
+    use CanCustomizeTemplate;
+
     public function __construct(Submission $submission)
     {
         $this->setAdditionalData([
