@@ -145,9 +145,8 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
 
 
                             $mailTemplate = new ParticipantPaymentMail($participant);
-                            
-                            $mailTemplate->subject($data['subject']);
-                            $mailTemplate->htmlTemplate($data['message']);
+                            $mailTemplate->subjectUsing($data['subject']);
+                            $mailTemplate->contentUsing($data['message']);
                             Mail::to($participant->email)->send($mailTemplate);
                         });
 
