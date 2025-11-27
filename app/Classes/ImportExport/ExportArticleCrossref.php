@@ -301,19 +301,14 @@ class ExportArticleCrossref
         if ($authors->isNotEmpty()) {
             $metadata['contributors'] = [
                 'person_name' => $authors->map(function ($author, $index) {
-                    $data = [
+                    return [
                         '_attributes' => [
                             'sequence' => $index === 0 ? 'first' : 'additional',
                             'contributor_role' => 'author',
                         ],
                         'given_name' => $author->given_name,
+                        'surname' => !empty($author->family_name) ? $author->family_name : $author->given_name
                     ];
-
-                    if($author->family_name){
-                        $data['surname'] = $author->family_name;
-                    }
-
-                    return $data;
                 })->toArray(),
             ];
         }
