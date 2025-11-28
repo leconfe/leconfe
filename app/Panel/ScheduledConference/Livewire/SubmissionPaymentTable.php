@@ -64,6 +64,12 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
                     ->description(fn (Payment $record) => $record->user->full_name)
                     ->wrap(),
+                TextColumn::make('status')
+                    ->label('Submission Status')
+                    ->badge()
+                    ->toggleable()
+                    ->state(fn (Payment $record) => $record->model?->status?->value)
+                    ->wrap(),
                 TextColumn::make('fee.name')
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
