@@ -307,7 +307,7 @@ class ExportArticleCrossref
                             'contributor_role' => 'author',
                         ],
                         'given_name' => $author->given_name,
-                        'surname' => $author->family_name,
+                        'surname' => !empty($author->family_name) ? $author->family_name : $author->given_name
                     ];
                 })->toArray(),
             ];
