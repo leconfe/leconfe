@@ -12,6 +12,10 @@ class Upgrade133 extends UpgradeBase
 {
     public function run(): void
     {
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
+        
         DB::table('scheduled_conferences')
             ->whereIn('state', [2, 3, 4])
             ->update(['is_published' => 1]);
