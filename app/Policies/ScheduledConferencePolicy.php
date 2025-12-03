@@ -20,9 +20,30 @@ class ScheduledConferencePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ScheduledConference $scheduledConference)
+    public function view(?User $user, ScheduledConference $scheduledConference)
     {
-        if ($user->can('ScheduledConference:view')) {
+        if($scheduledConference->is_published){
+            return true;
+        }
+
+        if($user?->can('viewDraft', $scheduledConference)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function viewDraft(User $user, ScheduledConference $scheduledConference)
+    {
+        if ($user->can('ScheduledConference:viewDraft')) {
+            return true;
+        }
+    }
+
+    
+    public function viewDashboardOverview(User $user, ScheduledConference $scheduledConference)
+    {
+        if ($user->can('ScheduledConference:viewDashboardOverview')) {
             return true;
         }
     }

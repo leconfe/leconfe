@@ -105,10 +105,10 @@ class UserResource extends Resource
                                     ->unique(ignoreRecord: true),
                                 Forms\Components\TextInput::make('password')
                                     ->label(__('general.password'))
-                                    ->required(fn (?User $record) => ! $record)
+                                    ->required(fn(?User $record) => ! $record)
                                     ->password()
-                                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                                    ->dehydrated(fn ($state) => filled($state))
+                                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                                    ->dehydrated(fn($state) => filled($state))
                                     ->confirmed(),
                                 Forms\Components\TextInput::make('password_confirmation')
                                     ->label(__('general.password_confirmation'))
@@ -126,10 +126,10 @@ class UserResource extends Resource
                 Forms\Components\Grid::make()
                     ->schema([
                         Forms\Components\Section::make()
-                            ->visible(fn (?User $record) => $record?->isBanned())
+                            ->visible(fn(?User $record) => $record?->isBanned())
                             ->schema([
                                 Forms\Components\Placeholder::make('disabled_at')
-                                    ->visible(fn (?User $record) => $record?->isBanned())
+                                    ->visible(fn(?User $record) => $record?->isBanned())
                                     ->label(__('general.disabled_at'))
                                     ->content(function (?User $record): ?string {
                                         $ban = $record?->bans->first();
@@ -137,7 +137,7 @@ class UserResource extends Resource
                                         return $ban?->created_at?->format(Setting::get('format_date')) ?? '-';
                                     }),
                                 Forms\Components\Placeholder::make('disabled_until')
-                                    ->visible(fn (?User $record) => $record?->isBanned())
+                                    ->visible(fn(?User $record) => $record?->isBanned())
                                     ->label(__('general.disabled_until'))
                                     ->content(function (?User $record): ?string {
                                         $ban = $record?->bans->first();
@@ -147,14 +147,14 @@ class UserResource extends Resource
 
                             ]),
                         Forms\Components\Section::make(__('general.user_roles'))
+                            ->hidden(fn() => app()->isOnSite())
                             ->schema([
                                 Forms\Components\CheckboxList::make('roles')
                                     ->hiddenLabel()
-                                    ->required()
                                     ->relationship(
                                         name: 'roles',
                                         titleAttribute: 'name',
-                                        modifyQueryUsing: fn ($query) => $query->where('name', '!=', UserRole::Admin)
+                                        modifyQueryUsing: fn($query) => $query->where('name', '!=', UserRole::Admin)
                                     )
                                     ->saveRelationshipsUsing(function (Forms\Components\CheckboxList $component, ?array $state, User $record) {
 
@@ -163,7 +163,6 @@ class UserResource extends Resource
                                         $roles = array_diff($roles, [UserRole::Admin->value]);
 
                                         $component->getModelInstance()->syncRoles($roles);
-
                                     }),
                             ]),
                     ])
@@ -186,10 +185,10 @@ class UserResource extends Resource
                             $name = Str::of(Filament::getUserName($record))
                                 ->trim()
                                 ->explode(' ')
-                                ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+                                ->map(fn(string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
                                 ->join(' ');
 
-                            return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=111827&font-size=0.33';
+                            return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827&font-size=0.33';
                         })
                         ->extraCellAttributes([
                             'style' => 'width: 1px',
@@ -199,7 +198,7 @@ class UserResource extends Resource
                         TextColumn::make('full_name')
                             ->weight(FontWeight::Medium)
                             ->searchable(
-                                query: fn ($query, $search) => $query
+                                query: fn($query, $search) => $query
                                     ->whereMeta('public_name', 'LIKE', "%{$search}%")
                                     ->orWhere('given_name', 'LIKE', "%{$search}%")
                                     ->orWhere('family_name', 'LIKE', "%{$search}%")
@@ -217,10 +216,10 @@ class UserResource extends Resource
                             ->color('gray')
                             ->icon('heroicon-s-building-library')
                             ->searchable(
-                                query: fn ($query, $search) => $query
+                                query: fn($query, $search) => $query
                                     ->whereMeta('affiliation', 'LIKE', "%{$search}%")
                             )
-                            ->getStateUsing(fn (User $record) => $record->getMeta('affiliation')),
+                            ->getStateUsing(fn(User $record) => $record->getMeta('affiliation')),
                         TextColumn::make('disabled')
                             ->getStateUsing(function (User $record) {
                                 if (! $record->isBanned()) {
@@ -233,7 +232,7 @@ class UserResource extends Resource
 
                                 $bannedUntil = $ban->expired_at;
 
-                                return __('general.disabled').($bannedUntil ? __('general.until').$bannedUntil->format(Setting::get('format_date')) : '');
+                                return __('general.disabled') . ($bannedUntil ? __('general.until') . $bannedUntil->format(Setting::get('format_date')) : '');
                             })
                             ->color('danger')
                             ->badge(),
@@ -247,72 +246,52 @@ class UserResource extends Resource
             ->filters([
                 SelectFilter::make('roles')
                     ->label(__('general.roles'))
-                    ->relationship('roles', 'name', modifyQueryUsing: fn ($query) => $query->where('name', '!=', UserRole::Admin))
+                    ->relationship('roles', 'name', modifyQueryUsing: fn($query) => $query->where('name', '!=', UserRole::Admin))
                     ->multiple()
                     ->preload(),
                 Filter::make('hide_user_with_no_roles')
                     ->default()
+                    ->hidden(fn() => app()->isOnSite())
                     ->label(__('general.hide_users_with_no_roles'))
-                    ->query(fn (array $data, Builder $query) => $query->whereHas('roles', fn ($query) => $query->where('name', '!=', UserRole::Admin))),
+                    ->query(fn(array $data, Builder $query) => $query->whereHas('roles', fn($query) => $query->where('name', '!=', UserRole::Admin))),
             ])
             ->deferFilters()
             ->actions([
                 EditAction::make()
                     ->modalWidth('full'),
-                DeleteAction::make()
-                    ->using(function (?array $data, User $record, DeleteAction $action) {
-                        try {
-                            $user = UserDeleteAction::run($data, $record);
+                Action::make('remove')
+                    ->color('danger')
+                    ->icon('heroicon-m-trash')
+                    ->requiresConfirmation()
+                    ->authorize('delete')
+                    ->hidden(fn() => app()->isOnSite())
+                    ->visible(fn($record) => $record->roles->count() && app()->isOnSite())
+                    ->action(function (User $record, Action $action) {
+                        $result = $record->syncRoles([]);
 
-                            return $user;
-                        } catch (\Throwable $th) {
-                            $action->failureNotificationTitle($th->getMessage());
+                        if (! $result) {
+                            $action->failure();
 
-                            return false;
+                            return;
                         }
+
+                        $action->success();
                     }),
                 ActionGroup::make([
                     Impersonate::make()
                         ->grouped()
-                        ->hidden(fn ($record) => ! auth()->user()->can('loginAs', $record))
-                        ->label(fn (User $record) => __('general.login_as_user', ['name' => $record->full_name]))
+                        ->hidden(fn($record) => ! auth()->user()->can('loginAs', $record))
+                        ->label(fn(User $record) => __('general.login_as_user', ['name' => $record->full_name]))
                         ->icon('heroicon-m-key')
                         ->color('primary')
-                        ->redirectTo(fn () => app()->getCurrentScheduledConference()?->getPanelUrl() ?? app()->getCurrentConference()?->getPanelUrl()),
-                    Action::make('enable')
-                        ->visible(fn (User $record) => auth()->user()->can('enable', $record))
-                        ->label(__('general.enable_user'))
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function (User $record) {
-                            $record->unban();
-                        }),
-                    Action::make('disable')
-                        ->visible(fn (User $record) => auth()->user()->can('disable', $record))
-                        ->label(fn (User $record) => __('general.disable'))
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->modalWidth('xl')
-                        ->modalHeading(fn (User $record) => "Disable User : {$record->full_name}")
-                        ->form([
-                            Textarea::make('comment')
-                                ->label(__('general.reason_for_disabling_user')),
-                            DatePicker::make('expired_at')
-                                ->label(__('general.until'))
-                                ->minDate(now()->addDay())
-                                ->hint(__('general.to_disable_permanently_leave_field_empty')),
-                        ])
-                        ->action(function (array $data, User $record) {
-                            $record->ban($data);
-                        }),
+                        ->redirectTo(fn() => app()->getCurrentScheduledConference()?->getPanelUrl() ?? app()->getCurrentConference()?->getPanelUrl()),
                     Action::make('email')
-                        ->visible(fn (User $record) => auth()->user()->can('sendEmail', $record))
-                        ->label(fn (User $record) => __('general.send_email'))
+                        ->visible(fn(User $record) => auth()->user()->can('sendEmail', $record))
+                        ->label(fn(User $record) => __('general.send_email'))
                         ->icon('heroicon-o-envelope')
                         ->modalWidth('3xl')
-                        ->fillForm(fn ($record) => ['to' => $record->email])
-                        ->modalHeading(fn (User $record) => __('general.send_email_to').$record->full_name)
+                        ->fillForm(fn($record) => ['to' => $record->email])
+                        ->modalHeading(fn(User $record) => __('general.send_email_to') . $record->full_name)
                         ->form([
                             Grid::make()
                                 ->schema([
@@ -332,7 +311,46 @@ class UserResource extends Resource
                         ->action(function (User $record, array $data) {
                             UserMailAction::run($record, ...Arr::only($data, ['subject', 'message']));
                         }),
+                    Action::make('enable')
+                        ->visible(fn(User $record) => auth()->user()->can('enable', $record))
+                        ->label(__('general.enable_user'))
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function (User $record) {
+                            $record->unban();
+                        }),
+                    Action::make('disable')
+                        ->visible(fn(User $record) => auth()->user()->can('disable', $record))
+                        ->label(fn(User $record) => __('general.disable'))
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->modalWidth('xl')
+                        ->modalHeading(fn(User $record) => "Disable User : {$record->full_name}")
+                        ->form([
+                            Textarea::make('comment')
+                                ->label(__('general.reason_for_disabling_user')),
+                            DatePicker::make('expired_at')
+                                ->label(__('general.until'))
+                                ->minDate(now()->addDay())
+                                ->hint(__('general.to_disable_permanently_leave_field_empty')),
+                        ])
+                        ->action(function (array $data, User $record) {
+                            $record->ban($data);
+                        }),
+                    DeleteAction::make()
+                        ->visible(fn() => app()->isOnSite())
+                        ->using(function (?array $data, User $record, DeleteAction $action) {
+                            try {
+                                $user = UserDeleteAction::run($data, $record);
 
+                                return $user;
+                            } catch (\Throwable $th) {
+                                $action->failureNotificationTitle($th->getMessage());
+
+                                return false;
+                            }
+                        }),
                 ]),
             ])
             ->queryStringIdentifier('users')

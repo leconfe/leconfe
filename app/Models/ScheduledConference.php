@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Application;
+use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,12 +34,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'date_end',
         'state',
         'type',
+        'is_published',
         'featured',
     ];
 
     protected $casts = [
-        'published' => 'boolean',
-        'published_at' => 'datetime',
+        'is_published' => 'boolean',
         'current' => 'boolean',
         'date_start' => 'date',
         'date_end' => 'date',
@@ -50,16 +52,6 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
      */
     protected static function booted(): void
     {
-        static::updating(function (ScheduledConference $scheduledConference) {
-            if ($scheduledConference->isDirty('state') && $scheduledConference->state == ScheduledConferenceState::Current) {
-                static::query()
-                    ->where('conference_id', $scheduledConference->conference_id)
-                    ->where('state', ScheduledConferenceState::Current->value)
-                    ->where('id', '!=', $scheduledConference->id)
-                    ->update(['state' => ScheduledConferenceState::Archived]);
-            }
-        });
-
         static::deleting(function (ScheduledConference $scheduledConference) {
             Announcement::query()
                 ->withoutGlobalScopes()
@@ -178,6 +170,11 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         return $this->hasMany(Submission::class);
     }
+    
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class);
+    }
 
     public function committees(): HasMany
     {
@@ -265,39 +262,13 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('submission_payment');
     }
 
-    public function isCurrent(): bool
-    {
-        return $this->state == ScheduledConferenceState::Current;
-    }
-
-    public function isDraft(): bool
-    {
-        return $this->state == ScheduledConferenceState::Draft;
-    }
-
-    public function isPublished(): bool
-    {
-        return $this->state == ScheduledConferenceState::Published;
-    }
-
-    public function isUpcoming(): bool
-    {
-        return $this->isPublished();
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->state == ScheduledConferenceState::Archived;
-    }
-
     public function scopeType($query, ScheduledConferenceType $type)
     {
         return $query->where('type', $type);
     }
 
-    public function scopeState($query, ScheduledConferenceState $state)
-    {
-        return $query->where('state', $state);
+    public function scopePublished($query, bool $isPublished = true){
+        return $query->where('is_published', $isPublished);
     }
 
     public function isInvoiceEnabled(): bool
@@ -356,7 +327,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        $response = Http::acceptJson()->post(Application::API_URL . 'leconfe/auth/register', [
+        if(!app()->isProduction()) return;
+        
+        $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
             'url' => $this->getUrl(),
         ]);
@@ -373,8 +346,32 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         ]);
     }
 
-    public function getContextString() : string
+    public function getContextString(): string
     {
         return 'scheduled-conference';
+    }
+
+    protected function fullDate(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $start = $this->date_start?->format(Setting::get('format_date'));
+                $end = $this->date_end?->format(Setting::get('format_date'));
+
+                if ($start && $end) {
+                    return "{$start} - {$end}";
+                }
+
+                if ($start) {
+                    return $start;
+                }
+
+                if ($end) {
+                    return $end;
+                }
+
+                return '';
+            },
+        );
     }
 }

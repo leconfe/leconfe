@@ -76,19 +76,21 @@
 
         <div class="overflow-y-scroll max-h-64">
             @foreach ($scheduledConferences as $scheduledConference)
-                <x-filament::dropdown.list.item
-                    :href="$scheduledConference->getPanelUrl()"
-                    :icon="filament()->getTenantAvatarUrl($scheduledConference)"
-                    tag="a"
-                    badge-color="primary"
-                >
-                    {{ $scheduledConference->title }}
-                    @if($scheduledConference->current)
-                    <x-slot name="badge">
-                        {{ __('general.current') }}
-                    </x-slot>
-                    @endif
-                </x-filament::dropdown.list.item>
+                @can('view', $scheduledConference)
+                    <x-filament::dropdown.list.item
+                        :href="$scheduledConference->getPanelUrl()"
+                        :icon="filament()->getTenantAvatarUrl($scheduledConference)"
+                        tag="a"
+                        badge-color="primary"
+                    >
+                        {{ $scheduledConference->title }}
+                        @if($scheduledConference->current)
+                        <x-slot name="badge">
+                            {{ __('general.current') }}
+                        </x-slot>
+                        @endif
+                    </x-filament::dropdown.list.item>
+                @endcan
             @endforeach
         </div>
     </x-filament::dropdown.list>

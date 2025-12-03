@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Conference;
-use App\Models\Enums\ScheduledConferenceState;
 use App\Models\ScheduledConference;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -47,7 +46,7 @@ class GlobalNavigation extends Component
         return ScheduledConference::query()
             ->with(['conference'])
             ->withoutGlobalScopes()
-            ->whereIn('state', [ScheduledConferenceState::Archived, ScheduledConferenceState::Current])
+            ->published()
             ->where('title', 'like', "%$search%")
             ->orderBy('title')
             ->limit(20)

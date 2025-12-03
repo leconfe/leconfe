@@ -204,7 +204,7 @@ class SubmissionResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->options(
-                        SubmissionStatus::array()
+                        array_combine(SubmissionStatus::values(), SubmissionStatus::values())
                     )
                     ->searchable(),
                 SelectFilter::make('track')

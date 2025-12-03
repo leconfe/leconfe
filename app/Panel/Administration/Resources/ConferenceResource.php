@@ -54,20 +54,15 @@ class ConferenceResource extends Resource
     {
         return $table
             ->defaultPaginationPageOption(5)
+            ->recordUrl(fn (Conference $record) => route('filament.conference.pages.dashboard', $record))
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('name')
+                    ->wrap()
                     ->label(__('general.name'))
                     ->searchable(),
             ])
             ->actions([
-                Tables\Actions\Action::make('open-conference')
-                    ->label(__('general.open_conference'))
-                    ->icon('heroicon-o-link')
-                    ->button()
-                    ->color('gray')
-                    ->url(fn (Conference $record) => route('filament.conference.pages.dashboard', $record))
-                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->button()

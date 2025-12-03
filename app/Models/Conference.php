@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Enums\ScheduledConferenceState;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -135,7 +134,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
 
     public function currentScheduledConference(): HasOne
     {
-        return $this->hasOne(ScheduledConference::class)->where('state', ScheduledConferenceState::Current);
+        return $this->hasOne(ScheduledConference::class)->published()->orderBy('date_start', 'DESC');
     }
 
     public function roles(): HasMany

@@ -185,6 +185,7 @@ return [
 
     'conference_settings' => 'Conference Settings',
     'conference_identity' => 'Conference Identity',
+    'information_about_conference' => 'Information about the conference parent',
     'information_about_scheduled_conference' => 'Information about the scheduled conference',
     'ISSN' => 'ISSN',
     'the_issn_of_the_conference' => 'The ISSN of the conference',

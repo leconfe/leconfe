@@ -6,6 +6,9 @@ use App\Models\Enums\Concern\UsefulEnums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
+/**
+ * @deprecated
+ */
 enum ScheduledConferenceState: int implements HasColor, HasLabel
 {
     use UsefulEnums;
@@ -24,8 +27,8 @@ enum ScheduledConferenceState: int implements HasColor, HasLabel
     {
         return match ($this) {
             self::Draft => 'gray',
-            self::Published => 'grenn',
-            self::Current => 'primary',
+            self::Published => 'primary',
+            self::Current => 'success',
             self::Archived => 'warning',
         };
     }
