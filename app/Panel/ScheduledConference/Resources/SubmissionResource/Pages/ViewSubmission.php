@@ -47,6 +47,7 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
 use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -363,6 +364,19 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     $action->success();
                 })
                 ->modalWidth('2xl'),
+            Action::make('withdrawn_reason')
+                ->record($this->record)
+                ->modalWidth(MaxWidth::ExtraLarge)
+                ->visible(fn($record) => $record->status->is(SubmissionStatus::Withdrawn))
+                ->color('danger')
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false)
+                ->infolist(function(Infolist $infolist){
+                    return $infolist->schema([
+                        TextEntry::make('reason')
+                            ->getStateUsing(fn($record) => $record->withdrawn_reason)
+                    ]);
+                }),
             Action::make('activity-log')
                 ->label(__('general.activity_log'))
                 ->authorize(fn () => auth()->user()->can('actAsEditor', $this->record))
