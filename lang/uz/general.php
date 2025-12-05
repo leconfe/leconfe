@@ -971,4 +971,5 @@ return [
     'support' => 'Qo‘llab-quvvatlash',
     'documentation' => 'Hujjatlar',
     'forum' => 'Forum',
+    'confirm_remove' => 'Ishonchingiz komilmi? Bu foydalanuvchini konferensiyadan yoki rejalashtirilgan konferensiyadan o‘chiradi.',
 ];

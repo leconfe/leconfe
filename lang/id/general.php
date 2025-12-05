@@ -938,4 +938,5 @@ return [
     'support' => 'Dukungan',
     'documentation' => 'Dokumentasi',
     'forum' => 'Forum',
+    'confirm_remove' => 'Apakah Anda yakin? Ini akan menghapus pengguna dari konferensi atau konferensi terjadwal.',
 ];

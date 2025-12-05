@@ -105,13 +105,6 @@ class SubmissionResource extends Resource
                             ])
                             ->badge()
                             ->getStateUsing(fn(Submission $record) => $record->status?->value),
-                        // Tables\Columns\TextColumn::make('editorial_also_as_reviewer')
-                        //     ->extraAttributes([
-                        //         'class' => 'mt-2',
-                        //     ])
-                        //     ->html()
-                        //     ->url('#')
-                        //     ->getStateUsing(fn(Submission $record) => view('panel.conference.resources.submission-resource.reviewer-editor', ['record' => $record])),
                     ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('editor-assigned-badges')

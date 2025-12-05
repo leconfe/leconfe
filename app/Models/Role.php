@@ -145,7 +145,6 @@ class Role extends Model
                     'Topic:view',
                     'User:create',
                     'User:delete',
-                    'User:disable',
                     'User:enable',
                     'User:loginAs',
                     'User:sendEmail',

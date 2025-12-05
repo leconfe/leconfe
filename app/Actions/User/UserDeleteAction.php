@@ -10,12 +10,12 @@ class UserDeleteAction
 {
     use AsAction;
 
-    public function handle($data, User $user)
+    public function handle(User $user)
     {
         try {
             DB::beginTransaction();
 
-            $user->delete($data);
+            $user->delete();
 
             DB::commit();
         } catch (\Throwable $th) {

@@ -264,8 +264,8 @@ class UserResource extends Resource
                     ->icon('heroicon-m-trash')
                     ->requiresConfirmation()
                     ->authorize('delete')
-                    ->hidden(fn() => app()->isOnSite())
-                    ->visible(fn($record) => $record->roles->count() && app()->isOnSite())
+                    ->visible(fn($record) => $record->roles->count() && !app()->isOnSite())
+                    ->modalDescription(__('general.confirm_remove'))
                     ->action(function (User $record, Action $action) {
                         $result = $record->syncRoles([]);
 
@@ -340,9 +340,9 @@ class UserResource extends Resource
                         }),
                     DeleteAction::make()
                         ->visible(fn() => app()->isOnSite())
-                        ->using(function (?array $data, User $record, DeleteAction $action) {
+                        ->using(function (User $record, DeleteAction $action) {
                             try {
-                                $user = UserDeleteAction::run($data, $record);
+                                $user = UserDeleteAction::run($record);
 
                                 return $user;
                             } catch (\Throwable $th) {

@@ -1016,4 +1016,5 @@ return [
     'support' => 'Support',
     'documentation' => 'Documentation',
     'forum' => 'Forum',
+    'confirm_remove' => 'Are you sure? This will remove user from the conference or scheduled conference.',
 ];

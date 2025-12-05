@@ -956,4 +956,5 @@ return [
     'support' => 'Mbështetje',
     'documentation' => 'Dokumentacion',
     'forum' => 'Forumi',
+    'confirm_remove' => 'A jeni i sigurt? Kjo do të largojë përdoruesin nga konferenca ose konferenca e planifikuar.',
 ];

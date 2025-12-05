@@ -21,9 +21,10 @@ class EditUser extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(function (?array $data, User $record, DeleteAction $action) {
+                ->visible(fn() => app()->isOnSite())
+                ->using(function (User $record, DeleteAction $action) {
                     try {
-                        $user = UserDeleteAction::run($data, $record);
+                        $user = UserDeleteAction::run($record);
 
                         return $user;
                     } catch (\Throwable $th) {
