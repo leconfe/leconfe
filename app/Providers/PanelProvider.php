@@ -194,11 +194,13 @@ class PanelProvider extends ServiceProvider
             ])
             ->navigationItems([
                 NavigationItem::make(fn() => __('general.documentation'))
+                    ->visible(fn() => auth()->user()?->hasRole(UserRole::internalRoles()))
                     ->url('https://leconfe.com/docs', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-document-text')
                     ->group(fn() => __('general.support'))
                     ->sort(999),
                 NavigationItem::make(fn() => __('general.forum'))
+                    ->visible(fn() => auth()->user()?->hasRole(UserRole::internalRoles()))
                     ->url('https://forum.leconfe.com', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->group(fn() => __('general.support'))
