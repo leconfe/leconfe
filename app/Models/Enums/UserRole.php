@@ -45,8 +45,6 @@ enum UserRole: string implements HasLabel
     {
         return [
             self::ConferenceManager,
-            self::Reviewer,
-            self::Author,
             self::Reader,
         ];
     }
@@ -56,6 +54,8 @@ enum UserRole: string implements HasLabel
         return [
             self::ScheduledConferenceEditor,
             self::TrackEditor,
+            self::Reviewer,
+            self::Author,
         ];
     }
 
