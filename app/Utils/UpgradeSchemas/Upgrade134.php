@@ -16,6 +16,8 @@ class Upgrade134 extends UpgradeBase
         Artisan::call('migrate', [
             '--force' => true,
         ]);
+
+		$this->migrateRole();
     }
 
     public function migrateRole()
