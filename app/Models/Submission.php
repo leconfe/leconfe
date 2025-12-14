@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Frontend\Conference\Pages\Paper;
 use App\Interfaces\HasPayment;
+use App\Models\Concerns\BelongsToScheduledConference;
 use App\Models\Concerns\HasDOI;
 use App\Models\Concerns\HasTopics;
 use App\Models\Concerns\InteractsWithPayment;
@@ -43,7 +44,7 @@ use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
+    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait, BelongsToScheduledConference;
 
     /**
      * The attributes that are mass assignable.

@@ -16,7 +16,7 @@ class AcceptAbstractMail extends TemplateMailable
     public function __construct(Submission $submission)
     {
         $this->setAdditionalData([
-            'Conference Title' => $submission->payment->scheduledConference->title,
+            'Conference Title' => $submission->scheduledConference->title,
             'Submission Title' => $submission->getMeta('title'),
             'Submission ID' => $submission->getKey(),
             'Submission Author' => $submission->user->fullName,
