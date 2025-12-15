@@ -139,7 +139,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
     public function getEloquentQuery()
     {
         return DiscussionTopic::query()
-            ->with(['discussions'])
+            ->with(['discussions.user'])
             ->where('submission_id', $this->submission->getKey())
             ->where('stage', $this->stage)
             ->when(
