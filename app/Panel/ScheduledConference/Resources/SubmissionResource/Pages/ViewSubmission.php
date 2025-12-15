@@ -176,7 +176,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     fn (): bool => $this->record->proceeding ? true : false
                 )
                 ->authorize('publish', $this->record)
-                ->successNotificationTitle(__('general.assign_proceeding_for_publication'))
+                ->successNotificationTitle(__('general.submission_published_successfully'))
                 ->mountUsing(function (Form $form) {
                     $mailTemplate = DefaultMailTemplate::where('mailable', PublishSubmissionMail::class)->first();
                     $form->fill([
