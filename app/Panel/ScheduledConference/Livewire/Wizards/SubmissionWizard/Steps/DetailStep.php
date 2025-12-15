@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
+use App\Models\Topic;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -65,6 +66,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                     ->schema([
                         Hidden::make('nextStep'),
                         Select::make('topic')
+                            ->visible(fn() => Topic::query()->count())
                             ->preload()
                             ->multiple()
                             ->label(__('general.topic'))
