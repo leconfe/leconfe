@@ -22,7 +22,7 @@ class PublishSubmissionMail extends TemplateMailable
     public function __construct(protected Submission $submission)
     {
         $this->setAdditionalData([
-            'Conference Title' => $submission->payment->scheduledConference->title,
+            'Conference Title' => $submission->scheduledConference->title,
             'Submission Title' => $submission->getMeta('title'),
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
