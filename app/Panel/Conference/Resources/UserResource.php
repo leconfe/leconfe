@@ -151,6 +151,7 @@ class UserResource extends Resource
                             ->schema([
                                 Forms\Components\CheckboxList::make('roles')
                                     ->hiddenLabel()
+                                    ->required()
                                     ->relationship(
                                         name: 'roles',
                                         titleAttribute: 'name',
