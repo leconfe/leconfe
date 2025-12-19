@@ -27,7 +27,7 @@ class SubmissionParticipant extends Model
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class)->withoutGlobalScopes();
     }
 
     public function scopeEditor(Builder $builder)
