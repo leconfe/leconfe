@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Application;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
 use Plank\Metable\Metable;
@@ -373,5 +375,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
                 return '';
             },
         );
+    }
+
+    public function ping()
+    {
+        if(!Cache::has('scheduled_conference_ping_' . $this->getKey())){
+            ScheduledConferencePing::dispatch($this)->onConnection('async');
+        }
     }
 }

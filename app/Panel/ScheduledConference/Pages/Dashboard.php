@@ -2,9 +2,11 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
+use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Models\Enums\UserRole;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ManageSubmissions;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Illuminate\Support\Facades\Cache;
 
 class Dashboard extends BaseDashboard
 {
@@ -12,6 +14,8 @@ class Dashboard extends BaseDashboard
 
     public function mount()
     {
+        app()->getCurrentScheduledConference()->ping();
+
         if (! static::show()) {
             return redirect()->to(ManageSubmissions::getUrl());
         }
