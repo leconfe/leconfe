@@ -7,6 +7,7 @@ use App\Actions\User\UserUpdateAction;
 use App\Models\User;
 use App\Panel\Conference\Resources\UserResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -20,17 +21,21 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->using(function (?array $data, User $record, DeleteAction $action) {
-                    try {
-                        $user = UserDeleteAction::run($data, $record);
+            Action::make('remove')
+                ->color('danger')
+                ->icon('heroicon-m-trash')
+                ->requiresConfirmation()
+                ->authorize('delete')
+                ->action(function (User $record, Action $action) {
+                    $result = $record->syncRoles([]);
 
-                        return $user;
-                    } catch (\Throwable $th) {
-                        $action->failureNotificationTitle($th->getMessage());
+                    if (! $result) {
+                        $action->failure();
 
-                        return false;
+                        return;
                     }
+
+                    $action->success();
                 }),
         ];
     }
