@@ -59,6 +59,8 @@ class PanelProvider extends ServiceProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 function () {
+                    if(auth()->user()?->cannot('ScheduledConference:switch')) return;
+
                     $currentConference = app()->getCurrentConference();
                     $currentScheduledConference = app()->getCurrentScheduledConference();
                     $scheduledConferences = ScheduledConference::query()

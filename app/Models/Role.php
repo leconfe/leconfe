@@ -92,6 +92,7 @@ class Role extends Model
                     'Role:update',
                     'Role:view',
                     'Role:viewAny',
+                    'ScheduledConference:switch',
                     'ScheduledConference:create',
                     'ScheduledConference:delete',
                     'ScheduledConference:update',
@@ -178,6 +179,7 @@ class Role extends Model
                     'Proceeding:update',
                     'Proceeding:view',
                     'Proceeding:viewAny',
+                    'ScheduledConference:switch',
                     'ScheduledConference:update',
                     'ScheduledConference:viewDraft',
                     'ScheduledConference:viewDashboardOverview',
@@ -228,6 +230,7 @@ class Role extends Model
                     'Topic:view',
                 ],
                 UserRole::TrackEditor->value => [
+                    'ScheduledConference:switch',
                     'ScheduledConference:viewDraft',
                     'Submission:acceptPaper',
                     'Submission:approvePayment',

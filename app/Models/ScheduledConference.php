@@ -324,7 +324,14 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function getEntityToken(): ?string
     {
-        return $this->getMeta('entity_token');
+        $token = $this->getMeta('entity_token');
+        if(!$token){
+            $this->registerEntity();
+
+            $token = $this->getMeta('entity_token');
+        }
+
+        return $token;
     }
 
     public function registerEntity(): void
