@@ -66,7 +66,8 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
-            ->with(['meta', 'media', 'bans']);
+            ->with(['meta', 'media', 'bans'])
+            ->when(!app()->isOnSite(), fn(Builder $query) => $query->whereHas('roles', fn($query) => $query->where('name', '!=', UserRole::Admin)));
     }
 
     public static function isDiscovered(): bool
@@ -151,6 +152,7 @@ class UserResource extends Resource
                             ->schema([
                                 Forms\Components\CheckboxList::make('roles')
                                     ->hiddenLabel()
+                                    ->required()
                                     ->relationship(
                                         name: 'roles',
                                         titleAttribute: 'name',
@@ -249,11 +251,6 @@ class UserResource extends Resource
                     ->relationship('roles', 'name', modifyQueryUsing: fn($query) => $query->where('name', '!=', UserRole::Admin))
                     ->multiple()
                     ->preload(),
-                Filter::make('hide_user_with_no_roles')
-                    ->default()
-                    ->hidden(fn() => app()->isOnSite())
-                    ->label(__('general.hide_users_with_no_roles'))
-                    ->query(fn(array $data, Builder $query) => $query->whereHas('roles', fn($query) => $query->where('name', '!=', UserRole::Admin))),
             ])
             ->deferFilters()
             ->actions([
