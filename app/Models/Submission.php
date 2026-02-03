@@ -160,35 +160,40 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         return $this->belongsTo(ScheduledConference::class);
     }
 
-    public function user()
+    public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function submissionFiles()
+    public function submissionFiles() : HasMany
     {
         return $this->hasMany(SubmissionFile::class);
     }
 
-    public function galleys()
+    public function galleys() : HasMany
     {
         return $this->hasMany(SubmissionGalley::class);
     }
 
-    public function discussionTopics()
+    public function discussionTopics() : HasMany
     {
         return $this->hasMany(DiscussionTopic::class);
     }
 
-    public function participants()
+    public function participants() : HasMany
     {
         return $this->hasMany(SubmissionParticipant::class);
     }
 
-    public function editors()
+    public function editors() 
     {
         return $this->participants()
             ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
+    }
+
+    public function presentations() : HasMany
+    {
+        return $this->hasMany(Presentation::class);
     }
 
     public function isPublishedOnExternal()

@@ -14,7 +14,7 @@
         'grid grid-cols-12' => $user->can('actAsEditor', $submission),
     ])>
         <div class="col-span-8 space-y-4">
-            @livewire(Components\Files\PresentationFiles::class, ['submission' => $submission])
+            @livewire(Components\PresentationList::class, ['submission' => $submission])
 
             @livewire(Components\Discussions\DiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::Presentation, 'lazy' => true])
         </div>
