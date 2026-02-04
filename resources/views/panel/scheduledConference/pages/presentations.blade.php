@@ -1,6 +1,11 @@
 <x-filament-panels::page>
+    <div class="w-full">
+        <x-filament::section>
+            {{ $this->form }}
+        </x-filament::section>
+    </div>
 
-    <div class="grid sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 gap-4 items-stretch">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 gap-4 items-stretch">
         @foreach ($presentations as $presentation)
             <a href="{{ $presentation->url() }}" class="group block h-full">
                 <div
@@ -25,6 +30,18 @@
                             {{ $presentation->submission->getMeta('title') }}
                         </h3>
 
+                        @php
+                            $submission = $presentation->submission;
+                            $primaryAuthor = $submission->authors->first(fn ($author) => $author->isPrimaryContact($submission));
+                        @endphp
+
+                        @if ($primaryAuthor)
+                            <p class="text-xs text-gray-500 inline-flex items-center gap-1">
+                                <x-heroicon-m-user class="w-3.5 h-3.5 text-gray-400" />
+                                <span>{{ $primaryAuthor->fullName }}</span>
+                            </p>
+                        @endif
+
                         <div class="mt-auto">
                             <x-filament::button 
                                 icon="heroicon-m-arrow-right"
@@ -38,5 +55,9 @@
                 </div>
             </a>
         @endforeach
+    </div>
+
+    <div class="w-full">
+        {{ $presentations->links('panel.scheduledConference.pagination.presentations') }}
     </div>
 </x-filament-panels::page>
