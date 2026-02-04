@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Models\Presentation;
 use App\Models\Submission;
+use App\Models\Timeline;
 use App\Models\Topic;
 use App\Models\Track;
 use Filament\Forms\Components\Grid;
@@ -28,9 +29,25 @@ class Presentations extends Page implements HasForms
 
     public ?array $formData = [];
 
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        if ($user?->hasPermissionTo('ScheduledConference:update')) {
+            return true;
+        }
+
+        return Timeline::isPresentationOpen();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::canAccess();
+    }
+
     public function mount(): void
     {
-        $this->form->fill([]);  
+        $this->form->fill([]);
     }
 
     public function updatedFormData(): void
@@ -54,16 +71,21 @@ class Presentations extends Page implements HasForms
                             ->label('Track')
                             ->placeholder('All tracks')
                             ->searchable()
-                            ->options(fn () => Track::query()
+                            ->options(fn() => Track::query()
                                 ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
                                 ->pluck('title', 'id')),
                         Select::make('topic_id')
                             ->label('Topic')
                             ->placeholder('All topics')
                             ->searchable()
-                            ->options(fn () => Topic::query()
-                                ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
-                                ->pluck('name', 'id')),
+                            ->options(
+                                fn() => Topic::query()
+                                    ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
+                                    ->pluck('name', 'id')
+                            )
+                            ->visible(
+                                fn($component) => count($component->getOptions()) > 0
+                            ),
                         TextInput::make('keyword')
                             ->label('Keyword')
                             ->placeholder('Search by keyword')
@@ -123,7 +145,7 @@ class Presentations extends Page implements HasForms
             ->paginate(6);
 
         return [
-           'presentations' => $presentations
+            'presentations' => $presentations
         ];
     }
 }

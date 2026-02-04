@@ -7,6 +7,7 @@ use App\Panel\Conference\Livewire\EmailSetting;
 use App\Panel\Conference\Livewire\PublisherLibrary;
 use App\Panel\ScheduledConference\Livewire\AuthorGuidance;
 use App\Panel\ScheduledConference\Livewire\AuthorRoleTable;
+use App\Panel\ScheduledConference\Livewire\PresentationSetting;
 use App\Panel\ScheduledConference\Livewire\ReviewFormTable;
 use App\Panel\ScheduledConference\Livewire\ReviewGuidance;
 use App\Panel\ScheduledConference\Livewire\ReviewSetupSetting;
@@ -125,6 +126,11 @@ class WorkflowSetting extends Page
                                                     ->key('review_form_table'),
                                             ]),
                                     ]),
+                            ]),
+                        Tabs\Tab::make('Presentations')
+                            ->label('Presentations')
+                            ->schema([
+                                Livewire::make(PresentationSetting::class),
                             ]),
                         Tabs\Tab::make('Publisher Library')
                             ->label(__('general.publisher_library'))
