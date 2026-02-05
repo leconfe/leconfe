@@ -145,4 +145,11 @@ class Proceeding extends Model implements HasMedia, Sortable
             'conference' => $this->conference,
         ]);
     }
+
+    protected function getAllDefaultMeta(): array
+    {
+        return [
+            'additional_content' => [],
+        ];
+    }
 }
