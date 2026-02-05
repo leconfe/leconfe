@@ -13,28 +13,35 @@
         @endif
 
         <div class="md:flex" x-data="{ activeTab: 'home' }" x-cloak>
-            <ul class="min-w-32 flex-column space-y space-y-2 text-sm font-medium text-body md:me-4 mb-4 md:mb-0">
-                <li>
-                    <button type="button"
-                        x-on:click="activeTab='home'"
-                        class="inline-flex items-center px-4 py-2.5 rounded-base w-full"
-                        x-bind:class="{ 'text-white bg-primary' : activeTab == 'home', 'hover:bg-gray-100' : activeTab != 'home'}"
-                        aria-current="page">
-                        Home
-                    </button>
-                </li>
-                @foreach ($proceeding->getMeta('additional_content') as $key => $additionalContent)
-                    <button 
-                        x-on:click="activeTab='tab-{{ $key }}'"
-                        x-bind:class="{ 'text-white bg-primary' : activeTab == 'tab-{{ $key }}', 'hover:bg-gray-100' : activeTab != 'tab-{{ $key }}'}"
-                        type="button"
-                        class="inline-flex items-center px-4 py-2.5 rounded-base w-full"
-                        aria-current="page">
-                        {{ $additionalContent['title'] }}
-                    </button>
-                @endforeach
-            </ul>
-            <div class="md:px-6 w-full md:border-l" x-show="activeTab == 'home'">
+            @if(!empty($additionalContents))
+                <ul class="min-w-48 flex-column space-y space-y-2 text-sm font-medium text-body md:me-4 mb-4 md:mb-0">
+                    <li>
+                        <button type="button"
+                            x-on:click="activeTab='home'"
+                            class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
+                            x-bind:class="{ 'text-white bg-primary' : activeTab == 'home', 'hover:bg-gray-100' : activeTab != 'home'}"
+                            aria-current="page">
+                            Home
+                        </button>
+                    </li>
+                    @foreach ($additionalContents as $key => $additionalContent)
+                        <button 
+                            x-on:click="activeTab='tab-{{ $key }}'"
+                            x-bind:class="{ 'text-white bg-primary' : activeTab == 'tab-{{ $key }}', 'hover:bg-gray-100' : activeTab != 'tab-{{ $key }}'}"
+                            type="button"
+                            class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
+                            aria-current="page">
+                            {{ $additionalContent['title'] }}
+                        </button>
+                    @endforeach
+                </ul>
+            @endif
+            <div 
+                @class([
+                    'w-full',
+                    'md:border-l md:px-6' => !empty($additionalContents)
+                ])
+                x-show="activeTab == 'home'">
                 <div class="proceeding-toc space-y-6">
                     <div class="proceeding-detail">
                         <x-website::heading-title tag="h1" :title="$proceeding->seriesTitle()" class="mb-5" />
@@ -77,7 +84,7 @@
                     </div>
                 </div>
             </div>
-            @foreach ($proceeding->getMeta('additional_content') as $key => $additionalContent)
+            @foreach ($additionalContents as $key => $additionalContent)
                <div class="md:px-6 w-full md:border-l user-content" x-show="activeTab == 'tab-{{ $key }}'">
                     {!! $additionalContent['content'] !!}
                </div>

@@ -73,6 +73,7 @@ class ProceedingDetail extends Page
         return [
             'proceeding' => $this->proceeding,
             'tracks' => $tracks,
+            'additionalContents' => $this->proceeding->getMeta('additional_content'),
         ];
     }
 }
