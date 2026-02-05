@@ -967,6 +967,7 @@ return [
     'discussion_not_submission_participant' => 'Tanlangan ishtirokchi ushbu taqdimotga biriktirilmagan.',
     'discussion_error_anonymous_review' => 'Tanlangan ishtirokchilar bilan muhokama yaratib bo‘lmaydi, chunki bu retsenzent anonimligini buzishi mumkin.',
     'additional_data' => "Qo'shimcha ma'lumotlar",
+    'additional_content' => "Qo'shimcha kontent",
     'view_as_editor' => 'Muharrir sifatida ko‘rish',
     'support' => 'Qo‘llab-quvvatlash',
     'documentation' => 'Hujjatlar',

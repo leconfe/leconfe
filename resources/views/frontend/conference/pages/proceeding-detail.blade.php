@@ -1,4 +1,4 @@
-<x-website::layouts.main>
+<x-website::layouts.main :showSidebar="false">
     <div class="space-y-6">
         <x-website::breadcrumbs :breadcrumbs="$this->getBreadcrumbs()" />
         @if (!$proceeding->isPublished())

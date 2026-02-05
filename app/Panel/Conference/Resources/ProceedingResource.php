@@ -9,9 +9,11 @@ use App\Panel\Conference\Resources\ProceedingResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -49,6 +51,12 @@ class ProceedingResource extends Resource
         return $form
             ->columns(1)
             ->schema([
+                SpatieMediaLibraryFileUpload::make('cover')
+                    ->label(__('general.cover'))
+                    ->collection('cover')
+                    ->imageResizeUpscale(false)
+                    ->image()
+                    ->conversion('thumb'),
                 Fieldset::make('Identification')
                     ->label(__('general.identification'))
                     ->columns(3)
@@ -74,12 +82,17 @@ class ProceedingResource extends Resource
                     ->profile('basic')
                     ->minHeight(300)
                     ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
-                SpatieMediaLibraryFileUpload::make('cover')
-                    ->label(__('general.cover'))
-                    ->collection('cover')
-                    ->imageResizeUpscale(false)
-                    ->image()
-                    ->conversion('thumb'),
+                Repeater::make('meta.additional_content')
+                    ->label(__('general.additional_content'))
+                    ->addActionAlignment(Alignment::Start)
+                    ->schema([
+                        TextInput::make('title')->required(),
+                        TinyEditor::make('content')
+                            ->label(__('general.content'))
+                            ->profile('basic')
+                            ->minHeight(300)
+                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                    ])
             ]);
     }
 
