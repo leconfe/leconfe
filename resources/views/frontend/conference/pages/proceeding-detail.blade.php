@@ -78,7 +78,7 @@
                 </div>
             </div>
             @foreach ($proceeding->getMeta('additional_content') as $key => $additionalContent)
-               <div class="md:px-6 w-full md:border-l" x-show="activeTab == 'tab-{{ $key }}'">
+               <div class="md:px-6 w-full md:border-l user-content" x-show="activeTab == 'tab-{{ $key }}'">
                     {!! $additionalContent['content'] !!}
                </div>
             @endforeach
