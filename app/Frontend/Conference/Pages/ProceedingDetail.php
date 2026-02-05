@@ -30,7 +30,6 @@ class ProceedingDetail extends Page
 
     public function canAccess(): bool
     {
-
         return $this->proceeding->isPublished();
     }
 
@@ -61,7 +60,7 @@ class ProceedingDetail extends Page
                     ->ordered()
                     ->where('proceeding_id', $this->proceeding->id)
                     ->where('status', SubmissionStatus::Published)
-                    ->with(['authors', 'doi', 'galleys.file.media', 'meta']),
+                    ->with(['authors.meta', 'doi', 'galleys.file.media', 'meta']),
             ])
             ->whereHas(
                 'submissions',
@@ -74,6 +73,7 @@ class ProceedingDetail extends Page
         return [
             'proceeding' => $this->proceeding,
             'tracks' => $tracks,
+            'additionalContents' => $this->proceeding->getMeta('additional_content'),
         ];
     }
 }

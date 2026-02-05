@@ -934,6 +934,7 @@ return [
     'discussion_not_submission_participant' => 'A selected participant is not assigned to this submission.',
     'discussion_error_anonymous_review' => 'Cannot create a discussion with the selected participants as it may compromise reviewer anonymity.',
     'additional_data' => "Data Tambahan",
+    'additional_content' => "Konten Tambahan",
     'view_as_editor' => 'Lihat sebagai Editor',
     'support' => 'Dukungan',
     'documentation' => 'Dokumentasi',

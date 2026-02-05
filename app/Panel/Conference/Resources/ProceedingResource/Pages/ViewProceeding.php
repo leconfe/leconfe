@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Resources\ProceedingResource\Pages;
 
+use App\Actions\Proceedings\ProceedingUpdateAction;
 use App\Models\Proceeding;
 use App\Models\Submission;
 use App\Panel\Conference\Resources\ProceedingResource;
@@ -10,6 +11,7 @@ use Filament\Actions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
@@ -37,8 +39,10 @@ class ViewProceeding extends Page implements HasForms, HasTable
         $this->record = $this->resolveRecord($record);
 
         $this->authorizeAccess();
-
-        $this->form->fill($this->record->attributesToArray());
+        $this->form->fill([
+            ...$this->record->attributesToArray(),
+            'meta' => $this->record->getAllMeta()->toArray(),
+        ]);
     }
 
     protected function getHeaderActions(): array
@@ -87,10 +91,14 @@ class ViewProceeding extends Page implements HasForms, HasTable
         abort_unless($this->can('update', $this->record), 403);
 
         $data = $this->form->getState();
-
-        $this->record->update($data);
+        ProceedingUpdateAction::run($this->record, $data);
 
         $this->form->saveRelationships();
+
+         Notification::make()
+                ->success()
+                ->title(__('general.saved'))
+                ->send();
     }
 
     public function table(Table $table): Table

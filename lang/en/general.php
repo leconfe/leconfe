@@ -1016,4 +1016,5 @@ return [
     'support' => 'Support',
     'documentation' => 'Documentation',
     'forum' => 'Forum',
+    'additional_content' => 'Additional Content',
 ];

@@ -967,6 +967,7 @@ return [
     'discussion_not_submission_participant' => 'Выбранный участник не назначен на эту подачу.',
     'discussion_error_anonymous_review' => 'Невозможно создать обсуждение с выбранными участниками, так как это может нарушить анонимность рецензента.',
     'additional_data' => "Дополнительные данные",
+    'additional_content' => "Дополнительное содержимое",
     'view_as_editor' => 'Просмотреть как редактор',
     'support' => 'Поддержка',
     'documentation' => 'Документация',
