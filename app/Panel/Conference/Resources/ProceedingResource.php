@@ -91,8 +91,10 @@ class ProceedingResource extends Resource
                             ->label(__('general.content'))
                             ->profile('basic')
                             ->minHeight(300)
+                            ->profile('advanced')
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                     ])
+                    ->defaultItems(0)
             ]);
     }
 
