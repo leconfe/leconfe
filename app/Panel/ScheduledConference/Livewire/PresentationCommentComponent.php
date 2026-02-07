@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Forms\Components\TinyEditor;
 use App\Models\Presentation;
 use App\Models\PresentationComment;
 use Filament\Actions\Action;
@@ -15,6 +16,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PresentationCommentComponent extends Component implements HasForms, HasActions
@@ -30,7 +32,6 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 		// $this->form->fill([]);
 	}
 
-
 	public function editAction(): Action
 	{
 		return Action::make('edit')
@@ -40,15 +41,20 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 				'content' => $this->record->getMeta('content')
 			])
 			->visible(fn() => auth()->user()->can('edit', $this->record))
-			->form([
-				Textarea::make('content')
-					->hiddenLabel()
-					->required()
-					->autosize(),
-			])
+			->form(fn($form) => $this->form($form))
 			->action(function (array $data) {
 				$this->record->setMeta('content', $data['content']);
 			});
+	}
+
+	public function form(Form $form): Form
+	{
+		return $form
+			->schema([
+				TinyEditor::make('content')
+					->hiddenLabel()
+					->minHeight(100),
+			]);
 	}
 
 	public function deleteAction(): Action
@@ -58,10 +64,40 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 			->requiresConfirmation()
 			->visible(fn() => auth()->user()->can('edit', $this->record))
 			->action(function (array $arguments) {
-				$this->record->delete();
-
-				$this->dispatch('refreshComments')->to(PresentationDiscussion::class); 
+				// $this->record->delete();
+				
+				$this->dispatch('deleteComment', commentId: $this->record->getKey())->to(PresentationDiscussion::class);
 			});
+	}
+
+	public function replyAction(): Action
+	{
+		return Action::make('reply')
+			->label('Reply')
+			->icon('heroicon-o-chat-bubble-left-ellipsis')
+			->link()
+			->color('gray')
+			->modalWidth(MaxWidth::ExtraLarge)
+			->form(fn($form) => $this->form($form))
+			->action(function ($data) {
+				$comment = $this->record->childs()->create([
+					'user_id' => auth()->id(),
+					'presentation_id' => $this->record->presentation_id,
+				]);
+				$comment->setMeta('content', $data['content']);
+
+				Notification::make()
+					->title('Comment Success')
+					->success()
+					->send();
+
+				$this->loadData();
+			});
+	}
+
+	public function loadData()
+	{
+		$this->record->load(['user', 'meta', 'childs' => ['user', 'meta']]);
 	}
 
 	public function render()

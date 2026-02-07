@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Forms\Components\TinyEditor;
 use App\Models\Presentation;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -12,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Stevebauman\Purify\Facades\Purify;
 
 class PresentationDiscussion extends Component implements HasForms, HasActions
 {
@@ -32,10 +34,9 @@ class PresentationDiscussion extends Component implements HasForms, HasActions
 	{
 		return $form
 			->schema([
-				Textarea::make('content')
+				TinyEditor::make('content')
 					->hiddenLabel()
-					->autosize()
-					->required()
+                    ->minHeight(100),
 			])
 			->statePath('formData');
 	}
@@ -57,10 +58,18 @@ class PresentationDiscussion extends Component implements HasForms, HasActions
 		$this->loadComments();
 	}
 
+	#[On('deleteComment')] 
+	public function deleteComment($commentId)
+	{
+		$this->record->comments()->where('id', $commentId)->delete();
+
+		$this->loadComments();
+	}
+
 	#[On('refreshComments')] 
 	public function loadComments()
 	{
-		$this->record->load(['comments' => fn($query) => $query->latest()->with(['user', 'meta'])]);
+		$this->record->load(['comments' => fn($query) => $query->latest()->whereNull('parent_id')->with(['user', 'meta', 'childs' => ['user', 'meta']])]);
 	}
 
 	public function render()

@@ -1,4 +1,10 @@
-<div id="comment-{{ $record->getKey() }}">
+<div 
+	id="comment-{{ $record->getKey() }}"
+	@class([
+		"py-6" => !$record->parent_id,
+		"ml-6 lg:ml-12 py-4" => $record->parent_id,
+	])
+	>
 	<article class="text-base">
 		<div class="flex justify-between items-center mb-2">
 			<div class="flex items-center">
@@ -18,12 +24,21 @@
 				$this->deleteAction,
 			]" />
 		</div>
-		<p class="text-gray-500 dark:text-gray-400">
-			{{ $record->getMeta('content') }}
-		</p>
-		<div>
-			
+		<div class="text-gray-500 dark:text-gray-400 user-content">
+			{{-- {{ $record->getMeta('content') }} --}}
+			{!! $record->getMeta('content') !!}
 		</div>
+
+		@if(!$record->parent_id)
+			<div class="flex items-center mt-4 space-x-4">
+				{{ $this->replyAction }}
+			</div>
+			@if($record->childs->isNotEmpty())
+				@foreach ($record->childs as $child)
+					@livewire(App\Panel\ScheduledConference\Livewire\PresentationCommentComponent::class, ['record' => $child], key('comment-' . $child->getKey()))
+				@endforeach
+			@endif
+		@endif
 		<x-filament-actions::modals />
 	</article>
 </div>

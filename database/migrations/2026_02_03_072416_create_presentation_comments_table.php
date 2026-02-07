@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Presentation::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
             $table->boolean('is_hidden')->default(false);
-            $table->foreignIdFor(PresentationComment::class, 'parent_id')->nullable()->constrained('presentation_comments');
+            $table->foreignIdFor(PresentationComment::class, 'parent_id')->nullable()->constrained('presentation_comments')->cascadeOnDelete();
 
             $table->timestamps();
             $table->index('created_at');

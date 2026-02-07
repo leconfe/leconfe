@@ -28,6 +28,21 @@ class PresentationCommentPolicy
      */
     public function update(User $user, PresentationComment $comment)
     {
+        if($user->getKey() == $comment->user_id){
+            return true;
+        }
+
+        if ($user->can('Comment:update')) {
+            return true;
+        }
+    }
+
+    public function delete(User $user, PresentationComment $comment)
+    {
+        if($user->getKey() == $comment->user_id){
+            return true;
+        }
+
         if ($user->can('Comment:update')) {
             return true;
         }

@@ -6,9 +6,9 @@
 				{{ __('general.submit') }}
 			</x-filament::button>
 		</form>
-		<div class="space-y-6">
+		<div class="divide-y">
 			@forelse ($record->comments as $comment)
-				 @livewire(App\Panel\ScheduledConference\Livewire\PresentationCommentComponent::class, ['record' => $comment], key('comment-' . $comment->getKey()))
+				 @livewire(App\Panel\ScheduledConference\Livewire\PresentationCommentComponent::class, ['record' => $comment], key('comment-' . $comment->getKey() . Str::random(7)))
 			@empty
 				<div class="text-gray-600">
 					There's nothing here
