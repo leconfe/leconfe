@@ -36,7 +36,8 @@ class PresentationDiscussion extends Component implements HasForms, HasActions
 			->schema([
 				TinyEditor::make('content')
 					->hiddenLabel()
-                    ->minHeight(100),
+					->required()
+					->minHeight(100),
 			])
 			->statePath('formData');
 	}
@@ -58,7 +59,7 @@ class PresentationDiscussion extends Component implements HasForms, HasActions
 		$this->loadComments();
 	}
 
-	#[On('deleteComment')] 
+	#[On('deleteComment')]
 	public function deleteComment($commentId)
 	{
 		$this->record->comments()->where('id', $commentId)->delete();
@@ -66,7 +67,7 @@ class PresentationDiscussion extends Component implements HasForms, HasActions
 		$this->loadComments();
 	}
 
-	#[On('refreshComments')] 
+	#[On('refreshComments')]
 	public function loadComments()
 	{
 		$this->record->load(['comments' => fn($query) => $query->latest()->whereNull('parent_id')->with(['user', 'meta', 'childs' => ['user', 'meta']])]);

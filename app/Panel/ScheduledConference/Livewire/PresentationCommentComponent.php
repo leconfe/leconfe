@@ -40,7 +40,7 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 			->fillForm([
 				'content' => $this->record->getMeta('content')
 			])
-			->visible(fn() => auth()->user()->can('edit', $this->record))
+			->visible(fn() => auth()->user()->can('update', $this->record))
 			->form(fn($form) => $this->form($form))
 			->action(function (array $data) {
 				$this->record->setMeta('content', $data['content']);
@@ -52,6 +52,7 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 		return $form
 			->schema([
 				TinyEditor::make('content')
+					->required()
 					->hiddenLabel()
 					->minHeight(100),
 			]);
@@ -62,10 +63,8 @@ class PresentationCommentComponent extends Component implements HasForms, HasAct
 		return Action::make('delete')
 			->color('danger')
 			->requiresConfirmation()
-			->visible(fn() => auth()->user()->can('edit', $this->record))
+			->visible(fn() => auth()->user()->can('delete', $this->record))
 			->action(function (array $arguments) {
-				// $this->record->delete();
-				
 				$this->dispatch('deleteComment', commentId: $this->record->getKey())->to(PresentationDiscussion::class);
 			});
 	}
