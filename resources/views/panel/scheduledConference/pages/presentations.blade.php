@@ -43,6 +43,17 @@
                                 </p>
                             @endif
 
+                            <div class="inline-flex items-center gap-3 text-xs text-gray-500">
+                                <span class="inline-flex items-center gap-1">
+                                    <x-heroicon-o-eye class="h-3.5 w-3.5" />
+                                    <span>{{ $presentation->viewsCountMeta() }}</span>
+                                </span>
+                                <span class="inline-flex items-center gap-1">
+                                    <x-heroicon-o-heart class="h-3.5 w-3.5" />
+                                    <span>{{ $presentation->likesCountMeta() }}</span>
+                                </span>
+                            </div>
+
                             <div class="mt-auto">
                                 <x-filament::button 
                                     icon="heroicon-m-arrow-right"

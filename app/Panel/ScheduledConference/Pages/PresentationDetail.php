@@ -7,6 +7,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Renderless;
 
 class PresentationDetail extends Page implements HasForms
 {
@@ -25,8 +26,15 @@ class PresentationDetail extends Page implements HasForms
     public Presentation $record;
 
     public function mount(): void
-    { 
+    {
         $this->record->load(['submission' => ['authors.role', 'meta']]);
+        $this->record->registerView((int) auth()->id());
+    }
+
+    #[Renderless]
+    public function toggleLike(): void
+    {
+        $this->record->toggleLike((int) auth()->id());
     }
 
     public function getTitle(): string | Htmlable
@@ -40,10 +48,9 @@ class PresentationDetail extends Page implements HasForms
     protected function getViewData(): array
     {
         return [
-           
+
         ];
     }
-
 
     public static function getRoutePath(): string
     {

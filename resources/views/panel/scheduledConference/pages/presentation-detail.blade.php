@@ -21,6 +21,37 @@
                             <span>{{ $primaryAuthor->fullName }}</span>
                         </p>
                     @endif
+
+                    <div
+                        class="mt-3 flex flex-wrap items-center gap-2"
+                        x-data="presentationEngagement({
+                            hasLiked: @js($record->isLikedBy((int) auth()->id())),
+                            likesCount: @js($record->likesCountMeta()),
+                            viewsCount: @js($record->viewsCountMeta()),
+                        })"
+                    >
+                        <button
+                            type="button"
+                            disabled
+                            class="fi-btn fi-btn-size-xs inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold ring-1 transition duration-75 fi-btn-color-gray fi-btn-outlined ring-gray-300 text-gray-700"
+                        >
+                            <x-heroicon-o-eye class="h-4 w-4" />
+                            <span x-text="viewsCount"></span>
+                        </button>
+                        <button
+                            type="button"
+                            x-on:click="toggleLike"
+                            x-bind:disabled="pending"
+                            x-bind:class="hasLiked
+                                ? 'ring-danger-300 text-danger-600 fi-btn-color-danger'
+                                : 'ring-gray-300 text-gray-700 fi-btn-color-gray'"
+                            class="fi-btn fi-btn-size-xs inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold ring-1 transition duration-75 fi-btn-outlined"
+                        >
+                            <x-heroicon-s-heart x-show="hasLiked" class="h-4 w-4" x-cloak />
+                            <x-heroicon-o-heart x-show="!hasLiked" class="h-4 w-4" x-cloak />
+                            <span x-text="likesCount"></span>
+                        </button>
+                    </div>
                 </div>
                 <div class="fi-in-tabs flex flex-col"
                     x-data="{ activeTab: 'discussion-tab' }">

@@ -64,6 +64,66 @@ class Presentation extends Model implements HasMedia
         return $this->comments()->latest();
     }
 
+    public function views(): HasMany
+    {
+        return $this->hasMany(PresentationView::class);
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(PresentationLike::class);
+    }
+
+    public function registerView(int $userId): bool
+    {
+        $view = $this->views()->firstOrCreate([
+            'user_id' => $userId,
+        ]);
+
+        if (! $view->wasRecentlyCreated) {
+            return false;
+        }
+
+        $this->setMeta('views_count', $this->views()->count());
+
+        return true;
+    }
+
+    public function toggleLike(int $userId): bool
+    {
+        $like = $this->likes()->where('user_id', $userId)->first();
+
+        if ($like) {
+            $like->delete();
+            $this->setMeta('likes_count', $this->likes()->count());
+
+            return false;
+        }
+
+        $this->likes()->create([
+            'user_id' => $userId,
+        ]);
+
+        $this->setMeta('likes_count', $this->likes()->count());
+
+        return true;
+    }
+
+    public function isLikedBy(int $userId): bool
+    {
+        return $this->likes()->where('user_id', $userId)->exists();
+    }
+
+    public function viewsCountMeta(): int
+    {
+        return (int) $this->getMeta('views_count', 0);
+    }
+
+    public function likesCountMeta(): int
+    {
+        return (int) $this->getMeta('likes_count', 0);
+    }
+
     public function scopeIsFinal(Builder $query, $isFinal = true)
     {
         $query->where('is_final', $isFinal);
