@@ -1,13 +1,30 @@
-<x-filament-panels::page>
+<div class="my-4">
     <div class="space-y-4">
-        <div class="grid xl:grid-cols-3">
-            <div class="xl:col-span-2 space-y-4">
-                <div class="container-iframe-16-9 rounded-xl">
+        <div class="grid xl:grid-cols-3 ">
+            <div class="xl:col-span-2 fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+                <div class="container-iframe-16-9 rounded-t-xl">
                     <iframe class="responsive-iframe" src="{{ $record->getIframeUrl() }}" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
                 </div>
-                <div class="fi-in-tabs flex flex-col fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5"
+                <div class="py-2.5 px-3">
+                    <h1 class="text-lg font-medium">
+                        {{ $record->submission->getMeta('title') }}
+                    </h1>
+
+                    @php
+                        $submission = $record->submission;
+                        $primaryAuthor = $submission->authors->first(fn ($author) => $author->isPrimaryContact($submission));
+                    @endphp
+
+                    @if ($primaryAuthor)
+                        <p class="text-sm text-gray-500 inline-flex items-center gap-1">
+                            <x-heroicon-m-user class="w-3.5 h-3.5 text-gray-400" />
+                            <span>{{ $primaryAuthor->fullName }}</span>
+                        </p>
+                    @endif
+                </div>
+                <div class="fi-in-tabs flex flex-col"
                     x-data="{ activeTab: 'discussion-tab' }">
-                    <x-filament::tabs :contained="true" class="!mx-0">
+                    <x-filament::tabs :contained="true" class="!mx-0 border-t">
                         <x-filament::tabs.item 
                             alpine-active="activeTab === 'discussion-tab'"
                             x-on:click="activeTab = 'discussion-tab'"
@@ -29,15 +46,15 @@
                             Authors
                         </x-filament::tabs.item>
                     </x-filament::tabs>
-                    <div class="p-6" x-show="activeTab === 'discussion-tab'">
+                    <div class="py-2.5 px-3" x-show="activeTab === 'discussion-tab'">
                         @livewire(App\Panel\ScheduledConference\Livewire\PresentationDiscussion::class, ['record' => $record, 'key' => "comment-$record->getKey()"])
                     </div>
-                    <div class="p-6" x-show="activeTab === 'abstract-tab'" x-cloak>
+                    <div class="py-2.5 px-3" x-show="activeTab === 'abstract-tab'" x-cloak>
                         <div class="citation_abstract content user-content text-sm">
                             {!! $record->submission->getMeta('abstract') !!}
                         </div>
                     </div>
-                    <div class="p-6" x-show="activeTab === 'authors-tab'" x-cloak>
+                    <div class="py-2.5 px-3" x-show="activeTab === 'authors-tab'" x-cloak>
                          <div
                             class="grid gap-4">
                             @foreach ($record->submission->authors as $author)
@@ -59,5 +76,5 @@
             </div>
         </div>
     </div>
-</x-filament-panels::page>
+</div>
     
