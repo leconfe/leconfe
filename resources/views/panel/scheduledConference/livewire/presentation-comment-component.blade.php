@@ -19,10 +19,12 @@
 					<time pubdate datetime="{{ $record->created_at->format('Y-m-d') }}" title="{{ $record->created_at->format(Setting::get('format_date')) }}">{{ $record->created_at->format(Setting::get('format_date')) }} </time>
 				</p>
 			</div>
-			<x-filament-actions::group :actions="[
-				$this->editAction,
-				$this->deleteAction,
-			]" />
+			@if (auth()->user()->can('edit', $record) || auth()->user()->can('delete', $record))	
+				<x-filament-actions::group :actions="[
+					$this->editAction,
+					$this->deleteAction,
+				]" />
+			@endif
 		</div>
 		<div class="text-gray-500 dark:text-gray-400 user-content">
 			{{-- {{ $record->getMeta('content') }} --}}
