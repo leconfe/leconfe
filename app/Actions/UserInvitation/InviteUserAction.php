@@ -27,7 +27,13 @@ class InviteUserAction
         $email = Str::lower(trim($data['email']));
         $roleId = data_get($data, 'role_id');
         $role = Role::query()->whereKey($roleId)->first();
-        if (! $role || $role->name === UserRole::Admin->value) {
+        $allowedRoleNames = collect(UserRole::internalRoles())
+            ->map(fn (UserRole $role) => $role->value)
+            ->reject(fn (string $roleName) => $roleName === UserRole::Admin->value)
+            ->values()
+            ->toArray();
+
+        if (! $role || ! in_array($role->name, $allowedRoleNames, true)) {
             throw ValidationException::withMessages([
                 'role_id' => 'Selected role is not allowed for invitation.',
             ]);

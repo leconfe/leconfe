@@ -176,8 +176,10 @@ class UserInvitationTable extends Component implements HasForms, HasTable
 
     protected function getRoleOptions(): array
     {
+        $invitableRoleNames = $this->getInvitableRoleNames();
+
         return Role::query()
-            ->where('name', '!=', UserRole::Admin->value)
+            ->whereIn('name', $invitableRoleNames)
             ->orderBy('name')
             ->pluck('name', 'id')
             ->toArray();
@@ -185,10 +187,21 @@ class UserInvitationTable extends Component implements HasForms, HasTable
 
     protected function getRoleNameOptions(): array
     {
+        $invitableRoleNames = $this->getInvitableRoleNames();
+
         return Role::query()
-            ->where('name', '!=', UserRole::Admin->value)
+            ->whereIn('name', $invitableRoleNames)
             ->orderBy('name')
             ->pluck('name', 'name')
+            ->toArray();
+    }
+
+    protected function getInvitableRoleNames(): array
+    {
+        return collect(UserRole::internalRoles())
+            ->map(fn (UserRole $role) => $role->value)
+            ->reject(fn (string $roleName) => $roleName === UserRole::Admin->value)
+            ->values()
             ->toArray();
     }
 
