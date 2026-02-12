@@ -4,7 +4,7 @@ namespace App\Actions\UserInvitation;
 
 use App\Mail\Templates\UserRoleInvitationMail;
 use App\Models\Enums\UserRole;
-use App\Models\ScheduledConference;
+use App\Models\Role;
 use App\Models\UserInvitation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -18,43 +18,27 @@ class InviteUserAction
 
     public function handle(array $data): UserInvitation
     {
-        $allowedRoles = [
-            UserRole::ConferenceManager->value,
-            UserRole::ScheduledConferenceEditor->value,
-            UserRole::TrackEditor->value,
-        ];
-
-        if (! in_array($data['role_name'], $allowedRoles, true)) {
+        if (! auth()->user()?->can('User:invite')) {
             throw ValidationException::withMessages([
-                'role_name' => 'Selected role is not allowed for invitation.',
+                'email' => 'You are not allowed to invite users.',
             ]);
         }
 
-        $conferenceId = app()->getCurrentConferenceId();
-        $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-        $roleName = $data['role_name'];
-
-        if (! $conferenceId && $scheduledConferenceId) {
-            $conferenceId = ScheduledConference::query()
-                ->withoutGlobalScopes()
-                ->whereKey($scheduledConferenceId)
-                ->value('conference_id');
-        }
-
-        if ($roleName === UserRole::ConferenceManager->value && ! $conferenceId) {
+        $email = Str::lower(trim($data['email']));
+        $roleId = data_get($data, 'role_id');
+        $role = Role::query()->whereKey($roleId)->first();
+        if (! $role || $role->name === UserRole::Admin->value) {
             throw ValidationException::withMessages([
-                'role_name' => 'Conference Manager invitation requires an active conference context.',
+                'role_id' => 'Selected role is not allowed for invitation.',
             ]);
         }
 
-        if (in_array($roleName, [UserRole::ScheduledConferenceEditor->value, UserRole::TrackEditor->value], true) && ! $scheduledConferenceId) {
-            throw ValidationException::withMessages([
-                'role_name' => 'Selected role requires an active scheduled conference context.',
-            ]);
-        }
+        $conferenceId = $role->conference_id ?: null;
+        $scheduledConferenceId = $role->scheduled_conference_id ?: null;
+        $roleName = $role->name;
 
         $existsPendingInvitation = UserInvitation::query()
-            ->where('email', $data['email'])
+            ->where('email', $email)
             ->where('role_name', $roleName)
             ->where('conference_id', $conferenceId)
             ->where('scheduled_conference_id', $scheduledConferenceId)
@@ -68,10 +52,10 @@ class InviteUserAction
             ]);
         }
 
-        $invitation = DB::transaction(function () use ($data, $conferenceId, $scheduledConferenceId) {
+        $invitation = DB::transaction(function () use ($data, $conferenceId, $scheduledConferenceId, $roleName, $email) {
             return UserInvitation::create([
-                'email' => Str::lower(trim($data['email'])),
-                'role_name' => $data['role_name'],
+                'email' => $email,
+                'role_name' => $roleName,
                 'conference_id' => $conferenceId,
                 'scheduled_conference_id' => $scheduledConferenceId,
                 'track_id' => null,

@@ -148,6 +148,7 @@ class Role extends Model
                     'User:delete',
                     'User:disable',
                     'User:enable',
+                    'User:invite',
                     'User:loginAs',
                     'User:sendEmail',
                     'User:update',
@@ -228,6 +229,7 @@ class Role extends Model
                     'Topic:delete',
                     'Topic:update',
                     'Topic:view',
+                    'User:invite',
                 ],
                 UserRole::TrackEditor->value => [
                     'ScheduledConference:switch',

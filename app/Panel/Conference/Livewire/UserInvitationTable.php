@@ -5,7 +5,7 @@ namespace App\Panel\Conference\Livewire;
 use App\Actions\UserInvitation\InviteUserAction;
 use App\Mail\Templates\UserRoleInvitationMail;
 use App\Models\Enums\UserRole;
-use App\Models\User;
+use App\Models\Role;
 use App\Models\UserInvitation;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Get;
@@ -75,17 +75,13 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                     ]),
                 SelectFilter::make('role_name')
                     ->label(__('general.role'))
-                    ->options([
-                        UserRole::ConferenceManager->value => UserRole::ConferenceManager->value,
-                        UserRole::ScheduledConferenceEditor->value => UserRole::ScheduledConferenceEditor->value,
-                        UserRole::TrackEditor->value => UserRole::TrackEditor->value,
-                    ]),
+                    ->options(fn () => $this->getRoleNameOptions()),
             ])
             ->headerActions([
                 Action::make('inviteUser')
                     ->label(__('general.invite_user'))
                     ->icon('heroicon-o-envelope')
-                    ->authorize(fn () => auth()->user()?->can('create', User::class) ?? false)
+                    ->authorize(fn () => $this->canInviteUsers())
                     ->form([
                         TextInput::make('email')
                             ->label(__('general.email'))
@@ -93,19 +89,18 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                             ->required()
                             ->rule(function (Get $get) {
                                 return function (string $attribute, $value, \Closure $fail) use ($get) {
-                                    $conferenceId = app()->getCurrentConferenceId();
-                                    $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-                                    $roleName = $get('role_name');
+                                    $roleId = $get('role_id');
+                                    $role = Role::query()->whereKey($roleId)->first();
 
-                                    if (! $roleName || ! $value) {
+                                    if (! $role || ! $value) {
                                         return;
                                     }
 
                                     $existsPendingInvitation = UserInvitation::query()
                                         ->where('email', mb_strtolower(trim((string) $value)))
-                                        ->where('role_name', $roleName)
-                                        ->where('conference_id', $conferenceId)
-                                        ->where('scheduled_conference_id', $scheduledConferenceId)
+                                        ->where('role_name', $role->name)
+                                        ->where('conference_id', $role->conference_id ?: null)
+                                        ->where('scheduled_conference_id', $role->scheduled_conference_id ?: null)
                                         ->whereNull('track_id')
                                         ->where('status', 'pending')
                                         ->exists();
@@ -115,14 +110,12 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                                     }
                                 };
                             }),
-                        Select::make('role_name')
+                        Select::make('role_id')
                             ->label(__('general.role'))
                             ->required()
-                            ->options([
-                                UserRole::ConferenceManager->value => UserRole::ConferenceManager->value,
-                                UserRole::ScheduledConferenceEditor->value => UserRole::ScheduledConferenceEditor->value,
-                                UserRole::TrackEditor->value => UserRole::TrackEditor->value,
-                            ])
+                            ->searchable()
+                            ->preload()
+                            ->options(fn () => $this->getRoleOptions())
                             ->native(false),
                     ])
                     ->action(fn (array $data) => InviteUserAction::run($data))
@@ -135,7 +128,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                     Action::make('resend')
                         ->label(__('general.resend'))
                         ->icon('heroicon-o-paper-airplane')
-                        ->authorize(fn () => auth()->user()?->can('create', User::class) ?? false)
+                        ->authorize(fn () => $this->canInviteUsers())
                         ->visible(fn (UserInvitation $record) => $record->status === 'pending')
                         ->action(function (UserInvitation $record) {
                             $record->update([
@@ -153,7 +146,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                         ->label(__('general.cancel'))
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->authorize(fn () => auth()->user()?->can('create', User::class) ?? false)
+                        ->authorize(fn () => $this->canInviteUsers())
                         ->visible(fn (UserInvitation $record) => $record->status === 'pending')
                         ->action(function (UserInvitation $record) {
                             $record->update([
@@ -179,5 +172,28 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->when($scheduledConferenceId, fn (Builder $query) => $query->where('scheduled_conference_id', $scheduledConferenceId))
             ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query->where('conference_id', $conferenceId))
             ->latest('id');
+    }
+
+    protected function getRoleOptions(): array
+    {
+        return Role::query()
+            ->where('name', '!=', UserRole::Admin->value)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    protected function getRoleNameOptions(): array
+    {
+        return Role::query()
+            ->where('name', '!=', UserRole::Admin->value)
+            ->orderBy('name')
+            ->pluck('name', 'name')
+            ->toArray();
+    }
+
+    protected function canInviteUsers(): bool
+    {
+        return auth()->user()?->can('User:invite') ?? false;
     }
 }
