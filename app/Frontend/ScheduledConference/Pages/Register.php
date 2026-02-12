@@ -129,6 +129,7 @@ class Register extends Page
         }
         
         $data = $this->validate();
+
         $allowedRoles = array_values(UserRole::getAllowedSelfAssignRoleNames());
         
         // Filter only allowed roles to register
