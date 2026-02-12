@@ -19,7 +19,6 @@ class InvitationAccept extends Page
     public function mount(string $token): void
     {
         $invitation = $this->getValidInvitation($token);
-
         if (! auth()->check()) {
             $invitedUserExists = User::query()
                 ->whereRaw('LOWER(email) = ?', [mb_strtolower($invitation->email)])
@@ -37,6 +36,7 @@ class InvitationAccept extends Page
 
         /** @var User $user */
         $user = auth()->user();
+
         if (mb_strtolower($user->email) !== mb_strtolower($invitation->email)) {
             $this->errorMessage = 'You are logged in with a different email account.';
 

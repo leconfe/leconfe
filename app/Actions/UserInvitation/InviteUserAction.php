@@ -27,11 +27,15 @@ class InviteUserAction
         $email = Str::lower(trim($data['email']));
         $roleId = data_get($data, 'role_id');
         $role = Role::query()->whereKey($roleId)->first();
-        $allowedRoleNames = collect(UserRole::internalRoles())
-            ->map(fn (UserRole $role) => $role->value)
-            ->reject(fn (string $roleName) => $roleName === UserRole::Admin->value)
-            ->values()
-            ->toArray();
+        $allowedRoleNames = ($role?->scheduled_conference_id ?? 0)
+            ? [
+                UserRole::ScheduledConferenceEditor->value,
+                UserRole::TrackEditor->value,
+            ]
+            : [
+                UserRole::ConferenceManager->value,
+                UserRole::ScheduledConferenceEditor->value,
+            ];
 
         if (! $role || ! in_array($role->name, $allowedRoleNames, true)) {
             throw ValidationException::withMessages([

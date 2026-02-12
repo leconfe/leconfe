@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\BelongsToScheduledConference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserInvitation extends Model
 {
+    use BelongsToConference, BelongsToScheduledConference;
+
     protected $fillable = [
         'email',
         'role_name',
@@ -24,16 +28,6 @@ class UserInvitation extends Model
         'expires_at' => 'datetime',
         'accepted_at' => 'datetime',
     ];
-
-    public function conference(): BelongsTo
-    {
-        return $this->belongsTo(Conference::class);
-    }
-
-    public function scheduledConference(): BelongsTo
-    {
-        return $this->belongsTo(ScheduledConference::class);
-    }
 
     public function track(): BelongsTo
     {

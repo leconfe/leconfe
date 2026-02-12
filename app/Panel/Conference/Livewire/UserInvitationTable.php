@@ -22,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Js;
 use Livewire\Component;
 
 class UserInvitationTable extends Component implements HasForms, HasTable
@@ -125,6 +126,15 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->emptyStateDescription(__('general.no_user_invitations_description'))
             ->actions([
                 ActionGroup::make([
+                    Action::make('copy_link')
+                        ->label('Copy Link')
+                        ->icon('heroicon-o-link')
+                        ->authorize(fn () => $this->canInviteUsers())
+                        ->visible(fn (UserInvitation $record) => $record->status === 'pending')
+                        ->alpineClickHandler(fn (UserInvitation $record) => sprintf(
+                            'window.navigator.clipboard.writeText(%s)',
+                            Js::from($record->getAcceptUrl()),
+                        )),
                     Action::make('resend')
                         ->label(__('general.resend'))
                         ->icon('heroicon-o-paper-airplane')
@@ -168,9 +178,11 @@ class UserInvitationTable extends Component implements HasForms, HasTable
         $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
 
         return UserInvitation::query()
-            ->with(['invitedBy.meta'])
+            ->with(['invitedBy.meta', 'conference', 'scheduledConference'])
             ->when($scheduledConferenceId, fn (Builder $query) => $query->where('scheduled_conference_id', $scheduledConferenceId))
-            ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query->where('conference_id', $conferenceId))
+            ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query
+                ->where('conference_id', $conferenceId)
+                ->whereNull('scheduled_conference_id'))
             ->latest('id');
     }
 
@@ -198,11 +210,17 @@ class UserInvitationTable extends Component implements HasForms, HasTable
 
     protected function getInvitableRoleNames(): array
     {
-        return collect(UserRole::internalRoles())
-            ->map(fn (UserRole $role) => $role->value)
-            ->reject(fn (string $roleName) => $roleName === UserRole::Admin->value)
-            ->values()
-            ->toArray();
+        if (app()->getCurrentScheduledConferenceId()) {
+            return [
+                UserRole::ScheduledConferenceEditor->value,
+                UserRole::TrackEditor->value,
+            ];
+        }
+
+        return [
+            UserRole::ConferenceManager->value,
+            UserRole::ScheduledConferenceEditor->value,
+        ];
     }
 
     protected function canInviteUsers(): bool

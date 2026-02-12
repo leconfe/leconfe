@@ -26,7 +26,7 @@ class AcceptUserInvitationAction
                 ->where('conference_id', $conferenceId)
                 ->where('scheduled_conference_id', $scheduledConferenceId)
                 ->first();
-
+                
             if (! $role) {
                 throw ValidationException::withMessages([
                     'role_name' => 'Role is not available in invitation scope.',

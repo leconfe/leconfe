@@ -24,7 +24,9 @@ class ListUsers extends ListRecords
 
         return UserInvitation::query()
             ->when($scheduledConferenceId, fn (Builder $query) => $query->where('scheduled_conference_id', $scheduledConferenceId))
-            ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query->where('conference_id', $conferenceId))
+            ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query
+                ->where('conference_id', $conferenceId)
+                ->whereNull('scheduled_conference_id'))
             ->where('status', 'pending')
             ->count();
     }
