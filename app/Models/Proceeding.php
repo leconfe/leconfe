@@ -86,7 +86,7 @@ class Proceeding extends Model implements HasMedia, Sortable
     public function publish($published = true): self
     {
         $this->published = $published;
-        $this->published_at = $published ? now() : null;
+        $this->published_at ??= now();
         $this->save();
 
         $this->setAsCurrent();
