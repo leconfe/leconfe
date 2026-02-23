@@ -74,6 +74,15 @@
             <p>
                 We have successfully received your registration fee of {{ $record->getFormattedFee() }}.
             </p>
+            @if(count($additionalItems))
+            <p class="mt-2">Payment breakdown:</p>
+            <ul class="list-disc ml-6">
+                <li>Base Fee: {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}</li>
+                @foreach($additionalItems as $item)
+                <li>{{ data_get($item, 'name') }}: {{ money((float) data_get($item, 'amount', 0), $record->currency, true)->formatWithoutZeroes() }}</li>
+                @endforeach
+            </ul>
+            @endif
             <p>Thank you for your payment. We look forward to your participation and wish you a successful and enjoyable conference experience.</p>
         </div>
         <div class="mt-8 font-bold">

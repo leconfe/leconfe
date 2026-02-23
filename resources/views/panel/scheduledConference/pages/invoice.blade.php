@@ -71,8 +71,8 @@
         </div>
         <div class="mt-4">
             <p class="font-bold text-base">Invoiced To</p>
-            <p>{{ $user_affiliation }}</p>
             <p>{{ $user_fullname }}</p>
+            <p>{{ $user_affiliation }}</p>
             <p>{{ $user_address_line }}</p>
             <p>{{ $user_city }} {{ $user_post_code }}</p>
             <p>{{ $user_country_name }}</p>
@@ -89,14 +89,24 @@
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
                             <p>{{ $record->fee->name }}</p>
-                            <p class="font-bold text-base">{{ $scheduledConference->title }}</p>
-                            <div>&nbsp;</div>
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
-                            {{ $record->getFormattedFee() }}
-                            <div>&nbsp;</div>
+                            {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}
                         </td>
                     </tr>
+                    @foreach($additionalItems as $item)
+                    <tr>
+                        <td class="border p-2 border-gray-400 align-middle">
+                            <p>{{ data_get($item, 'name') }}</p>
+                            @if(data_get($item, 'description'))
+                            <p class="text-xs text-gray-600">{{ data_get($item, 'description') }}</p>
+                            @endif
+                        </td>
+                        <td class="border p-2 border-gray-400 align-top text-center">
+                            {{ money((float) data_get($item, 'amount', 0), $record->currency, true)->formatWithoutZeroes() }}
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="bg-gray-200">

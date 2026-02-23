@@ -30,6 +30,10 @@ class Invoice extends Page
         $data = [
             'scheduledConference' => app()->getCurrentScheduledConference(),
             'record' => $this->record,
+            'baseAmount' => (float) $this->record->getMeta('base_amount', $this->record->fee?->amount ?? 0),
+            'additionalItems' => collect($this->record->getMeta('additional_items', []))
+                ->filter(fn ($item) => is_array($item) && data_get($item, 'name'))
+                ->values(),
         ];
 
         if ($this->record->model instanceof Submission) {

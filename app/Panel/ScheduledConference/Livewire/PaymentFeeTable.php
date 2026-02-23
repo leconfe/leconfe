@@ -8,6 +8,7 @@ use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -181,6 +182,23 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                             ->after('opened_at'),
                     ]),
                 Checkbox::make('is_active'),
+                Repeater::make('meta.additional_items')
+                    ->label('Add-on Items')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Item Name')
+                            ->required(),
+                        Textarea::make('description')
+                            ->label('Description')
+                            ->autosize(),
+                        TextInput::make('amount')
+                            ->label('Amount')
+                            ->numeric()
+                            ->minValue(0)
+                            ->required(),
+                    ])
+                    ->collapsible()
+                    ->default([]),
             ]);
     }
 }
