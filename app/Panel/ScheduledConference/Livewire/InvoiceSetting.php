@@ -50,9 +50,6 @@ class InvoiceSetting extends Component implements HasForms
                             ->schema([
                                 Checkbox::make('meta.receipt_enable')
                                     ->label('Enable Receipt'),
-                                TextInput::make('meta.organizer')
-                                    ->label('Organizer')
-                                    ->required(),
                                 TinyEditor::make('meta.invoice_sender_information')
                                     ->label('Sender Information'),
                                 TinyEditor::make('meta.invoice_notes')

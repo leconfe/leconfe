@@ -57,7 +57,7 @@
 <body class="text-sm">
     <div class="page">
         @if($scheduledConference->hasMedia('logo'))
-        <img class="max-h-72"
+        <img class="max-h-40"
             src="{{ $scheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']) }}"
             alt="{{ $scheduledConference->title }}">
         @endif
@@ -118,10 +118,6 @@
         </div>
         <div class="mt-4 max-w-none prose prose-sm prose-p:my-0 prose-p:leading-5 prose-li:leading-5 prose-ol:mt-0" style="--tw-prose-body: #000;--tw-prose-counters: #000;">
             {!! $scheduledConference->getMeta('invoice_notes') !!}
-        </div>
-        <div class="mt-8 font-bold">
-            <p>With best regards,</p>
-            <p>{{ $scheduledConference->getMeta('organizer') }}</p>
         </div>
     </div>
 </body>
