@@ -22,13 +22,19 @@ class ListUsers extends ListRecords implements HasForms
 
     protected static string $resource = UserResource::class;
 
-    protected static string $view = 'panel.conference.resources.user-resource.pages.list-users';
-
     public array $notifyFormData = [
         'role_ids' => [],
         'subject' => '',
         'message' => '',
     ];
+
+    public function getView(): string
+    {
+        if (app()->isOnSite()) {
+            return static::$view;
+        }
+        return 'panel.conference.resources.user-resource.pages.list-users';
+    }
 
     protected function getHeaderActions(): array
     {
