@@ -106,10 +106,11 @@ class ListUsers extends ListRecords implements HasForms
                 try {
                     if (!empty($user->email)) {
                         Mail::to($user->email)
-                            ->send((new MailUser($subject, $message))->from($fromName));
+                            ->send((new MailUser($subject, $message))->from(config('mail.from.address'), $fromName));
                     }
                 } catch (\Throwable $e) {
                     // ignore individual mail failures
+                    \Illuminate\Support\Facades\Log::error("Failed to send email to user {$user->id}: " . $e->getMessage());
                 }
             }
 
