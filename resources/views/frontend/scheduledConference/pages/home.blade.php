@@ -36,7 +36,7 @@
                                 <div class="cf-speaker-list grid gap-2 sm:grid-cols-2">
                                     @foreach ($role->speakers as $speaker)
                                         <div class="cf-speaker flex items-center h-full gap-2">
-                                            <img class="cf-speaker-img object-cover w-16 h-16 rounded-full aspect-square"
+                                            <img class="cf-speaker-img object-cover w-24 h-24 rounded-full aspect-square"
                                                 src="{{ $speaker->getFilamentAvatarUrl() }}"
                                                 alt="{{ $speaker->fullName }}" />
                                             <div class="cf-speaker-information space-y-1">
