@@ -952,6 +952,7 @@ return [
     'discussion_not_submission_participant' => 'Një pjesëmarrës i zgjedhur nuk është caktuar në këtë dorëzim.',
     'discussion_error_anonymous_review' => 'Nuk mund të krijohet një diskutim me pjesëmarrësit e zgjedhur pasi mund të komprometojë anonimitetin e rishikuesit.',
     'additional_data' => "Të dhëna shtesë",
+    'additional_content' => "Përmbajtje shtesë",
     'view_as_editor' => 'Shiko si Redaktor',
     'support' => 'Mbështetje',
     'documentation' => 'Dokumentacion',

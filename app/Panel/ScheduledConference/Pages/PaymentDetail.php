@@ -27,6 +27,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class PaymentDetail extends Page
 {
@@ -278,6 +279,9 @@ class PaymentDetail extends Page
                                 TextEntry::make('paid_at')
                                     ->visible(fn (Payment $record) => $record->paid_at)
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
+                                TextEntry::make('payment_method')
+                                    ->visible(fn (Payment $record) => $record->payment_method)
+                                    ->getStateUsing(fn($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
                                 	->state('Download')
                                 	->color('primary')

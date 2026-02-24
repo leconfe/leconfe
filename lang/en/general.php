@@ -1016,6 +1016,7 @@ return [
     'support' => 'Support',
     'documentation' => 'Documentation',
     'forum' => 'Forum',
+    'additional_content' => 'Additional Content',
 
     'users' => 'Users',
     'send_notification' => 'Send Notification',
