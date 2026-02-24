@@ -939,6 +939,7 @@ return [
     'documentation' => 'Dokumentasi',
     'forum' => 'Forum',
 
+    'users' => 'Pengguna',
     'send_notification' => 'Kirim Notifikasi',
     'send_notification_description' => 'Pilih pengguna yang akan menerima notifikasi email Anda',
     'selected_users' => 'Pengguna Terpilih',

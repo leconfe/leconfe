@@ -13,6 +13,8 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailUser;
 
 class ListUsers extends ListRecords implements HasForms
 {
@@ -56,6 +58,7 @@ class ListUsers extends ListRecords implements HasForms
                     ->multiple()
                     ->searchable()
                     ->preload()
+                    ->required()
                     ->helperText(__('general.send_notification_description'))
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('subject')
@@ -74,13 +77,16 @@ class ListUsers extends ListRecords implements HasForms
     public function sendNotification()
     {
         $data = $this->notifyForm->getState();
+        if (app()->isOnScheduledConference()) {
+            $fromName = app()->getCurrentScheduledConference()->title;
+        } else {
+            $fromName = app()->getCurrentConference()->name;
+        }
 
         try {
-            $users = empty($data['role_ids'])
-                ? User::all()
-                : User::whereHas('roles', function ($query) use ($data) {
-                    $query->whereIn('roles.id', $data['role_ids'] ?? []);
-                })->get();
+            $users = User::whereHas('roles', function ($query) use ($data) {
+                $query->whereIn('roles.id', $data['role_ids'] ?? []);
+            })->get();
 
             foreach ($users as $user) {
                 $subject = $data['subject'] ?? '';
@@ -90,6 +96,15 @@ class ListUsers extends ListRecords implements HasForms
                     ->title($subject)
                     ->body($message)
                     ->sendToDatabase($user);
+
+                try {
+                    if (!empty($user->email)) {
+                        Mail::to($user->email)
+                            ->send((new MailUser($subject, $message))->from($fromName));
+                    }
+                } catch (\Throwable $e) {
+                    // ignore individual mail failures
+                }
             }
 
             Notification::make()

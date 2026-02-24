@@ -1017,6 +1017,7 @@ return [
     'documentation' => 'Documentation',
     'forum' => 'Forum',
 
+    'users' => 'Users',
     'send_notification' => 'Send Notification',
     'send_notification_description' => 'Select user who will receive your email notification',
     'selected_users' => 'Selected Users',
