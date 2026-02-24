@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToScheduledConference;
 use App\Models\Enums\PresentationType;
 use App\Panel\ScheduledConference\Pages\PresentationDetail;
+use Illuminate\Support\Carbon;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,6 +47,10 @@ class Presentation extends Model implements HasMedia
     {
         $this
             ->addMediaCollection('thumbnail')
+            ->singleFile();
+
+        $this
+            ->addMediaCollection('pdf')
             ->singleFile();
     }
 
@@ -171,10 +176,26 @@ class Presentation extends Model implements HasMedia
     public function getIframeUrl()
     {
         return match ($this->type) {
+            PresentationType::PDF => $this->getIframeUrlPdf(),
             PresentationType::Youtube => $this->getIframeUrlYoutube(),
             PresentationType::GoogleSlide => $this->getIframeUrlGoogleSlide(),
             default => '',
         };
+    }
+
+    public function getIframeUrlPdf() : string
+    {
+        $media = $this->getFirstMedia('pdf');
+
+        if (! $media) {
+            return '';
+        }
+
+        if ($media->disk === 'private-files') {
+            return $media->getTemporaryUrl(Carbon::now()->addMinutes(5), options: ['inline' => 1]);
+        }
+
+        return $media->getUrl();
     }
 
     public function getIframeUrlYoutube() : string

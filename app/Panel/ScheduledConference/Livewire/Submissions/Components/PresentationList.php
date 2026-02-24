@@ -64,8 +64,9 @@ class PresentationList extends \Livewire\Component implements HasForms, HasTable
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('file')
                         ->required()
-                        ->multiple()
                         ->collection('pdf')
+                        ->disk('private-files')
+                        ->maxFiles(1)
                         ->visible(fn(Get $get) => PresentationType::PDF->is((int) $get('type')))
                         ->dehydrated(fn(Get $get) => PresentationType::PDF->is((int) $get('type')))
                         ->acceptedFileTypes(['application/pdf']),
