@@ -956,4 +956,8 @@ return [
     'support' => 'Mbështetje',
     'documentation' => 'Dokumentacion',
     'forum' => 'Forumi',
+    'send_notification' => 'Dërgo Njoftim',
+    'send_notification_description' => 'Zgjidh përdoruesit që do të marrin njoftimin me email',
+    'selected_users' => 'Përdoruesit e përzgjedhur',
+    'select_users' => 'Zgjidh Përdoruesit',
 ];
