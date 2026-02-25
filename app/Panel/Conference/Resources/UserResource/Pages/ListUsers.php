@@ -2,6 +2,7 @@
 
 namespace App\Panel\Conference\Resources\UserResource\Pages;
 
+use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\User;
@@ -72,7 +73,7 @@ class ListUsers extends ListRecords implements HasForms
                     ->required()
                     ->default('')
                     ->maxLength(255),
-                Forms\Components\RichEditor::make('message')
+                TinyEditor::make('message')
                     ->label(__('general.message'))
                     ->required()
                     ->default('')
