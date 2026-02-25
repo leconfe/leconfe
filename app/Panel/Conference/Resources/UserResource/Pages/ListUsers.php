@@ -23,11 +23,12 @@ class ListUsers extends ListRecords implements HasForms
 
     protected static string $resource = UserResource::class;
 
-    public array $notifyFormData = [
-        'role_ids' => [],
-        'subject' => '',
-        'message' => '',
-    ];
+    public ?array $notifyFormData = [];
+
+    public function mount(): void
+    {
+        $this->notifyForm->fill();
+    }
 
     public function getView(): string
     {
@@ -54,7 +55,6 @@ class ListUsers extends ListRecords implements HasForms
     public function notifyForm(Form $form): Form
     {
         return $form
-            ->statePath('notifyFormData')
             ->schema([
                 Forms\Components\Select::make('role_ids')
                     ->label(__('general.roles'))
@@ -63,9 +63,9 @@ class ListUsers extends ListRecords implements HasForms
                             ->pluck('name', 'id')
                     )
                     ->multiple()
+                    ->required()
                     ->searchable()
                     ->preload()
-                    ->required()
                     ->helperText(__('general.send_notification_description'))
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('subject')
@@ -75,10 +75,11 @@ class ListUsers extends ListRecords implements HasForms
                     ->maxLength(255),
                 TinyEditor::make('message')
                     ->label(__('general.message'))
-                    ->required()
                     ->default('')
+                    ->required()
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->statePath('notifyFormData');
     }
 
     public function sendNotification()
