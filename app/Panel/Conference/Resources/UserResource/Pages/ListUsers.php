@@ -94,11 +94,10 @@ class ListUsers extends ListRecords implements HasForms
             $users = User::whereHas('roles', function ($query) use ($data) {
                 $query->whereIn('roles.id', $data['role_ids'] ?? []);
             })->get();
+            $subject = $data['subject'] ?? '';
+            $message = $data['message'] ?? '';
 
             foreach ($users as $user) {
-                $subject = $data['subject'] ?? '';
-                $message = $data['message'] ?? '';
-
                 Notification::make()
                     ->title($subject)
                     ->body($message)
