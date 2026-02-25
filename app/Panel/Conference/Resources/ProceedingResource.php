@@ -9,6 +9,7 @@ use App\Panel\Conference\Resources\ProceedingResource\Pages;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -57,6 +58,8 @@ class ProceedingResource extends Resource
                     ->imageResizeUpscale(false)
                     ->image()
                     ->conversion('thumb'),
+                DatePicker::make('published_at')
+                    ->visible(fn(?Proceeding $record) => $record?->published),
                 Fieldset::make('Identification')
                     ->label(__('general.identification'))
                     ->columns(3)
