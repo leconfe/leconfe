@@ -144,7 +144,6 @@ class Role extends Model
                     'Topic:delete',
                     'Topic:update',
                     'Topic:view',
-                    'User:create',
                     'User:delete',
                     'User:disable',
                     'User:enable',

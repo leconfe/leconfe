@@ -175,7 +175,6 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->heading(__('general.users'))
             ->columns([
                 Split::make([
                     SpatieMediaLibraryImageColumn::make('profile')

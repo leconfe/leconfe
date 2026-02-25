@@ -13,6 +13,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
@@ -82,6 +83,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                 Action::make('inviteUser')
                     ->label(__('general.invite_user'))
                     ->icon('heroicon-o-envelope')
+                    ->modalWidth(MaxWidth::ExtraLarge)
                     ->authorize(fn () => $this->canInviteUsers())
                     ->form([
                         TextInput::make('email')
