@@ -21,4 +21,5 @@ return [
     'option_unavailable' => 'الخيار غير متاح',
     'review_form' => 'نموذج المراجعة',
     'form_preview' => 'معاينة النموذج',
+    'how_to_publish_presentation' => 'كيفية نشر العرض التقديمي؟',
 ];

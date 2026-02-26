@@ -61,9 +61,9 @@ class ReviewerInvitationMail extends TemplateMailable
         return <<<'HTML'
             <p>Dear {{ Reviewer Name }},</p>
 
-            <p>I would like to invite you to review the paper "{{ Submission Title }}," which has been submitted to {{ Conference Title }}.</p>
+            <p>We would like to invite you to review the paper "{{ Submission Title }}," which has been submitted to {{ Conference Title }}.</p>
 
-            <p>Please log into the conference website by {{ Response Due Date }} to indicate whether you are able to undertake the review. Through the site, you can access the submission, record your review, and provide your recommendation: {{ Submission Invitation URL }}</p>
+            <p>Please log into the conference website by {{ Response Due Date }} to indicate whether you are able to undertake the review. Through the site, you can access the submission, record your review, and provide your recommendation: <a href="{{ Submission Invitation URL }}">{{ Submission Invitation URL }}</a></p>
 
             <p>The completed review is due by {{ Review Due Date }}.</p>
 

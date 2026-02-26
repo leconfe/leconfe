@@ -21,6 +21,7 @@ return [
     'option_unavailable' => 'Option unavailable',
     'review_form' => 'Review Form',
     'form_preview' => 'Form Preview',
+    'how_to_publish_presentation' => 'How to Publish Presentation?',
     'welcome_message_title' => 'Welcome to :conference !',
     'welcome_message_submit_paper' => 'To submit your paper, please <a class="text-primary-600" href=":submit_link">click here</a> instead.',
     'welcome_message_non_presenter' => 'If you are participating as a non-presenter, you may <a class="text-primary-600" href=":register_link">register here</a> instead.',

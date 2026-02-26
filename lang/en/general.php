@@ -1017,4 +1017,11 @@ return [
     'documentation' => 'Documentation',
     'forum' => 'Forum',
     'additional_content' => 'Additional Content',
+
+    'users' => 'Users',
+    'send_notification' => 'Send Notification',
+    'send_notification_description' => 'Select user who will receive your email notification',
+    'selected_users' => 'Selected Users',
+    'select_users' => 'Select Users',
+    'failed_to_send' => 'Failed to send',
 ];
