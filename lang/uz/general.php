@@ -972,4 +972,8 @@ return [
     'support' => 'Qo‘llab-quvvatlash',
     'documentation' => 'Hujjatlar',
     'forum' => 'Forum',
+    'send_notification' => 'Xabar yuborish',
+    'send_notification_description' => 'Elektron pochta orqali xabar oladigan foydalanuvchilarni tanlang',
+    'selected_users' => 'Tanlangan foydalanuvchilar',
+    'select_users' => 'Foydalanuvchilarni tanlash',
 ];
