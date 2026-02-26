@@ -253,6 +253,10 @@ class UserResource extends Resource
                     ->preload(),
             ])
             ->deferFilters()
+            ->headerActions([
+                Tables\Actions\CreateAction::make()
+                    ->icon('heroicon-o-user-plus'),
+            ])
             ->actions([
                 EditAction::make()
                     ->modalWidth('full'),
@@ -355,7 +359,8 @@ class UserResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->icon('heroicon-o-user-plus'),
             ]);
     }
 

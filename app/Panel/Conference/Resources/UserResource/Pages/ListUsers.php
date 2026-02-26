@@ -6,6 +6,7 @@ use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserInvitation;
 use App\Panel\Conference\Resources\UserResource;
 use Filament\Actions;
 use Filament\Forms;
@@ -14,6 +15,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailUser;
 
@@ -22,6 +24,7 @@ class ListUsers extends ListRecords implements HasForms
     use InteractsWithForms;
 
     protected static string $resource = UserResource::class;
+    protected static string $view = 'panel.conference.resources.user-resource.pages.list-users';
 
     public ?array $notifyFormData = [];
 
@@ -40,9 +43,21 @@ class ListUsers extends ListRecords implements HasForms
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
+    }
+
+    public function getInvitationPendingCountProperty(): int
+    {
+        $conferenceId = app()->getCurrentConferenceId();
+        $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
+
+        return UserInvitation::query()
+            ->when($scheduledConferenceId, fn (Builder $query) => $query->where('scheduled_conference_id', $scheduledConferenceId))
+            ->when(! $scheduledConferenceId && $conferenceId, fn (Builder $query) => $query
+                ->where('conference_id', $conferenceId)
+                ->whereNull('scheduled_conference_id'))
+            ->where('status', 'pending')
+            ->count();
     }
 
     protected function getForms(): array

@@ -35,6 +35,7 @@ use App\Models\SubmissionFormItem;
 use App\Models\Timeline;
 use App\Models\Topic;
 use App\Models\Track;
+use App\Models\UserInvitation;
 use App\Models\Version;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\Collection;
@@ -152,6 +153,7 @@ class Application extends LaravelApplication
             Stakeholder::class,
             StakeholderLevel::class,
             Participant::class,
+            UserInvitation::class,
         ];
 
         foreach ($models as $model) {
@@ -183,6 +185,7 @@ class Application extends LaravelApplication
             PaymentFee::class,
             Participant::class,
             ReviewFormItem::class,
+            UserInvitation::class,
             Presentation::class,
         ];
 

@@ -37,6 +37,13 @@ class UserPolicy
         }
     }
 
+    public function invite(User $user)
+    {
+        if ($user->can('User:invite')) {
+            return true;
+        }
+    }
+
     /**
      * Determine whether the user can update the model.
      */

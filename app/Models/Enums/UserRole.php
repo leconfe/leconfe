@@ -65,6 +65,7 @@ enum UserRole: string implements HasLabel
             self::Admin,
             self::ConferenceManager,
             self::ScheduledConferenceEditor,
+            self::TrackEditor,
         ];
     }
 
