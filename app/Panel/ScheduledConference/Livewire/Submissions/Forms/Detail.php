@@ -14,6 +14,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Stevebauman\Purify\Facades\Purify;
 
 class Detail extends \Livewire\Component implements HasForms
 {
@@ -67,7 +68,8 @@ class Detail extends \Livewire\Component implements HasForms
                 TinyEditor::make('meta.abstract')
                     ->label(__('general.abstract'))
                     ->required()
-                    ->minHeight(300),
+                    ->minHeight(300)
+                    ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
             ]);
     }
 

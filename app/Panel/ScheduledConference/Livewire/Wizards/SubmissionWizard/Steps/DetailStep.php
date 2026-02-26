@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
+use Stevebauman\Purify\Facades\Purify;
 
 class DetailStep extends Component implements HasActions, HasForms, HasWizardStep
 {
@@ -83,7 +84,8 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->label(__('general.abstract'))
                             ->minHeight(300)
                             ->minLength($this->record?->track->getMeta('abstract_word_count') ?? 0)
-                            ->required(! $this->record?->track->getMeta('do_not_require_abstracts') ?? true),
+                            ->required(! $this->record?->track->getMeta('do_not_require_abstracts') ?? true)
+                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                     ]),
             ]),
         ];
