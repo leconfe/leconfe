@@ -1031,4 +1031,9 @@ return [
     'cancelled' => 'Cancelled',
     'no_user_invitations' => 'No invitations yet',
     'no_user_invitations_description' => 'Create an invitation to assign roles for conference or scheduled conference.',
+    'send_notification' => 'Send Notification',
+    'send_notification_description' => 'Select user who will receive your email notification',
+    'selected_users' => 'Selected Users',
+    'select_users' => 'Select Users',
+    'failed_to_send' => 'Failed to send',
 ];

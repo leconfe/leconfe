@@ -29,6 +29,10 @@ Route::get('download/{path}', function (string $path, Request $request) {
 
     abort_if(! $storage->exists($path), 404);
 
+    if ($request->boolean('inline')) {
+        return $storage->response($path);
+    }
+
     return $storage->download($path);
 })->where('path', '.*')->name('download');
 

@@ -21,6 +21,10 @@ class Timeline extends Model
 
     public const TYPE_REGISTRATION_CLOSE = 4;
 
+    public const TYPE_PRESENTATION_OPEN = 5;
+
+    public const TYPE_PRESENTATION_CLOSE = 6;
+
     protected $fillable = [
         'scheduled_conference_id',
         'name',
@@ -43,6 +47,8 @@ class Timeline extends Model
         return [
             self::TYPE_SUBMISSION_OPEN => 'Submission Open',
             self::TYPE_SUBMISSION_CLOSE => 'Submission Close',
+            self::TYPE_PRESENTATION_OPEN => 'Presentation Open',
+            self::TYPE_PRESENTATION_CLOSE => 'Presentation Close',
         ];
     }
 
@@ -55,6 +61,21 @@ class Timeline extends Model
         }
 
         if ($timelineSubmissionOpen->date?->startOfDay()?->isPast() && (! $timelineSubmissionClose || $timelineSubmissionClose->date?->endOfDay()->isFuture())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function isPresentationOpen(): bool
+    {
+        $timelinePresentationOpen = self::where('type', self::TYPE_PRESENTATION_OPEN)->first();
+        $timelinePresentationClose = self::where('type', self::TYPE_PRESENTATION_CLOSE)->first();
+        if (! $timelinePresentationOpen) {
+            return false;
+        }
+
+        if ($timelinePresentationOpen->date?->startOfDay()?->isPast() && (! $timelinePresentationClose || $timelinePresentationClose->date?->endOfDay()->isFuture())) {
             return true;
         }
 

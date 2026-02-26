@@ -12,6 +12,9 @@
                 <x-filament::tabs.item alpine-active="activeTab === 'users-table'" x-on:click="activeTab = 'users-table'">
                     {{ __('general.users') }}
                 </x-filament::tabs.item>
+                <x-filament::tabs.item alpine-active="activeTab === 'notify-form'" x-on:click="activeTab = 'notify-form'">
+                    {{ __('general.notify') }}
+                </x-filament::tabs.item>
                 <x-filament::tabs.item alpine-active="activeTab === 'invitations-table'" x-on:click="activeTab = 'invitations-table'" :badge="$this->invitationPendingCount">
                     {{ __('general.invitations') }}
                 </x-filament::tabs.item>
@@ -43,6 +46,21 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
             </div>
 
+            <div x-show="activeTab === 'notify-form'" style="display: none;">
+                <x-filament::section>
+                    <x-slot name="heading">
+                        {{ __('general.send_notification') }}
+                    </x-slot>
+
+                    <form wire:submit="sendNotification" class="space-y-4">
+                        {{ $this->notifyForm }}
+
+                        <x-filament::button type="submit">
+                            {{ __('general.send') }}
+                        </x-filament::button>
+                    </form>
+                </x-filament::section>
+            </div>
             <div x-show="activeTab === 'invitations-table'" style="display: none;">
                 @livewire(App\Panel\Conference\Livewire\UserInvitationTable::class, ['lazy' => true])
             </div>

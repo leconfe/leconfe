@@ -15,6 +15,7 @@ use App\Models\NavigationMenu;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\Presentation;
 use App\Models\Proceeding;
 use App\Models\Registration;
 use App\Models\RegistrationPayment;
@@ -185,6 +186,7 @@ class Application extends LaravelApplication
             Participant::class,
             ReviewFormItem::class,
             UserInvitation::class,
+            Presentation::class,
         ];
 
         foreach ($models as $model) {
