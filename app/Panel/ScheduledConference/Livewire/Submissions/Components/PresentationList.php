@@ -28,6 +28,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 
 class PresentationList extends \Livewire\Component implements HasForms, HasTable
 {
@@ -57,6 +58,7 @@ class PresentationList extends \Livewire\Component implements HasForms, HasTable
                 ->image(),
             Select::make('type')
                 ->options(PresentationType::class)
+                ->hint(new HtmlString('<a href="https://leconfe.com/docs/presentation/" target="_blank" rel="noopener noreferrer" class="font-semibold text-gray-600 text-xs hover:text-primary-600">' . __('scheduled_conference.how_to_publish_presentation') . '</a>'))
                 ->required()
                 ->default(PresentationType::GoogleSlide->value)
                 ->live(),

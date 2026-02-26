@@ -21,4 +21,5 @@ return [
     'option_unavailable' => 'Вариант недоступен',
     'review_form' => 'Форма рецензии',
     'form_preview' => 'Предварительный просмотр формы',
+    'how_to_publish_presentation' => 'Как опубликовать презентацию?',
 ];
