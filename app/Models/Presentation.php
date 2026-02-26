@@ -38,8 +38,6 @@ class Presentation extends Model implements HasMedia
                 $presentation->is_final = true;
                 $presentation->save();
             }
-
-            $presentation->fetchThumbnailAutomatically();
         });
     }
 

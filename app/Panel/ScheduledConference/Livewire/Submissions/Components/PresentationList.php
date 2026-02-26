@@ -132,6 +132,9 @@ class PresentationList extends \Livewire\Component implements HasForms, HasTable
                             $record->setAsFinal();
                         }
 
+                        $record->fetchThumbnailAutomatically();
+
+
                         return $record;
                     })
 
