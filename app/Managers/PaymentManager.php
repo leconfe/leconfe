@@ -33,6 +33,8 @@ class PaymentManager
         ?float $amount = null,
         ?string $currency = null,
         ?Carbon $expiredAt = null,
+        array $additionalItems = [],
+        ?float $baseAmount = null,
     ) {
 
         $paymentQueue = new Payment([
@@ -52,6 +54,8 @@ class PaymentManager
             'title' => $title,
             'request_url' => $requestUrl,
             'description' => $description,
+            'additional_items' => $additionalItems,
+            'base_amount' => $baseAmount ?? $paymentFee->amount,
         ]);
 
         Lottery::odds(1, 20)->winner(fn () => Payment::deleteExpired());

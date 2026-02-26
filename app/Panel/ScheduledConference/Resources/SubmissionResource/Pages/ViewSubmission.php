@@ -37,6 +37,7 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
@@ -44,6 +45,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
 use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
@@ -101,6 +103,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         ->label('Payment Fee')
                         ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                         ->required()
+                        ->live()
                         ->options(
                             fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                 ->active()
@@ -113,12 +116,27 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 ->get()
                                 ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                         ),
+                    CheckboxList::make('additional_item_keys')
+                        ->label('Add-on Items')
+                        ->options(function (Get $get) {
+                            $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                            return $paymentFee?->getAdditionalItemOptions() ?? [];
+                        })
+                        ->visible(function (Get $get) {
+                            $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                            return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
+                        }),
                 ])
                 ->action(function (array $data, Submission $submission, Action $action) {
                     $paymentManager = PaymentManager::get();
 
                     $paymentFeeId = data_get($data, 'payment_fee_id');
                     $paymentFee = PaymentFee::find($paymentFeeId);
+                    $additionalItemKeys = data_get($data, 'additional_item_keys', []);
+                    $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
+                    $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
 
                     $paymentManager->queue(
                         $submission,
@@ -128,8 +146,11 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         $submission->getMeta('title'),
                         SubmissionResource::getUrl('view', ['record' => $submission]),
                         $paymentFee->getMeta('description'),
-                        $paymentFee->amount,
+                        $totalAmount,
                         $paymentFee->currency,
+                        null,
+                        $selectedAdditionalItems,
+                        $paymentFee->amount,
                     );
 
                     $action->successNotificationTitle('Submission Payment submitted');

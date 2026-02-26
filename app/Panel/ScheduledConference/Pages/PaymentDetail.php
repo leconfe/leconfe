@@ -17,9 +17,11 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -27,6 +29,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class PaymentDetail extends Page
@@ -106,6 +109,7 @@ class PaymentDetail extends Page
                     ->fillForm([
                         'invoice' => $this->record->invoice,
                         'payment_fee_id' => $this->record->payment_fee_id,
+                        'additional_item_keys' => collect($this->record->getMeta('additional_items', []))->pluck('key')->values()->all(),
                     ])
                     ->form([
                         TextInput::make('invoice')
@@ -122,6 +126,7 @@ class PaymentDetail extends Page
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
+                            ->live()
                             ->options(
                                 fn (Payment $record) => PaymentFee::type($record->type)
                                     ->active()
@@ -134,6 +139,21 @@ class PaymentDetail extends Page
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
+                        CheckboxList::make('additional_item_keys')
+                            ->label('Add-on Items')
+                            ->options(function (Get $get, Payment $record) {
+                                $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
+                                $paymentFee = PaymentFee::find($paymentFeeId);
+
+                                return $paymentFee?->getAdditionalItemOptions() ?? [];
+                            })
+                            ->default(fn (Payment $record) => collect($record->getMeta('additional_items', []))->pluck('key')->values()->all())
+                            ->visible(function (Get $get, Payment $record) {
+                                $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
+                                $paymentFee = PaymentFee::find($paymentFeeId);
+
+                                return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
+                            }),
                         Checkbox::make('dont_send_notification')
                             ->label(__('general.dont_send_notification')),
                     ])
@@ -142,9 +162,13 @@ class PaymentDetail extends Page
 
                         $paymentFee = PaymentFee::find($paymentFeeId);
 
+                        $additionalItemKeys = data_get($data, 'additional_item_keys', []);
+                        $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
+                        $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
+
                         $updateData = [
                             'payment_fee_id' => $paymentFeeId,
-                            'amount' => $paymentFee->amount,
+                            'amount' => $totalAmount,
                             'currency' => $paymentFee->currency,
                         ];
 
@@ -162,6 +186,8 @@ class PaymentDetail extends Page
                         }
 
                         $record->update($updateData);
+                        $record->setMeta('additional_items', $selectedAdditionalItems);
+                        $record->setMeta('base_amount', $paymentFee->amount);
 
                         $action->successNotificationTitle('Payment Fee Updated');
                         $action->success();
@@ -254,7 +280,31 @@ class PaymentDetail extends Page
                                     }),
                                 TextEntry::make('fee.name')
                                     ->label('Payment Fee Name'),
+                                TextEntry::make('base_amount')
+                                    ->label('Base Fee')
+                                    ->state(function (Payment $record) {
+                                        $baseAmount = (float) $record->getMeta('base_amount', $record->fee?->amount ?? 0);
+
+                                        return money($baseAmount, $record->currency, true)->formatWithoutZeroes();
+                                    }),
+                                TextEntry::make('additional_items')
+                                    ->label('Add-on Items')
+                                    ->visible(fn (Payment $record) => count($record->getMeta('additional_items', [])) > 0)
+                                    ->state(function (Payment $record) {
+                                        $lines = collect($record->getMeta('additional_items', []))
+                                            ->map(function ($item) use ($record) {
+                                                $name = data_get($item, 'name', '-');
+                                                $amount = (float) data_get($item, 'amount', 0);
+                                                $formatted = money($amount, $record->currency, true)->formatWithoutZeroes();
+
+                                                return e($name).' ('.$formatted.')';
+                                            });
+
+                                        return new HtmlString($lines->implode('<br>'));
+                                    })
+                                    ->html(),
                                 TextEntry::make('amount')
+                                    ->label('Total Amount')
                                     ->state(fn ($record) => $record->getFormattedFee()),
                                 ...PaymentFormItem::buildInfolistSchema($this->record->type),
                             ]),

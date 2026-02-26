@@ -13,11 +13,13 @@ use App\Notifications\ParticipantRegistered;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Arr;
@@ -100,6 +102,7 @@ class ParticipantRegistration extends Page implements HasForms
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
+                            ->live()
                             ->options(
                                 fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
@@ -112,6 +115,18 @@ class ParticipantRegistration extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
                             ),
+                        CheckboxList::make('additional_item_keys')
+                            ->label('Add-on Items')
+                            ->options(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                                return $paymentFee?->getAdditionalItemOptions() ?? [];
+                            })
+                            ->visible(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                                return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
+                            }),
                     ]),
             ])
             ->statePath('formData');
@@ -136,6 +151,9 @@ class ParticipantRegistration extends Page implements HasForms
             $currentUser->setManyMeta($meta);
 
             $paymentFee = PaymentFee::find($data['payment_fee_id']);
+            $additionalItemKeys = data_get($data, 'additional_item_keys', []);
+            $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
+            $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
             $paymentManager = PaymentManager::get();
             $payment = $paymentManager->queue(
                 $participant,
@@ -144,7 +162,12 @@ class ParticipantRegistration extends Page implements HasForms
                 PaymentManager::TYPE_PARTICIPANT_FEE,
                 $paymentFee->name,
                 Dashboard::getUrl(),
-                $paymentFee->getMeta('description')
+                $paymentFee->getMeta('description'),
+                $totalAmount,
+                $paymentFee->currency,
+                null,
+                $selectedAdditionalItems,
+                $paymentFee->amount,
             );
 
             $payment->save();

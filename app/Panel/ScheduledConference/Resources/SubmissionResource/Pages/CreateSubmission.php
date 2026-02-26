@@ -14,6 +14,7 @@ use App\Models\Timeline;
 use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -89,6 +90,7 @@ class CreateSubmission extends Page implements HasForms
                         Radio::make('payment_fee_id')
                             ->label('Payment Fee')
                             ->required()
+                            ->live()
                             ->options(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
@@ -101,6 +103,18 @@ class CreateSubmission extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
+                        CheckboxList::make('additional_item_keys')
+                            ->label('Add-on Items')
+                            ->options(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                                return $paymentFee?->getAdditionalItemOptions() ?? [];
+                            })
+                            ->visible(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                                return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
+                            }),
                         ...PaymentFormItem::buildFormSchema(PaymentManager::TYPE_SUBMISSION_FEE),
                     ]),
                 Radio::make('track_id')
@@ -216,6 +230,9 @@ class CreateSubmission extends Page implements HasForms
                 $paymentManager = PaymentManager::get();
 
                 $paymentFee = PaymentFee::find($paymentFeeId);
+                $additionalItemKeys = data_get($data, 'additional_item_keys', []);
+                $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
+                $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
 
                 $payment = $paymentManager->queue(
                     $submission,
@@ -225,8 +242,11 @@ class CreateSubmission extends Page implements HasForms
                     $submission->getMeta('title'),
                     SubmissionResource::getUrl('view', ['record' => $submission]),
                     $paymentFee->getMeta('description'),
-                    $paymentFee->amount,
+                    $totalAmount,
                     $paymentFee->currency,
+                    null,
+                    $selectedAdditionalItems,
+                    $paymentFee->amount,
                 );
 
                 if(isset($data['form_responses'])){

@@ -87,4 +87,79 @@ class PaymentFee extends Model implements Sortable
             'additional_items' => [],
         ];
     }
+
+    public function getAdditionalItems(): array
+    {
+        $additionalItems = $this->getMeta('additional_items', []);
+
+        if (! is_array($additionalItems)) {
+            return [];
+        }
+
+        return collect($additionalItems)
+            ->values()
+            ->map(function ($item) {
+                if (! is_array($item)) {
+                    return null;
+                }
+
+                $name = trim((string) data_get($item, 'name', ''));
+                $amount = (float) data_get($item, 'amount', 0);
+
+                if ($name === '' || $amount < 0) {
+                    return null;
+                }
+
+                $description = data_get($item, 'description');
+                $normalizedKey = md5($name.'|'.$amount.'|'.(string) $description);
+
+                return [
+                    'key' => 'addon_'.$normalizedKey,
+                    'name' => $name,
+                    'description' => $description,
+                    'amount' => $amount,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    public function getAdditionalItemOptions(): array
+    {
+        return collect($this->getAdditionalItems())
+            ->mapWithKeys(function (array $item) {
+                $formattedAmount = money($item['amount'], $this->currency, true)->formatWithoutZeroes();
+
+                return [
+                    $item['key'] => "{$item['name']} ({$formattedAmount})",
+                ];
+            })
+            ->all();
+    }
+
+    public function resolveSelectedAdditionalItems(?array $selectedKeys = null): array
+    {
+        if (! is_array($selectedKeys) || $selectedKeys === []) {
+            return [];
+        }
+
+        $selectedKeys = array_values(array_unique(array_map('strval', $selectedKeys)));
+
+        return collect($this->getAdditionalItems())
+            ->whereIn('key', $selectedKeys)
+            ->values()
+            ->all();
+    }
+
+    public function getAdditionalItemsTotal(?array $selectedKeys = null): float
+    {
+        return collect($this->resolveSelectedAdditionalItems($selectedKeys))
+            ->sum('amount');
+    }
+
+    public function getAmountWithAdditionalItems(?array $selectedKeys = null): float
+    {
+        return (float) $this->amount + $this->getAdditionalItemsTotal($selectedKeys);
+    }
 }
