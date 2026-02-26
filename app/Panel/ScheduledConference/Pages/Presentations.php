@@ -71,6 +71,7 @@ class Presentations extends Page implements HasForms
                             ->label('Track')
                             ->placeholder('All tracks')
                             ->searchable()
+                            ->live()
                             ->options(fn() => Track::query()
                                 ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
                                 ->pluck('title', 'id')),
@@ -78,6 +79,7 @@ class Presentations extends Page implements HasForms
                             ->label('Topic')
                             ->placeholder('All topics')
                             ->searchable()
+                            ->live()
                             ->options(
                                 fn() => Topic::query()
                                     ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
@@ -105,7 +107,7 @@ class Presentations extends Page implements HasForms
         $trackId = data_get($this->formData, 'track_id');
         $topicId = data_get($this->formData, 'topic_id');
         $keyword = trim((string) data_get($this->formData, 'keyword'));
-
+        
         $presentations = Presentation::query()
             ->with([
                 'meta',
