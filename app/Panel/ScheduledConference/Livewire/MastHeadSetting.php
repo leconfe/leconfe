@@ -4,11 +4,14 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
+use App\Models\Topic;
+use App\Actions\Topics\TopicCreateAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -72,17 +75,29 @@ class MastHeadSetting extends Component implements HasForms
                                     ->columnSpanFull()
                                     ->hint(__('general.recommended_description_length'))
                                     ->helperText(__('general.short_description_of_the_website')),
-                                TextInput::make('meta.acronym')
-                                    ->label(__('general.acronym'))
-                                    ->rule('alpha_dash')
-                                    ->helperText(__('general.acronym_rather_than_the_full_conference')),
+                                TextInput::make('meta.faculty')
+                                    ->label(__('general.faculty'))
+                                    ->rule('alpha_dash'),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                TextInput::make('meta.conference_theme')
-                                    ->label(__('general.theme'))
-                                    ->helperText(__('general.theme_information'))
-                                    ->columnSpanFull(),
+                                Select::make('meta.topics')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $search): array => Topic::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                                    ->getOptionLabelsUsing(fn(array $values): array => Topic::whereIn('id', $values)->pluck('name', 'id')->toArray())
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label(__('general.topic_name'))
+                                            ->required(),
+                                    ])
+                                    ->createOptionUsing(function (array $data): int {
+                                        $topic = TopicCreateAction::run(['name' => $data['name']]);
+
+                                        return $topic->getKey();
+                                    })
+                                    ->noSearchResultsMessage(__('general.no_topic_found_create_new'))
+                                    ->label(__('general.topic')),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
