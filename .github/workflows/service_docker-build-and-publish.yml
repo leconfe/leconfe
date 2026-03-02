@@ -20,15 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
     
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
-      
-      - name: Install PHP dependencies
-        run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
-      
       - name: Download default plugins
         env:
           PLUGIN_REPO_TOKEN: ${{ secrets.PLUGIN_REPO_TOKEN }}
@@ -60,6 +51,15 @@ jobs:
             rm "plugins/$asset"
           done
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+      
+      - name: Install PHP dependencies
+        run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
+      
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
