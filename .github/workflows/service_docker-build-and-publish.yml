@@ -31,10 +31,18 @@ jobs:
       
       - name: Download default plugins
         env:
+          PLUGIN_REPO_TOKEN: ${{ secrets.PLUGIN_REPO_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p plugins
           count=$(yq '.plugins | length' data/plugins.yaml)
+
+          # For private plugin repositories, provide PLUGIN_REPO_TOKEN with read access.
+          if [ -n "${PLUGIN_REPO_TOKEN:-}" ]; then
+            export GH_TOKEN="$PLUGIN_REPO_TOKEN"
+          else
+            export GH_TOKEN="$GITHUB_TOKEN"
+          fi
 
           for i in $(seq 0 $((count - 1))); do
             repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
@@ -45,10 +53,14 @@ jobs:
             asset="${repo##*/}-${version}.zip" # example: leconfe-plugin-custom-header-v1.0.0.zip
 
             # download release asset
-            gh release download "$version" \
+            if ! gh release download "$version" \
               --repo "$repo" \
               --pattern "$asset" \
-              --dir "plugins"
+              --dir "plugins"; then
+              echo "Failed to download $repo@$version."
+              echo "If this repository is private, set secret PLUGIN_REPO_TOKEN with access to that repository."
+              exit 1
+            fi
 
             # extract zip ke plugins/
             unzip -q "plugins/$asset" -d "plugins"
