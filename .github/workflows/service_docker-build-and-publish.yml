@@ -37,13 +37,6 @@ jobs:
           mkdir -p plugins
           count=$(yq '.plugins | length' data/plugins.yaml)
 
-          # For private plugin repositories, provide PLUGIN_REPO_TOKEN with read access.
-          if [ -n "${PLUGIN_REPO_TOKEN:-}" ]; then
-            export GH_TOKEN="$PLUGIN_REPO_TOKEN"
-          else
-            export GH_TOKEN="$GITHUB_TOKEN"
-          fi
-
           for i in $(seq 0 $((count - 1))); do
             repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
             version=$(yq ".plugins[$i].version" data/plugins.yaml)
