@@ -22,3 +22,12 @@ plugins:
   - name: QuickSubmit
     repo: leconfe/QuickSubmit
     version: 1.0.1
+  
+  - name: CertificateManager
+    repo: leconfe/CertificateManager
+    version: 1.2.0
+  
+  - name: WebsiteBuilder
+    repo: leconfe/WebsiteBuilder
+    version: 1.1.1
+  
