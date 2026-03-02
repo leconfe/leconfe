@@ -21,36 +21,30 @@ jobs:
       - uses: actions/checkout@v3
     
       - name: Download default plugins
-        env:
-          PLUGIN_REPO_TOKEN: ${{ secrets.PLUGIN_REPO_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # gh CLI uses GH_TOKEN/GITHUB_TOKEN. Prefer PLUGIN_REPO_TOKEN for cross-repo private access.
-          export GH_TOKEN="${PLUGIN_REPO_TOKEN:-$GITHUB_TOKEN}"
           mkdir -p plugins
           count=$(yq '.plugins | length' data/plugins.yaml)
 
           for i in $(seq 0 $((count - 1))); do
-            repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
-            version=$(yq ".plugins[$i].version" data/plugins.yaml)
+            name=$(yq ".plugins[$i].name" data/plugins.yaml)
+            link=$(yq ".plugins[$i].link" data/plugins.yaml)
 
-            echo "Downloading from $repo @ $version..."
+            if [ -z "$link" ] || [ "$link" = "null" ]; then
+              echo "Missing link for plugin index $i."
+              exit 1
+            fi
 
-            asset="${repo##*/}-${version}.zip" # example: leconfe-plugin-custom-header-v1.0.0.zip
+            asset="plugins/${name}.zip"
+            echo "Downloading $name from $link..."
 
-            # download release asset
-            if ! gh release download "$version" \
-              --repo "$repo" \
-              --pattern "$asset" \
-              --dir "plugins"; then
-              echo "Failed to download $repo@$version."
-              echo "If this repository is private, set secret PLUGIN_REPO_TOKEN with access to that repository."
+            if ! curl -fsSL "$link" -o "$asset"; then
+              echo "Failed to download $name from $link."
               exit 1
             fi
 
             # extract zip ke plugins/
-            unzip -q "plugins/$asset" -d "plugins"
-            rm "plugins/$asset"
+            unzip -q "$asset" -d "plugins"
+            rm "$asset"
           done
 
       - name: Setup PHP
