@@ -26,6 +26,8 @@ jobs:
         PLUGIN_REPO_TOKEN: ${{ secrets.PLUGIN_REPO_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # gh CLI uses GH_TOKEN/GITHUB_TOKEN. Prefer PLUGIN_REPO_TOKEN for cross-repo private access.
+        export GH_TOKEN="${PLUGIN_REPO_TOKEN:-$GITHUB_TOKEN}"
         mkdir -p plugins
         count=$(yq '.plugins | length' data/plugins.yaml)
 
