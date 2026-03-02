@@ -76,28 +76,22 @@ class MastHeadSetting extends Component implements HasForms
                                     ->hint(__('general.recommended_description_length'))
                                     ->helperText(__('general.short_description_of_the_website')),
                                 TextInput::make('meta.faculty')
-                                    ->label(__('general.faculty'))
-                                    ->rule('alpha_dash'),
+                                    ->label(__('general.faculty')),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                Select::make('meta.topics')
+                                Select::make('topics')
                                     ->multiple()
-                                    ->searchable()
-                                    ->getSearchResultsUsing(fn(string $search): array => Topic::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
-                                    ->getOptionLabelsUsing(fn(array $values): array => Topic::whereIn('id', $values)->pluck('name', 'id')->toArray())
+                                    ->relationship('topics', 'name')
                                     ->createOptionForm([
                                         TextInput::make('name')
-                                            ->label(__('general.topic_name'))
-                                            ->required(),
+                                            ->label(__('general.name'))
+                                            ->required()
+                                            ->autofocus()
+                                            ->autocomplete()
+                                            ->placeholder(__('general.enter_the_name_of_the_topic')),
                                     ])
-                                    ->createOptionUsing(function (array $data): int {
-                                        $topic = TopicCreateAction::run(['name' => $data['name']]);
-
-                                        return $topic->getKey();
-                                    })
-                                    ->noSearchResultsMessage(__('general.no_topic_found_create_new'))
-                                    ->label(__('general.topic')),
+                                    ->searchable(),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),

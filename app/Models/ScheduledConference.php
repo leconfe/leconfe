@@ -172,7 +172,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         return $this->hasMany(Submission::class);
     }
-    
+
     public function participants(): HasMany
     {
         return $this->hasMany(Participant::class);
@@ -257,7 +257,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isSubmissionRequirePayment(): bool
     {
-        if (! $this->getMeta('submission_payment')) {
+        if (!$this->getMeta('submission_payment')) {
             return false;
         }
 
@@ -269,7 +269,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $query->where('type', $type);
     }
 
-    public function scopePublished($query, bool $isPublished = true){
+    public function scopePublished($query, bool $isPublished = true)
+    {
         return $query->where('is_published', $isPublished);
     }
 
@@ -325,7 +326,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function getEntityToken(): ?string
     {
         $token = $this->getMeta('entity_token');
-        if(!$token){
+        if (!$token) {
             $this->registerEntity();
 
             $token = $this->getMeta('entity_token');
@@ -336,8 +337,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        if(!app()->isProduction()) return;
-        
+        if (!app()->isProduction())
+            return;
+
         $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
             'url' => $this->getUrl(),
@@ -386,8 +388,13 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function ping()
     {
-        if(!Cache::has('scheduled_conference_ping_' . $this->getKey())){
+        if (!Cache::has('scheduled_conference_ping_' . $this->getKey())) {
             ScheduledConferencePing::dispatch($this)->onConnection('async');
         }
+    }
+
+    public function topics(): HasMany
+    {
+        return $this->hasMany(Topic::class);
     }
 }
