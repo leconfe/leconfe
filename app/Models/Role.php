@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\Enums\UserRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Plank\Metable\Metable;
 use Spatie\Permission\Models\Role as Model;
 
 class Role extends Model
 {
+    use Metable;
     protected $fillable = [
         'name',
         'conference_id',
