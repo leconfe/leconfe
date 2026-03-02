@@ -1036,4 +1036,11 @@ return [
     'selected_users' => 'Selected Users',
     'select_users' => 'Select Users',
     'failed_to_send' => 'Failed to send',
+
+    'duplicate_role' => 'Duplicate role',
+    'new_role' => 'New Role',
+    'role_created' => 'Role created',
+    'role_updated' => 'Role updated',
+    'role_deleted' => 'Role deleted',
+    'no_roles' => 'No roles',
 ];

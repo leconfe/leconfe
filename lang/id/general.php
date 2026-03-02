@@ -960,4 +960,11 @@ return [
     'selected_users' => 'Pengguna Terpilih',
     'select_users' => 'Pilih Pengguna',
     'failed_to_send' => 'Gagal mengirim',
+
+    'duplicate_role' => 'Duplikat peran',
+    'new_role' => 'Peran Baru',
+    'role_created' => 'Peran dibuat',
+    'role_updated' => 'Peran diperbarui',
+    'role_deleted' => 'Peran dihapus',
+    'no_roles' => 'Tidak ada peran',
 ];

@@ -961,4 +961,11 @@ return [
     'send_notification_description' => 'Zgjidh përdoruesit që do të marrin njoftimin me email',
     'selected_users' => 'Përdoruesit e përzgjedhur',
     'select_users' => 'Zgjidh Përdoruesit',
+
+    'duplicate_role' => 'Dublikoni rolin',
+    'new_role' => 'Rol i ri',
+    'role_created' => 'Roli u krijua',
+    'role_updated' => 'Roli u përditësua',
+    'role_deleted' => 'Roli u fshi',
+    'no_roles' => 'Asnjë rol',
 ];
