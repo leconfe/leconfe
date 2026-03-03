@@ -2,21 +2,22 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Actions\ScheduledConferences\ScheduledConferenceSyncTopics;
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
 use App\Models\Topic;
-use App\Actions\Topics\TopicCreateAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class MastHeadSetting extends Component implements HasForms
@@ -32,6 +33,7 @@ class MastHeadSetting extends Component implements HasForms
         $this->form->fill([
             ...$scheduledConference->attributesToArray(),
             'meta' => $scheduledConference->getAllMeta(),
+            'topics' => $scheduledConference->topics()->withoutGlobalScopes()->pluck('name')->toArray(),
         ]);
     }
 
@@ -80,18 +82,10 @@ class MastHeadSetting extends Component implements HasForms
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                Select::make('topics')
-                                    ->multiple()
-                                    ->relationship('topics', 'name')
-                                    ->createOptionForm([
-                                        TextInput::make('name')
-                                            ->label(__('general.name'))
-                                            ->required()
-                                            ->autofocus()
-                                            ->autocomplete()
-                                            ->placeholder(__('general.enter_the_name_of_the_topic')),
-                                    ])
-                                    ->searchable(),
+                                TagsInput::make('topics')
+                                    ->label(__('general.topics'))
+                                    ->helperText(__('general.topics_description'))
+                                    ->suggestions(fn() => Topic::pluck('name')->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
@@ -106,7 +100,6 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.editorial_team'))
                                     ->profile('basic')
                                     ->minHeight(100),
-
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
@@ -124,10 +117,17 @@ class MastHeadSetting extends Component implements HasForms
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
+
                             try {
-                                ScheduledConferenceUpdateAction::run(app()->getCurrentScheduledConference(), $formData);
+                                $scheduledConference = app()->getCurrentScheduledConference();
+
+                                ScheduledConferenceUpdateAction::run($scheduledConference, $formData);
+
+                                ScheduledConferenceSyncTopics::run($scheduledConference, $formData['topics'] ?? []);
+
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
+                                Log::error($th);
                                 $action->sendFailureNotification();
                             }
                         }),
