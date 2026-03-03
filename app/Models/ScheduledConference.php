@@ -6,6 +6,7 @@ use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Application;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\HasTopics;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -26,7 +27,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
+    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes, HasTopics;
 
     protected $fillable = [
         'conference_id',
@@ -391,10 +392,5 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         if (!Cache::has('scheduled_conference_ping_' . $this->getKey())) {
             ScheduledConferencePing::dispatch($this)->onConnection('async');
         }
-    }
-
-    public function topics(): HasMany
-    {
-        return $this->hasMany(Topic::class);
     }
 }
