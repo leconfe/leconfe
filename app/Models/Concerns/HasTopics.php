@@ -33,6 +33,15 @@ trait HasTopics
         return $this;
     }
 
+    public function syncTopics(array|ArrayAccess|Topic $topics, ?string $type = null): static
+    {
+        $topics = collect(Topic::findOrCreate($topics, $type));
+
+        $this->topics()->sync($topics->pluck('id')->toArray());
+
+        return $this;
+    }
+
     public function attachTopic(string|Topic $topic, ?string $type = null)
     {
         return $this->attachTopics([$topic], $type);
@@ -42,7 +51,7 @@ trait HasTopics
     {
         collect($topics)
             ->filter()
-            ->each(fn (Topic $topic) => $this->topics()->detach($topic));
+            ->each(fn(Topic $topic) => $this->topics()->detach($topic));
 
         return $this;
     }
