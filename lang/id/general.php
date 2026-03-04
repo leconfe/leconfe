@@ -961,7 +961,7 @@ return [
     'select_users' => 'Pilih Pengguna',
     'failed_to_send' => 'Gagal mengirim',
 
-    'duplicate_role' => 'Duplikat peran',
+    'permission_level' => 'Tingkat Izin',
     'new_role' => 'Peran Baru',
     'role_created' => 'Peran dibuat',
     'role_updated' => 'Peran diperbarui',

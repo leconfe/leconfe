@@ -977,7 +977,7 @@ return [
     'selected_users' => 'Выбранные пользователи',
     'select_users' => 'Выбрать пользователей',
 
-    'duplicate_role' => 'Дублировать роль',
+    'permission_level' => 'Уровень разрешений',
     'new_role' => 'Новая роль',
     'role_created' => 'Роль создана',
     'role_updated' => 'Роль обновлена',

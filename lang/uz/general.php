@@ -977,7 +977,7 @@ return [
     'selected_users' => 'Tanlangan foydalanuvchilar',
     'select_users' => 'Foydalanuvchilarni tanlash',
 
-    'duplicate_role' => 'Rolni nusxalash',
+    'permission_level' => 'Ruxsat darajasi',
     'new_role' => 'Yangi rol',
     'role_created' => 'Rol yaratildi',
     'role_updated' => 'Rol yangilandi',

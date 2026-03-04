@@ -979,7 +979,7 @@ return [
     'selected_users' => 'المستخدمون المحددون',
     'select_users' => 'اختر المستخدمين',
 
-    'duplicate_role' => 'نسخ الدور',
+    'permission_level' => 'مستوى الإذن',
     'new_role' => 'دور جديد',
     'role_created' => 'تم إنشاء الدور',
     'role_updated' => 'تم تحديث الدور',

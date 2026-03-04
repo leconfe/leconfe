@@ -962,7 +962,7 @@ return [
     'selected_users' => 'Përdoruesit e përzgjedhur',
     'select_users' => 'Zgjidh Përdoruesit',
 
-    'duplicate_role' => 'Dublikoni rolin',
+    'permission_level' => 'Niveli i Lejeve',
     'new_role' => 'Rol i ri',
     'role_created' => 'Roli u krijua',
     'role_updated' => 'Roli u përditësua',
