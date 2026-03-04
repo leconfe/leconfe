@@ -33,13 +33,26 @@ class VerifyUserEmail extends TemplateMailable
 
     protected function verificationUrl($user)
     {
+        $routeName = 'livewirePageGroup.website.pages.verification.verify';
+
+        $parameters = [
+            'id' => $user->getKey(),
+            'hash' => sha1($user->getEmailForVerification()),
+        ];
+
+        if ($scheduledConference = app()->getCurrentScheduledConference()) {
+            $routeName = 'livewirePageGroup.scheduledConference.pages.verification.verify';
+            $parameters['conference'] = $scheduledConference->conference->path;
+            $parameters['serie'] = $scheduledConference->path;
+        } elseif ($conference = app()->getCurrentConference()) {
+            $routeName = 'livewirePageGroup.conference.pages.verification.verify';
+            $parameters['conference'] = $conference->path;
+        }
+
         return URL::temporarySignedRoute(
-            'verification.verify',
+            $routeName,
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ]
+            $parameters
         );
     }
 

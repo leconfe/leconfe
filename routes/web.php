@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\LogoutController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -35,12 +34,6 @@ Route::get('download/{path}', function (string $path, Request $request) {
 
     return $storage->download($path);
 })->where('path', '.*')->name('download');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return redirect()->route('livewirePageGroup.website.pages.home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::any('logout', LogoutController::class)->name('logout');
 Route::post('livewire/upload-file', [FileUploadController::class, 'handle'])

@@ -24,6 +24,19 @@ class MustVerifyEmail
         }
 
         if (! $request->user()->hasVerifiedEmail()) {
+            if ($scheduledConference = app()->getCurrentScheduledConference()) {
+                return redirect()->route('livewirePageGroup.scheduledConference.pages.email-verification', [
+                    'conference' => $scheduledConference->conference->path,
+                    'serie' => $scheduledConference->path,
+                ]);
+            }
+
+            if ($conference = app()->getCurrentConference()) {
+                return redirect()->route('livewirePageGroup.conference.pages.email-verification', [
+                    'conference' => $conference->path,
+                ]);
+            }
+
             return redirect()->route('livewirePageGroup.website.pages.email-verification');
         }
 
