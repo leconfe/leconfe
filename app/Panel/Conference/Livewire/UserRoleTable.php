@@ -40,12 +40,16 @@ class UserRoleTable extends Component implements HasForms, HasTable
             ->toArray();
 
         return $table
-            ->query($this->getQuery())
+            ->query($this->getQuery($default))
             ->heading(__('general.roles'))
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
-                    ->searchable()
+                    ->searchable(),
+                TextColumn::make('meta.permission_level')
+                    ->label(__('general.permission_level'))
+                    ->getStateUsing(fn(Role $record) => $record->getMeta('permission_level'))
+                    ->searchable(false),
             ])
             ->actions([
                 EditAction::make()
@@ -62,16 +66,16 @@ class UserRoleTable extends Component implements HasForms, HasTable
                         TextInput::make('name')
                             ->label(__('general.name'))
                             ->required(),
-                        Select::make('meta.duplicate_role')
+                        Select::make('meta.permission_level')
                             ->default(fn($record) => $record->name)
-                            ->label(__('general.duplicate_role'))
+                            ->label(__('general.permission_level'))
                             ->options($permissionOptions)
                             ->required(),
                     ])
                     ->action(fn(Role $record, array $data) => RoleUpdateAction::run($record, [
                         'name' => $data['name'],
                         'meta' => $data['meta'],
-                        'permissions' => Role::getPermissionsForRole($data['meta']['duplicate_role']),
+                        'permissions' => Role::getPermissionsForRole($data['meta']['permission_level']),
                     ]))
                     ->successNotificationTitle(__('general.role_updated')),
                 DeleteAction::make()
@@ -89,8 +93,8 @@ class UserRoleTable extends Component implements HasForms, HasTable
                         TextInput::make('name')
                             ->label(__('general.name'))
                             ->required(),
-                        Select::make('meta.duplicate_role')
-                            ->label(__('general.duplicate_role'))
+                        Select::make('meta.permission_level')
+                            ->label(__('general.permission_level'))
                             ->options($permissionOptions)
                             ->required(),
                     ])
@@ -99,7 +103,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             'name' => $data['name'],
                             'meta' => $data['meta'],
                             'scheduled_conference_id' => app()->isOnScheduledConference() ? app()->getCurrentScheduledConference()->id : 0,
-                            'permissions' => Role::getPermissionsForRole($data['meta']['duplicate_role']),
+                            'permissions' => Role::getPermissionsForRole($data['meta']['permission_level']),
                         ]);
                     })
                     ->successNotificationTitle(__('general.role_created')),
@@ -107,10 +111,12 @@ class UserRoleTable extends Component implements HasForms, HasTable
             ->emptyStateHeading(__('general.no_roles'));
     }
 
-    protected function getQuery(): Builder
+    protected function getQuery($defaultRole): Builder
     {
-        return Role::query()
-            ->where('name', '!=', UserRole::Admin);
+        $query = Role::query()->with('meta');
+        $query->whereNotIn('name', $defaultRole);
+
+        return $query;
     }
 }
 
