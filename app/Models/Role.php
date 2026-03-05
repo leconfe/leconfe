@@ -27,8 +27,8 @@ class Role extends Model
     {
         static::addGlobalScope('conferences', function (Builder $builder) {
 
-            $conferenceScopeColumn = config('permission.table_names.roles', 'roles').'.conference_id';
-            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles').'.scheduled_conference_id';
+            $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
+            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
 
             $conferenceId = app()->getCurrentConferenceId();
             $builder->where($conferenceScopeColumn, 0);
@@ -296,6 +296,8 @@ class Role extends Model
     {
         $permission = $this->filterPermission($permission);
 
-        return in_array($permission->name, static::getPermissionsForRole($this->name));
+        $permissionLevel = $this->getMeta('permission_level') ?? $this->name;
+
+        return in_array($permission->name, static::getPermissionsForRole($permissionLevel));
     }
 }

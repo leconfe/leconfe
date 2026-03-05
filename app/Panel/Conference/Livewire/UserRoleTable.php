@@ -32,15 +32,15 @@ class UserRoleTable extends Component implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        $default = array_keys(Role::getDefaultPermissionsAttribute());
+        $defaultRoles = array_keys(Role::getDefaultPermissionsAttribute());
 
-        $permissionOptions = Role::whereNot('name', UserRole::Admin)
-            ->whereIn('name', $default)
-            ->pluck('name', 'name')
+        $permissionOptions = collect($defaultRoles)
+            ->reject(fn($role) => $role === UserRole::Admin->value)
+            ->mapWithKeys(fn($role) => [$role => $role])
             ->toArray();
 
         return $table
-            ->query($this->getQuery($default))
+            ->query($this->getQuery())
             ->heading(__('general.roles'))
             ->columns([
                 TextColumn::make('name')
@@ -48,18 +48,23 @@ class UserRoleTable extends Component implements HasForms, HasTable
                     ->searchable(),
                 TextColumn::make('meta.permission_level')
                     ->label(__('general.permission_level'))
-                    ->getStateUsing(fn(Role $record) => $record->getMeta('permission_level'))
+                    ->getStateUsing(fn(Role $record) => $record->getMeta('permission_level') ?? $record->name)
                     ->searchable(false),
             ])
             ->actions([
                 EditAction::make()
                     ->label(__('general.edit'))
                     ->modalWidth(MaxWidth::Large)
-                    ->hidden(fn(Role $record) => in_array($record->name, $default))
+                    ->hidden(fn(Role $record) => in_array($record->name, $defaultRoles))
                     ->fillForm(function (Role $record) {
+                        $meta = $record->getAllMeta()->toArray();
+                        if (!isset($meta['permission_level'])) {
+                            $meta['permission_level'] = $record->name;
+                        }
+
                         return [
-                            ...$record->toArray(),
-                            'meta' => $record->getAllMeta()->toArray(),
+                            'name' => $record->name,
+                            'meta' => $meta,
                         ];
                     })
                     ->form([
@@ -67,21 +72,25 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             ->label(__('general.name'))
                             ->required(),
                         Select::make('meta.permission_level')
-                            ->default(fn($record) => $record->name)
                             ->label(__('general.permission_level'))
                             ->options($permissionOptions)
-                            ->required(),
+                            ->required()
+                            ->disabled(true),
                     ])
-                    ->action(fn(Role $record, array $data) => RoleUpdateAction::run($record, [
-                        'name' => $data['name'],
-                        'meta' => $data['meta'],
-                        'permissions' => Role::getPermissionsForRole($data['meta']['permission_level']),
-                    ]))
+                    ->action(function (Role $record, array $data) {
+                        $meta = $data['meta'] ?? [];
+                        $meta['permission_level'] = $meta['permission_level'] ?? $record->getMeta('permission_level') ?? $record->name;
+
+                        RoleUpdateAction::run($record, [
+                            'name' => $data['name'],
+                            'meta' => $meta,
+                        ]);
+                    })
                     ->successNotificationTitle(__('general.role_updated')),
                 DeleteAction::make()
                     ->label(__('general.delete'))
                     ->requiresConfirmation()
-                    ->hidden(fn(Role $record) => in_array($record->name, $default))
+                    ->hidden(fn(Role $record) => in_array($record->name, $defaultRoles))
                     ->successNotificationTitle(__('general.role_deleted')),
             ])
             ->headerActions([
@@ -103,7 +112,6 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             'name' => $data['name'],
                             'meta' => $data['meta'],
                             'scheduled_conference_id' => app()->isOnScheduledConference() ? app()->getCurrentScheduledConference()->id : 0,
-                            'permissions' => Role::getPermissionsForRole($data['meta']['permission_level']),
                         ]);
                     })
                     ->successNotificationTitle(__('general.role_created')),
@@ -111,12 +119,9 @@ class UserRoleTable extends Component implements HasForms, HasTable
             ->emptyStateHeading(__('general.no_roles'));
     }
 
-    protected function getQuery($defaultRole): Builder
+    protected function getQuery(): Builder
     {
-        $query = Role::query()->with('meta');
-        $query->whereNotIn('name', $defaultRole);
-
-        return $query;
+        return Role::query()->with('meta');
     }
 }
 
