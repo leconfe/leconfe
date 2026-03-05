@@ -8,46 +8,43 @@
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 items-center justify-evenly">
             <div class="w-full sm:w-1/3">
-                <x-filament::input.wrapper>
-                    <x-filament::input.select wire:model.live="topic">
-                        <option value="">{{ __('general.all_topics') }}</option>
-                        @foreach($topics as $id => $name)
-                            <option value="{{ $name }}" @if(request('topic') === $name) selected @endif>{{ $name }}
-                            </option>
-                        @endforeach
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                <select wire:model.live="topic"
+                    class="w-full bg-transparent outline-none p-2 border rounded-md border-primary">
+                    <option value="">{{ __('general.all_topics') }}</option>
+                    @foreach($topics as $id => $name)
+                        <option value="{{ $name }}" @if(request('topic') === $name) selected @endif>{{ $name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="w-full sm:w-1/3">
-                <x-filament::input.wrapper>
-                    <x-filament::input.select wire:model.live="faculty">
-                        <option value="">{{ __('general.all_faculties') ?? __('general.faculty') }}</option>
-                        @foreach($faculties as $faculty)
-                            <option value="{{ $faculty }}" @if(request('faculty') === $faculty) selected @endif>
-                                {{ $faculty }}
-                            </option>
-                        @endforeach
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                <select wire:model.live="faculty"
+                    class="w-full bg-transparent outline-none p-2 border rounded-md border-primary">
+                    <option value="">{{ __('general.all_faculties') ?? __('general.faculty') }}</option>
+                    @foreach($faculties as $faculty)
+                        <option value="{{ $faculty }}" @if(request('faculty') === $faculty) selected @endif>
+                            {{ $faculty }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="w-full sm:w-1/3">
-                <x-filament::input.wrapper>
-                    <x-filament::input.select wire:model.live="conference">
-                        <option value="">{{ __('general.all_conferences') ?? __('general.conference') }}</option>
-                        @foreach($conferences as $id => $name)
-                            <option value="{{ $name }}" @if(request('conference') === $name) selected @endif>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                <select wire:model.live="conference"
+                    class="w-full bg-transparent outline-none p-2 border rounded-md border-primary">
+                    <option value="">{{ __('general.all_conferences') ?? __('general.conference') }}</option>
+                    @foreach($conferences as $id => $name)
+                        <option value="{{ $name }}" @if(request('conference') === $name) selected @endif>
+                            {{ $name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
-            <button wire:click="resetFilters" class="btn btn-primary w-fit">
+            {{-- <button wire:click="resetFilters" class="btn btn-primary w-fit">
                 {{ __('general.reset') }}
-            </button>
+            </button> --}}
         </div>
 
         @if($featuredScheduledConferences->isNotEmpty())
