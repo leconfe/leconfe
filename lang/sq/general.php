@@ -61,6 +61,10 @@ return [
 
     'conference' => 'Konferenca',
     'open_conference' => 'Hap Konferencën',
+    'open_scheduled_conference' => 'Hap Konferencën e Planifikuar',
+    'my_scheduled_conferences' => 'Konferencat e Mia të Planifikuara',
+    'my_scheduled_conferences_description' => 'Konferencat e planifikuara ku jeni të regjistruar.',
+    'no_scheduled_conference_roles_description' => 'Nuk keni ende caktime rolesh në konferencat e planifikuara.',
     'name' => 'Emri',
     'path' => 'Shtegu',
     'url_path' => 'Shtegu i konferencës. Ky do të përdoret në URL-në e konferencës.',

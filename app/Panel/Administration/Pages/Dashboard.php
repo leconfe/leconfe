@@ -3,6 +3,11 @@
 namespace App\Panel\Administration\Pages;
 
 use App\Actions\Leconfe\Relink;
+use App\Facades\Setting;
+use App\Models\Role;
+use App\Models\ScheduledConference;
+use App\Models\User;
+use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
@@ -16,7 +21,9 @@ use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Collection;
 
 class Dashboard extends Page implements HasInfolists
 {
@@ -33,12 +40,16 @@ class Dashboard extends Page implements HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return __('general.administration');
+        if (Auth::user()->can('Administration:view')) {
+            return __('general.administration');
+        }
+
+        return __('general.dashboard');
     }
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('Administration:view');
+        return Auth::check();
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -46,6 +57,7 @@ class Dashboard extends Page implements HasInfolists
         return $infolist
             ->schema([
                 Section::make('')
+                    ->visible(fn (): bool => Auth::user()->can('Administration:view'))
                     ->columns(2)
                     ->schema([
                         Grid::make(1)
@@ -130,6 +142,80 @@ class Dashboard extends Page implements HasInfolists
 
                     ]),
             ]);
+    }
+
+    public function getScheduledConferencePortalsProperty(): Collection
+    {
+        $userId = Auth::id();
+        
+        $assignedRoles = DB::table('model_has_roles')
+            ->select(['role_id', 'scheduled_conference_id'])
+            ->where('model_type', User::class)
+            ->where('model_id', $userId)
+            ->where('scheduled_conference_id', '>', 0)
+            ->get();
+
+        if ($assignedRoles->isEmpty()) {
+            return collect();
+        }
+
+        $roles = Role::query()
+            ->withoutGlobalScopes()
+            ->whereIn('id', $assignedRoles->pluck('role_id')->unique()->all())
+            ->pluck('name', 'id');
+
+        $rolesByScheduledConference = $assignedRoles
+            ->groupBy('scheduled_conference_id')
+            ->map(fn (Collection $rolesPerScheduledConference) => $rolesPerScheduledConference
+                ->pluck('role_id')
+                ->map(fn (int $roleId) => $roles->get($roleId))
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values());
+
+        $scheduledConferences = ScheduledConference::query()
+            ->withoutGlobalScopes()
+            ->select(['id', 'conference_id', 'title', 'path', 'date_start', 'date_end', 'state'])
+            ->with(['conference:id,name,path'])
+            ->whereIn('id', $rolesByScheduledConference->keys()->all())
+            ->orderByDesc('date_start')
+            ->orderByDesc('id')
+            ->get();
+
+
+        return $scheduledConferences
+            ->map(function (ScheduledConference $scheduledConference) use ($rolesByScheduledConference): array {
+                return [
+                    'title' => $scheduledConference->title,
+                    'conference_name' => $scheduledConference->conference?->name,
+                    'date_range' => $this->formatDateRange($scheduledConference->date_start?->toDateString(), $scheduledConference->date_end?->toDateString()),
+                    'roles' => $rolesByScheduledConference->get($scheduledConference->getKey(), collect()),
+                    'panel_url' => route('filament.scheduledConference.pages.dashboard', [
+                        'conference' => $scheduledConference->conference?->path,
+                        'serie' => $scheduledConference->path,
+                    ]),
+                    'state' => $scheduledConference->state?->value ?? $scheduledConference->state,
+                ];
+            })
+            ->values();
+    }
+
+    protected function formatDateRange(?string $startDate, ?string $endDate): ?string
+    {
+        if (! $startDate && ! $endDate) {
+            return null;
+        }
+
+        $format = Setting::get('format_date');
+        $startDateFormatted = $startDate ? Carbon::parse($startDate)->translatedFormat($format) : null;
+        $endDateFormatted = $endDate ? Carbon::parse($endDate)->translatedFormat($format) : null;
+
+        if ($startDateFormatted && $endDateFormatted) {
+            return "{$startDateFormatted} - {$endDateFormatted}";
+        }
+
+        return $startDateFormatted ?? $endDateFormatted;
     }
 
     protected function expireUserSession(Action $action)
