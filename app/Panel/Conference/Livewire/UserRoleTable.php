@@ -121,7 +121,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
 
     protected function getQuery(): Builder
     {
-        return Role::query()->with('meta');
+        return Role::query()->with('meta')->where('name', '!=', UserRole::Admin->value);
     }
 }
 
