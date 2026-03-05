@@ -63,6 +63,10 @@ return [
 
     'conference' => 'Konferensi',
     'open_conference' => 'Buka Konferensi',
+    'open_scheduled_conference' => 'Buka Konferensi Terjadwal',
+    'my_scheduled_conferences' => 'Konferensi Terjadwal Saya',
+    'my_scheduled_conferences_description' => 'Konferensi terjadwal tempat Anda terdaftar.',
+    'no_scheduled_conference_roles_description' => 'Anda belum memiliki penugasan peran pada konferensi terjadwal.',
     'name' => 'Nama',
     'path' => 'Path',
     'url_path' => 'Path konferensi. Akan digunakan dalam URL konferensi.',

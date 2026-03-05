@@ -72,6 +72,10 @@ return [
 
     'conference' => 'المؤتمر',
     'open_conference' => 'فتح المؤتمر',
+    'open_scheduled_conference' => 'فتح المؤتمر المجدول',
+    'my_scheduled_conferences' => 'المؤتمرات المجدولة الخاصة بي',
+    'my_scheduled_conferences_description' => 'المؤتمرات المجدولة التي أنت مسجل فيها.',
+    'no_scheduled_conference_roles_description' => 'ليس لديك أي تعيينات أدوار في المؤتمرات المجدولة بعد.',
     'name' => 'الاسم',
     'path' => 'المسار',
     'url_path' => 'مسار المؤتمر. سيتم استخدامه في عنوان URL للمؤتمر.',

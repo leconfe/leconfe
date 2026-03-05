@@ -13,14 +13,19 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class ConferenceResource extends Resource
 {
     protected static ?string $model = Conference::class;
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can('Administration:view') ?? false;
+    }
+
     public static function getNavigationLabel(): string
     {
-        // This returns the label for the dashboard navigation.
         return __('general.conference');
     }
 

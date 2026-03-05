@@ -3,11 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Conference;
-use App\Models\Role;
 use App\Providers\PanelProvider;
 use Closure;
 use Filament\Facades\Filament;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,14 +26,6 @@ class RedirectPanelIfCannotAccess
         }
 
         $conference = app()->getCurrentConference();
-        $role = Role::query()
-            ->withoutGlobalScopes()
-            ->with([
-                'conference',
-                'scheduledConference' => fn (Builder $query) => $query->withoutGlobalScopes(),
-            ])
-            ->whereHas('users', fn ($query) => $query->where('id', $user->id))
-            ->first();
 
         if ($panel->getId() === PanelProvider::PANEL_CONFERENCE) {
 
@@ -45,22 +35,6 @@ class RedirectPanelIfCannotAccess
             if($conference->currentScheduledConference){
                 return redirect()->to($conference->currentScheduledConference->getPanelUrl());
             }
-        }
-
-        if ($panel->getId() === PanelProvider::PANEL_ADMINISTRATION) {
-            if ($user->can('Administration:view')) {
-                return $next($request);
-            }
-
-            if ($role?->scheduledConference) {
-                return redirect()->to($role->scheduledConference->getPanelUrl());
-            }
-
-            if ($role?->conference) {
-                return redirect()->to($role->conference->getPanelUrl());
-            }
-
-            return redirect()->to(Conference::first()->getPanelUrl());
         }
 
         return $next($request);
