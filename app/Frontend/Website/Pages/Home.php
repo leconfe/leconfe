@@ -10,6 +10,7 @@ use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Topic;
+use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
@@ -24,6 +25,9 @@ class Home extends Page
     use WithoutUrlPagination, WithPagination;
 
     protected static string $view = 'frontend.website.pages.home';
+
+    public $faculty;
+    public $topic;
 
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
@@ -42,8 +46,27 @@ class Home extends Page
             ]);
     }
 
+    public function resetFilters()
+    {
+        $this->reset(['faculty', 'topic']);
+    }
+
     protected function getViewData(): array
     {
+        $topics = Topic::withoutGlobalScopes()
+            ->whereHas('scheduledConferences', function ($q) {
+                $q->withoutGlobalScopes();
+            })
+            ->pluck('name', 'id');
+
+        $faculties = ScheduledConference::withoutGlobalScopes()
+            ->get()
+            ->map(fn($s) => $s->getMeta('faculty'))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
@@ -54,19 +77,35 @@ class Home extends Page
             ->orderBy('featured', 'ASC')
             ->get();
 
-        $scheduledConferences = $this->getEloquentQuery()
+        $scheduledQuery = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',
                 'meta',
             ])
             ->published()
-            ->orderBy('date_start', 'DESC')
-            ->get();
+            ->orderBy('date_start', 'DESC');
+
+        if ($this->topic) {
+            $scheduledQuery->whereHas('topics', function ($t) {
+                $t->whereRaw('LOWER(name) = ?', [mb_strtolower($this->topic)]);
+            });
+        }
+
+        if ($this->faculty) {
+            $scheduledQuery->whereHas('meta', function ($m) {
+                $m->where('key', 'faculty')
+                    ->where('value', $this->faculty);
+            });
+        }
+
+        $scheduledConferences = $scheduledQuery->get();
 
         return [
             'scheduledConferences' => $scheduledConferences,
             'featuredScheduledConferences' => $featuredScheduledConferences,
+            'faculties' => $faculties,
+            'topics' => $topics,
         ];
     }
 

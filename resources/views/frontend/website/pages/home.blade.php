@@ -6,9 +6,42 @@
             </div>
         @endif
 
+        <form id="conference-filter-form" method="GET" class="space-y-3 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="w-full sm:w-1/3">
+                    <x-filament::input.wrapper>
+                        <x-filament::input.select wire:model.live="topic">
+                            <option value="">{{ __('general.all_topics') }}</option>
+                            @foreach($topics as $id => $name)
+                                <option value="{{ $name }}" @if(request('topic') === $name) selected @endif>{{ $name }}
+                                </option>
+                            @endforeach
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
+                </div>
+
+                <div class="w-full sm:w-1/3">
+                    <x-filament::input.wrapper>
+                        <x-filament::input.select wire:model.live="faculty">
+                            <option value="">{{ __('general.all_faculties') ?? __('general.faculty') }}</option>
+                            @foreach($faculties as $faculty)
+                                <option value="{{ $faculty }}" @if(request('faculty') === $faculty) selected @endif>
+                                    {{ $faculty }}
+                                </option>
+                            @endforeach
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
+                </div>
+
+                <x-filament::button wire:click="resetFilters" color="info">
+                    {{ __('general.reset') }}
+                </x-filament::button>
+            </div>
+        </form>
+
         @if($featuredScheduledConferences->isNotEmpty())
             <div class="featured-scheduled-conference">
-                <x-website::heading-title title="{{ __('general.featured_scheduled_conference') }}" class="grow"/>
+                <x-website::heading-title title="{{ __('general.featured_scheduled_conference') }}" class="grow" />
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-4">
                     @foreach ($featuredScheduledConferences as $scheduledConference)
@@ -20,7 +53,7 @@
 
         @if($scheduledConferences->isNotEmpty())
             <div class="featured-scheduled-conference">
-                <x-website::heading-title title="{{ __('general.conferences') }}" class="grow"/>
+                <x-website::heading-title title="{{ __('general.conferences') }}" class="grow" />
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-4">
                     @foreach ($scheduledConferences as $scheduledConference)
