@@ -31,6 +31,8 @@ class Home extends Page
     public $faculty;
     #[Url(as: 'topic')]
     public $topic;
+    #[Url(as: 'conference')]
+    public $conference;
 
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
@@ -51,7 +53,7 @@ class Home extends Page
 
     public function resetFilters()
     {
-        $this->reset(['faculty', 'topic']);
+        $this->reset(['faculty', 'topic', 'conference']);
     }
 
     protected function getViewData(): array
@@ -69,6 +71,12 @@ class Home extends Page
             ->unique()
             ->sort()
             ->values();
+
+        $conferences = Conference::withoutGlobalScopes()
+            ->whereHas('scheduledConferences', function ($q) {
+                $q->withoutGlobalScopes();
+            })
+            ->pluck('name', 'id');
 
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
@@ -103,6 +111,12 @@ class Home extends Page
             });
         }
 
+        if ($this->conference) {
+            $scheduledQuery->whereHas('conference', function ($c) {
+                $c->whereRaw('LOWER(name) = ?', [mb_strtolower($this->conference)]);
+            });
+        }
+
         $scheduledConferences = $scheduledQuery->get();
 
         return [
@@ -110,6 +124,7 @@ class Home extends Page
             'featuredScheduledConferences' => $featuredScheduledConferences,
             'faculties' => $faculties,
             'topics' => $topics,
+            'conferences' => $conferences,
         ];
     }
 
