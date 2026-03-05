@@ -16,6 +16,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Url;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
@@ -26,7 +27,9 @@ class Home extends Page
 
     protected static string $view = 'frontend.website.pages.home';
 
+    #[Url(as: 'faculty')]
     public $faculty;
+    #[Url(as: 'topic')]
     public $topic;
 
     protected static string|array $routeMiddleware = [
@@ -88,7 +91,8 @@ class Home extends Page
 
         if ($this->topic) {
             $scheduledQuery->whereHas('topics', function ($t) {
-                $t->whereRaw('LOWER(name) = ?', [mb_strtolower($this->topic)]);
+                $t->withoutGlobalScopes()
+                    ->whereRaw('LOWER(name) = ?', [mb_strtolower($this->topic)]);
             });
         }
 
