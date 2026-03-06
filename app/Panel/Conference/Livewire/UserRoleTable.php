@@ -34,10 +34,18 @@ class UserRoleTable extends Component implements HasForms, HasTable
     {
         $defaultRoles = array_keys(Role::getDefaultPermissionsAttribute());
 
-        $permissionOptions = collect($defaultRoles)
-            ->reject(fn($role) => $role === UserRole::Admin->value)
-            ->mapWithKeys(fn($role) => [$role => $role])
-            ->toArray();
+        $permissionLevelOptions = [];
+        if (app()->isOnScheduledConference()) {
+            $permissionLevelOptions = collect(UserRole::scheduledConferenceRoles())
+                ->map(fn($role) => $role instanceof \BackedEnum ? $role->value : $role)
+                ->mapWithKeys(fn($role) => [$role => $role])
+                ->toArray();
+        } else {
+            $permissionLevelOptions = collect(UserRole::conferenceRoles())
+                ->map(fn($role) => $role instanceof \BackedEnum ? $role->value : $role)
+                ->mapWithKeys(fn($role) => [$role => $role])
+                ->toArray();
+        }
 
         return $table
             ->query($this->getQuery())
@@ -73,7 +81,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             ->required(),
                         Select::make('meta.permission_level')
                             ->label(__('general.permission_level'))
-                            ->options($permissionOptions)
+                            ->options($permissionLevelOptions)
                             ->required()
                             ->disabled(true),
                     ])
@@ -104,7 +112,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             ->required(),
                         Select::make('meta.permission_level')
                             ->label(__('general.permission_level'))
-                            ->options($permissionOptions)
+                            ->options($permissionLevelOptions)
                             ->required(),
                     ])
                     ->action(function (array $data) {
