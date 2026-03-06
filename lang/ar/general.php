@@ -982,4 +982,5 @@ return [
     'send_notification_description' => 'اختر المستخدمين الذين سيتلقون إشعار البريد الإلكتروني',
     'selected_users' => 'المستخدمون المحددون',
     'select_users' => 'اختر المستخدمين',
+    'registration_required_fields' => 'الحقول الإلزامية للتسجيل',
 ];
