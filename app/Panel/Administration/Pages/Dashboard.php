@@ -174,6 +174,8 @@ class Dashboard extends Page implements HasInfolists
                 ->sort()
                 ->values());
 
+        // dd($rolesByScheduledConference);
+
         $scheduledConferences = ScheduledConference::query()
             ->withoutGlobalScopes()
             ->select(['id', 'conference_id', 'title', 'path', 'date_start', 'date_end', 'state'])
