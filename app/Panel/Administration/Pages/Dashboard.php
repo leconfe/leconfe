@@ -147,12 +147,11 @@ class Dashboard extends Page implements HasInfolists
     public function getScheduledConferencePortalsProperty(): Collection
     {
         $userId = Auth::id();
-        
+
         $assignedRoles = DB::table('model_has_roles')
-            ->select(['role_id', 'scheduled_conference_id'])
+            ->select(['role_id', 'conference_id', 'scheduled_conference_id'])
             ->where('model_type', User::class)
             ->where('model_id', $userId)
-            ->where('scheduled_conference_id', '>', 0)
             ->get();
 
         if ($assignedRoles->isEmpty()) {
@@ -164,35 +163,65 @@ class Dashboard extends Page implements HasInfolists
             ->whereIn('id', $assignedRoles->pluck('role_id')->unique()->all())
             ->pluck('name', 'id');
 
-        $rolesByScheduledConference = $assignedRoles
+        $directRolesByScheduledConference = $assignedRoles
+            ->where('scheduled_conference_id', '>', 0)
             ->groupBy('scheduled_conference_id')
-            ->map(fn (Collection $rolesPerScheduledConference) => $rolesPerScheduledConference
+            ->map(fn (Collection $rolesPerScheduledConference): Collection => $rolesPerScheduledConference
                 ->pluck('role_id')
-                ->map(fn (int $roleId) => $roles->get($roleId))
+                ->map(fn ($roleId) => $roles->get($roleId))
                 ->filter()
                 ->unique()
                 ->sort()
                 ->values());
 
-        // dd($rolesByScheduledConference);
+        $conferenceRoles = $assignedRoles
+            ->where('conference_id', '>', 0)
+            ->where('scheduled_conference_id', 0)
+            ->groupBy('conference_id')
+            ->map(fn (Collection $rolesPerConference): Collection => $rolesPerConference
+                ->pluck('role_id')
+                ->map(fn ($roleId) => $roles->get($roleId))
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values());
+
+        if ($directRolesByScheduledConference->isEmpty() && $conferenceRoles->isEmpty()) {
+            return collect();
+        }
 
         $scheduledConferences = ScheduledConference::query()
             ->withoutGlobalScopes()
             ->select(['id', 'conference_id', 'title', 'path', 'date_start', 'date_end', 'state'])
             ->with(['conference:id,name,path'])
-            ->whereIn('id', $rolesByScheduledConference->keys()->all())
+            ->where(function ($query) use ($directRolesByScheduledConference, $conferenceRoles) {
+                if ($directRolesByScheduledConference->isNotEmpty()) {
+                    $query->whereIn('id', $directRolesByScheduledConference->keys()->all());
+                }
+
+                if ($conferenceRoles->isNotEmpty()) {
+                    $query->orWhereIn('conference_id', $conferenceRoles->keys()->all());
+                }
+            })
             ->orderByDesc('date_start')
             ->orderByDesc('id')
             ->get();
 
-
         return $scheduledConferences
-            ->map(function (ScheduledConference $scheduledConference) use ($rolesByScheduledConference): array {
+            ->map(function (ScheduledConference $scheduledConference) use ($conferenceRoles, $directRolesByScheduledConference): array {
+                $roleNames = $directRolesByScheduledConference
+                    ->get($scheduledConference->getKey(), collect())
+                    ->merge($conferenceRoles->get($scheduledConference->conference_id, collect()))
+                    ->filter()
+                    ->unique()
+                    ->sort()
+                    ->values();
+
                 return [
                     'title' => $scheduledConference->title,
                     'conference_name' => $scheduledConference->conference?->name,
                     'date_range' => $this->formatDateRange($scheduledConference->date_start?->toDateString(), $scheduledConference->date_end?->toDateString()),
-                    'roles' => $rolesByScheduledConference->get($scheduledConference->getKey(), collect()),
+                    'roles' => $roleNames,
                     'panel_url' => route('filament.scheduledConference.pages.dashboard', [
                         'conference' => $scheduledConference->conference?->path,
                         'serie' => $scheduledConference->path,
