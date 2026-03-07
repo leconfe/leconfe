@@ -47,6 +47,9 @@ class Home extends Page
             'search' => '',
             'value' => []
         ],
+        'search' => [
+            'value' => ''
+        ]
     ];
 
     protected static string|array $routeMiddleware = [
@@ -79,40 +82,35 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        $topicsQuery = Topic::withoutGlobalScopes()
-            ->whereHas('scheduledConferences', function ($q) {
-                $q->withoutGlobalScopes();
-            });
-
+        // topic
+        $topicsQuery = Topic::withoutGlobalScopes()->websiteTopics();
         if (!empty($this->filter['topic']['search'])) {
             $topicsQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['topic']['search']) . '%']);
         }
-
         $topics = $topicsQuery->pluck('name', 'id');
 
+        // faculty
         $facultiesCollection = ScheduledConference::withoutGlobalScopes()
             ->get()
             ->map(fn($s) => $s->getMeta('faculty'))
             ->filter();
-
         if (!empty($this->filter['faculty']['search'])) {
             $facultiesCollection = $facultiesCollection->filter(function ($faculty) {
                 return Str::contains(Str::lower($faculty), mb_strtolower($this->filter['faculty']['search']));
             });
         }
-
         $faculties = $facultiesCollection->unique()->sort()->values();
 
+        // TODO: remove
         $conferencesQuery = Conference::withoutGlobalScopes()
             ->whereHas('scheduledConferences', function ($q) {
                 $q->withoutGlobalScopes();
             });
-
         if (!empty($this->filter['conference']['search'])) {
             $conferencesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['conference']['search']) . '%']);
         }
-
         $conferences = $conferencesQuery->pluck('name', 'id');
+
 
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
@@ -133,26 +131,6 @@ class Home extends Page
             ->published()
             ->orderBy('date_start', 'DESC');
 
-        if ($this->topic) {
-            $scheduledQuery->whereHas('topics', function ($t) {
-                $t->withoutGlobalScopes()
-                    ->whereRaw('LOWER(name) = ?', [mb_strtolower($this->topic)]);
-            });
-        }
-
-        if ($this->faculty) {
-            $scheduledQuery->whereHas('meta', function ($m) {
-                $m->where('key', 'faculty')
-                    ->where('value', $this->faculty);
-            });
-        }
-
-        if ($this->conference) {
-            $scheduledQuery->whereHas('conference', function ($c) {
-                $c->whereRaw('LOWER(name) = ?', [mb_strtolower($this->conference)]);
-            });
-        }
-
         // Apply Livewire checkbox filters if provided
         if (!empty($this->filter['topic']['value'])) {
             $scheduledQuery->whereHas('topics', function ($t) {
@@ -168,12 +146,14 @@ class Home extends Page
             });
         }
 
+        // TODO: remove
         if (!empty($this->filter['conference']['value'])) {
             $scheduledQuery->whereIn('conference_id', $this->filter['conference']['value']);
         }
 
         $scheduledConferences = $scheduledQuery->get();
 
+        // TODO: remove
         $selectedConferences = [];
         if (!empty($this->filter['conference']['value'])) {
             $selectedConferences = Conference::whereIn('id', $this->filter['conference']['value'])
@@ -188,7 +168,7 @@ class Home extends Page
             'faculties' => $faculties,
             'topics' => $topics,
             'conferences' => $conferences,
-            'selectedConferences' => $selectedConferences,
+            'selectedConferences' => $selectedConferences, // TODO: remove
         ];
     }
 
