@@ -106,7 +106,7 @@ class UserResource extends Resource
                                     ->unique(ignoreRecord: true),
                                 Forms\Components\TextInput::make('password')
                                     ->label(__('general.password'))
-                                    ->required(fn(?User $record) => ! $record)
+                                    ->required(fn(?User $record) => !$record)
                                     ->password()
                                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                                     ->dehydrated(fn($state) => filled($state))
@@ -156,7 +156,7 @@ class UserResource extends Resource
                                     ->relationship(
                                         name: 'roles',
                                         titleAttribute: 'name',
-                                        modifyQueryUsing: fn($query) => $query->where('name', '!=', UserRole::Admin)
+                                        modifyQueryUsing: fn($query) => $query->withoutGlobalScopes()->availableRolesByContext()
                                     )
                                     ->saveRelationshipsUsing(function (Forms\Components\CheckboxList $component, ?array $state, User $record) {
 
@@ -224,7 +224,7 @@ class UserResource extends Resource
                             ->getStateUsing(fn(User $record) => $record->getMeta('affiliation')),
                         TextColumn::make('disabled')
                             ->getStateUsing(function (User $record) {
-                                if (! $record->isBanned()) {
+                                if (!$record->isBanned()) {
                                     return null;
                                 }
 
@@ -248,7 +248,7 @@ class UserResource extends Resource
             ->filters([
                 SelectFilter::make('roles')
                     ->label(__('general.roles'))
-                    ->relationship('roles', 'name', modifyQueryUsing: fn($query) => $query->where('name', '!=', UserRole::Admin))
+                    ->relationship('roles', 'name', modifyQueryUsing: fn($query) => $query->withoutGlobalScopes()->availableRolesByContext())
                     ->multiple()
                     ->preload(),
             ])
@@ -270,7 +270,7 @@ class UserResource extends Resource
                     ->action(function (User $record, Action $action) {
                         $result = $record->syncRoles([]);
 
-                        if (! $result) {
+                        if (!$result) {
                             $action->failure();
 
                             return;
@@ -281,7 +281,7 @@ class UserResource extends Resource
                 ActionGroup::make([
                     Impersonate::make()
                         ->grouped()
-                        ->hidden(fn($record) => ! auth()->user()->can('loginAs', $record))
+                        ->hidden(fn($record) => !auth()->user()->can('loginAs', $record))
                         ->label(fn(User $record) => __('general.login_as_user', ['name' => $record->full_name]))
                         ->icon('heroicon-m-key')
                         ->color('primary')
