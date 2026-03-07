@@ -22,7 +22,7 @@
         <div class="featured-scheduled-conference">
             <x-website::heading-title title="{{ __('general.conferences') }}" class="grow" />
 
-            <div class="mt-6 mb-6 grid grid-cols-10 gap-2">
+            <div class="mt-6 mb-6 grid grid-cols-10 gap-2 items-center">
                 <div class="md:col-span-5 col-span-full gap-2">
                     <label class="input input-sm input-bordered !outline-none bg-white flex items-center gap-2">
                         <input type="search" class="grow" placeholder="{{ __('general.search') }}"
@@ -37,10 +37,11 @@
                         {{ __('general.topics') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
-                    <div tabindex="0" class="mt-2 p-2 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl"
+                    <div tabindex="0"
+                        class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
                         x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false"
                         x-anchor="$refs.button" x-cloak>
-                        <div>
+                        <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
                                     wire:model.live.debounce="filter.topic.search" />
@@ -71,10 +72,11 @@
                         {{ __('general.faculties') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
-                    <div tabindex="0" class="mt-2 p-2 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl"
+                    <div tabindex="0"
+                        class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
                         x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false"
                         x-anchor="$refs.button" x-cloak>
-                        <div>
+                        <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
                                     wire:model.live.debounce="filter.faculty.search" />
@@ -101,7 +103,7 @@
 
                 <button class="col-span-full md:col-span-1 btn btn-sm btn-primary w-full tooltip"
                     data-tip="Clear all the filter and the search input." wire:click="resetFilter"
-                    wire:loading.attr="disabled">
+                    wire:loading.attr="disabled" wire:ignore>
                     {{ __('general.reset_all') }}
                 </button>
 

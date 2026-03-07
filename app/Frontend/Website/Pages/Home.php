@@ -68,7 +68,7 @@ class Home extends Page
     protected function getViewData(): array
     {
         // topic
-        $topicsQuery = Topic::withoutGlobalScopes()->websiteTopics();
+        $topicsQuery = Topic::withoutGlobalScopes()->websiteTopics()->limit(20);
         if (!empty($this->filter['topic']['search'])) {
             $topicsQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['topic']['search']) . '%']);
         }

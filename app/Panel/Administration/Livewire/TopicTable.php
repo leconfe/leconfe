@@ -35,7 +35,7 @@ class TopicTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getEloquentQuery())
-            ->heading(__('general.topic'))
+            ->heading(__('general.topics'))
             ->headerActions([
                 CreateAction::make()
                     ->label(__('general.create'))
@@ -43,11 +43,11 @@ class TopicTable extends Component implements HasForms, HasTable
                         TextInput::make('name')->label(__('general.name'))->required(),
                     ])
                     ->using(function (array $data) {
-                            $data['conference_id'] = 0;
-                            $topic = Topic::create($data);
-                            $topic->setMeta('type', 'website');
-                            return $topic;
-                        }),
+                        $data['conference_id'] = 0;
+                        $topic = Topic::create($data);
+                        $topic->setMeta('type', 'website');
+                        return $topic;
+                    }),
             ])
             ->columns([
                 TextColumn::make('name')->label(__('general.name'))->searchable()->wrap(),
