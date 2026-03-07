@@ -3,17 +3,10 @@
 namespace App\Frontend\Website\Pages;
 
 use App\Http\Middleware\RedirectToConference;
-use App\Http\Middleware\RedirectToScheduledConference;
-use App\Models\Conference;
-use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
-use App\Models\Scopes\ScheduledConferenceScope;
 use App\Models\Topic;
-use Filament\Forms\Components\Select;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
@@ -71,7 +64,6 @@ class Home extends Page
 
     public function resetFilter(string $type = null): void
     {
-        // $this->reset(['faculty', 'topic', 'conference']);
         if ($type) {
             $this->filter[$type]['search'] = '';
             $this->filter[$type]['value'] = [];
