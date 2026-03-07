@@ -42,12 +42,37 @@ class Role extends Model
             });
 
             $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+                $query->where($scheduledConferenceScopeColumn, 0);
                 if ($scheduledConferenceId) {
-                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
-                } else {
-                    $query->where($scheduledConferenceScopeColumn, 0);
+                    $query->orWhere($scheduledConferenceScopeColumn, $scheduledConferenceId);
                 }
             });
+        });
+    }
+
+    public function scopeAvailableRolesByContext(Builder $builder)
+    {
+        $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
+        $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
+
+        $conferenceId = app()->getCurrentConferenceId();
+        $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
+
+        $builder->where(function (Builder $query) use ($conferenceScopeColumn, $conferenceId) {
+            if ($conferenceId) {
+                $query->where($conferenceScopeColumn, $conferenceId);
+            } else {
+                $query->where($conferenceScopeColumn, 0);
+
+            }
+        });
+
+        $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+            if ($scheduledConferenceId) {
+                $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
+            } else {
+                $query->where($scheduledConferenceScopeColumn, 0);
+            }
         });
     }
 
