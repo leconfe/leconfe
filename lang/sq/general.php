@@ -961,4 +961,8 @@ return [
     'send_notification_description' => 'Zgjidh përdoruesit që do të marrin njoftimin me email',
     'selected_users' => 'Përdoruesit e përzgjedhur',
     'select_users' => 'Zgjidh Përdoruesit',
+
+    'topics' => 'Tema',
+    'faculty' => 'Fakulteti',
+    'faculties' => 'Fakultetet',
 ];

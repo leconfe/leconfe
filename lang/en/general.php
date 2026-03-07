@@ -1036,4 +1036,8 @@ return [
     'selected_users' => 'Selected Users',
     'select_users' => 'Select Users',
     'failed_to_send' => 'Failed to send',
+
+    'topics' => 'Topics',
+    'faculty' => 'Faculty',
+    'faculties' => 'Faculties',
 ];

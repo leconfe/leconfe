@@ -960,4 +960,8 @@ return [
     'selected_users' => 'Pengguna Terpilih',
     'select_users' => 'Pilih Pengguna',
     'failed_to_send' => 'Gagal mengirim',
+
+    'topics' => 'Topik',
+    'faculty' => 'Fakultas',
+    'faculties' => 'Fakultas',
 ];
