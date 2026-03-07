@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -138,7 +140,55 @@ class PaymentFee extends Model implements Sortable
             ->all();
     }
 
-    public function resolveSelectedAdditionalItems(?array $selectedKeys = null): array
+    public function resolveSelectedAdditionalItems(?array $selectedData = null): array
+    {
+        if (! is_array($selectedData) || $selectedData === []) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($selectedData as $item) {
+            if (is_array($item)) {
+                $key = data_get($item, 'key');
+                $quantity = (int) data_get($item, 'quantity', 1);
+
+                if ($key && $quantity > 0) {
+                    $additionalItem = collect($this->getAdditionalItems())
+                        ->firstWhere('key', $key);
+
+                    if ($additionalItem) {
+                        $items[] = [
+                            'key' => $key,
+                            'name' => $additionalItem['name'],
+                            'description' => $additionalItem['description'] ?? null,
+                            'amount' => (float) $additionalItem['amount'],
+                            'quantity' => $quantity,
+                            'total_amount' => (float) $additionalItem['amount'] * $quantity,
+                        ];
+                    }
+                }
+            } elseif (is_string($item)) {
+                $additionalItem = collect($this->getAdditionalItems())
+                    ->firstWhere('key', $item);
+
+                if ($additionalItem) {
+                    $items[] = [
+                        'key' => $item,
+                        'name' => $additionalItem['name'],
+                        'description' => $additionalItem['description'] ?? null,
+                        'amount' => (float) $additionalItem['amount'],
+                        'quantity' => 1,
+                        'total_amount' => (float) $additionalItem['amount'],
+                    ];
+                }
+            }
+        }
+
+        return $items;
+    }
+
+    public function resolveSelectedAdditionalItemsByKeys(?array $selectedKeys = null): array
     {
         if (! is_array($selectedKeys) || $selectedKeys === []) {
             return [];
@@ -152,14 +202,92 @@ class PaymentFee extends Model implements Sortable
             ->all();
     }
 
-    public function getAdditionalItemsTotal(?array $selectedKeys = null): float
+    public function getAdditionalItemFormSchema(): array
     {
-        return collect($this->resolveSelectedAdditionalItems($selectedKeys))
-            ->sum('amount');
+        $items = $this->getAdditionalItems();
+        $currency = $this->currency;
+
+        if (empty($items)) {
+            return [];
+        }
+
+        $schema = collect($items)->map(function (array $item) use ($currency) {
+            $key = $item['key'];
+            $name = $item['name'];
+            $amount = $item['amount'];
+            $description = $item['description'] ?? '';
+            $formattedAmount = money($amount, $currency, true)->formatWithoutZeroes();
+
+            return TextInput::make("additional_items.{$key}")
+                ->label($name)
+                ->numeric()
+                ->minValue(0)
+                ->default(0)
+                ->helperText($description ? "{$description} - {$formattedAmount} each" : "{$formattedAmount} each")
+                ->suffixAction(
+                    \Filament\Actions\StaticAction::make('clear')
+                        ->icon('heroicon-x-mark')
+                        ->action(function (Set $set) use ($key) {
+                            $set("additional_items.{$key}", 0);
+                        })
+                );
+        })->toArray();
+
+        return [
+            \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                ->schema($schema)
+                ->visible(fn () => count($items) > 0),
+        ];
     }
 
-    public function getAmountWithAdditionalItems(?array $selectedKeys = null): float
+    public function getSelectedAdditionalItemsFromData(?array $data = null): array
     {
-        return (float) $this->amount + $this->getAdditionalItemsTotal($selectedKeys);
+        if (! is_array($data) || ! isset($data['additional_items'])) {
+            return [];
+        }
+
+        $selected = [];
+        $additionalItemsData = $data['additional_items'];
+
+        foreach ($additionalItemsData as $key => $quantity) {
+            $quantity = (int) $quantity;
+            if ($quantity > 0) {
+                $item = collect($this->getAdditionalItems())->firstWhere('key', $key);
+                if ($item) {
+                    $selected[] = [
+                        'key' => $key,
+                        'name' => $item['name'],
+                        'description' => $item['description'] ?? null,
+                        'amount' => (float) $item['amount'],
+                        'quantity' => $quantity,
+                        'total_amount' => (float) $item['amount'] * $quantity,
+                    ];
+                }
+            }
+        }
+
+        return $selected;
+    }
+
+    public function getTotalAdditionalItemsFromData(?array $data = null): float
+    {
+        return collect($this->getSelectedAdditionalItemsFromData($data))
+            ->sum('total_amount');
+    }
+
+    public function getAmountWithAdditionalItemsFromData(?array $data = null): float
+    {
+        return (float) $this->amount + $this->getTotalAdditionalItemsFromData($data);
+    }
+
+    public function getAdditionalItemsTotal(?array $selectedData = null): float
+    {
+        return collect($this->resolveSelectedAdditionalItems($selectedData))
+            ->sum('total_amount');
+    }
+
+    public function getAmountWithAdditionalItems(?array $selectedData = null): float
+    {
+        return (float) $this->amount + $this->getAdditionalItemsTotal($selectedData);
     }
 }
