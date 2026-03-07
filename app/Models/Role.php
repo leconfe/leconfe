@@ -42,10 +42,9 @@ class Role extends Model
             });
 
             $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+                $query->where($scheduledConferenceScopeColumn, 0);
                 if ($scheduledConferenceId) {
-                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
-                } else {
-                    $query->where($scheduledConferenceScopeColumn, 0);
+                    $query->orWhere($scheduledConferenceScopeColumn, $scheduledConferenceId);
                 }
             });
         });
