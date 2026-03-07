@@ -11,6 +11,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -82,10 +83,11 @@ class MastHeadSetting extends Component implements HasForms
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                TagsInput::make('topics')
+                                Select::make('topics')
                                     ->label(__('general.topics'))
-                                    ->helperText(__('general.topics_description'))
-                                    ->suggestions(fn() => Topic::pluck('name')->toArray()),
+                                    ->searchable()
+                                    ->multiple()
+                                    ->options(fn() => Topic::withoutGlobalScopes()->websiteTopics()->limit(20)->pluck('name', 'name')->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
