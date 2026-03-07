@@ -20,13 +20,6 @@ class Home extends Page
 
     protected static string $view = 'frontend.website.pages.home';
 
-    #[Url(as: 'faculty')]
-    public $faculty;
-    #[Url(as: 'topic')]
-    public $topic;
-    #[Url(as: 'conference')]
-    public $conference;
-
     public $filter = [
         'faculty' => [
             'search' => '',
