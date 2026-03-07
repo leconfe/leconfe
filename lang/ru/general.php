@@ -67,6 +67,10 @@ return [
 
     'conference' => 'Конференция',
     'open_conference' => 'Открыть конференцию',
+    'open_scheduled_conference' => 'Открыть запланированную конференцию',
+    'my_scheduled_conferences' => 'Мои запланированные конференции',
+    'my_scheduled_conferences_description' => 'Запланированные конференции, в которых вы зарегистрированы.',
+    'no_scheduled_conference_roles_description' => 'У вас пока нет назначенных ролей в запланированных конференциях.',
     'name' => 'Название',
     'path' => 'Путь',
     'url_path' => 'Путь конференции. Он будет использоваться в URL-адресе конференции.',

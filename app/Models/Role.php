@@ -31,17 +31,21 @@ class Role extends Model
             $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
 
             $conferenceId = app()->getCurrentConferenceId();
-            $builder->where($conferenceScopeColumn, operator: 0);
-            if ($conferenceId) {
-                $builder->orWhere($conferenceScopeColumn, app()->getCurrentConferenceId());
-            }
-
             $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-            $builder->where(function (Builder $q) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+
+            $builder->where(function (Builder $query) use ($conferenceScopeColumn, $conferenceId) {
+                $query->where($conferenceScopeColumn, 0);
+
+                if ($conferenceId) {
+                    $query->orWhere($conferenceScopeColumn, $conferenceId);
+                }
+            });
+
+            $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
                 if ($scheduledConferenceId) {
-                    $q->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
+                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
                 } else {
-                    $q->where($scheduledConferenceScopeColumn, 0);
+                    $query->where($scheduledConferenceScopeColumn, 0);
                 }
             });
         });

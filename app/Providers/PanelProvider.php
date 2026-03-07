@@ -137,7 +137,8 @@ class PanelProvider extends ServiceProvider
     {
         $this->setupPanel($panel)
             ->id(static::PANEL_ADMINISTRATION)
-            ->path('administration')
+            ->path('panel')
+            ->topNavigation(fn () => auth()->check() && ! auth()->user()->can('Administration:view'))
             ->homeUrl(fn() => route('livewirePageGroup.website.pages.home'))
             ->discoverResources(in: app_path('Panel/Administration/Resources'), for: 'App\\Panel\\Administration\\Resources')
             ->discoverPages(in: app_path('Panel/Administration/Pages'), for: 'App\\Panel\\Administration\\Pages')

@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -230,40 +232,50 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
      */
     public function assignRole(...$roles)
     {
-        $roles = $this->collectRoles($roles);
+        $roles = array_values(array_unique($this->collectRoles($roles)));
 
         $model = $this->getModel();
+        $roleModels = Role::withoutGlobalScopes()
+            ->whereIn('id', $roles)
+            ->get()
+            ->keyBy(fn (Role $role) => (string) $role->getKey());
 
-        $conference = app()->getCurrentConference();
-        $scheduledConference = app()->getCurrentScheduledConference();
+        $persistRoles = function (self $user) use ($roles, $roleModels) {
+            $table = config('permission.table_names.model_has_roles', 'model_has_roles');
+            $rolePivotKey = config('permission.column_names.role_pivot_key') ?: 'role_id';
+            $modelMorphKey = config('permission.column_names.model_morph_key', 'model_id');
 
-        $teamPivot = [];
+            collect($roles)
+                ->map(fn ($roleId) => $roleModels->get((string) $roleId))
+                ->filter()
+                ->each(function (Role $role) use ($user, $table, $rolePivotKey, $modelMorphKey) {
+                    DB::table($table)->updateOrInsert(
+                        [
+                            $rolePivotKey => $role->getKey(),
+                            'conference_id' => $role->conference_id ?? 0,
+                            'scheduled_conference_id' => $role->scheduled_conference_id ?? 0,
+                            'model_type' => self::class,
+                            $modelMorphKey => $user->getKey(),
+                        ],
+                        []
+                    );
+                });
 
-        if ($conference) {
-            $teamPivot['conference_id'] = $conference->getKey();
-        }
-
-        if ($scheduledConference) {
-            $teamPivot['scheduled_conference_id'] = $scheduledConference->getKey();
-        }
+            $user->unsetRelation('roles');
+        };
 
         if ($model->exists) {
-            $currentRoles = $this->roles->map(fn ($role) => $role->getKey())->toArray();
-
-            $this->roles()->attach(array_diff($roles, $currentRoles), $teamPivot);
-            $model->unsetRelation('roles');
+            $persistRoles($this);
         } else {
             $class = \get_class($model);
 
-            $class::saved(
-                function ($object) use ($roles, $model, $teamPivot) {
+            $class::saved(function ($object) use ($model, $persistRoles) {
                     if ($model->getKey() != $object->getKey()) {
                         return;
                     }
-                    $model->roles()->attach($roles, $teamPivot);
-                    $model->unsetRelation('roles');
-                }
-            );
+
+                    $persistRoles($model);
+                });
         }
 
         if (is_a($this, Permission::class)) {

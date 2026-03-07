@@ -73,6 +73,10 @@ return [
 
     'conference' => 'Conference',
     'open_conference' => 'Open Conference',
+    'open_scheduled_conference' => 'Open Scheduled Conference',
+    'my_scheduled_conferences' => 'My Scheduled Conferences',
+    'my_scheduled_conferences_description' => 'Scheduled conferences where you are registered.',
+    'no_scheduled_conference_roles_description' => 'You do not have any role assignments in scheduled conferences yet.',
     'name' => 'Name',
     'path' => 'Path',
     'url_path' => 'The path of the conference. This will be used in the URL of the conference.',
