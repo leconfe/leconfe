@@ -87,6 +87,7 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.topics'))
                                     ->searchable()
                                     ->multiple()
+                                    ->getSearchResultsUsing(fn(string $search) => Topic::withoutGlobalScopes()->websiteTopics()->where('name', 'like', "%{$search}%")->limit(20)->pluck('name', 'name')->toArray())
                                     ->options(fn() => Topic::withoutGlobalScopes()->websiteTopics()->limit(20)->pluck('name', 'name')->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
