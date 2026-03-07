@@ -164,7 +164,7 @@ return [
     'trash' => 'Chiqindi',
 
     'proceeding' => 'Materiallar to‘plami',
-    'proceedings' => "Materiallar to‘plami",
+    'proceedings' => 'Materiallar to‘plami',
     'identification' => 'Identifikatsiya',
     'volume' => 'Jild',
     'number' => 'Son',
@@ -980,11 +980,11 @@ return [
     'send_notification_description' => 'Elektron pochta orqali xabar oladigan foydalanuvchilarni tanlang',
     'selected_users' => 'Tanlangan foydalanuvchilar',
     'select_users' => 'Foydalanuvchilarni tanlash',
-
     'permission_level' => 'Ruxsat darajasi',
     'new_role' => 'Yangi rol',
     'role_created' => 'Rol yaratildi',
     'role_updated' => 'Rol yangilandi',
     'role_deleted' => 'Rol oʻchirildi',
     'no_roles' => 'Rol mavjud emas',
+    'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
 ];

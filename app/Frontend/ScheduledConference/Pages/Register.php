@@ -62,24 +62,26 @@ class Register extends Page
 
     public function rules()
     {
+        $scheduledConference = app()->getCurrentScheduledConference();
+
         $rules = [
             'given_name' => [
-                'required',
+                $scheduledConference->getMeta('required_given_name') ? 'required' : 'nullable',
             ],
             'family_name' => [
-                'nullable',
+                $scheduledConference->getMeta('required_family_name') ? 'required' : 'nullable',
             ],
             'public_name' => [
-                'nullable',
+                $scheduledConference->getMeta('required_public_name') ? 'required' : 'nullable',
             ],
             'affiliation' => [
-                'nullable',
+                $scheduledConference->getMeta('required_affiliation') ? 'required' : 'nullable',
             ],
             'country' => [
-                'nullable',
+                $scheduledConference->getMeta('required_country') ? 'required' : 'nullable',
             ],
             'phone' => [
-                'nullable',
+                $scheduledConference->getMeta('required_phone') ? 'required' : 'nullable',
                 'phone:INTERNATIONAL',
             ],
             'email' => [
@@ -127,11 +129,11 @@ class Register extends Page
 
             return null;
         }
-        
+
         $data = $this->validate();
 
         $allowedRoles = array_values(UserRole::getAllowedSelfAssignRoleNames());
-        
+
         // Filter only allowed roles to register
         $selfAssignRoles = collect($data['selfAssignRoles'])
             ->filter(fn ($role) => in_array($role, $allowedRoles))
@@ -160,8 +162,7 @@ class Register extends Page
             throw $th;
         }
 
-
-        if(config('app.must_verify_email')){
+        if (config('app.must_verify_email')) {
             $user->sendEmailVerificationNotification();
         }
 
@@ -174,13 +175,23 @@ class Register extends Page
 
     protected function getViewData(): array
     {
+        $scheduledConference = app()->getCurrentScheduledConference();
+
         $data = [
             'countries' => Country::all(),
             'roles' => UserRole::getAllowedSelfAssignRoleNames(),
             'loginUrl' => app()->getLoginUrl(),
-            'allowRegistration' => app()->getCurrentScheduledConference()->getMeta('allow_registration'),
-            'scheduledConference' => app()->getCurrentScheduledConference(),
+            'allowRegistration' => $scheduledConference->getMeta('allow_registration'),
+            'scheduledConference' => $scheduledConference,
             'privacyStatementUrl' => route(PrivacyStatement::getRouteName()),
+            'requiredFields' => [
+                'given_name' => $scheduledConference->getMeta('required_given_name'),
+                'family_name' => $scheduledConference->getMeta('required_family_name'),
+                'public_name' => $scheduledConference->getMeta('required_public_name'),
+                'affiliation' => $scheduledConference->getMeta('required_affiliation'),
+                'country' => $scheduledConference->getMeta('required_country'),
+                'phone' => $scheduledConference->getMeta('required_phone'),
+            ],
         ];
 
         return $data;

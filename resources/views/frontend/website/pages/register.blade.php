@@ -18,9 +18,9 @@
                     <div class="grid gap-4 sm:grid-cols-6">
                         <div class="gap-2 form-control sm:col-span-3">
                             <label class="label-text">
-                                {{ __('general.given_name') }} <span class="text-red-500">*</span>
+                                {{ __('general.given_name') }} @if($requiredFields['given_name'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <input type="text" class="input input-sm" wire:model="given_name" required />
+                            <input type="text" class="input input-sm" wire:model="given_name" @if($requiredFields['given_name']) required @endif />
                             @error('given_name')
                                 <div class="text-sm text-red-600">
                                     {{ $message }}
@@ -29,9 +29,9 @@
                         </div>
                         <div class="gap-2 form-control sm:col-span-3">
                             <label class="label-text">
-                                {{ __('general.family_name') }}
+                                {{ __('general.family_name') }} @if($requiredFields['family_name'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <input type="text" class="input input-sm" wire:model="family_name" />
+                            <input type="text" class="input input-sm" wire:model="family_name" @if($requiredFields['family_name']) required @endif />
                             @error('family_name')
                                 <div class="text-sm text-red-600">
                                     {{ $message }}
@@ -40,9 +40,9 @@
                         </div>
                           <div class="gap-2 form-control sm:col-span-6">
                             <label class="label-text">
-                                {{ __('general.public_name') }}
+                                {{ __('general.public_name') }} @if($requiredFields['public_name'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <input type="text" class="input input-sm" wire:model="public_name" />
+                            <input type="text" class="input input-sm" wire:model="public_name" @if($requiredFields['public_name']) required @endif />
                             @error('public_name')
                                 <div class="text-sm text-red-600">
                                     {{ $message }}
@@ -52,9 +52,9 @@
                         </div>
                         <div class="gap-2 form-control sm:col-span-3">
                             <label class="label-text">
-                                {{ __('general.affiliation') }}
+                                {{ __('general.affiliation') }} @if($requiredFields['affiliation'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <input type="text" class="input input-sm" wire:model="affiliation" />
+                            <input type="text" class="input input-sm" wire:model="affiliation" @if($requiredFields['affiliation']) required @endif />
                             @error('affiliation')
                                 <div class="text-sm text-red-600">
                                     {{ $message }}
@@ -63,9 +63,9 @@
                         </div>
                         <div class="gap-2 form-control sm:col-span-3">
                             <label class="label-text">
-                                {{ __('general.country') }}
+                                {{ __('general.country') }} @if($requiredFields['country'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <select class="font-normal select select-sm" name="country" wire:model='country'>
+                            <select class="font-normal select select-sm" name="country" wire:model='country' @if($requiredFields['country']) required @endif>
                                 <option value="none" selected disabled>{{ __('general.select_country') }}</option>
                                 @foreach ($countries as $country)
                                     <option value="{{ $country->id }}">{{ $country->flag . ' ' . $country->name }}</option>
@@ -80,9 +80,9 @@
 
                         <div class="gap-2 form-control sm:col-span-6">
                             <label class="label-text">
-                                {{ __('general.phone') }}
+                                {{ __('general.phone') }} @if($requiredFields['phone'])<span class="text-red-500">*</span>@endif
                             </label>
-                            <input type="tel" class="input input-sm" wire:model="phone" />
+                            <input type="tel" class="input input-sm" wire:model="phone" @if($requiredFields['phone']) required @endif />
                             @error('phone')
                                 <div class="text-sm text-red-600">
                                     {{ $message }}

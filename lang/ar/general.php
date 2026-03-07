@@ -982,11 +982,11 @@ return [
     'send_notification_description' => 'اختر المستخدمين الذين سيتلقون إشعار البريد الإلكتروني',
     'selected_users' => 'المستخدمون المحددون',
     'select_users' => 'اختر المستخدمين',
-
     'permission_level' => 'مستوى الإذن',
     'new_role' => 'دور جديد',
     'role_created' => 'تم إنشاء الدور',
     'role_updated' => 'تم تحديث الدور',
     'role_deleted' => 'تم حذف الدور',
     'no_roles' => 'لا توجد أدوار',
+    'registration_required_fields' => 'الحقول الإلزامية للتسجيل',
 ];
