@@ -79,7 +79,13 @@
             <ul class="list-disc ml-6">
                 <li>Base Fee: {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}</li>
                 @foreach($additionalItems as $item)
-                <li>{{ data_get($item, 'name') }}: {{ money((float) data_get($item, 'amount', 0), $record->currency, true)->formatWithoutZeroes() }}</li>
+                <li>
+                    {{ data_get($item, 'name') }}
+                    @if(data_get($item, 'quantity', 1) > 1)
+                    x{{ data_get($item, 'quantity') }}
+                    @endif
+                    : {{ money((float) data_get($item, 'total_amount', data_get($item, 'amount', 0)), $record->currency, true)->formatWithoutZeroes() }}
+                </li>
                 @endforeach
             </ul>
             @endif

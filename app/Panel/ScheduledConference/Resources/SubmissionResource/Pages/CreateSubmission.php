@@ -14,7 +14,6 @@ use App\Models\Timeline;
 use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -78,7 +77,7 @@ class CreateSubmission extends Page implements HasForms
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
                     ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
                 TextInput::make('meta.title')
-                    ->required(),                
+                    ->required(),
                 Grid::make(1)
                     ->visible(SubmissionFormItem::exists())
                     ->schema([
@@ -103,13 +102,24 @@ class CreateSubmission extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
-                        CheckboxList::make('additional_item_keys')
-                            ->label('Add-on Items')
-                            ->options(function (Get $get) {
+                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                            ->schema(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
+                                if (! $paymentFee) {
+                                    return [];
+                                }
 
-                                return $paymentFee?->getAdditionalItemOptions() ?? [];
+                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                    $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
+
+                                    return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
+                                        ->label("{$item['name']} ({$formattedAmount})")
+                                        ->helperText($item['description'] ?? null)
+                                        ->minValue(0)
+                                        ->maxValue(999);
+                                })->toArray();
                             })
+                            ->columns(1)
                             ->visible(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
 
@@ -222,7 +232,7 @@ class CreateSubmission extends Page implements HasForms
                 'role_id' => $submitAsRole->getKey(),
             ]);
 
-            if($submissionFormResponses = data_get($data, 'submission_form_responses')){
+            if ($submissionFormResponses = data_get($data, 'submission_form_responses')) {
                 $submission->setMeta('submission_form_responses', $submissionFormResponses);
             }
 
@@ -230,9 +240,9 @@ class CreateSubmission extends Page implements HasForms
                 $paymentManager = PaymentManager::get();
 
                 $paymentFee = PaymentFee::find($paymentFeeId);
-                $additionalItemKeys = data_get($data, 'additional_item_keys', []);
-                $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
-                $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
+                $additionalItems = data_get($data, 'additional_items', []);
+                $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+                $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
 
                 $payment = $paymentManager->queue(
                     $submission,
@@ -249,7 +259,7 @@ class CreateSubmission extends Page implements HasForms
                     $paymentFee->amount,
                 );
 
-                if(isset($data['form_responses'])){
+                if (isset($data['form_responses'])) {
                     $payment->setMeta('form_responses', $data['form_responses']);
                 }
             }
