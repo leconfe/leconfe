@@ -2,7 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Actions\ScheduledConferences\ScheduledConferenceSyncTopics;
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
 use App\Models\Topic;
@@ -126,7 +125,7 @@ class MastHeadSetting extends Component implements HasForms
 
                                 ScheduledConferenceUpdateAction::run($scheduledConference, $formData);
 
-                                ScheduledConferenceSyncTopics::run($scheduledConference, $formData['topics'] ?? []);
+                                $scheduledConference->syncTopics($formData['topics'] ?? []);
 
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
