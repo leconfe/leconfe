@@ -37,7 +37,6 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
@@ -96,7 +95,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
     {
         return [
             Action::make('submission_payment')
-                ->hidden(fn (Submission $record) => !app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled() || $record->status == SubmissionStatus::Incomplete || $record->payment)
+                ->hidden(fn (Submission $record) => ! app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled() || $record->status == SubmissionStatus::Incomplete || $record->payment)
                 ->label('Submission Payment')
                 ->form([
                     Radio::make('payment_fee_id')
@@ -116,13 +115,24 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 ->get()
                                 ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                         ),
-                    CheckboxList::make('additional_item_keys')
-                        ->label('Add-on Items')
-                        ->options(function (Get $get) {
+                    \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                        ->schema(function (Get $get) {
                             $paymentFee = PaymentFee::find($get('payment_fee_id'));
+                            if (! $paymentFee) {
+                                return [];
+                            }
 
-                            return $paymentFee?->getAdditionalItemOptions() ?? [];
+                            return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
+
+                                return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
+                                    ->label("{$item['name']} ({$formattedAmount})")
+                                    ->helperText($item['description'] ?? null)
+                                    ->minValue(0)
+                                    ->maxValue(999);
+                            })->toArray();
                         })
+                        ->columns(1)
                         ->visible(function (Get $get) {
                             $paymentFee = PaymentFee::find($get('payment_fee_id'));
 
@@ -134,9 +144,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
                     $paymentFeeId = data_get($data, 'payment_fee_id');
                     $paymentFee = PaymentFee::find($paymentFeeId);
-                    $additionalItemKeys = data_get($data, 'additional_item_keys', []);
-                    $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
-                    $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
+                    $additionalItems = data_get($data, 'additional_items', []);
+                    $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+                    $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
 
                     $paymentManager->queue(
                         $submission,
@@ -158,7 +168,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 }),
             Action::make('payment_detail')
                 ->label('Payment Detail')
-                ->visible(fn (Submission $record) => !$record->stage->is(SubmissionStage::Wizard) && $record->payment)
+                ->visible(fn (Submission $record) => ! $record->stage->is(SubmissionStage::Wizard) && $record->payment)
                 ->url(fn (Submission $record) => PaymentDetail::getUrl(['record' => $record->payment])),
             Action::make('view')
                 ->icon('heroicon-o-eye')

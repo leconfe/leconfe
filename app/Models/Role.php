@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Models\Enums\UserRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Plank\Metable\Metable;
 use Spatie\Permission\Models\Role as Model;
 
 class Role extends Model
 {
+    use Metable;
+
     protected $fillable = [
         'name',
         'conference_id',
@@ -24,20 +27,51 @@ class Role extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('conferences', function (Builder $builder) {
-
-            $conferenceScopeColumn = config('permission.table_names.roles', 'roles').'.conference_id';
-            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles').'.scheduled_conference_id';
+            $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
+            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
 
             $conferenceId = app()->getCurrentConferenceId();
-            $builder->where($conferenceScopeColumn, 0);
-            if ($conferenceId) {
-                $builder->orWhere($conferenceScopeColumn, app()->getCurrentConferenceId());
-            }
-
             $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-            $builder->where($scheduledConferenceScopeColumn, 0);
+
+            $builder->where(function (Builder $query) use ($conferenceScopeColumn, $conferenceId) {
+                $query->where($conferenceScopeColumn, 0);
+
+                if ($conferenceId) {
+                    $query->orWhere($conferenceScopeColumn, $conferenceId);
+                }
+            });
+
+            $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+                $query->where($scheduledConferenceScopeColumn, 0);
+                if ($scheduledConferenceId) {
+                    $query->orWhere($scheduledConferenceScopeColumn, $scheduledConferenceId);
+                }
+            });
+        });
+    }
+
+    public function scopeAvailableRolesByContext(Builder $builder)
+    {
+        $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
+        $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
+
+        $conferenceId = app()->getCurrentConferenceId();
+        $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
+
+        $builder->where(function (Builder $query) use ($conferenceScopeColumn, $conferenceId) {
+            if ($conferenceId) {
+                $query->where($conferenceScopeColumn, $conferenceId);
+            } else {
+                $query->where($conferenceScopeColumn, 0);
+
+            }
+        });
+
+        $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
             if ($scheduledConferenceId) {
-                $builder->orWhere($scheduledConferenceScopeColumn, app()->getCurrentScheduledConferenceId());
+                $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
+            } else {
+                $query->where($scheduledConferenceScopeColumn, 0);
             }
         });
     }
@@ -228,7 +262,14 @@ class Role extends Model
                     'Topic:delete',
                     'Topic:update',
                     'Topic:view',
+                    'User:delete',
+                    'User:disable',
+                    'User:enable',
                     'User:invite',
+                    'User:sendEmail',
+                    'User:update',
+                    'User:view',
+                    'User:viewAny',
                 ],
                 UserRole::TrackEditor->value => [
                     'ScheduledConference:switch',
@@ -294,6 +335,8 @@ class Role extends Model
     {
         $permission = $this->filterPermission($permission);
 
-        return in_array($permission->name, static::getPermissionsForRole($this->name));
+        $permissionLevel = $this->getMeta('permission_level') ?? $this->name;
+
+        return in_array($permission->name, static::getPermissionsForRole($permissionLevel));
     }
 }

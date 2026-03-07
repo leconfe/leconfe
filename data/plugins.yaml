@@ -1,24 +1,25 @@
 plugins:
   - name: GoogleScholarMetadata
-    repo: leconfe/GoogleScholarMetadata
-    version: 1.0.2
+    link: https://panel.leconfe.com/api/plugins/release/download/627925030850738
 
   - name: CustomSidebarManager
-    repo: leconfe/CustomSidebarManager
-    version: 1.0.0
+    link: https://panel.leconfe.com/api/plugins/release/download/484164187661747
 
   - name: CustomHeader
-    repo: leconfe/CustomHeader
-    version: 1.0.0
+    link: https://panel.leconfe.com/api/plugins/release/download/615268614770965
 
   - name: PdfJs
-    repo: leconfe/PdfJs
-    version: 1.0.1
+    link: https://panel.leconfe.com/api/plugins/release/download/590432709864161
 
   - name: SubmissionReport
-    repo: leconfe/SubmissionReport
-    version: 1.0.5
+    link: https://panel.leconfe.com/api/plugins/release/download/590430802743805
 
   - name: QuickSubmit
-    repo: leconfe/QuickSubmit
-    version: 1.0.1
+    link: https://panel.leconfe.com/api/plugins/release/download/627230347614255
+  
+  - name: CertificateManager
+    link: https://panel.leconfe.com/api/plugins/release/download/634660602878682
+  
+  - name: WebsiteBuilder
+    link: https://panel.leconfe.com/api/plugins/release/download/656312646821813
+  

@@ -3,9 +3,7 @@
 namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
-use App\Mail\Templates\UserPayPaymentMail;
 use App\Managers\PaymentManager;
-use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
@@ -17,7 +15,6 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
@@ -28,7 +25,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -47,7 +43,7 @@ class PaymentDetail extends Page
         if (! $record) {
             $record = auth()->user()->participant?->payment;
         }
-        
+
         abort_unless($record && auth()->user()->can('view', $record), 403);
         $this->record = $record;
     }
@@ -65,7 +61,7 @@ class PaymentDetail extends Page
     public function getBreadcrumbs(): array
     {
         return [
-           Payments::canAccess() ? Payments::getUrl() : 0 => 'Payments',
+            Payments::canAccess() ? Payments::getUrl() : 0 => 'Payments',
         ];
     }
 
@@ -95,10 +91,10 @@ class PaymentDetail extends Page
                 Action::make('edit_payment')
                     ->label('Edit Payment')
                     ->visible(function (Payment $record) {
-                        if($record->type == PaymentManager::TYPE_SUBMISSION_FEE && !app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()){
+                        if ($record->type == PaymentManager::TYPE_SUBMISSION_FEE && ! app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()) {
                             return false;
                         }
-                        if($record->type == PaymentManager::TYPE_PARTICIPANT_FEE && !app()->getCurrentScheduledConference()->isParticipantPaymentEnabled()){
+                        if ($record->type == PaymentManager::TYPE_PARTICIPANT_FEE && ! app()->getCurrentScheduledConference()->isParticipantPaymentEnabled()) {
                             return false;
                         }
 
@@ -106,11 +102,24 @@ class PaymentDetail extends Page
                     })
                     ->color('gray')
                     ->record($this->record)
-                    ->fillForm([
-                        'invoice' => $this->record->invoice,
-                        'payment_fee_id' => $this->record->payment_fee_id,
-                        'additional_item_keys' => collect($this->record->getMeta('additional_items', []))->pluck('key')->values()->all(),
-                    ])
+                    ->fillForm(function () {
+                        $additionalItemsData = [];
+                        $existingItems = $this->record->getMeta('additional_items', []);
+
+                        if ($this->record->payment_fee) {
+                            foreach ($this->record->payment_fee->getAdditionalItems() as $item) {
+                                $key = $item['key'];
+                                $existingItem = collect($existingItems)->firstWhere('key', $key);
+                                $additionalItemsData[$key] = $existingItem ? (int) data_get($existingItem, 'quantity', 0) : 0;
+                            }
+                        }
+
+                        return [
+                            'invoice' => $this->record->invoice,
+                            'payment_fee_id' => $this->record->payment_fee_id,
+                            'additional_items' => $additionalItemsData,
+                        ];
+                    })
                     ->form([
                         TextInput::make('invoice')
                             ->visible(fn () => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
@@ -139,15 +148,31 @@ class PaymentDetail extends Page
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
-                        CheckboxList::make('additional_item_keys')
-                            ->label('Add-on Items')
-                            ->options(function (Get $get, Payment $record) {
+                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                            ->schema(function (Get $get, Payment $record) {
                                 $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
                                 $paymentFee = PaymentFee::find($paymentFeeId);
 
-                                return $paymentFee?->getAdditionalItemOptions() ?? [];
+                                if (! $paymentFee) {
+                                    return [];
+                                }
+
+                                $existingItems = $record->getMeta('additional_items', []);
+
+                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee, $existingItems) {
+                                    $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
+                                    $existingItem = collect($existingItems)->firstWhere('key', $item['key']);
+                                    $defaultValue = $existingItem ? (int) data_get($existingItem, 'quantity', 0) : 0;
+
+                                    return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
+                                        ->label("{$item['name']} ({$formattedAmount})")
+                                        ->helperText($item['description'] ?? null)
+                                        ->minValue(0)
+                                        ->maxValue(999)
+                                        ->default($defaultValue);
+                                })->toArray();
                             })
-                            ->default(fn (Payment $record) => collect($record->getMeta('additional_items', []))->pluck('key')->values()->all())
+                            ->columns(1)
                             ->visible(function (Get $get, Payment $record) {
                                 $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
                                 $paymentFee = PaymentFee::find($paymentFeeId);
@@ -162,9 +187,9 @@ class PaymentDetail extends Page
 
                         $paymentFee = PaymentFee::find($paymentFeeId);
 
-                        $additionalItemKeys = data_get($data, 'additional_item_keys', []);
-                        $selectedAdditionalItems = $paymentFee->resolveSelectedAdditionalItems($additionalItemKeys);
-                        $totalAmount = $paymentFee->getAmountWithAdditionalItems($additionalItemKeys);
+                        $additionalItems = data_get($data, 'additional_items', []);
+                        $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+                        $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
 
                         $updateData = [
                             'payment_fee_id' => $paymentFeeId,
@@ -176,13 +201,13 @@ class PaymentDetail extends Page
                             $updateData['invoice'] = $data['invoice'];
                         }
 
-                        if(!$data['dont_send_notification']){
-                            if($this->record->type == PaymentManager::TYPE_SUBMISSION_FEE){
+                        if (! $data['dont_send_notification']) {
+                            if ($this->record->type == PaymentManager::TYPE_SUBMISSION_FEE) {
                                 $this->record?->user->notify(new SubmissionPayment($this->record->model));
                             } else {
                                 $this->record?->user->notify(new ParticipantPayment($this->record->model));
                             }
-                            
+
                         }
 
                         $record->update($updateData);
@@ -223,8 +248,8 @@ class PaymentDetail extends Page
                     ->requiresConfirmation()
                     ->authorize(fn (Payment $record) => auth()->user()->can('setUnpaid', $record))
                     ->record($this->record)
-                    ->visible(fn(Payment $record) => $record->isPaid())
-                    ->action(function(Action $action, Payment $record){
+                    ->visible(fn (Payment $record) => $record->isPaid())
+                    ->action(function (Action $action, Payment $record) {
                         $record->update([
                             'paid_at' => null,
                         ]);
@@ -294,10 +319,17 @@ class PaymentDetail extends Page
                                         $lines = collect($record->getMeta('additional_items', []))
                                             ->map(function ($item) use ($record) {
                                                 $name = data_get($item, 'name', '-');
-                                                $amount = (float) data_get($item, 'amount', 0);
+                                                $quantity = (int) data_get($item, 'quantity', 1);
+                                                $amount = (float) data_get($item, 'total_amount', data_get($item, 'amount', 0));
                                                 $formatted = money($amount, $record->currency, true)->formatWithoutZeroes();
 
-                                                return e($name).' ('.$formatted.')';
+                                                $text = e($name);
+                                                if ($quantity > 1) {
+                                                    $text .= " x{$quantity}";
+                                                }
+                                                $text .= ' ('.$formatted.')';
+
+                                                return $text;
                                             });
 
                                         return new HtmlString($lines->implode('<br>'));
@@ -331,13 +363,13 @@ class PaymentDetail extends Page
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
                                 TextEntry::make('payment_method')
                                     ->visible(fn (Payment $record) => $record->payment_method)
-                                    ->getStateUsing(fn($record) => Str::headline($record->payment_method)),
+                                    ->getStateUsing(fn ($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
-                                	->state('Download')
-                                	->color('primary')
-                                	->visible(fn(Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
-                                	->url(fn(Payment $record) => Receipt::getUrl(['record' => $record]))
-                                	->openUrlInNewTab(),
+                                    ->state('Download')
+                                    ->color('primary')
+                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
+                                    ->url(fn (Payment $record) => Receipt::getUrl(['record' => $record]))
+                                    ->openUrlInNewTab(),
                             ]),
                         ...PaymentManager::get()->getPaymentMethodInfolist(),
                     ]),

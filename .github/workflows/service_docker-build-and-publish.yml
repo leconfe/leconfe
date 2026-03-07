@@ -20,6 +20,33 @@ jobs:
     steps:
       - uses: actions/checkout@v3
     
+      - name: Download default plugins
+        run: |
+          mkdir -p plugins
+          count=$(yq '.plugins | length' data/plugins.yaml)
+
+          for i in $(seq 0 $((count - 1))); do
+            name=$(yq ".plugins[$i].name" data/plugins.yaml)
+            link=$(yq ".plugins[$i].link" data/plugins.yaml)
+
+            if [ -z "$link" ] || [ "$link" = "null" ]; then
+              echo "Missing link for plugin index $i."
+              exit 1
+            fi
+
+            asset="plugins/${name}.zip"
+            echo "Downloading $name from $link..."
+
+            if ! curl -fsSL "$link" -o "$asset"; then
+              echo "Failed to download $name from $link."
+              exit 1
+            fi
+
+            # extract zip ke plugins/
+            unzip -q "$asset" -d "plugins"
+            rm "$asset"
+          done
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -29,32 +56,6 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --optimize-autoloader
       
-      - name: Download default plugins
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p plugins
-          count=$(yq '.plugins | length' data/plugins.yaml)
-
-          for i in $(seq 0 $((count - 1))); do
-            repo=$(yq ".plugins[$i].repo" data/plugins.yaml)
-            version=$(yq ".plugins[$i].version" data/plugins.yaml)
-
-            echo "Downloading from $repo @ $version..."
-
-            asset="${repo##*/}-${version}.zip" # example: leconfe-plugin-custom-header-v1.0.0.zip
-
-            # download release asset
-            gh release download "$version" \
-              --repo "$repo" \
-              --pattern "$asset" \
-              --dir "plugins"
-
-            # extract zip ke plugins/
-            unzip -q "plugins/$asset" -d "plugins"
-            rm "plugins/$asset"
-          done
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:

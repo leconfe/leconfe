@@ -8,6 +8,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -62,6 +63,21 @@ class SetupSetting extends Component implements HasForms
                             ->selectablePlaceholder(false)
                             ->searchable()
                             ->required(),
+                    ]),
+                Section::make(__('general.registration_required_fields'))
+                    ->schema([
+                        Checkbox::make('meta.required_given_name')
+                            ->label(__('general.given_name')),
+                        Checkbox::make('meta.required_family_name')
+                            ->label(__('general.family_name')),
+                        Checkbox::make('meta.required_public_name')
+                            ->label(__('general.public_name')),
+                        Checkbox::make('meta.required_affiliation')
+                            ->label(__('general.affiliation')),
+                        Checkbox::make('meta.required_country')
+                            ->label(__('general.country')),
+                        Checkbox::make('meta.required_phone')
+                            ->label(__('general.phone')),
                     ]),
                 Actions::make([
                     Action::make('save')

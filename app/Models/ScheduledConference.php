@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
-use App\Application;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\HasTopics;
@@ -161,6 +160,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'receipt_enable' => false,
             'submission_payment' => false,
             'participant_payment' => false,
+            'required_given_name' => true,
+            'required_family_name' => false,
+            'required_public_name' => false,
+            'required_affiliation' => false,
+            'required_country' => false,
+            'required_phone' => false,
         ];
     }
 

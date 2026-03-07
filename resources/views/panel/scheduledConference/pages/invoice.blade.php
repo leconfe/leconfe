@@ -81,7 +81,8 @@
             <table class="w-full border border-collapse border-gray-400">
                 <thead>
                     <tr class="bg-gray-200">
-                        <th class="border p-2 border-gray-400 w-[70%]">Description</th>
+                        <th class="border p-2 border-gray-400 w-[50%]">Description</th>
+                        <th class="border p-2 border-gray-400">Unit Price</th>
                         <th class="border p-2 border-gray-400">Total</th>
                     </tr>
                 </thead>
@@ -89,6 +90,9 @@
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
                             <p>{{ $record->fee->name }}</p>
+                        </td>
+                        <td class="border p-2 border-gray-400 align-top text-center">
+                            {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
                             {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}
@@ -101,16 +105,22 @@
                             @if(data_get($item, 'description'))
                             <p class="text-xs text-gray-600">{{ data_get($item, 'description') }}</p>
                             @endif
+                            @if(data_get($item, 'quantity', 1) > 1)
+                            <p class="text-xs text-gray-600">Quantity: {{ data_get($item, 'quantity') }}</p>
+                            @endif
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
                             {{ money((float) data_get($item, 'amount', 0), $record->currency, true)->formatWithoutZeroes() }}
+                        </td>
+                        <td class="border p-2 border-gray-400 align-top text-center">
+                            {{ money((float) data_get($item, 'total_amount', data_get($item, 'amount', 0)), $record->currency, true)->formatWithoutZeroes() }}
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="bg-gray-200">
-                        <td class="border p-2 border-gray-400 font-bold text-right ">Total</td>
+                        <td class="border p-2 border-gray-400 font-bold text-right" colspan="2">Total</td>
                         <td class="border p-2 border-gray-400 font-bold text-center">{{ $record->getFormattedFee() }}</td>
                     </tr>
                 </tfoot>

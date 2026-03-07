@@ -67,6 +67,10 @@ return [
 
     'conference' => 'Konferensiya',
     'open_conference' => 'Konferensiyani ochish',
+    'open_scheduled_conference' => 'Rejalashtirilgan Konferensiyani Ochish',
+    'my_scheduled_conferences' => 'Mening Rejalashtirilgan Konferensiyalarim',
+    'my_scheduled_conferences_description' => 'Siz ro‘yxatdan o‘tgan rejalashtirilgan konferensiyalar.',
+    'no_scheduled_conference_roles_description' => 'Sizda hali rejalashtirilgan konferensiyalarda rol biriktirishlari mavjud emas.',
     'name' => 'Nomi',
     'path' => 'Yo‘l',
     'url_path' => 'Konferensiyaning yo‘li. Bu konferensiyaning URL manzilida ishlatiladi.',
@@ -160,7 +164,7 @@ return [
     'trash' => 'Chiqindi',
 
     'proceeding' => 'Materiallar to‘plami',
-    'proceedings' => "Materiallar to‘plami",
+    'proceedings' => 'Materiallar to‘plami',
     'identification' => 'Identifikatsiya',
     'volume' => 'Jild',
     'number' => 'Son',
@@ -976,6 +980,13 @@ return [
     'send_notification_description' => 'Elektron pochta orqali xabar oladigan foydalanuvchilarni tanlang',
     'selected_users' => 'Tanlangan foydalanuvchilar',
     'select_users' => 'Foydalanuvchilarni tanlash',
+    'permission_level' => 'Ruxsat darajasi',
+    'new_role' => 'Yangi rol',
+    'role_created' => 'Rol yaratildi',
+    'role_updated' => 'Rol yangilandi',
+    'role_deleted' => 'Rol oʻchirildi',
+    'no_roles' => 'Rol mavjud emas',
+    'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
 
     'topics' => 'Mavzular',
     'faculty' => 'Fakultet',
