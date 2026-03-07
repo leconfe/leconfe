@@ -18,6 +18,10 @@ class RoleUpdateAction
 
             $role->update($data);
 
+            if ($meta = data_get($data, 'meta')) {
+                $role->setManyMeta($meta);
+            }
+
             if (isset($data['permissions'])) {
                 // filter out protected permissions
                 $protectedPermissionContexts = Permission::getProtectedPermissionContexts();

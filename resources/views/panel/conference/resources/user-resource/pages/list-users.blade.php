@@ -12,10 +12,14 @@
                 <x-filament::tabs.item alpine-active="activeTab === 'users-table'" x-on:click="activeTab = 'users-table'">
                     {{ __('general.users') }}
                 </x-filament::tabs.item>
+                <x-filament::tabs.item alpine-active="activeTab === 'role'" x-on:click="activeTab = 'role'">
+                    {{ __('general.roles') }}
+                </x-filament::tabs.item>
                 <x-filament::tabs.item alpine-active="activeTab === 'notify-form'" x-on:click="activeTab = 'notify-form'">
                     {{ __('general.notify') }}
                 </x-filament::tabs.item>
-                <x-filament::tabs.item alpine-active="activeTab === 'invitations-table'" x-on:click="activeTab = 'invitations-table'" :badge="$this->invitationPendingCount">
+                <x-filament::tabs.item alpine-active="activeTab === 'invitations-table'"
+                    x-on:click="activeTab = 'invitations-table'" :badge="$this->invitationPendingCount">
                     {{ __('general.invitations') }}
                 </x-filament::tabs.item>
             </x-filament::tabs>
@@ -31,7 +35,8 @@
                                 $tabKey = strval($tabKey);
                             @endphp
 
-                            <x-filament::tabs.item :active="$activeTab === $tabKey" :badge="$tab->getBadge()" :icon="$tab->getIcon()" :icon-position="$tab->getIconPosition()"
+                            <x-filament::tabs.item :active="$activeTab === $tabKey" :badge="$tab->getBadge()" :icon="$tab->getIcon()"
+                                :icon-position="$tab->getIconPosition()"
                                 :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'">
                                 {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
                             </x-filament::tabs.item>
@@ -45,7 +50,9 @@
                 {{ $this->table }}
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
             </div>
-
+            <div x-show="activeTab === 'role'">
+                @livewire(App\Panel\Conference\Livewire\UserRoleTable::class, ['lazy' => true])
+            </div>
             <div x-show="activeTab === 'notify-form'" style="display: none;">
                 <x-filament::section>
                     <x-slot name="heading">

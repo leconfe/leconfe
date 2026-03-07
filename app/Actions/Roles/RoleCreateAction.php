@@ -19,10 +19,15 @@ class RoleCreateAction
             $data['conference_id'] ??= app()->getCurrentConferenceId();
 
             $role = Role::create($data);
+
+            if ($meta = data_get($data, 'meta')) {
+                $role->setManyMeta($meta);
+            }
+
             if (isset($data['permissions'])) {
                 $protectedPermissionContexts = Permission::getProtectedPermissionContexts();
                 $data['permissions'] = collect($data['permissions'])
-                    ->filter(fn ($value, $permission) => ! in_array(explode(':', $permission)[0], $protectedPermissionContexts))
+                    ->filter(fn($value, $permission) => !in_array(explode(':', $permission)[0], $protectedPermissionContexts))
                     ->keys()
                     ->toArray();
 

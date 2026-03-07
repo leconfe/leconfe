@@ -980,5 +980,11 @@ return [
     'send_notification_description' => 'Выберите пользователей, которые получат уведомление по электронной почте',
     'selected_users' => 'Выбранные пользователи',
     'select_users' => 'Выбрать пользователей',
+    'permission_level' => 'Уровень разрешений',
+    'new_role' => 'Новая роль',
+    'role_created' => 'Роль создана',
+    'role_updated' => 'Роль обновлена',
+    'role_deleted' => 'Роль удалена',
+    'no_roles' => 'Ролей нет',
     'registration_required_fields' => 'Обязательные поля для регистрации',
 ];
