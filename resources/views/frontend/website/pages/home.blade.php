@@ -99,40 +99,6 @@
                     </div>
                 </div>
 
-                <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
-                    <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
-                        x-ref="button" @@click="open = ! open">
-                        {{ __('general.conferences') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
-                    </button>
-
-                    <div tabindex="0" class="mt-2 p-2 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl"
-                        x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false"
-                        x-anchor="$refs.button">
-                        <div>
-                            <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
-                                <input type="search" class="grow" placeholder="{{ __('general.search') }}"
-                                    wire:model.live.debounce="filter.conference.search" />
-                                <x-heroicon-m-magnifying-glass class="h-3 w-3 opacity-70" />
-                            </label>
-                            <button class="mb-2 btn btn-xs btn-outline no-animation border-neutral-300 w-full"
-                                wire:click="resetFilter('conference')" wire:loading.attr="disabled">
-                                {{ __('general.reset') }}
-                            </button>
-                        </div>
-                        @foreach ($conferences as $id => $name)
-                            <div>
-                                <label
-                                    class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
-                                    <span class="label-text px-2">{{ $name }}
-                                    </span>
-                                    <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $id }}"
-                                        wire:model.live="filter.conference.value" wire:key="{{ $id }}" />
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
                 <button class="col-span-full md:col-span-2 btn btn-sm btn-primary w-full tooltip"
                     data-tip="Clear all the filter and the search input." wire:click="resetFilter"
                     wire:loading.attr="disabled">

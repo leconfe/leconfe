@@ -101,17 +101,6 @@ class Home extends Page
         }
         $faculties = $facultiesCollection->unique()->sort()->values();
 
-        // TODO: remove
-        $conferencesQuery = Conference::withoutGlobalScopes()
-            ->whereHas('scheduledConferences', function ($q) {
-                $q->withoutGlobalScopes();
-            });
-        if (!empty($this->filter['conference']['search'])) {
-            $conferencesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['conference']['search']) . '%']);
-        }
-        $conferences = $conferencesQuery->pluck('name', 'id');
-
-
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
@@ -146,29 +135,13 @@ class Home extends Page
             });
         }
 
-        // TODO: remove
-        if (!empty($this->filter['conference']['value'])) {
-            $scheduledQuery->whereIn('conference_id', $this->filter['conference']['value']);
-        }
-
         $scheduledConferences = $scheduledQuery->get();
-
-        // TODO: remove
-        $selectedConferences = [];
-        if (!empty($this->filter['conference']['value'])) {
-            $selectedConferences = Conference::whereIn('id', $this->filter['conference']['value'])
-                ->get()
-                ->pluck('name')
-                ->toArray();
-        }
 
         return [
             'scheduledConferences' => $scheduledConferences,
             'featuredScheduledConferences' => $featuredScheduledConferences,
             'faculties' => $faculties,
             'topics' => $topics,
-            'conferences' => $conferences,
-            'selectedConferences' => $selectedConferences, // TODO: remove
         ];
     }
 
