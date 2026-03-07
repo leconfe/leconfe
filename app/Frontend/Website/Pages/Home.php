@@ -34,6 +34,21 @@ class Home extends Page
     #[Url(as: 'conference')]
     public $conference;
 
+    public $filter = [
+        'faculty' => [
+            'search' => '',
+            'value' => []
+        ],
+        'topic' => [
+            'search' => '',
+            'value' => []
+        ],
+        'conference' => [
+            'search' => '',
+            'value' => []
+        ],
+    ];
+
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
     ];
@@ -51,32 +66,53 @@ class Home extends Page
             ]);
     }
 
-    public function resetFilters()
+    public function resetFilter(string $type = null): void
     {
-        $this->reset(['faculty', 'topic', 'conference']);
+        // $this->reset(['faculty', 'topic', 'conference']);
+        if ($type) {
+            $this->filter[$type]['search'] = '';
+            $this->filter[$type]['value'] = [];
+        } else {
+            $this->reset(['filter']);
+        }
     }
 
     protected function getViewData(): array
     {
-        $topics = Topic::withoutGlobalScopes()
+        $topicsQuery = Topic::withoutGlobalScopes()
             ->whereHas('scheduledConferences', function ($q) {
                 $q->withoutGlobalScopes();
-            })
-            ->pluck('name', 'id');
+            });
 
-        $faculties = ScheduledConference::withoutGlobalScopes()
+        if (!empty($this->filter['topic']['search'])) {
+            $topicsQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['topic']['search']) . '%']);
+        }
+
+        $topics = $topicsQuery->pluck('name', 'id');
+
+        $facultiesCollection = ScheduledConference::withoutGlobalScopes()
             ->get()
             ->map(fn($s) => $s->getMeta('faculty'))
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values();
+            ->filter();
 
-        $conferences = Conference::withoutGlobalScopes()
+        if (!empty($this->filter['faculty']['search'])) {
+            $facultiesCollection = $facultiesCollection->filter(function ($faculty) {
+                return Str::contains(Str::lower($faculty), mb_strtolower($this->filter['faculty']['search']));
+            });
+        }
+
+        $faculties = $facultiesCollection->unique()->sort()->values();
+
+        $conferencesQuery = Conference::withoutGlobalScopes()
             ->whereHas('scheduledConferences', function ($q) {
                 $q->withoutGlobalScopes();
-            })
-            ->pluck('name', 'id');
+            });
+
+        if (!empty($this->filter['conference']['search'])) {
+            $conferencesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['conference']['search']) . '%']);
+        }
+
+        $conferences = $conferencesQuery->pluck('name', 'id');
 
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
@@ -117,7 +153,34 @@ class Home extends Page
             });
         }
 
+        // Apply Livewire checkbox filters if provided
+        if (!empty($this->filter['topic']['value'])) {
+            $scheduledQuery->whereHas('topics', function ($t) {
+                $t->withoutGlobalScopes()
+                    ->whereIn('name', $this->filter['topic']['value']);
+            });
+        }
+
+        if (!empty($this->filter['faculty']['value'])) {
+            $scheduledQuery->whereHas('meta', function ($m) {
+                $m->where('key', 'faculty')
+                    ->whereIn('value', $this->filter['faculty']['value']);
+            });
+        }
+
+        if (!empty($this->filter['conference']['value'])) {
+            $scheduledQuery->whereIn('conference_id', $this->filter['conference']['value']);
+        }
+
         $scheduledConferences = $scheduledQuery->get();
+
+        $selectedConferences = [];
+        if (!empty($this->filter['conference']['value'])) {
+            $selectedConferences = Conference::whereIn('id', $this->filter['conference']['value'])
+                ->get()
+                ->pluck('name')
+                ->toArray();
+        }
 
         return [
             'scheduledConferences' => $scheduledConferences,
@@ -125,6 +188,7 @@ class Home extends Page
             'faculties' => $faculties,
             'topics' => $topics,
             'conferences' => $conferences,
+            'selectedConferences' => $selectedConferences,
         ];
     }
 
