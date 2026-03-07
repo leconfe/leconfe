@@ -157,7 +157,7 @@ return [
     'trash' => 'Sampah',
 
     'proceeding' => 'Prosiding',
-    'proceedings' => "Prosiding",
+    'proceedings' => 'Prosiding',
     'identification' => 'Identifikasi',
     'volume' => 'Volume',
     'number' => 'Nomor',
@@ -938,8 +938,8 @@ return [
     'conferences' => 'Konferensi',
     'discussion_not_submission_participant' => 'A selected participant is not assigned to this submission.',
     'discussion_error_anonymous_review' => 'Cannot create a discussion with the selected participants as it may compromise reviewer anonymity.',
-    'additional_data' => "Data Tambahan",
-    'additional_content' => "Konten Tambahan",
+    'additional_data' => 'Data Tambahan',
+    'additional_content' => 'Konten Tambahan',
     'users' => 'Pengguna',
     'invitations' => 'Undangan',
     'user_invitations' => 'Undangan Pengguna',
@@ -964,4 +964,5 @@ return [
     'selected_users' => 'Pengguna Terpilih',
     'select_users' => 'Pilih Pengguna',
     'failed_to_send' => 'Gagal mengirim',
+    'registration_required_fields' => 'Field Wajib Registrasi',
 ];

@@ -155,7 +155,7 @@ return [
     'trash' => 'Plehra',
 
     'proceeding' => 'Proceeding',
-    'proceedings' => "Procedurat",
+    'proceedings' => 'Procedurat',
     'identification' => 'Identifikimi',
     'volume' => 'Vëllimi',
     'number' => 'Numri',
@@ -955,8 +955,8 @@ return [
     'conferences' => 'Konferencat',
     'discussion_not_submission_participant' => 'Një pjesëmarrës i zgjedhur nuk është caktuar në këtë dorëzim.',
     'discussion_error_anonymous_review' => 'Nuk mund të krijohet një diskutim me pjesëmarrësit e zgjedhur pasi mund të komprometojë anonimitetin e rishikuesit.',
-    'additional_data' => "Të dhëna shtesë",
-    'additional_content' => "Përmbajtje shtesë",
+    'additional_data' => 'Të dhëna shtesë',
+    'additional_content' => 'Përmbajtje shtesë',
     'view_as_editor' => 'Shiko si Redaktor',
     'support' => 'Mbështetje',
     'documentation' => 'Dokumentacion',
@@ -965,4 +965,5 @@ return [
     'send_notification_description' => 'Zgjidh përdoruesit që do të marrin njoftimin me email',
     'selected_users' => 'Përdoruesit e përzgjedhur',
     'select_users' => 'Zgjidh Përdoruesit',
+    'registration_required_fields' => 'Fushat e detyrueshme të regjistrimit',
 ];
