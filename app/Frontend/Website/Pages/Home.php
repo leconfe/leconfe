@@ -120,6 +120,13 @@ class Home extends Page
             });
         }
 
+        if ($this->filter['search']['value'] !== '') {
+            $scheduledQuery->where(function ($q) {
+                $searchTerm = '%' . mb_strtolower($this->filter['search']['value']) . '%';
+                $q->whereRaw('LOWER(title) LIKE ?', [$searchTerm]);
+            });
+        }
+
         $scheduledConferences = $scheduledQuery->get();
 
         return [
