@@ -3,6 +3,7 @@
 namespace App\Managers;
 
 use App\Classes\Plugin as ClassesPlugin;
+use App\Classes\Plugin;
 use App\Events\PluginInstalled;
 use App\Models\PluginSetting;
 use Exception;
@@ -78,7 +79,12 @@ class PluginManager
 
                 $informations = Yaml::parseFile($disk->path($pluginDir . DIRECTORY_SEPARATOR . 'index.yaml'));
                 $targets = Arr::get($informations, 'targets');
-                
+                $sitewide = Arr::get($informations, 'sitewide', false);
+
+                if ($sitewide) {
+                    return true;
+                }
+
                 if(!empty($targets) && !in_array($context, $targets)){
                     return false;
                 }
@@ -87,8 +93,9 @@ class PluginManager
             })
             ->each(function ($pluginPath) use ($disk) {
                 $plugin = $this->initiatePlugin($disk->path($pluginPath));
+                $plugin->load();
 
-                $this->register($pluginPath, $plugin, $this->getSetting($pluginPath, 'enabled', false));
+                $this->register($pluginPath, $plugin, $this->getSetting($plugin, 'enabled', false));
             });
 
 
@@ -136,6 +143,7 @@ class PluginManager
             $plugin = include $pluginPath . DIRECTORY_SEPARATOR . 'index.php';
 
             $plugin->setPluginPath($pluginPath);
+
             if (! $plugin instanceof ClassesPlugin) {
                 throw new Exception('Plugin must return an instance of ' . ClassesPlugin::class);
             }
@@ -156,10 +164,10 @@ class PluginManager
         return $this->getPlugins($onlyEnabled)->get($path);
     }
 
-    protected function getCacheKey($plugin, $key)
+    protected function getCacheKey($plugin, $key, $conferenceId = null, $scheduledConferenceId = null)
     {
-        $conferenceId = App::getCurrentConferenceId();
-        $scheduledConferenceId = App::getCurrentScheduledConferenceId();
+        $conferenceId = $conferenceId ?? App::getCurrentConferenceId();
+        $scheduledConferenceId = $scheduledConferenceId ?? App::getCurrentScheduledConferenceId();
 
         return md5(implode('_', [
             'plugin_setting',
@@ -170,13 +178,34 @@ class PluginManager
         ]));
     }
 
-    public function getSetting(string $plugin, mixed $key, $default = null): mixed
+    protected function getPluginFolder(Plugin $plugin): string
     {
-        return Cache::rememberForever($this->getCacheKey($plugin, $key), function () use ($plugin, $key, $default) {
+        return $plugin->getInfo('folder');
+    }
+
+    protected function isPluginSitewide(Plugin $plugin): bool
+    {
+        return $plugin->getInfo('sitewide') ?? false;
+    }
+
+    public function getSetting(Plugin $plugin, mixed $key, $default = null): mixed
+    {
+        $pluginFolder = $this->getPluginFolder($plugin);
+        $sitewide = $this->isPluginSitewide($plugin);
+        
+        if ($sitewide) {
+            $conferenceId = 0;
+            $scheduledConferenceId = 0;
+        } else {
+            $conferenceId = App::getCurrentConferenceId();
+            $scheduledConferenceId = App::getCurrentScheduledConferenceId() ?? 0;
+        }
+
+        return Cache::rememberForever($this->getCacheKey($pluginFolder, $key, $conferenceId, $scheduledConferenceId), function () use ($pluginFolder, $key, $default, $conferenceId, $scheduledConferenceId) {
             $setting = PluginSetting::query()
-                ->where('conference_id', App::getCurrentConferenceId())
-                ->where('scheduled_conference_id', App::getCurrentScheduledConferenceId() ?? 0)
-                ->where('plugin', $plugin)
+                ->where('conference_id', $conferenceId)
+                ->where('scheduled_conference_id', $scheduledConferenceId)
+                ->where('plugin', $pluginFolder)
                 ->where('key', $key)
                 ->first();
 
@@ -184,12 +213,20 @@ class PluginManager
         });
     }
 
-    public function updateSetting(string $plugin, $key, $value): mixed
+    public function updateSetting(Plugin $plugin, $key, $value): mixed
     {
-        $conferenceId = App::getCurrentConferenceId();
-        $scheduledConferenceId = App::getCurrentScheduledConferenceId() ?? 0;
+        $pluginFolder = $this->getPluginFolder($plugin);
+        $sitewide = $this->isPluginSitewide($plugin);
+        
+        if ($sitewide) {
+            $conferenceId = 0;
+            $scheduledConferenceId = 0;
+        } else {
+            $conferenceId = App::getCurrentConferenceId();
+            $scheduledConferenceId = App::getCurrentScheduledConferenceId() ?? 0;
+        }
 
-        Cache::forget($this->getCacheKey($plugin, $key));
+        Cache::forget($this->getCacheKey($pluginFolder, $key, $conferenceId, $scheduledConferenceId));
 
         $type = $this->getType($value);
 
