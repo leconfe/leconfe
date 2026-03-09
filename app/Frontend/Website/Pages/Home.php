@@ -3,12 +3,14 @@
 namespace App\Frontend\Website\Pages;
 
 use App\Http\Middleware\RedirectToConference;
+use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Topic;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
@@ -74,17 +76,11 @@ class Home extends Page
         }
         $topics = $topicsQuery->pluck('name', 'id');
 
-        // faculty
-        $facultiesCollection = ScheduledConference::withoutGlobalScopes()
-            ->get()
-            ->map(fn($s) => $s->getMeta('faculty'))
-            ->filter();
+        $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
         if (!empty($this->filter['faculty']['search'])) {
-            $facultiesCollection = $facultiesCollection->filter(function ($faculty) {
-                return Str::contains(Str::lower($faculty), mb_strtolower($this->filter['faculty']['search']));
-            });
+            $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
         }
-        $faculties = $facultiesCollection->unique()->sort()->values();
+        $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
 
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
