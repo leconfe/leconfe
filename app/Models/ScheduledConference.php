@@ -280,6 +280,18 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $query->where('is_published', $isPublished);
     }
 
+    public function scopeFilterByCategories($query, array $categories)
+    {
+        return $query->whereHas('meta', function ($m) use ($categories) {
+            $m->where('key', 'category')
+                ->where(function ($q) use ($categories) {
+                    foreach ($categories as $category) {
+                        $q->orWhereJsonContains('value', $category);
+                    }
+                });
+        });
+    }
+
     public function isInvoiceEnabled(): bool
     {
         return $this->getMeta('invoice_enable');
