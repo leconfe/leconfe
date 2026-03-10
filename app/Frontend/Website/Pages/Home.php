@@ -40,6 +40,8 @@ class Home extends Page
     // Lazy-load flags
     public bool $loadCategories = false;
     public bool $loadFaculties = false;
+    // Cache for categories to avoid reloading on every Livewire update
+    public array $categoriesCache = [];
 
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
@@ -70,15 +72,13 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        // categories (lazy-loaded)
-        $categories = collect();
-        if ($this->loadCategories) {
-            $categories = Site::getSite()->getMeta('scheduled_conference_categories', []);
-            if (!empty($this->filter['category']['search'])) {
-                $categories = array_filter($categories, function ($value) {
-                    return stripos($value, $this->filter['category']['search']) !== false;
-                });
-            }
+        // categories (lazy-loaded, cached after first load)
+        $categories = empty($this->categoriesCache) ? collect() : collect($this->categoriesCache);
+        if ($this->loadCategories && !empty($this->filter['category']['search'])) {
+            $search = $this->filter['category']['search'];
+            $categories = $categories->filter(function ($value) use ($search) {
+                return stripos($value, $search) !== false;
+            })->values();
         }
 
         // faculties (lazy-loaded)
@@ -144,6 +144,10 @@ class Home extends Page
      */
     public function changeStateLoadCategories(bool $load): void
     {
+        // Populate cache on first open to avoid repeated DB/meta calls during updates
+        if ($load && empty($this->categoriesCache)) {
+            $this->categoriesCache = Site::getSite()->getMeta('scheduled_conference_categories', []);
+        }
         $this->loadCategories = $load;
     }
 
