@@ -975,7 +975,8 @@ return [
 
     'categories' => 'Kategoritë',
     'category' => 'Kategori',
-    'scheduled_conference_categories' => 'Kategoritë e Konferencave të Planifikuara',
+    'new_category' => 'Kategori e re',
+    'loading' => 'Duke u ngarkuar',
     'scheduled_conference_categories_hint' => 'Përdoret për të filtruar dhe kategorizuar konferencat e planifikuara dhe për të ndihmuar përdoruesit të gjejnë përmbajtje relevante.',
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',

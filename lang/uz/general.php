@@ -990,7 +990,8 @@ return [
 
     'categories' => 'Kategoriyalar',
     'category' => 'Kategoriya',
-    'scheduled_conference_categories' => 'Rejalashtirilgan konferensiya kategoriyalari',
+    'new_category' => 'Yangi kategoriya',
+    'loading' => 'Yuklanmoqda',
     'scheduled_conference_categories_hint' => 'Bu rejalashtirilgan konferensiyalarni filtrlash va toifalash hamda foydalanuvchilarga mos kontentni topishga yordam berish uchun ishlatiladi.',
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
