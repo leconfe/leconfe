@@ -84,7 +84,9 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.categories'))
                                     ->searchable()
                                     ->multiple()
-                                    ->options(fn() => Site::getSite()->getMeta('scheduled_conference_categories', [])),
+                                    ->options(fn() => collect(
+                                        Site::getSite()->getMeta('scheduled_conference_categories', [])
+                                    )->mapWithKeys(fn($item) => [$item => $item])->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
