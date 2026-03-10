@@ -4,14 +4,13 @@ namespace App\Panel\Administration\Pages;
 
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
+use App\Panel\Administration\Livewire\CategoryTable;
 use App\Panel\Administration\Livewire\FeaturedScheduledConferenceTable;
-use App\Panel\Administration\Livewire\TopicTable;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
 use App\Panel\Conference\Livewire\NavigationMenuSetting;
 use Filament\Infolists\Components\Livewire;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -43,9 +42,7 @@ class WebsiteSetting extends Page implements HasInfolists
         return __('general.settings');
     }
 
-    public function mount()
-    {
-    }
+    public function mount() {}
 
     public static function canAccess(): bool
     {
@@ -104,10 +101,10 @@ class WebsiteSetting extends Page implements HasInfolists
                                             ]),
                                     ]),
                             ]),
-                        Tabs\Tab::make('Topic')
-                            ->label(__('general.topic'))
+                        Tabs\Tab::make('category')
+                            ->label(__('general.category'))
                             ->schema([
-                                Livewire::make(TopicTable::class),
+                                Livewire::make(CategoryTable::class),
                             ]),
 
                     ])
