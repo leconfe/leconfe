@@ -52,7 +52,8 @@ class SetupSetting extends Component implements HasForms
                             ->helperText(__('general.conference_redirect_hint'))
                             ->options(Conference::query()->pluck('name', 'id')),
                         TagsInput::make('meta.scheduled_conference_categories')
-                            ->label(__('general.scheduled_conference_categories'))
+                            ->placeholder(__('general.new_category'))
+                            ->label(__('general.categories'))
                             ->helperText(__('general.scheduled_conference_categories_hint')),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
