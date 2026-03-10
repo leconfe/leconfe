@@ -988,7 +988,8 @@ return [
     'no_roles' => 'Rol mavjud emas',
     'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
 
-    'topics' => 'Mavzular',
+    'categories' => 'Kategoriyalar',
+    'category' => 'Kategoriya',
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
 ];

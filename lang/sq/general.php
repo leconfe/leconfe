@@ -973,7 +973,8 @@ return [
     'no_roles' => 'Asnjë rol',
     'registration_required_fields' => 'Fushat e detyrueshme të regjistrimit',
 
-    'topics' => 'Tema',
+    'categories' => 'Kategoritë',
+    'category' => 'Kategori',
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',
 ];

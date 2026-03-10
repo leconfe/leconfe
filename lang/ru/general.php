@@ -988,7 +988,8 @@ return [
     'no_roles' => 'Ролей нет',
     'registration_required_fields' => 'Обязательные поля для регистрации',
 
-    'topics' => 'Темы',
+    'categories' => 'Категории',
+    'category' => 'Категория',
     'faculty' => 'Факультет',
     'faculties' => 'Факультеты',
 ];

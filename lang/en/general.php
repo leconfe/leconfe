@@ -1049,7 +1049,8 @@ return [
     'role_deleted' => 'Role deleted',
     'no_roles' => 'No roles',
 
-    'topics' => 'Topics',
+    'categories' => 'Categories',
+    'category' => 'Category',
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
 ];

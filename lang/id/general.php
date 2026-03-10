@@ -972,7 +972,8 @@ return [
     'no_roles' => 'Tidak ada peran',
     'registration_required_fields' => 'Field Wajib Registrasi',
 
-    'topics' => 'Topik',
+    'categories' => 'Kategori',
+    'category' => 'Kategori',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
 ];

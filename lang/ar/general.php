@@ -990,7 +990,8 @@ return [
     'no_roles' => 'لا توجد أدوار',
     'registration_required_fields' => 'الحقول الإلزامية للتسجيل',
 
-    'topics' => 'المواضيع',
+    'categories' => 'الفئات',
+    'category' => 'فئة',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
 
