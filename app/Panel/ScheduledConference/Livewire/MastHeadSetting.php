@@ -4,7 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
-use App\Models\Topic;
+use App\Models\ScheduledConferenceCategory;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -33,7 +33,6 @@ class MastHeadSetting extends Component implements HasForms
         $this->form->fill([
             ...$scheduledConference->attributesToArray(),
             'meta' => $scheduledConference->getAllMeta(),
-            'topics' => $scheduledConference->topics()->withoutGlobalScopes()->pluck('name')->toArray(),
         ]);
     }
 
@@ -82,12 +81,12 @@ class MastHeadSetting extends Component implements HasForms
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                Select::make('topics')
-                                    ->label(__('general.topics'))
+                                Select::make('meta.category')
+                                    ->label(__('general.categories'))
                                     ->searchable()
                                     ->multiple()
-                                    ->getSearchResultsUsing(fn(string $search) => Topic::withoutGlobalScopes()->websiteTopics()->where('name', 'like', "%{$search}%")->limit(20)->pluck('name', 'name')->toArray())
-                                    ->options(fn() => Topic::withoutGlobalScopes()->websiteTopics()->limit(20)->pluck('name', 'name')->toArray()),
+                                    ->getSearchResultsUsing(fn(string $search) => ScheduledConferenceCategory::query()->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($search) . '%'])->pluck('name', 'name')->toArray())
+                                    ->options(fn() => ScheduledConferenceCategory::query()->pluck('name', 'name')->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
@@ -124,8 +123,6 @@ class MastHeadSetting extends Component implements HasForms
                                 $scheduledConference = app()->getCurrentScheduledConference();
 
                                 ScheduledConferenceUpdateAction::run($scheduledConference, $formData);
-
-                                $scheduledConference->syncTopics($formData['topics'] ?? []);
 
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
