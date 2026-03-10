@@ -100,10 +100,7 @@ class Home extends Page
 
         // Apply Livewire checkbox filters if provided
         if (!empty($this->filter['category']['value'])) {
-            $scheduledQuery->whereHas('meta', function ($m) {
-                $m->where('key', 'category')
-                    ->whereIn('value', $this->filter['category']['value']);
-            });
+            $scheduledQuery->filterByCategories($this->filter['category']['value']);
         }
 
         if (!empty($this->filter['faculty']['value'])) {
