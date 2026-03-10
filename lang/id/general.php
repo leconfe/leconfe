@@ -974,6 +974,8 @@ return [
 
     'categories' => 'Kategori',
     'category' => 'Kategori',
+    'scheduled_conference_categories' => 'Kategori Konferensi Terjadwal',
+    'scheduled_conference_categories_hint' => 'Ini digunakan untuk memfilter dan mengkategorikan konferensi yang sudah terjadwal serta membantu pengguna menemukan konten yang relevan.',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
 ];

@@ -992,6 +992,8 @@ return [
 
     'categories' => 'الفئات',
     'category' => 'فئة',
+    'scheduled_conference_categories' => 'فئات المؤتمرات المجدولة',
+    'scheduled_conference_categories_hint' => 'يُستخدم هذا لتصفية وتصنيف المؤتمرات المجدولة ومساعدة المستخدمين في العثور على المحتوى المناسب.',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
 
