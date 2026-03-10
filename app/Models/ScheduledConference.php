@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
-use App\Models\Concerns\HasTopics;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -26,7 +25,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes, HasTopics;
+    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
 
     protected $fillable = [
         'conference_id',

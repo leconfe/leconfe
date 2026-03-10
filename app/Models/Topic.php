@@ -8,30 +8,16 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use ArrayAccess;
-use Plank\Metable\Metable;
 
 class Topic extends Model
 {
-    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, Metable;
+    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory;
 
     protected $fillable = ['name', 'conference_id'];
 
     public function submissions()
     {
         return $this->morphedByMany(Submission::class, 'topicable');
-    }
-
-    public function scheduledConferences()
-    {
-        return $this->morphedByMany(ScheduledConference::class, 'topicable');
-    }
-
-    public function scopeWebsiteTopics($query)
-    {
-        return $query->whereHas('meta', function ($q) {
-            $q->where('key', 'type')
-                ->where('value', 'website');
-        });
     }
 
     /**
