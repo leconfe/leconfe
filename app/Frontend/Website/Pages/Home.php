@@ -40,7 +40,6 @@ class Home extends Page
     // Lazy-load flags
     public bool $loadCategories = false;
     public bool $loadFaculties = false;
-    // Cache for categories to avoid reloading on every Livewire update
     public array $categoriesCache = [];
 
     protected static string|array $routeMiddleware = [

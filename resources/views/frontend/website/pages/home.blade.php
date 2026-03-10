@@ -53,10 +53,7 @@
                                 {{ __('general.reset') }}
                             </button>
                         </div>
-                        <div wire:loading class="p-2 text-center text-sm">
-                            {{ __('general.loading') }}
-                        </div>
-                        <div wire:loading.remove>
+                        <div>
                             @foreach ($categories as $id => $name)
                                 <div>
                                     <label
