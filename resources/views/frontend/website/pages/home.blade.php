@@ -34,7 +34,7 @@
                 <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
                     <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
                         x-ref="button" @@click="open = ! open">
-                        {{ __('general.topics') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
+                        {{ __('general.categories') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
                     <div tabindex="0"
@@ -44,22 +44,22 @@
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
-                                    wire:model.live.debounce="filter.topic.search" />
+                                    wire:model.live.debounce="filter.category.search" />
                                 <x-heroicon-m-magnifying-glass class="h-3 w-3 opacity-70" />
                             </label>
                             <button class="mb-2 btn btn-xs btn-outline no-animation border-neutral-300 w-full"
-                                wire:click="resetFilter('topic')" wire:loading.attr="disabled">
+                                wire:click="resetFilter('category')" wire:loading.attr="disabled">
                                 {{ __('general.reset') }}
                             </button>
                         </div>
-                        @foreach ($topics as $id => $name)
+                        @foreach ($categories as $id => $name)
                             <div>
                                 <label
                                     class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
                                     <span class="label-text px-2">{{ $name }}
                                     </span>
                                     <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $name }}"
-                                        wire:model.live="filter.topic.value" wire:key="{{ $id }}" />
+                                        wire:model.live="filter.category.value" wire:key="{{ $id }}" />
                                 </label>
                             </div>
                         @endforeach
@@ -108,12 +108,12 @@
                 </button>
 
                 <div class="col-span-full w-full">
-                    @if (!empty($filter['topic']['value']))
+                    @if (!empty($filter['category']['value']))
                         <span class="px-3 py-0.5 badge badge-primary text-xs">
-                            {{ __('general.topic') }}: {{ implode(', ', $filter['topic']['value']) }}
+                            {{ __('general.category') }}: {{ implode(', ', $filter['category']['value']) }}
                             <span class="ml-2">
                                 <x-heroicon-o-x-mark class="h-3 w-3 cursor-pointer hover:text-neutral"
-                                    wire:click="resetFilter('topic')" />
+                                    wire:click="resetFilter('category')" />
                             </span>
                         </span>
                     @endif

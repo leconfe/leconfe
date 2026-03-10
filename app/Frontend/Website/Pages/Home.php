@@ -6,12 +6,9 @@ use App\Http\Middleware\RedirectToConference;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
-use App\Models\Topic;
+use App\Models\ScheduledConferenceCategory;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Url;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
@@ -27,7 +24,7 @@ class Home extends Page
             'search' => '',
             'value' => []
         ],
-        'topic' => [
+        'category' => [
             'search' => '',
             'value' => []
         ],
@@ -69,12 +66,12 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        // topic
-        $topicsQuery = Topic::withoutGlobalScopes()->websiteTopics()->limit(20);
-        if (!empty($this->filter['topic']['search'])) {
-            $topicsQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['topic']['search']) . '%']);
+        // categories
+        $categoriesQuery = ScheduledConferenceCategory::query();
+        if (!empty($this->filter['category']['search'])) {
+            $categoriesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['category']['search']) . '%']);
         }
-        $topics = $topicsQuery->pluck('name', 'id');
+        $categories = $categoriesQuery->pluck('name', 'id');
 
         $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
         if (!empty($this->filter['faculty']['search'])) {
@@ -102,10 +99,10 @@ class Home extends Page
             ->orderBy('date_start', 'DESC');
 
         // Apply Livewire checkbox filters if provided
-        if (!empty($this->filter['topic']['value'])) {
-            $scheduledQuery->whereHas('topics', function ($t) {
-                $t->withoutGlobalScopes()
-                    ->whereIn('name', $this->filter['topic']['value']);
+        if (!empty($this->filter['category']['value'])) {
+            $scheduledQuery->whereHas('meta', function ($m) {
+                $m->where('key', 'category')
+                    ->whereIn('value', $this->filter['category']['value']);
             });
         }
 
@@ -129,7 +126,7 @@ class Home extends Page
             'scheduledConferences' => $scheduledConferences,
             'featuredScheduledConferences' => $featuredScheduledConferences,
             'faculties' => $faculties,
-            'topics' => $topics,
+            'categories' => $categories,
         ];
     }
 
