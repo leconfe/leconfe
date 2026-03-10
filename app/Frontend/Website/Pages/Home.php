@@ -37,6 +37,10 @@ class Home extends Page
         ]
     ];
 
+    // Lazy-load flags
+    public bool $loadCategories = false;
+    public bool $loadFaculties = false;
+
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
     ];
@@ -66,18 +70,25 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        // categories
-        $categoriesQuery = ScheduledConferenceCategory::query();
-        if (!empty($this->filter['category']['search'])) {
-            $categoriesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['category']['search']) . '%']);
+        // categories (lazy-loaded)
+        $categories = collect();
+        if ($this->loadCategories) {
+            $categoriesQuery = ScheduledConferenceCategory::query();
+            if (!empty($this->filter['category']['search'])) {
+                $categoriesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['category']['search']) . '%']);
+            }
+            $categories = $categoriesQuery->pluck('name', 'id');
         }
-        $categories = $categoriesQuery->pluck('name', 'id');
 
-        $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
-        if (!empty($this->filter['faculty']['search'])) {
-            $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
+        // faculties (lazy-loaded)
+        $faculties = collect();
+        if ($this->loadFaculties) {
+            $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
+            if (!empty($this->filter['faculty']['search'])) {
+                $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
+            }
+            $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
         }
-        $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
 
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
@@ -125,6 +136,22 @@ class Home extends Page
             'faculties' => $faculties,
             'categories' => $categories,
         ];
+    }
+
+    /**
+     * Ensure categories are loaded when the dropdown is opened.
+     */
+    public function changeStateLoadCategories(bool $load): void
+    {
+        $this->loadCategories = $load;
+    }
+
+    /**
+     * Ensure faculties are loaded when the dropdown is opened.
+     */
+    public function changeStateLoadFaculties(bool $load): void
+    {
+        $this->loadFaculties = $load;
     }
 
     public static function routes(PageGroup $pageGroup): void

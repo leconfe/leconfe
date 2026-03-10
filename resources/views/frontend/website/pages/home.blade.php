@@ -33,13 +33,14 @@
 
                 <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
                     <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
-                        x-ref="button" @@click="open = ! open">
+                        x-ref="button" @@click="$wire.call('changeStateLoadCategories', true); open = ! open">
                         {{ __('general.categories') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
                     <div tabindex="0"
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
-                        x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false"
+                        x-show="open" x-on:click.outside="open = false; $wire.call('changeStateLoadCategories', false)"
+                        x-on:mouseleave="open = false; $wire.call('changeStateLoadCategories', false)"
                         x-anchor="$refs.button" x-cloak>
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
@@ -52,29 +53,35 @@
                                 {{ __('general.reset') }}
                             </button>
                         </div>
-                        @foreach ($categories as $id => $name)
-                            <div>
-                                <label
-                                    class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
-                                    <span class="label-text px-2">{{ $name }}
-                                    </span>
-                                    <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $name }}"
-                                        wire:model.live="filter.category.value" wire:key="{{ $id }}" />
-                                </label>
-                            </div>
-                        @endforeach
+                        <div wire:loading class="p-2 text-center text-sm">
+                            {{ __('general.loading') }}
+                        </div>
+                        <div wire:loading.remove>
+                            @foreach ($categories as $id => $name)
+                                <div>
+                                    <label
+                                        class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
+                                        <span class="label-text px-2">{{ $name }}
+                                        </span>
+                                        <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $name }}"
+                                            wire:model.live="filter.category.value" wire:key="{{ $id }}" />
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
                     <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
-                        x-ref="button" @@click="open = ! open">
+                        x-ref="button" @@click="$wire.call('changeStateLoadFaculties', true); open = ! open">
                         {{ __('general.faculties') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
                     <div tabindex="0"
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
-                        x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false"
+                        x-show="open" x-on:click.outside="open = false; $wire.call('changeStateLoadFaculties', false)"
+                        x-on:mouseleave="open = false; $wire.call('changeStateLoadFaculties', false)"
                         x-anchor="$refs.button" x-cloak>
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
@@ -87,17 +94,22 @@
                                 {{ __('general.reset') }}
                             </button>
                         </div>
-                        @foreach ($faculties as $id => $name)
-                            <div>
-                                <label
-                                    class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
-                                    <span class="label-text px-2">{{ $name }}
-                                    </span>
-                                    <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $name }}"
-                                        wire:model.live="filter.faculty.value" wire:key="{{ $id }}" />
-                                </label>
-                            </div>
-                        @endforeach
+                        <div wire:loading class="p-2 text-center text-sm">
+                            {{ __('general.loading') }}
+                        </div>
+                        <div wire:loading.remove>
+                            @foreach ($faculties as $id => $name)
+                                <div>
+                                    <label
+                                        class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
+                                        <span class="label-text px-2">{{ $name }}
+                                        </span>
+                                        <input type="checkbox" class="checkbox checkbox-xs mx-1.5" value="{{ $name }}"
+                                            wire:model.live="filter.faculty.value" wire:key="{{ $id }}" />
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
