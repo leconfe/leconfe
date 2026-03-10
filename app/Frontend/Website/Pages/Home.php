@@ -6,7 +6,7 @@ use App\Http\Middleware\RedirectToConference;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
-use App\Models\ScheduledConferenceCategory;
+use App\Models\Site;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
 use Livewire\WithoutUrlPagination;
@@ -73,11 +73,12 @@ class Home extends Page
         // categories (lazy-loaded)
         $categories = collect();
         if ($this->loadCategories) {
-            $categoriesQuery = ScheduledConferenceCategory::query();
+            $categories = Site::getSite()->getMeta('scheduled_conference_categories', []);
             if (!empty($this->filter['category']['search'])) {
-                $categoriesQuery->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($this->filter['category']['search']) . '%']);
+                $categories = array_filter($categories, function ($value) {
+                    return stripos($value, $this->filter['category']['search']) !== false;
+                });
             }
-            $categories = $categoriesQuery->pluck('name', 'id');
         }
 
         // faculties (lazy-loaded)

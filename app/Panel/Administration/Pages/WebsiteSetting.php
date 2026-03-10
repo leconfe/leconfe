@@ -4,7 +4,6 @@ namespace App\Panel\Administration\Pages;
 
 use App\Infolists\Components\ShoutUpdateVersion;
 use App\Infolists\Components\VerticalTabs;
-use App\Panel\Administration\Livewire\CategoryTable;
 use App\Panel\Administration\Livewire\FeaturedScheduledConferenceTable;
 use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SetupSetting;
@@ -42,7 +41,9 @@ class WebsiteSetting extends Page implements HasInfolists
         return __('general.settings');
     }
 
-    public function mount() {}
+    public function mount()
+    {
+    }
 
     public static function canAccess(): bool
     {
@@ -100,11 +101,6 @@ class WebsiteSetting extends Page implements HasInfolists
                                                     ->lazy(),
                                             ]),
                                     ]),
-                            ]),
-                        Tabs\Tab::make('category')
-                            ->label(__('general.category'))
-                            ->schema([
-                                Livewire::make(CategoryTable::class),
                             ]),
 
                     ])

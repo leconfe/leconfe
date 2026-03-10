@@ -4,14 +4,13 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
-use App\Models\ScheduledConferenceCategory;
+use App\Models\Site;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -85,8 +84,7 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.categories'))
                                     ->searchable()
                                     ->multiple()
-                                    ->getSearchResultsUsing(fn(string $search) => ScheduledConferenceCategory::query()->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($search) . '%'])->pluck('name', 'name')->toArray())
-                                    ->options(fn() => ScheduledConferenceCategory::query()->pluck('name', 'name')->toArray()),
+                                    ->options(fn() => Site::getSite()->getMeta('scheduled_conference_categories', [])),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),

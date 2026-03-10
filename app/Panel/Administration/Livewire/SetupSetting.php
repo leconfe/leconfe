@@ -10,6 +10,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -50,6 +51,9 @@ class SetupSetting extends Component implements HasForms
                             ->label(__('general.conference_redirect'))
                             ->helperText(__('general.conference_redirect_hint'))
                             ->options(Conference::query()->pluck('name', 'id')),
+                        TagsInput::make('meta.scheduled_conference_categories')
+                            ->label(__('general.scheduled_conference_categories'))
+                            ->helperText(__('general.scheduled_conference_categories_hint')),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
                             ->label(__('general.logo'))
@@ -77,7 +81,7 @@ class SetupSetting extends Component implements HasForms
                                     ->label(__('general.country'))
                                     ->placeholder(__('general.select_a_country'))
                                     ->searchable()
-                                    ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->name => $country->flag.' '.$country->name]))
+                                    ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->name => $country->flag . ' ' . $country->name]))
                                     ->optionsLimit(250),
                                 TextInput::make('meta.publisher_name')
                                     ->label(__('general.publisher'))
@@ -93,12 +97,12 @@ class SetupSetting extends Component implements HasForms
                             ->label(__('general.about_site'))
                             ->profile('advanced')
                             ->minHeight(300)
-                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                            ->dehydrateStateUsing(fn(?string $state) => Purify::clean($state)),
                         TinyEditor::make('meta.page_footer')
                             ->label(__('general.page_footer'))
                             ->profile('advanced')
                             ->minHeight(300)
-                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                            ->dehydrateStateUsing(fn(?string $state) => Purify::clean($state)),
                     ])
                     ->columns(1),
                 Actions::make([
