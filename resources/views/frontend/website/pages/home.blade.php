@@ -33,15 +33,15 @@
 
                 <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
                     <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
-                        x-ref="button" @@click="$wire.call('changeStateLoadCategories', true); open = ! open">
+                        x-ref="button" @@click="open = !open">
                         {{ __('general.categories') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
                     <div tabindex="0"
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
-                        x-show="open" x-on:click.outside="open = false; $wire.call('changeStateLoadCategories', false)"
-                        x-on:mouseleave="open = false; $wire.call('changeStateLoadCategories', false)"
-                        x-anchor="$refs.button" x-cloak>
+                        x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false;"
+                        x-anchor="$refs.button" x-cloak
+                        x-intersect="if(@js(empty($filter['category']['options']))) $wire.call('loadCategories') ">
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
@@ -54,7 +54,7 @@
                             </button>
                         </div>
                         <div>
-                            @foreach ($categories as $id => $name)
+                            @foreach ($filter['category']['options'] as $id => $name)
                                 <div>
                                     <label
                                         class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
@@ -71,15 +71,15 @@
 
                 <div class="col-span-full sm:col-span-5 md:col-span-2 dropdown h-fit w-full" x-data="{ open: false }">
                     <button tabindex="0" role="button" class="btn btn-sm btn-outline border-gray-300 w-full"
-                        x-ref="button" @@click="$wire.call('changeStateLoadFaculties', true); open = ! open">
+                        x-ref="button" @@click="open = ! open">
                         {{ __('general.faculties') }} <x-heroicon-o-chevron-down class="h-4 w-4" />
                     </button>
 
                     <div tabindex="0"
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
-                        x-show="open" x-on:click.outside="open = false; $wire.call('changeStateLoadFaculties', false)"
-                        x-on:mouseleave="open = false; $wire.call('changeStateLoadFaculties', false)"
-                        x-anchor="$refs.button" x-cloak>
+                        x-show="open" x-on:click.outside="open = false" x-on:mouseleave="open = false"
+                        x-anchor="$refs.button" x-cloak
+                        x-intersect="if(@js(empty($filter['faculty']['options']))) $wire.call('loadFaculties') ">
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
@@ -95,7 +95,7 @@
                             {{ __('general.loading') }}
                         </div>
                         <div wire:loading.remove>
-                            @foreach ($faculties as $id => $name)
+                            @foreach ($filter['faculty']['options'] as $id => $name)
                                 <div>
                                     <label
                                         class="py-1.5 label cursor-pointer hover:bg-neutral-200 hover:!text-white transition-colors rounded">
@@ -133,16 +133,6 @@
                             <span class="ml-2">
                                 <x-heroicon-o-x-mark class="h-3 w-3 cursor-pointer hover:text-neutral"
                                     wire:click="resetFilter('faculty')" />
-                            </span>
-                        </span>
-                    @endif
-
-                    @if (!empty($selectedConferences))
-                        <span class="px-3 py-0.5 badge badge-primary text-xs">
-                            {{ __('general.conference') }}: {{ implode(', ', $selectedConferences) }}
-                            <span class="ml-2">
-                                <x-heroicon-o-x-mark class="h-3 w-3 cursor-pointer hover:text-neutral"
-                                    wire:click="resetFilter('conference')" />
                             </span>
                         </span>
                     @endif

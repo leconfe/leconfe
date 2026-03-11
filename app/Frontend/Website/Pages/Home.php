@@ -22,25 +22,18 @@ class Home extends Page
     public $filter = [
         'faculty' => [
             'search' => '',
-            'value' => []
+            'value' => [],
+            'options' => []
         ],
         'category' => [
             'search' => '',
-            'value' => []
-        ],
-        'conference' => [
-            'search' => '',
-            'value' => []
+            'value' => [],
+            'options' => []
         ],
         'search' => [
             'value' => ''
         ]
     ];
-
-    // Lazy-load flags
-    public bool $loadCategories = false;
-    public bool $loadFaculties = false;
-    public array $categoriesCache = [];
 
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
@@ -64,6 +57,7 @@ class Home extends Page
         if ($type) {
             $this->filter[$type]['search'] = '';
             $this->filter[$type]['value'] = [];
+            $this->filter[$type]['options'] = [];
         } else {
             $this->reset(['filter']);
         }
@@ -71,25 +65,6 @@ class Home extends Page
 
     protected function getViewData(): array
     {
-        // categories (lazy-loaded, cached after first load)
-        $categories = empty($this->categoriesCache) ? collect() : collect($this->categoriesCache);
-        if ($this->loadCategories && !empty($this->filter['category']['search'])) {
-            $search = $this->filter['category']['search'];
-            $categories = $categories->filter(function ($value) use ($search) {
-                return stripos($value, $search) !== false;
-            })->values();
-        }
-
-        // faculties (lazy-loaded)
-        $faculties = collect();
-        if ($this->loadFaculties) {
-            $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
-            if (!empty($this->filter['faculty']['search'])) {
-                $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
-            }
-            $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
-        }
-
         $featuredScheduledConferences = $this->getEloquentQuery()
             ->with([
                 'conference',
@@ -109,7 +84,6 @@ class Home extends Page
             ->published()
             ->orderBy('date_start', 'DESC');
 
-        // Apply Livewire checkbox filters if provided
         if (!empty($this->filter['category']['value'])) {
             $scheduledQuery->filterByCategories($this->filter['category']['value']);
         }
@@ -133,29 +107,42 @@ class Home extends Page
         return [
             'scheduledConferences' => $scheduledConferences,
             'featuredScheduledConferences' => $featuredScheduledConferences,
-            'faculties' => $faculties,
-            'categories' => $categories,
         ];
     }
 
-    /**
-     * Ensure categories are loaded when the dropdown is opened.
-     */
-    public function changeStateLoadCategories(bool $load): void
+    public function loadCategories(): void
     {
-        // Populate cache on first open to avoid repeated DB/meta calls during updates
-        if ($load && empty($this->categoriesCache)) {
-            $this->categoriesCache = Site::getSite()->getMeta('scheduled_conference_categories', []);
+        $categories = collect(Site::getSite()->getMeta('scheduled_conference_categories', []));
+        if (!empty($this->filter['category']['search'])) {
+            $search = $this->filter['category']['search'];
+            $categories = $categories->filter(function ($value) use ($search) {
+                return stripos($value, $search) !== false;
+            })->values();
         }
-        $this->loadCategories = $load;
+        $this->filter['category']['options'] = $categories;
     }
 
-    /**
-     * Ensure faculties are loaded when the dropdown is opened.
-     */
-    public function changeStateLoadFaculties(bool $load): void
+    public function loadFaculties(): void
     {
-        $this->loadFaculties = $load;
+        $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
+        if (!empty($this->filter['faculty']['search'])) {
+            $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
+        }
+        $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
+        $this->filter['faculty']['options'] = $faculties;
+    }
+
+    public function updated($name, $value): void
+    {
+        if ($name === 'filter.category.search') {
+            $this->loadCategories();
+            return;
+        }
+
+        if ($name === 'filter.faculty.search') {
+            $this->loadFaculties();
+            return;
+        }
     }
 
     public static function routes(PageGroup $pageGroup): void
