@@ -738,7 +738,7 @@ return [
     'back_to_conference' => 'Kembali ke Konferensi',
     'view_current_event' => 'Lihat Acara Saat Ini',
     'view_event' => 'Lihat Acara',
-    'there_are_no_conferences_taking_place_at_this_time' => 'Saat ini tidak ada konferensi yang berlangsung',
+    'no_conferences_were_found' => 'Tidak ada konferensi yang ditemukan',
     'session_name' => 'Nama Sesi',
     'detail_that_visible_to_all_user' => 'Detail yang terlihat oleh semua pengguna',
     'detail_that_visible_only_to_participant' => 'Detail yang hanya terlihat oleh peserta',

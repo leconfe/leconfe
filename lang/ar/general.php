@@ -770,7 +770,7 @@ return [
     'select_country' => 'اختر البلد',
     'view_current_event' => 'عرض الحدث الحالي',
     'view_event' => 'عرض الحدث',
-    'there_are_no_conferences_taking_place_at_this_time' => 'لا توجد مؤتمرات تحدث في هذا الوقت',
+    'no_conferences_were_found' => 'لم يتم العثور على أي مؤتمرات',
     'session_name' => 'اسم الجلسة',
     'detail_that_visible_to_all_user' => 'تفاصيل مرئية لجميع المستخدمين',
     'detail_that_visible_only_to_participant' => 'تفاصيل مرئية فقط للمشاركين',

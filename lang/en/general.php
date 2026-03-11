@@ -779,7 +779,7 @@ return [
     'select_country' => 'Select country',
     'view_current_event' => 'View Current Event',
     'view_event' => 'View Event',
-    'there_are_no_conferences_taking_place_at_this_time' => 'There are no conferences taking place at this time',
+    'no_conferences_were_found' => 'No conferences were found',
 
     'session_name' => 'Session name',
     'detail_that_visible_to_all_user' => 'Detail that visible to all user',

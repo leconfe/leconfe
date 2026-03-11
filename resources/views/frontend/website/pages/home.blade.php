@@ -150,15 +150,18 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-4">
-                @forelse ($scheduledConferences as $scheduledConference)
+                @foreach ($scheduledConferences as $scheduledConference)
                     <x-website::scheduled-conference-summary :scheduledConference="$scheduledConference" />
-                @empty
-                    <div class="my-12 text-center">
-                        <p class="text-lg font-bold">{{ __('general.there_are_no_conferences_taking_place_at_this_time') }}
-                        </p>
-                    </div>
-                @endforelse
+                @endforeach
             </div>
+
+            @if (empty($scheduledConference))
+                <div class="my-12 text-center">
+                    <p class="text-lg font-bold text-gray-600">
+                        {{ __('general.no_conferences_were_found') }}
+                    </p>
+                </div>
+            @endif
         </div>
     </div>
 </x-website::layouts.main>

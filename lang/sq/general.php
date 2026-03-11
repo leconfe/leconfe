@@ -753,7 +753,7 @@ return [
     'select_country' => 'Zgjidhni vendin',
     'view_current_event' => 'Shiko Ngjarjen Aktual',
     'shiko_ngjarjen' => 'Shiko Ngjarjen',
-    'there_are_no_conferences_taking_place_at_this_time' => 'Nuk ka konferenca që po zhvillohen në këtë moment',
+    'no_conferences_were_found' => 'Nuk u gjetën konferenca',
     'session_name' => 'Emri i Sesionit',
     'detail_that_visible_to_all_user' => 'Detaje që janë të dukshme për të gjithë përdoruesit',
     'detail_that_visible_only_to_participant' => 'Detaje që janë të dukshme vetëm për pjesëmarrësit',

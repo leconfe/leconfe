@@ -740,7 +740,7 @@ return [
     'select_country' => 'Выберите страну',
     'view_current_event' => 'Просмотр текущего события',
     'view_event' => 'Просмотр события',
-    'there_are_no_conferences_taking_place_at_this_time' => 'В настоящее время конференции не проводятся',
+    'no_conferences_were_found' => 'Конференции не найдены',
 
     'session_name' => 'Название сессии',
     'detail_that_visible_to_all_user' => 'Детали, видимые всем пользователям',
