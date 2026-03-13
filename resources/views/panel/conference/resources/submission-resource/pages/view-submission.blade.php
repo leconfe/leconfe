@@ -1,7 +1,7 @@
 <x-filament::page
     x-on:show-editor-guidance.window="$dispatch('open-modal', { id: 'editor-guidance' })"
     x-data="{
-        shouldAutoShowEditorGuidance: {{ auth()->user()->can('actAsEditor', $this->record) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')) ? 'true' : 'false' }},
+        shouldAutoShowEditorGuidance: {{ $this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')) ? 'true' : 'false' }},
         autoShowEditorGuidanceEnabled() {
             return localStorage.getItem('autoShowEditorGuidance') != 0;
         },
@@ -23,7 +23,7 @@
         {{ $this->infolist }}
     @endif
 
-    @if (auth()->user()->can('actAsEditor', $this->record) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
+    @if ($this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
         <x-filament::modal id="editor-guidance" width="3xl" :close-by-clicking-away="false">
             <x-slot name="heading">
                 {{ __('general.editor_guidance') }}

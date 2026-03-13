@@ -98,7 +98,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->label(__('general.editor_guidance'))
                 ->icon('heroicon-o-information-circle')
                 ->color('info')
-                ->visible(fn (): bool => auth()->user()->can('actAsEditor', $this->record) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
+                ->visible(fn (): bool => $this->record->stage !== SubmissionStage::Wizard
+                    && $this->record->isParticipantEditor(auth()->user())
+                    && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
                 ->action(fn () => $this->dispatch('show-editor-guidance')),
             Action::make('submission_payment')
                 ->hidden(fn (Submission $record) => ! app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled() || $record->status == SubmissionStatus::Incomplete || $record->payment)
