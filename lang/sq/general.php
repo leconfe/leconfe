@@ -489,10 +489,12 @@ return [
     'workflow_settings' => 'Cilësimet e Përshkrimit të Punës',
     'author_roles' => 'Roli i Autorëve',
     'reviewer_guidance' => 'Udhëzime për Rishikuesit',
+    'editor_guidance' => 'Udhëzime për Redaktorët',
     'submission_payment_items' => 'Artikujt e Pagesës për Dorëzim',
     'paper_components' => 'Pjesët e Dokumentit',
     'add_a_component' => 'Shto një Pjesë',
     'author_guidelines' => 'Udhëzimet për Autorët',
+    'editor_guidelines' => 'Udhëzimet për Redaktorët',
     'brief_explanation' => 'Jepni një shpjegim të shkurtër të procesit të dorëzimit që autori të di çfarë të presë.',
     'guidance_authors_might_need_to_know' => 'Jepni udhëzime për gjithçka që autorët mund të kenë nevojë të dinë, si standardet bibliografike dhe të formatimit, së bashku me shembuj të formateve të zakonshme të citimeve që duhet të përdoren. Ju gjithashtu mund të dëshironi të ofroni detaje në lidhje me formatin e preferuar dhe temën e dorëzimeve.',
 

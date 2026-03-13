@@ -511,10 +511,12 @@ return [
     'workflow_settings' => 'Workflow Setting',
     'author_roles' => 'Author Roles',
     'reviewer_guidance' => 'Reviewer Guidance',
+    'editor_guidance' => 'Editor Guidance',
     'submission_payment_items' => 'Submission Payment Items',
     'paper_components' => 'Paper Components',
     'add_a_component' => 'Add a Component',
     'author_guidelines' => 'Author Guidelines',
+    'editor_guidelines' => 'Editor Guidelines',
     'brief_explanation' => 'Provide a brief explanation of the submission process so that the author knows what to expect.',
     'guidance_authors_might_need_to_know' => 'Provide guidance on anything authors might need to know, such as bibliographic and formatting standards, alongside examples of common citation formats to be used. You may also wish to provide details about the preferred format and subject matter of submissions.',
 
