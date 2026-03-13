@@ -753,7 +753,7 @@ return [
     'select_country' => 'Zgjidhni vendin',
     'view_current_event' => 'Shiko Ngjarjen Aktual',
     'shiko_ngjarjen' => 'Shiko Ngjarjen',
-    'there_are_no_conferences_taking_place_at_this_time' => 'Nuk ka konferenca që po zhvillohen në këtë moment',
+    'no_conferences_were_found' => 'Nuk u gjetën konferenca',
     'session_name' => 'Emri i Sesionit',
     'detail_that_visible_to_all_user' => 'Detaje që janë të dukshme për të gjithë përdoruesit',
     'detail_that_visible_only_to_participant' => 'Detaje që janë të dukshme vetëm për pjesëmarrësit',
@@ -972,4 +972,12 @@ return [
     'role_deleted' => 'Roli u fshi',
     'no_roles' => 'Asnjë rol',
     'registration_required_fields' => 'Fushat e detyrueshme të regjistrimit',
+
+    'categories' => 'Kategoritë',
+    'category' => 'Kategori',
+    'new_category' => 'Kategori e re',
+    'loading' => 'Duke u ngarkuar',
+    'scheduled_conference_categories_hint' => 'Përdoret për të filtruar dhe kategorizuar konferencat e planifikuara dhe për të ndihmuar përdoruesit të gjejnë përmbajtje relevante.',
+    'faculty' => 'Fakulteti',
+    'faculties' => 'Fakultetet',
 ];

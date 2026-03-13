@@ -41,7 +41,9 @@ class WebsiteSetting extends Page implements HasInfolists
         return __('general.settings');
     }
 
-    public function mount() {}
+    public function mount()
+    {
+    }
 
     public static function canAccess(): bool
     {

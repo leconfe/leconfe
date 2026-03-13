@@ -4,16 +4,19 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use App\Forms\Components\TinyEditor;
+use App\Models\Site;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class MastHeadSetting extends Component implements HasForms
@@ -76,6 +79,8 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.acronym'))
                                     ->rule('alpha_dash')
                                     ->helperText(__('general.acronym_rather_than_the_full_conference')),
+                                TextInput::make('meta.faculty')
+                                    ->label(__('general.faculty')),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
@@ -83,6 +88,13 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.theme'))
                                     ->helperText(__('general.theme_information'))
                                     ->columnSpanFull(),
+                                Select::make('meta.category')
+                                    ->label(__('general.categories'))
+                                    ->searchable()
+                                    ->multiple()
+                                    ->options(fn() => collect(
+                                        Site::getSite()->getMeta('scheduled_conference_categories', [])
+                                    )->mapWithKeys(fn($item) => [$item => $item])->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
@@ -97,7 +109,6 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.editorial_team'))
                                     ->profile('basic')
                                     ->minHeight(100),
-
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
@@ -115,10 +126,15 @@ class MastHeadSetting extends Component implements HasForms
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
                             $formData = $this->form->getState();
+
                             try {
-                                ScheduledConferenceUpdateAction::run(app()->getCurrentScheduledConference(), $formData);
+                                $scheduledConference = app()->getCurrentScheduledConference();
+
+                                ScheduledConferenceUpdateAction::run($scheduledConference, $formData);
+
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
+                                Log::error($th);
                                 $action->sendFailureNotification();
                             }
                         }),

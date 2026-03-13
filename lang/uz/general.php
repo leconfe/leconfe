@@ -740,7 +740,7 @@ return [
     'select_country' => 'Mamlakatni tanlang',
     'view_current_event' => 'Joriy tadbirni ko‘rish',
     'view_event' => 'Tadbirni ko‘rish',
-    'there_are_no_conferences_taking_place_at_this_time' => 'Hozirda hech qanday konferensiya o‘tkazilmayapti',
+    'no_conferences_were_found' => 'Hech qanday konferensiyalar topilmadi',
 
     'session_name' => 'Sessiya nomi',
     'detail_that_visible_to_all_user' => 'Barcha foydalanuvchilarga ko‘rinadigan tafsilot',
@@ -987,4 +987,12 @@ return [
     'role_deleted' => 'Rol oʻchirildi',
     'no_roles' => 'Rol mavjud emas',
     'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
+
+    'categories' => 'Kategoriyalar',
+    'category' => 'Kategoriya',
+    'new_category' => 'Yangi kategoriya',
+    'loading' => 'Yuklanmoqda',
+    'scheduled_conference_categories_hint' => 'Bu rejalashtirilgan konferensiyalarni filtrlash va toifalash hamda foydalanuvchilarga mos kontentni topishga yordam berish uchun ishlatiladi.',
+    'faculty' => 'Fakultet',
+    'faculties' => 'Fakultetlar',
 ];

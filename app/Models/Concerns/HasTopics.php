@@ -42,7 +42,7 @@ trait HasTopics
     {
         collect($topics)
             ->filter()
-            ->each(fn (Topic $topic) => $this->topics()->detach($topic));
+            ->each(fn(Topic $topic) => $this->topics()->detach($topic));
 
         return $this;
     }

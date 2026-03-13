@@ -740,7 +740,7 @@ return [
     'select_country' => 'Выберите страну',
     'view_current_event' => 'Просмотр текущего события',
     'view_event' => 'Просмотр события',
-    'there_are_no_conferences_taking_place_at_this_time' => 'В настоящее время конференции не проводятся',
+    'no_conferences_were_found' => 'Конференции не найдены',
 
     'session_name' => 'Название сессии',
     'detail_that_visible_to_all_user' => 'Детали, видимые всем пользователям',
@@ -987,4 +987,12 @@ return [
     'role_deleted' => 'Роль удалена',
     'no_roles' => 'Ролей нет',
     'registration_required_fields' => 'Обязательные поля для регистрации',
+
+    'categories' => 'Категории',
+    'category' => 'Категория',
+    'new_category' => 'Новая категория',
+    'loading' => 'Загрузка',
+    'scheduled_conference_categories_hint' => 'Используется для фильтрации и категоризации запланированных конференций и помогает пользователям находить релевантный контент.',
+    'faculty' => 'Факультет',
+    'faculties' => 'Факультеты',
 ];
