@@ -75,11 +75,19 @@ class MastHeadSetting extends Component implements HasForms
                                     ->columnSpanFull()
                                     ->hint(__('general.recommended_description_length'))
                                     ->helperText(__('general.short_description_of_the_website')),
+                                TextInput::make('meta.acronym')
+                                    ->label(__('general.acronym'))
+                                    ->rule('alpha_dash')
+                                    ->helperText(__('general.acronym_rather_than_the_full_conference')),
                                 TextInput::make('meta.faculty')
                                     ->label(__('general.faculty')),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
+                                TextInput::make('meta.conference_theme')
+                                    ->label(__('general.theme'))
+                                    ->helperText(__('general.theme_information'))
+                                    ->columnSpanFull(),
                                 Select::make('meta.category')
                                     ->label(__('general.categories'))
                                     ->searchable()

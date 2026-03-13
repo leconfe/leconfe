@@ -41,7 +41,7 @@
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
                         x-show="open" x-on:click.outside="open = false;" x-on:mouseleave="open = false;"
                         x-anchor="$refs.button" x-cloak
-                        x-intersect="if(@js(empty($filter['category']['options']))) $wire.call('loadCategories') ">
+                        x-intersect.once="$wire.call('loadCategories')">
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
@@ -79,7 +79,7 @@
                         class="mt-2 p-2 pt-0 max-w-fit min-w-full grid bg-white border rounded z-[1] shadow-xl max-h-72 overflow-auto relative"
                         x-show="open" x-on:click.outside="open = false" x-on:mouseleave="open = false"
                         x-anchor="$refs.button" x-cloak
-                        x-intersect="if(@js(empty($filter['faculty']['options']))) $wire.call('loadFaculties') ">
+                        x-intersect.once="$wire.call('loadFaculties') ">
                         <div class="sticky top-0 bg-white z-10 pt-2">
                             <label class="mb-2 input input-xs input-bordered !outline-none bg-white flex items-center">
                                 <input type="search" class="grow" placeholder="{{ __('general.search') }}"
