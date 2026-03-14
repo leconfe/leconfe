@@ -1074,7 +1074,7 @@ return [
     'role_updated' => 'Role updated',
     'role_deleted' => 'Role deleted',
     'no_roles' => 'No roles',
-    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Cannot delete this role because it is still assigned to users.'
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Cannot delete this role because it is still assigned to users.',
 
     'categories' => 'Categories',
     'category' => 'Category',
