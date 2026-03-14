@@ -997,6 +997,7 @@ return [
     'role_deleted' => 'Peran dihapus',
     'no_roles' => 'Tidak ada peran',
     'registration_required_fields' => 'Field Wajib Registrasi',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Peran ini tidak dapat dihapus karena masih digunakan oleh pengguna.',
 
     'categories' => 'Kategori',
     'category' => 'Kategori',

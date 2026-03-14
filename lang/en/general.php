@@ -1074,6 +1074,7 @@ return [
     'role_updated' => 'Role updated',
     'role_deleted' => 'Role deleted',
     'no_roles' => 'No roles',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Cannot delete this role because it is still assigned to users.',
 
     'categories' => 'Categories',
     'category' => 'Category',
@@ -1082,4 +1083,5 @@ return [
     'scheduled_conference_categories_hint' => 'This is used to filter and categorize scheduled conferences and help users find relevant content.',
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
+
 ];
