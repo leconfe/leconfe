@@ -59,7 +59,8 @@ class UserRoleTable extends Component implements HasForms, HasTable
                     ->label(__('general.permission_level'))
                     ->getStateUsing(fn(Role $record) => $record->getMeta('permission_level') ?? $record->name)
                     ->searchable(false),
-                TextColumn::make('assigned_count')
+                TextColumn::make('users_count')
+                    ->counts('users')
                     ->label(__('general.users'))
                     ->badge()
             ])
@@ -103,7 +104,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                     ->label(__('general.delete'))
                     ->requiresConfirmation()
                     ->action(function (Role $record) {
-                        if ($record->assigned_count > 0) {
+                        if ($record->users_count > 0) {
                             Notification::make()
                                 ->title(__('general.failed'))
                                 ->body(__('general.cannot_delete_this_role_because_it_is_still_assigned_to_users'))
@@ -144,16 +145,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
 
     protected function getQuery(): Builder
     {
-        $rolesTable = config('permission.table_names.roles', 'roles');
-        $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
-
         return Role::query()
-            ->select("{$rolesTable}.*")
-            ->selectSub(function ($sub) use ($modelHasRolesTable, $rolesTable) {
-                $sub->from($modelHasRolesTable)
-                    ->selectRaw('COUNT(*)')
-                    ->whereColumn("{$modelHasRolesTable}.role_id", "{$rolesTable}.id");
-            }, 'assigned_count')
             ->with('meta')
             ->withoutGlobalScopes()
             ->availableRolesByContext();
