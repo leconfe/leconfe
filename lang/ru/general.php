@@ -1013,6 +1013,7 @@ return [
     'role_deleted' => 'Роль удалена',
     'no_roles' => 'Ролей нет',
     'registration_required_fields' => 'Обязательные поля для регистрации',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Невозможно удалить эту роль, потому что она все еще назначена пользователям.',
 
     'categories' => 'Категории',
     'category' => 'Категория',

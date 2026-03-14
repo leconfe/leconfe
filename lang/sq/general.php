@@ -998,6 +998,7 @@ return [
     'role_deleted' => 'Roli u fshi',
     'no_roles' => 'Asnjë rol',
     'registration_required_fields' => 'Fushat e detyrueshme të regjistrimit',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Ky rol nuk mund të fshihet sepse është ende i caktuar për përdoruesit.',
 
     'categories' => 'Kategoritë',
     'category' => 'Kategori',

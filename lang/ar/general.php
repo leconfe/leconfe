@@ -1015,6 +1015,7 @@ return [
     'role_deleted' => 'تم حذف الدور',
     'no_roles' => 'لا توجد أدوار',
     'registration_required_fields' => 'الحقول الإلزامية للتسجيل',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'لا يمكن حذف هذا الدور لأنه لا يزال مُعيَّنًا للمستخدمين.',
 
     'categories' => 'الفئات',
     'category' => 'فئة',

@@ -1013,6 +1013,7 @@ return [
     'role_deleted' => 'Rol oʻchirildi',
     'no_roles' => 'Rol mavjud emas',
     'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
+    'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Bu rolni o‘chirib bo‘lmaydi, chunki u hali ham foydalanuvchilarga biriktirilgan.',
 
     'categories' => 'Kategoriyalar',
     'category' => 'Kategoriya',
