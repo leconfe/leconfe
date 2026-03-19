@@ -150,7 +150,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'review_invitation_response_deadline' => 21,
             'review_completion_deadline' => 28,
             'theme' => 'DefaultTheme',
-            'allowed_self_assign_roles' => ['Author', 'Reader'],
+            'allowed_self_assign_roles' => ['Author'],
             'allow_registration' => true,
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
