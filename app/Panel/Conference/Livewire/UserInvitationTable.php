@@ -4,7 +4,6 @@ namespace App\Panel\Conference\Livewire;
 
 use App\Actions\UserInvitation\InviteUserAction;
 use App\Mail\Templates\UserRoleInvitationMail;
-use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\UserInvitation;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -93,7 +92,11 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                             ->rule(function (Get $get) {
                                 return function (string $attribute, $value, \Closure $fail) use ($get) {
                                     $roleId = $get('role_id');
-                                    $role = Role::query()->whereKey($roleId)->first();
+                                    $role = Role::query()
+                                        ->withoutGlobalScopes()
+                                        ->availableRolesByContext()
+                                        ->whereKey($roleId)
+                                        ->first();
 
                                     if (! $role || ! $value) {
                                         return;
@@ -119,6 +122,23 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                             ->searchable()
                             ->preload()
                             ->options(fn () => $this->getRoleOptions())
+                            ->rule(function () {
+                                return function (string $attribute, $value, \Closure $fail) {
+                                    if (! $value) {
+                                        return;
+                                    }
+
+                                    $roleExists = Role::query()
+                                        ->withoutGlobalScopes()
+                                        ->availableRolesByContext()
+                                        ->whereKey($value)
+                                        ->exists();
+
+                                    if (! $roleExists) {
+                                        $fail('Selected role is not available in the current context.');
+                                    }
+                                };
+                            })
                             ->native(false),
                     ])
                     ->action(fn (array $data) => InviteUserAction::run($data))
@@ -190,10 +210,9 @@ class UserInvitationTable extends Component implements HasForms, HasTable
 
     protected function getRoleOptions(): array
     {
-        $invitableRoleNames = $this->getInvitableRoleNames();
-
         return Role::query()
-            ->whereIn('name', $invitableRoleNames)
+            ->withoutGlobalScopes()
+            ->availableRolesByContext()
             ->orderBy('name')
             ->pluck('name', 'id')
             ->toArray();
@@ -201,28 +220,12 @@ class UserInvitationTable extends Component implements HasForms, HasTable
 
     protected function getRoleNameOptions(): array
     {
-        $invitableRoleNames = $this->getInvitableRoleNames();
-
         return Role::query()
-            ->whereIn('name', $invitableRoleNames)
+            ->withoutGlobalScopes()
+            ->availableRolesByContext()
             ->orderBy('name')
             ->pluck('name', 'name')
             ->toArray();
-    }
-
-    protected function getInvitableRoleNames(): array
-    {
-        if (app()->getCurrentScheduledConferenceId()) {
-            return [
-                UserRole::ScheduledConferenceEditor->value,
-                UserRole::TrackEditor->value,
-            ];
-        }
-
-        return [
-            UserRole::ConferenceManager->value,
-            UserRole::ScheduledConferenceEditor->value,
-        ];
     }
 
     protected function canInviteUsers(): bool
