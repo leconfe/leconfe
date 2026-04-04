@@ -11,6 +11,7 @@ use App\Notifications\ParticipantPayment;
 use App\Notifications\PaymentConfirmed;
 use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use Awcodes\Shout\Components\ShoutEntry;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -81,6 +82,7 @@ class PaymentDetail extends Page
                     ->record($this->record)
                     ->model(Payment::class)
                     ->visible(fn (Payment $record) => ! $record->isPaid())
+                    ->disabled(fn (Payment $record) => ! $record->isPaid() && ! (app()->getCurrentScheduledConference()?->isPaymentOpen() ?? true))
             );
 
         return [
@@ -347,6 +349,12 @@ class PaymentDetail extends Page
                         'lg' => 4,
                     ])
                     ->schema([
+                        ShoutEntry::make('payment_availability_notice')
+                            ->visible(fn (Payment $record) => ! $record->isPaid() && $this->shouldShowPaymentAvailabilitySection())
+                            ->heading(fn () => $this->getPaymentAvailabilityHeading())
+                            ->type(fn () => $this->getPaymentAvailabilityType())
+                            ->columnSpan('full')
+                            ->content(fn () => new HtmlString($this->getPaymentAvailabilityContent())),
                         Section::make('Additional Information')
                             ->schema([
                                 TextEntry::make('created_at')
@@ -380,5 +388,96 @@ class PaymentDetail extends Page
     public static function getRoutePath(): string
     {
         return '/payments/detail/{record?}';
+    }
+
+    protected function shouldShowPaymentAvailabilitySection(): bool
+    {
+        return filled($this->getPaymentAvailabilityContent());
+    }
+
+    protected function getPaymentAvailabilityHeading(): string
+    {
+        $scheduledConference = app()->getCurrentScheduledConference();
+
+        if (! $scheduledConference) {
+            return __('general.payment_is_available');
+        }
+
+        if (! $scheduledConference->isPaymentOpen()) {
+            $openedAt = $scheduledConference->getPaymentOpenedAt();
+            $closedAt = $scheduledConference->getPaymentClosedAt();
+
+            if ($openedAt && now()->lt($openedAt)) {
+                return __('general.payment_is_not_open_yet');
+            }
+
+            if ($closedAt && now()->gt($closedAt)) {
+                return __('general.payment_period_has_ended');
+            }
+        }
+
+        return __('general.payment_is_available');
+    }
+
+    protected function getPaymentAvailabilityType(): string
+    {
+        return app()->getCurrentScheduledConference()?->isPaymentOpen() ? 'success' : 'warning';
+    }
+
+    protected function getPaymentAvailabilityContent(): string
+    {
+        $scheduledConference = app()->getCurrentScheduledConference();
+
+        if (! $scheduledConference) {
+            return '';
+        }
+
+        $openedAt = $scheduledConference->getPaymentOpenedAt();
+        $closedAt = $scheduledConference->getPaymentClosedAt();
+        $format = Setting::get('format_date');
+
+        if (! $scheduledConference->isPaymentOpen()) {
+            if ($openedAt && now()->lt($openedAt)) {
+                if ($closedAt) {
+                    return __('general.payment_will_open_on_and_close_on', [
+                        'start' => e($openedAt->format($format)),
+                        'end' => e($closedAt->format($format)),
+                    ]);
+                }
+
+                return __('general.payment_will_open_on', [
+                    'date' => e($openedAt->format($format)),
+                ]);
+            }
+
+            if ($closedAt && now()->gt($closedAt)) {
+                if ($openedAt) {
+                    return __('general.payment_was_available_from_until', [
+                        'start' => e($openedAt->format($format)),
+                        'end' => e($closedAt->format($format)),
+                    ]);
+                }
+
+                return __('general.payment_period_ended_on', [
+                    'date' => e($closedAt->format($format)),
+                ]);
+            }
+
+            return __('general.payment_is_not_available_at_this_time');
+        }
+
+        if ($closedAt) {
+            return __('general.payment_is_available_until', [
+                'date' => e($closedAt->format($format)),
+            ]);
+        }
+
+        if ($openedAt) {
+            return __('general.payment_is_currently_available_starting', [
+                'date' => e($openedAt->format($format)),
+            ]);
+        }
+
+        return '';
     }
 }
