@@ -29,7 +29,6 @@ class Setting
     protected function getData($key): mixed
     {
         $prefixedKey = $this->prefix.$key;
-
         return app()->getCurrentConferenceId() ? app()->getCurrentConference()->getMeta($prefixedKey) : app()->getSite()->getMeta($prefixedKey);
     }
 

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
@@ -159,6 +160,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'receipt_enable' => false,
             'submission_payment' => false,
             'participant_payment' => false,
+            'payment_opened_at' => null,
+            'payment_closed_at' => null,
             'required_given_name' => true,
             'required_family_name' => false,
             'required_public_name' => false,
@@ -314,6 +317,39 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function isParticipantRegistrationEnabled(): bool
     {
         return $this->isParticipantPaymentEnabled();
+    }
+
+    public function getPaymentOpenedAt(): ?Carbon
+    {
+        $openedAt = $this->getMeta('payment_opened_at');
+
+        return filled($openedAt) ? Carbon::parse($openedAt)->startOfDay() : null;
+    }
+
+    public function getPaymentClosedAt(): ?Carbon
+    {
+        $closedAt = $this->getMeta('payment_closed_at');
+
+        return filled($closedAt) ? Carbon::parse($closedAt)->endOfDay() : null;
+    }
+
+    public function isPaymentOpen(?Carbon $date = null): bool
+    {
+        $date ??= now();
+
+        if ($openedAt = $this->getPaymentOpenedAt()) {
+            if ($date->lt($openedAt)) {
+                return false;
+            }
+        }
+
+        if ($closedAt = $this->getPaymentClosedAt()) {
+            if ($date->gt($closedAt)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function generateInvoiceNumber(?int $number = null)
