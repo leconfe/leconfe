@@ -334,6 +334,7 @@ return [
     'topic' => 'Тема',
     'keywords' => 'Ключевые слова',
     'abstract' => 'Аннотация',
+    'abstract_word_limit_exceeded' => 'Аннотация не должна превышать :count слов.',
     'next' => 'Далее',
     'details' => 'Подробности',
     'upload_abstract' => 'Загрузить аннотацию',

@@ -334,6 +334,7 @@ return [
     'topic' => 'Mavzu',
     'keywords' => 'Kalit so‘zlar',
     'abstract' => 'Annotatsiya',
+    'abstract_word_limit_exceeded' => 'Annotatsiya :count ta so‘zdan oshmasligi kerak.',
     'next' => 'Keyingi',
     'details' => 'Tafsilotlar',
     'upload_abstract' => 'Annotatsiyani yuklash',

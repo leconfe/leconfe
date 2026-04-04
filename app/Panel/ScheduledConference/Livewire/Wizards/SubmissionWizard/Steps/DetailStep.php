@@ -93,7 +93,7 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                                 }
 
                                 if (TinyMceWordCounter::countWords($value) > $abstractWordLimit) {
-                                    $fail(__('general.abstract').' must not exceed '.$abstractWordLimit.' words.');
+                                    $fail(__('general.abstract_word_limit_exceeded', ['count' => $abstractWordLimit]));
                                 }
                             })
                             ->required(! $this->record?->track->getMeta('do_not_require_abstracts') ?? true)

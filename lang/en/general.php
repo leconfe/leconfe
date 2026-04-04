@@ -362,6 +362,7 @@ return [
     'topic' => 'Topic',
     'keywords' => 'Keywords',
     'abstract' => 'Abstract',
+    'abstract_word_limit_exceeded' => 'Abstract must not exceed :count words.',
     'next' => 'Next',
     'details' => 'Details',
     'upload_abstract' => 'Upload Abstract',

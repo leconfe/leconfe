@@ -79,7 +79,7 @@ class Detail extends \Livewire\Component implements HasForms
                         }
 
                         if (TinyMceWordCounter::countWords($value) > $abstractWordLimit) {
-                            $fail(__('general.abstract').' must not exceed '.$abstractWordLimit.' words.');
+                            $fail(__('general.abstract_word_limit_exceeded', ['count' => $abstractWordLimit]));
                         }
                     })
                     ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
