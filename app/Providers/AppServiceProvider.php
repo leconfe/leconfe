@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Laravel\Pennant\Feature;
 
 use function Illuminate\Events\queueable;
 
@@ -104,6 +105,12 @@ class AppServiceProvider extends ServiceProvider
         $this->detectConference();
         $this->handleEvent();
         $this->forceHttps();
+        $this->registerFeatureFlags();
+    }
+
+    protected function registerFeatureFlags(): void
+    {
+        Feature::define('cloud', fn () => config('app.cloud', false));
     }
 
     protected function handleEvent()

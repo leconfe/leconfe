@@ -112,12 +112,12 @@ abstract class Plugin implements HasPlugin
 
     public function getSetting($key, $default = null): mixed
     {
-        return FacadesPlugin::getSetting($this->getInfo('folder'), $key, $default);
+        return FacadesPlugin::getSetting($this, $key, $default);
     }
 
     public function updateSetting($key, $value): mixed
     {
-        return FacadesPlugin::updateSetting($this->getInfo('folder'), $key, $value);
+        return FacadesPlugin::updateSetting($this, $key, $value);
     }
 
     public function onPanel(Panel $panel): void
