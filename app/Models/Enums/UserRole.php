@@ -15,7 +15,6 @@ enum UserRole: string implements HasLabel
     case TrackEditor = 'Track Editor';
     case Reviewer = 'Reviewer';
     case Author = 'Author';
-    case Reader = 'Reader';
 
     public function getLabel(): ?string
     {
@@ -25,7 +24,6 @@ enum UserRole: string implements HasLabel
     public static function selfAssignedRoles(): array
     {
         return [
-            self::Reader,
             self::Author,
             self::Reviewer,
         ];
@@ -45,7 +43,6 @@ enum UserRole: string implements HasLabel
     {
         return [
             self::ConferenceManager,
-            self::Reader,
         ];
     }
 

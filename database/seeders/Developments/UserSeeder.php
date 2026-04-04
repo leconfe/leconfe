@@ -40,7 +40,6 @@ class UserSeeder extends Seeder
         $scheduledConferenceRoles = collect([
             UserRole::Reviewer,
             UserRole::Author,
-            UserRole::Reader,
             UserRole::ScheduledConferenceEditor,
             UserRole::TrackEditor,
         ]);

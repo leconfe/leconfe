@@ -319,7 +319,6 @@ class Role extends Model
                     'DiscussionTopic:create',
                     'DiscussionTopic:update',
                 ],
-                UserRole::Reader->value => [],
             ];
         }
 

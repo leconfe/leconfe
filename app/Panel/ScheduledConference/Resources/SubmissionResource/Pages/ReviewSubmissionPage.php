@@ -55,8 +55,8 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->where('user_id', auth()->user()->getKey())
             ->first() ?? null;
 
-        abort_if($this->review->status == ReviewerStatus::DECLINED, 403, 'You have declined this review request');
-        abort_if($this->review->status == ReviewerStatus::CANCELED, 403, 'This review request has been canceled');
+        abort_if($this->review->status == ReviewerStatus::DECLINED, 403, __('general.review_request_declined'));
+        abort_if($this->review->status == ReviewerStatus::CANCELED, 403, __('general.review_request_canceled'));
 
         if ($this->review->status == ReviewerStatus::PENDING) {
             redirect(SubmissionResource::getUrl('reviewer-invitation', ['record' => $this->record]));
@@ -74,7 +74,9 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return 'Review: '.$this->record->getMeta('title');
+        return __('general.review_submission_heading', [
+            'title' => $this->record->getMeta('title'),
+        ]);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -83,31 +85,36 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->record($this->record)
             ->schema([
                 InfolistSection::make()
-                    ->heading('Submission Details')
+                    ->heading(__('general.submission_details'))
                     ->schema([
                         Grid::make(1)
                             ->schema([
-                                TextEntry::make('Title')
+                                TextEntry::make('title')
+                                    ->label(__('general.title'))
                                     ->color('gray')
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->getMeta('title')
                                     ),
-                                TextEntry::make('Author')
+                                TextEntry::make('author')
+                                    ->label(__('general.author'))
                                     ->color('gray')
                                     ->visible(fn () => in_array($this->review?->getMeta('review_mode'), [Review::MODE_ANONYMOUS, Review::MODE_OPEN]))
                                     ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
-                                TextEntry::make('Keywords')
+                                TextEntry::make('keywords')
+                                    ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-'
                                     ),
-                                TextEntry::make('Abstract')
+                                TextEntry::make('abstract')
+                                    ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(
                                         fn (Submission $record): string => $record->getMeta('abstract')
                                     ),
-                                TextEntry::make('Review Mode')
+                                TextEntry::make('review_mode')
+                                    ->label(__('general.review_mode'))
                                     ->color('gray')
                                     ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
@@ -118,13 +125,30 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     public function getHeaderActions(): array
     {
         return [
-            Action::make('View Guidelines')
+            Action::make('viewGuidelines')
+                ->label(__('general.view_guidelines'))
                 ->icon('heroicon-o-information-circle')
                 ->color('info')
+                ->hidden(fn (): bool => ! $this->hasGuidanceModalContent())
                 ->action(
                     fn () => $this->dispatch('show-guidelines')
                 ),
         ];
+    }
+
+    public function hasReviewGuidelines(): bool
+    {
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('review_guidelines'));
+    }
+
+    public function hasCompetingInterests(): bool
+    {
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('competing_interests'));
+    }
+
+    public function hasGuidanceModalContent(): bool
+    {
+        return $this->hasReviewGuidelines() || $this->hasCompetingInterests();
     }
 
     public function form(Form $form): Form
@@ -136,17 +160,18 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->disabled(fn () => $this->review->reviewSubmitted())
             ->schema([
                 Section::make()
-                    ->heading('Review Form')
+                    ->heading(__('scheduled_conference.review_form'))
                     ->schema([
                         ...ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
                         TinyEditor::make('meta.review_for_author_editor')
                             ->minHeight(300)
-                            ->label('Review for Author and Editor'),
+                            ->label(__('general.review_for_author_and_editor')),
                         TinyEditor::make('meta.review_for_editor')
                             ->minHeight(300)
-                            ->label('Review for Editor'),
+                            ->label(__('general.review_for_editor')),
                         Select::make('recommendation')
                             ->required()
+                            ->label(__('general.recommendation'))
                             ->options(SubmissionStatusRecommendation::list()),
                     ]),
             ]);
@@ -156,10 +181,10 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     {
         return Action::make('submitReviewAction')
             ->icon('lineawesome-check-circle-solid')
-            ->label('Submit Review')
+            ->label(__('general.submit_review'))
             ->requiresConfirmation()
             ->hidden(fn () => $this->review->reviewSubmitted())
-            ->successNotificationTitle('Review submitted successfully')
+            ->successNotificationTitle(__('general.review_submitted_successfully'))
             ->action(function (Action $action) {
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
@@ -213,10 +238,10 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     public function saveForLaterAction()
     {
         return Action::make('saveForLaterAction')
-            ->label('Save for Later')
+            ->label(__('general.save_for_later'))
             ->outlined()
             ->hidden(fn () => $this->review->reviewSubmitted())
-            ->successNotificationTitle('Review saved')
+            ->successNotificationTitle(__('general.review_saved'))
             ->action(function (Action $action) {
                 $data = $this->formData;
 
@@ -231,5 +256,16 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
                 $action->success();
             });
+    }
+
+    protected function hasHtmlContent(?string $value): bool
+    {
+        $plainText = preg_replace(
+            '/\s+/u',
+            '',
+            strip_tags(html_entity_decode($value ?? '', ENT_QUOTES | ENT_HTML5))
+        );
+
+        return filled($plainText);
     }
 }

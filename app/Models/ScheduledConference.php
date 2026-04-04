@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
@@ -116,7 +117,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
@@ -150,7 +151,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'review_invitation_response_deadline' => 21,
             'review_completion_deadline' => 28,
             'theme' => 'DefaultTheme',
-            'allowed_self_assign_roles' => ['Author', 'Reader'],
+            'allowed_self_assign_roles' => ['Author'],
             'allow_registration' => true,
             'default_register_country' => 'id',
             'default_open_review_for_author' => true,
@@ -159,6 +160,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'receipt_enable' => false,
             'submission_payment' => false,
             'participant_payment' => false,
+            'payment_opened_at' => null,
+            'payment_closed_at' => null,
             'required_given_name' => true,
             'required_family_name' => false,
             'required_public_name' => false,
@@ -262,7 +265,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isSubmissionRequirePayment(): bool
     {
-        if (! $this->getMeta('submission_payment')) {
+        if (!$this->getMeta('submission_payment')) {
             return false;
         }
 
@@ -277,6 +280,18 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function scopePublished($query, bool $isPublished = true)
     {
         return $query->where('is_published', $isPublished);
+    }
+
+    public function scopeFilterByCategories($query, array $categories)
+    {
+        return $query->whereHas('meta', function ($m) use ($categories) {
+            $m->where('key', 'category')
+                ->where(function ($q) use ($categories) {
+                    foreach ($categories as $category) {
+                        $q->orWhereJsonContains('value', $category);
+                    }
+                });
+        });
     }
 
     public function isInvoiceEnabled(): bool
@@ -304,11 +319,44 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->isParticipantPaymentEnabled();
     }
 
+    public function getPaymentOpenedAt(): ?Carbon
+    {
+        $openedAt = $this->getMeta('payment_opened_at');
+
+        return filled($openedAt) ? Carbon::parse($openedAt)->startOfDay() : null;
+    }
+
+    public function getPaymentClosedAt(): ?Carbon
+    {
+        $closedAt = $this->getMeta('payment_closed_at');
+
+        return filled($closedAt) ? Carbon::parse($closedAt)->endOfDay() : null;
+    }
+
+    public function isPaymentOpen(?Carbon $date = null): bool
+    {
+        $date ??= now();
+
+        if ($openedAt = $this->getPaymentOpenedAt()) {
+            if ($date->lt($openedAt)) {
+                return false;
+            }
+        }
+
+        if ($closedAt = $this->getPaymentClosedAt()) {
+            if ($date->gt($closedAt)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function generateInvoiceNumber(?int $number = null)
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
@@ -331,7 +379,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function getEntityToken(): ?string
     {
         $token = $this->getMeta('entity_token');
-        if (! $token) {
+        if (!$token) {
             $this->registerEntity();
 
             $token = $this->getMeta('entity_token');
@@ -342,9 +390,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        if (! app()->isProduction()) {
+        if (!app()->isProduction())
             return;
-        }
 
         $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
@@ -394,7 +441,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function ping()
     {
-        if (! Cache::has('scheduled_conference_ping_'.$this->getKey())) {
+        if (!Cache::has('scheduled_conference_ping_' . $this->getKey())) {
             ScheduledConferencePing::dispatch($this)->onConnection('async');
         }
     }

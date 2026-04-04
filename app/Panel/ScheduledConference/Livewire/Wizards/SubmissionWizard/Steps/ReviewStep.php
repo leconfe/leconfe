@@ -18,6 +18,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
@@ -80,6 +81,7 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
 
                     DB::commit();
                 } catch (\Exception $e) {
+                    Log::error($e->getMessage());
                     DB::rollBack();
 
                     $action->failureNotificationTitle(__('general.failed_send_notification'));

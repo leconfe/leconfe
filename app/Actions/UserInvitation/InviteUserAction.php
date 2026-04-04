@@ -3,7 +3,6 @@
 namespace App\Actions\UserInvitation;
 
 use App\Mail\Templates\UserRoleInvitationMail;
-use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\UserInvitation;
 use Illuminate\Support\Facades\DB;
@@ -25,21 +24,11 @@ class InviteUserAction
         }
 
         $email = Str::lower(trim($data['email']));
-        $roleId = data_get($data, 'role_id');
-        $role = Role::query()->whereKey($roleId)->first();
-        $allowedRoleNames = ($role?->scheduled_conference_id ?? 0)
-            ? [
-                UserRole::ScheduledConferenceEditor->value,
-                UserRole::TrackEditor->value,
-            ]
-            : [
-                UserRole::ConferenceManager->value,
-                UserRole::ScheduledConferenceEditor->value,
-            ];
+        $role = $this->resolveInvitableRole(data_get($data, 'role_id'));
 
-        if (! $role || ! in_array($role->name, $allowedRoleNames, true)) {
+        if (! $role) {
             throw ValidationException::withMessages([
-                'role_id' => 'Selected role is not allowed for invitation.',
+                'role_id' => 'Selected role is not available in the current context.',
             ]);
         }
 
@@ -80,5 +69,13 @@ class InviteUserAction
             ->send(new UserRoleInvitationMail($invitation));
 
         return $invitation;
+    }
+
+    private function resolveInvitableRole(mixed $roleId): ?Role
+    {
+        return Role::withoutGlobalScopes()
+            ->availableRolesByContext()
+            ->whereKey($roleId)
+            ->first();
     }
 }

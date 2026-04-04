@@ -54,7 +54,9 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return 'Reviewer Request: '.$this->record->getMeta('title');
+        return __('general.reviewer_request_heading', [
+            'title' => $this->record->getMeta('title'),
+        ]);
     }
 
     public function getSubheading(): string|Htmlable|null
@@ -71,7 +73,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     public function acceptAction()
     {
         return Action::make('acceptAction')
-            ->label('Accept Request')
+            ->label(__('general.accept_request'))
             ->icon('lineawesome-check-circle-solid')
             ->visible(
                 fn (): bool => $this->review->status == ReviewerStatus::PENDING
@@ -79,8 +81,8 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->color('primary')
             ->outlined()
             ->requiresConfirmation()
-            ->successNotificationTitle('Request Accepted')
-            ->failureNotificationTitle('Failed to accept request, please try again later or contact admin.')
+            ->successNotificationTitle(__('general.request_accepted'))
+            ->failureNotificationTitle(__('general.failed_to_accept_request'))
             ->action(function (Action $action) {
                 try {
                     DB::beginTransaction();
@@ -115,7 +117,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     new ReviewerAcceptedInvitationMail($this->review)
                                 );
                         } catch (\Exception $e) {
-                            $action->failureNotificationTitle('Failed to send notification to author');
+                            $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
                             $action->failure();
                         }
                     }
@@ -139,7 +141,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     public function declineAction()
     {
         return Action::make('declineAction')
-            ->label('Decline Request')
+            ->label(__('general.decline_request'))
             ->icon('lineawesome-times-circle-solid')
             ->visible(
                 fn (): bool => $this->review->status == ReviewerStatus::PENDING
@@ -147,7 +149,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->outlined()
             ->color('danger')
             ->requiresConfirmation()
-            ->successNotificationTitle('Request Declined')
+            ->successNotificationTitle(__('general.request_declined'))
             ->action(function (Action $action) {
 
                 ReviewUpdateAction::run($this->review, [
@@ -173,7 +175,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                             new ReviewerDeclinedInvitationMail($this->review)
                         );
                 } catch (\Exception $e) {
-                    $action->failureNotificationTitle('Failed to send notification to author');
+                    $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
                     $action->failure();
                 }
 
@@ -188,51 +190,59 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->schema([
                 Section::make()
                     ->aside()
-                    ->heading('Request for review')
-                    ->description('You have been selected as a potential reviewer of the following submission. Below is an overview of the submission, as well as the timeline for this review. We hope that you are able to participate')
+                    ->heading(__('general.request_for_review'))
+                    ->description(__('general.request_for_review_description'))
                     ->schema([
-                        Fieldset::make('Submission Details')
+                        Fieldset::make(__('general.submission_details'))
                             ->columns(1)
                             ->schema([
-                                TextEntry::make('Title')
+                                TextEntry::make('title')
+                                    ->label(__('general.title'))
                                     ->color('gray')
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
-                                TextEntry::make('Author')
+                                TextEntry::make('author')
+                                    ->label(__('general.author'))
                                     ->color('gray')
                                     ->visible(fn () => $this->review->isShowAuthor())
                                     ->getStateUsing(fn (Submission $submission) => $submission->user?->fullName),
-                                TextEntry::make('Keywords')
+                                TextEntry::make('keywords')
+                                    ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->getStateUsing(function (Submission $submission) {
                                         return $submission->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-';
                                     }),
-                                TextEntry::make('Abstract')
+                                TextEntry::make('abstract')
+                                    ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
-                                TextEntry::make('Review Mode')
+                                TextEntry::make('review_mode')
+                                    ->label(__('general.review_mode'))
                                     ->color('gray')
                                     ->getStateUsing(fn () => $this->review?->review_mode),
                             ]),
                         Livewire::make(ReviewerAssignedFiles::class, [
                             'record' => $this->review,
                         ]),
-                        Fieldset::make('Review Schedule')
+                        Fieldset::make(__('general.review_schedule'))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 2,
                                 'xl' => 3,
                             ])
                             ->schema([
-                                TextEntry::make("Editor's Request")
+                                TextEntry::make('editor_request')
+                                    ->label(__('general.editor_request'))
                                     ->getStateUsing(
                                         fn (): ?string => $this->review?->date_assigned?->format(Setting::get('format_date'))
                                     ),
-                                TextEntry::make('Response Due Date')
+                                TextEntry::make('response_due_date')
+                                    ->label(__('general.response_due_date'))
                                     ->getStateUsing(
                                         fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date'))
                                     ),
-                                TextEntry::make('Review Due Date')
+                                TextEntry::make('review_due_date')
+                                    ->label(__('general.review_due_date'))
                                     ->getStateUsing(
                                         fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date'))
                                     ),

@@ -6,6 +6,8 @@ use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -35,6 +37,18 @@ class PaymentSetting extends Component implements HasForms
                             ->label(__('general.enable_submission_payment')),
                         Checkbox::make('meta.participant_payment')
                             ->label(__('general.enable_participant_payment')),
+                        Grid::make(2)
+                            ->schema([
+                                DatePicker::make('meta.payment_opened_at')
+                                    ->label(__('general.payment_start_date'))
+                                    ->native(false)
+                                    ->prefixIcon('heroicon-m-calendar-days'),
+                                DatePicker::make('meta.payment_closed_at')
+                                    ->label(__('general.payment_end_date'))
+                                    ->native(false)
+                                    ->prefixIcon('heroicon-m-calendar-days')
+                                    ->after('meta.payment_opened_at'),
+                            ]),
                     ]),
                 Actions::make([
                     Action::make('save')

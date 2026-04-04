@@ -3,18 +3,12 @@
 namespace App\Frontend\Website\Pages;
 
 use App\Http\Middleware\RedirectToConference;
-use App\Http\Middleware\RedirectToScheduledConference;
-use App\Models\Conference;
 use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
-use App\Models\Scopes\ScheduledConferenceScope;
-use App\Models\Topic;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use App\Models\Site;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
@@ -24,6 +18,22 @@ class Home extends Page
     use WithoutUrlPagination, WithPagination;
 
     protected static string $view = 'frontend.website.pages.home';
+
+    public $filter = [
+        'faculty' => [
+            'search' => '',
+            'value' => [],
+            'options' => []
+        ],
+        'category' => [
+            'search' => '',
+            'value' => [],
+            'options' => []
+        ],
+        'search' => [
+            'value' => ''
+        ]
+    ];
 
     protected static string|array $routeMiddleware = [
         RedirectToConference::class
@@ -42,6 +52,17 @@ class Home extends Page
             ]);
     }
 
+    public function resetFilter(string $type = null): void
+    {
+        if ($type) {
+            $this->filter[$type]['search'] = '';
+            $this->filter[$type]['value'] = [];
+            $this->filter[$type]['options'] = [];
+        } else {
+            $this->reset(['filter']);
+        }
+    }
+
     protected function getViewData(): array
     {
         $featuredScheduledConferences = $this->getEloquentQuery()
@@ -54,20 +75,74 @@ class Home extends Page
             ->orderBy('featured', 'ASC')
             ->get();
 
-        $scheduledConferences = $this->getEloquentQuery()
+        $scheduledQuery = $this->getEloquentQuery()
             ->with([
                 'conference',
                 'media',
                 'meta',
             ])
             ->published()
-            ->orderBy('date_start', 'DESC')
-            ->get();
+            ->orderBy('date_start', 'DESC');
+
+        if (!empty($this->filter['category']['value'])) {
+            $scheduledQuery->filterByCategories($this->filter['category']['value']);
+        }
+
+        if (!empty($this->filter['faculty']['value'])) {
+            $scheduledQuery->whereHas('meta', function ($m) {
+                $m->where('key', 'faculty')
+                    ->whereIn('value', $this->filter['faculty']['value']);
+            });
+        }
+
+        if ($this->filter['search']['value'] !== '') {
+            $scheduledQuery->where(function ($q) {
+                $searchTerm = '%' . mb_strtolower($this->filter['search']['value']) . '%';
+                $q->whereRaw('LOWER(title) LIKE ?', [$searchTerm]);
+            });
+        }
+
+        $scheduledConferences = $scheduledQuery->get();
 
         return [
             'scheduledConferences' => $scheduledConferences,
             'featuredScheduledConferences' => $featuredScheduledConferences,
         ];
+    }
+
+    public function loadCategories(): void
+    {
+        $categories = collect(Site::getSite()->getMeta('scheduled_conference_categories', []));
+        if (!empty($this->filter['category']['search'])) {
+            $search = $this->filter['category']['search'];
+            $categories = $categories->filter(function ($value) use ($search) {
+                return stripos($value, $search) !== false;
+            })->values();
+        }
+        $this->filter['category']['options'] = $categories;
+    }
+
+    public function loadFaculties(): void
+    {
+        $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
+        if (!empty($this->filter['faculty']['search'])) {
+            $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
+        }
+        $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
+        $this->filter['faculty']['options'] = $faculties;
+    }
+
+    public function updated($name, $value): void
+    {
+        if ($name === 'filter.category.search') {
+            $this->loadCategories();
+            return;
+        }
+
+        if ($name === 'filter.faculty.search') {
+            $this->loadFaculties();
+            return;
+        }
     }
 
     public static function routes(PageGroup $pageGroup): void
