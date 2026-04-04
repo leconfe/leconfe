@@ -29,7 +29,7 @@ return [
     'profiles' => [
         'default' => [
             'plugins' => 'autoresize link wordcount',
-            'toolbar' => 'bold italic superscript subscript | link | blockquote bullist numlist',
+            'toolbar' => 'bold italic superscript subscript | link | blockquote bullist numlist wordcount',
             'upload_directory' => 'tinyeditor',
         ],
 

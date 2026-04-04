@@ -110,6 +110,7 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->label(__('general.track_abstract_word_count'))
                     ->helperText(__('general.track_abstract_word_count_helper'))
                     ->numeric()
+                    ->integer()
                     ->minValue(0)
                     ->default(0),
                 Checkbox::make('meta.do_not_require_abstracts')
