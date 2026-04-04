@@ -356,6 +356,7 @@ return [
     'topic' => 'الموضوع',
     'keywords' => 'الكلمات الرئيسية',
     'abstract' => 'الملخص',
+    'abstract_word_limit_exceeded' => 'يجب ألا يتجاوز الملخص :count كلمة.',
     'next' => 'التالي',
     'details' => 'التفاصيل',
     'upload_abstract' => 'تحميل الملخص',

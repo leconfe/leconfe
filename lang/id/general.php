@@ -347,6 +347,7 @@ return [
     'topic' => 'Topik',
     'keywords' => 'Kata Kunci',
     'abstract' => 'Abstrak',
+    'abstract_word_limit_exceeded' => 'Abstrak tidak boleh melebihi :count kata.',
     'next' => 'Selanjutnya',
     'details' => 'Rincian',
     'upload_abstract' => 'Unggah Abstrak',

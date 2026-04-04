@@ -5,6 +5,8 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
+use App\Utils\TinyMceWordCounter;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -36,6 +38,8 @@ class Detail extends \Livewire\Component implements HasForms
 
     public function form(Form $form): Form
     {
+        $abstractWordLimit = (int) ($this->submission?->track?->getMeta('abstract_word_count') ?? 0);
+
         return $form
             ->disabled(function (): bool {
                 return ! auth()->user()->can('editing', $this->submission);
@@ -69,6 +73,15 @@ class Detail extends \Livewire\Component implements HasForms
                     ->label(__('general.abstract'))
                     ->required()
                     ->minHeight(300)
+                    ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) use ($abstractWordLimit) {
+                        if ($abstractWordLimit < 1 || blank($value)) {
+                            return;
+                        }
+
+                        if (TinyMceWordCounter::countWords($value) > $abstractWordLimit) {
+                            $fail(__('general.abstract_word_limit_exceeded', ['count' => $abstractWordLimit]));
+                        }
+                    })
                     ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
             ]);
     }

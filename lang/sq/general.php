@@ -345,6 +345,7 @@ return [
     'topic' => 'Temë',
     'keywords' => 'Fjalë Kyçe',
     'abstract' => 'Abstrakt',
+    'abstract_word_limit_exceeded' => 'Abstrakti nuk duhet të kalojë :count fjalë.',
     'next' => 'Tjetër',
     'details' => 'Detaje',
     'upload_abstract' => 'Ngarko Abstraktin',

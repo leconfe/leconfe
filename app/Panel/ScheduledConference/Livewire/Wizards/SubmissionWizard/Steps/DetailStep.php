@@ -7,6 +7,7 @@ use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
 use App\Models\Topic;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
+use App\Utils\TinyMceWordCounter;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Closure;
 use Livewire\Component;
 use Stevebauman\Purify\Facades\Purify;
 
@@ -59,6 +61,8 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
 
     protected function getFormSchema(): array
     {
+        $abstractWordLimit = (int) ($this->record?->track?->getMeta('abstract_word_count') ?? 0);
+
         return [
             Section::make([
                 Section::make(__('general.submission_details'))
@@ -83,7 +87,15 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                         TinyEditor::make('meta.abstract')
                             ->label(__('general.abstract'))
                             ->minHeight(300)
-                            ->minLength($this->record?->track->getMeta('abstract_word_count') ?? 0)
+                            ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) use ($abstractWordLimit) {
+                                if ($abstractWordLimit < 1 || blank($value)) {
+                                    return;
+                                }
+
+                                if (TinyMceWordCounter::countWords($value) > $abstractWordLimit) {
+                                    $fail(__('general.abstract_word_limit_exceeded', ['count' => $abstractWordLimit]));
+                                }
+                            })
                             ->required(! $this->record?->track->getMeta('do_not_require_abstracts') ?? true)
                             ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                     ]),
