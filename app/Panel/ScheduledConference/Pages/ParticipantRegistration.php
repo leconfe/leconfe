@@ -145,6 +145,8 @@ class ParticipantRegistration extends Page implements HasForms
     public function submit()
     {
         $data = $this->form->getState();
+        $paymentFormResponses = PaymentFormItem::filterOutUploadResponses(data_get($data, 'form_responses'));
+
         try {
             DB::beginTransaction();
 
@@ -182,8 +184,8 @@ class ParticipantRegistration extends Page implements HasForms
 
             $payment->save();
 
-            if (data_get($data, 'form_responses')) {
-                $payment->setMeta('form_responses', $data['form_responses']);
+            if (array_key_exists('form_responses', $data)) {
+                $payment->setMeta('form_responses', $paymentFormResponses);
             }
 
             $this->form->model($payment)->saveRelationships();

@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Submission;
 use App\Models\SubmissionFormItem;
 use Filament\Forms\Components\Textarea;
@@ -29,10 +30,13 @@ class AdditionalData extends \Livewire\Component implements HasForms
     public function submit()
     {
         $data = $this->form->getState();
+        $submissionFormResponses = SubmissionFormItem::filterOutUploadResponses(data_get($data, 'submission_form_responses'));
 
-        if ($submissionFormResponses = data_get($data, 'submission_form_responses')) {
+        if (array_key_exists('submission_form_responses', $data)) {
             $this->submission->setMeta('submission_form_responses', $submissionFormResponses);
         }
+
+        $this->form->model($this->submission)->saveRelationships();
 
         Notification::make()
             ->body(__('general.saved_successfuly'))

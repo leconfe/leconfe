@@ -202,6 +202,9 @@ class CreateSubmission extends Page implements HasForms
     public function submit()
     {
         $data = $this->form->getState();
+        $submissionFormResponses = SubmissionFormItem::filterOutUploadResponses(data_get($data, 'submission_form_responses'));
+        $paymentFormResponses = PaymentFormItem::filterOutUploadResponses(data_get($data, 'form_responses'));
+
         if (! auth()->user()->hasRole(UserRole::Author)) {
             auth()->user()->assignRole(UserRole::Author);
         }
@@ -232,9 +235,11 @@ class CreateSubmission extends Page implements HasForms
                 'role_id' => $submitAsRole->getKey(),
             ]);
 
-            if ($submissionFormResponses = data_get($data, 'submission_form_responses')) {
+            if (array_key_exists('submission_form_responses', $data)) {
                 $submission->setMeta('submission_form_responses', $submissionFormResponses);
             }
+
+            $this->form->model($submission)->saveRelationships();
 
             if ($paymentFeeId = data_get($data, 'payment_fee_id')) {
                 $paymentManager = PaymentManager::get();
@@ -259,9 +264,11 @@ class CreateSubmission extends Page implements HasForms
                     $paymentFee->amount,
                 );
 
-                if (isset($data['form_responses'])) {
-                    $payment->setMeta('form_responses', $data['form_responses']);
+                if (array_key_exists('form_responses', $data)) {
+                    $payment->setMeta('form_responses', $paymentFormResponses);
                 }
+
+                $this->form->model($payment)->saveRelationships();
             }
 
             DB::commit();

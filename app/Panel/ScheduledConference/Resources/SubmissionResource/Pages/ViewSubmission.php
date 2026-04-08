@@ -595,6 +595,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 Livewire::make(AdditionalData::class, [
                                                     'submission' => $this->record,
                                                 ])
+                                                    ->lazy()
                                                     ->key('additional_data'),
                                             ]),
                                     ]),
