@@ -117,7 +117,11 @@ class Overview extends Widget implements HasForms, HasInfolists
                     ])
                     ->schema([
                         TextEntry::make('submitted')
-                            ->getStateUsing(fn() => Submission::query()->count())
+                            ->getStateUsing(
+                                fn() => Submission::query()
+                                    ->whereNotIn('status', [SubmissionStatus::Incomplete])
+                                    ->count()
+                            )
                             ->size(TextEntrySize::Large)
                             ->color('primary')
                             ->url(SubmissionResource::getUrl('index')),
