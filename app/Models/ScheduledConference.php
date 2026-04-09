@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use Filament\Models\Contracts\HasAvatar;
@@ -160,6 +161,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'receipt_enable' => false,
             'submission_payment' => false,
             'participant_payment' => false,
+            'submission_billing_stage' => SubmissionStage::PeerReview->value,
             'payment_opened_at' => null,
             'payment_closed_at' => null,
             'required_given_name' => true,
@@ -307,6 +309,34 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function isSubmissionPaymentEnabled(): bool
     {
         return $this->getMeta('submission_payment');
+    }
+
+    public static function getSubmissionBillingStageOptions(): array
+    {
+        return [
+            SubmissionStage::CallforAbstract->value => SubmissionStage::CallforAbstract->value,
+            SubmissionStage::PeerReview->value => SubmissionStage::PeerReview->value,
+            SubmissionStage::Presentation->value => SubmissionStage::Presentation->value,
+            SubmissionStage::Editing->value => SubmissionStage::Editing->value,
+        ];
+    }
+
+    public function getSubmissionBillingStage(): SubmissionStage
+    {
+        $stage = SubmissionStage::tryFrom(
+            (string) $this->getMeta('submission_billing_stage', SubmissionStage::PeerReview->value)
+        );
+
+        if (! in_array($stage, [
+            SubmissionStage::CallforAbstract,
+            SubmissionStage::PeerReview,
+            SubmissionStage::Presentation,
+            SubmissionStage::Editing,
+        ], true)) {
+            return SubmissionStage::PeerReview;
+        }
+
+        return $stage;
     }
 
     public function isParticipantPaymentEnabled(): bool

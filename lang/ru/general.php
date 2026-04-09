@@ -382,6 +382,7 @@ return [
     'submission_complete' => 'Подача завершена',
     'submission_payment' => 'Оплата подачи',
     'enable_submission_payment' => 'Включить оплату подачи',
+    'when_submission_invoice_email_sent' => 'Когда отправлять письмо со счётом за подачу?',
     'enable_participant_payment' => 'Включить оплату участника',
     'payment_start_date' => 'Дата начала оплаты',
     'payment_end_date' => 'Дата окончания оплаты',

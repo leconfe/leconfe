@@ -382,6 +382,7 @@ return [
     'submission_complete' => 'Yuborish yakunlandi',
     'submission_payment' => 'Yuborish uchun to‘lov',
     'enable_submission_payment' => 'Yuborish uchun to‘lovni yoqish',
+    'when_submission_invoice_email_sent' => 'Topshirish bo‘yicha hisob-faktura emaili qachon yuborilsin?',
     'enable_participant_payment' => 'Ishtirokchi to‘lovini yoqish',
     'payment_start_date' => 'To‘lov boshlanish sanasi',
     'payment_end_date' => 'To‘lov tugash sanasi',

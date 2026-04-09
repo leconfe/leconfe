@@ -392,6 +392,7 @@ return [
     'submission_complete' => 'Pengajuan selesai',
     'submission_payment' => 'Pembayaran Pengajuan',
     'enable_submission_payment' => 'Aktifkan Pembayaran Pengajuan',
+    'when_submission_invoice_email_sent' => 'Kapan email tagihan pengajuan dikirim?',
     'enable_participant_payment' => 'Aktifkan Pembayaran Partisipan',
     'payment_start_date' => 'Tanggal Mulai Pembayaran',
     'payment_end_date' => 'Tanggal Akhir Pembayaran',

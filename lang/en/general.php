@@ -411,6 +411,7 @@ return [
     'submission_complete' => 'Submission complete',
     'submission_payment' => 'Submission Payment',
     'enable_submission_payment' => 'Enable Submission Payment',
+    'when_submission_invoice_email_sent' => 'When should the submission invoice email be sent?',
     'enable_participant_payment' => 'Enable Participant Payment',
     'payment_start_date' => 'Payment Start Date',
     'payment_end_date' => 'Payment End Date',

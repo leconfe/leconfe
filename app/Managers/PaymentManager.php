@@ -6,9 +6,13 @@ use App\Facades\Hook;
 use App\Interfaces\HasPayment;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\Submission;
 use App\Models\User;
+use App\Services\Billing\SubmissionBillingNotifier;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Lottery;
 
 class PaymentManager
@@ -57,6 +61,26 @@ class PaymentManager
             'additional_items' => $additionalItems,
             'base_amount' => $baseAmount ?? $paymentFee->amount,
         ]);
+
+        if ($model instanceof Submission) {
+            $submissionId = $model->getKey();
+
+            DB::afterCommit(function () use ($submissionId) {
+                $submission = Submission::withoutGlobalScopes()
+                    ->with(['payment', 'user', 'scheduledConference'])
+                    ->find($submissionId);
+
+                if (! $submission) {
+                    return;
+                }
+
+                try {
+                    app(SubmissionBillingNotifier::class)->maybeNotifyForSubmission($submission);
+                } catch (\Throwable $th) {
+                    Log::error($th->getMessage());
+                }
+            });
+        }
 
         Lottery::odds(1, 20)->winner(fn () => Payment::deleteExpired());
 

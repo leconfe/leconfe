@@ -3,15 +3,18 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Models\ScheduledConference;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Livewire\Component;
 
 class PaymentSetting extends Component implements HasForms
@@ -34,7 +37,12 @@ class PaymentSetting extends Component implements HasForms
                 Section::make()
                     ->schema([
                         Checkbox::make('meta.submission_payment')
+                            ->live()
                             ->label(__('general.enable_submission_payment')),
+                        Select::make('meta.submission_billing_stage')
+                            ->label(__('general.when_submission_invoice_email_sent'))
+                            ->options(ScheduledConference::getSubmissionBillingStageOptions())
+                            ->visible(fn (Get $get) => (bool) $get('meta.submission_payment')),
                         Checkbox::make('meta.participant_payment')
                             ->label(__('general.enable_participant_payment')),
                         Grid::make(2)
