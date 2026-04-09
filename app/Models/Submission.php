@@ -350,16 +350,32 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
                 $reviewResponses = $review->getMeta('review_responses') ?? [];
                 $reviewForms = ReviewFormItem::query()
                     ->with(['meta'])
-                    ->whereIn('id', array_keys($reviewResponses))
+                    ->ordered()
                     ->get();
 
-                $data['reviewResponses'] = collect($reviewResponses)
-                    ->filter(fn ($item, $key) => $reviewForms->find($key))
-                    ->mapWithKeys(function ($item, $key) use ($reviewForms) {
-                        $reviewForm = $reviewForms->find($key);
+                $data['reviewResponses'] = $reviewForms
+                    ->mapWithKeys(function (ReviewFormItem $reviewForm) use ($review, $reviewResponses) {
+                        $key = (string) $reviewForm->getKey();
+                        $value = $reviewResponses[$key] ?? null;
+
+                        if ($reviewForm->isUploadType() && $review->getMedia($reviewForm->getFieldId())->isEmpty()) {
+                            return [];
+                        }
+
+                        if (! $reviewForm->isUploadType() && ! array_key_exists($key, $reviewResponses)) {
+                            return [];
+                        }
+
+                        if (is_array($value) && empty($value)) {
+                            return [];
+                        }
+
+                        if (! is_array($value) && blank($value) && ! $reviewForm->isUploadType()) {
+                            return [];
+                        }
 
                         $label = $reviewForm->label;
-                        $content = $reviewForm->getContentFromValue($item);
+                        $content = $reviewForm->getContentFromValue($value, $review);
 
                         return [$label => $content];
                     });

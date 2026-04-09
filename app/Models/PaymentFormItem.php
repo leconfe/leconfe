@@ -77,7 +77,13 @@ class PaymentFormItem extends Model implements Sortable
             static::TYPE_CHECKBOX => 'Checkboxes (you can choose one or more)',
             static::TYPE_RADIO => 'Radio button (you can only choose one)',
             static::TYPE_SELECT => 'Drop down box',
+            static::TYPE_UPLOAD => 'Upload File',
         ];
+    }
+
+    public function isUploadType(): bool
+    {
+        return $this->type === static::TYPE_UPLOAD;
     }
 
     public function getFormField() : Field
@@ -95,6 +101,7 @@ class PaymentFormItem extends Model implements Sortable
     public function getInfolistEntry()
     {
         return match($this->type){
+            static::TYPE_UPLOAD => $this->uploadEntry(),
             default => $this->textEntry(),
         };
     }
@@ -104,6 +111,25 @@ class PaymentFormItem extends Model implements Sortable
         return TextEntry::make($this->getFieldId())
             ->label($this->getMeta('name'))
             ->getStateUsing(fn($record) => $record->getFormItemResponse($this));
+    }
+
+    public function uploadEntry(): TextEntry
+    {
+        return TextEntry::make($this->getFieldId())
+            ->label($this->getMeta('name'))
+            ->html()
+            ->getStateUsing(function (Payment $record) {
+                $mediaFiles = $record->getMedia($this->getFieldId());
+                if ($mediaFiles->isEmpty()) {
+                    return '-';
+                }
+
+                return new HtmlString(
+                    $mediaFiles
+                        ->map(fn (Media $media) => '<a href="'.e($media->getTemporaryUrl(now()->addMinutes(5))).'" target="_blank" class="text-primary-600 hover:underline">'.e($media->original_file_name).'</a>')
+                        ->implode('<br>')
+                );
+            });
     }
 
     protected function getFieldId(): string
@@ -166,9 +192,36 @@ class PaymentFormItem extends Model implements Sortable
         return SpatieMediaLibraryFileUpload::make($this->getFieldId())
             ->label($this->getMeta('name'))
             ->helperText(new HtmlString($this->getMeta('description')))
+            ->disk('private-files')
+            ->visibility('private')
+            ->multiple(false)
             ->downloadable()
             ->required($this->required)
+            ->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
+                if (! $component->getRecord() instanceof Payment) {
+                    return;
+                }
+
+                $component->saveUploadedFiles();
+            })
             ->collection($this->getFieldId());
+    }
+
+    public static function filterOutUploadResponses(?array $responses): array
+    {
+        if (! is_array($responses)) {
+            return [];
+        }
+
+        $uploadFieldIds = static::query()
+            ->where('type', static::TYPE_UPLOAD)
+            ->pluck('id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+
+        return collect($responses)
+            ->reject(fn ($value, $key) => in_array((string) $key, $uploadFieldIds, true))
+            ->toArray();
     }
 
     public static function buildFormSchema(int $paymentType) : array

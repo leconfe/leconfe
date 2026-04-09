@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Radio;
@@ -31,6 +32,8 @@ class ReviewFormItem extends Model implements Sortable
 
     public const TYPE_SELECT = 5;
 
+    public const TYPE_UPLOAD = 6;
+
     protected $table = 'submission_review_form_items';
 
     protected $fillable = [
@@ -54,7 +57,13 @@ class ReviewFormItem extends Model implements Sortable
             static::TYPE_SELECT => 'Drop down box with weight scoring.',
             static::TYPE_CHECKBOX => 'Checkboxes (you can choose one or more)',
             static::TYPE_RADIO => 'Radio button (you can only choose one)',
+            static::TYPE_UPLOAD => 'Upload File',
         ];
+    }
+
+    public function isUploadType(): bool
+    {
+        return $this->type === static::TYPE_UPLOAD;
     }
 
     public function isEnableScoring(): bool
@@ -62,7 +71,7 @@ class ReviewFormItem extends Model implements Sortable
         return $this->type === static::TYPE_SELECT && filled($this->weight);
     }
 
-    protected function getFieldId(): string
+    public function getFieldId(): string
     {
         return 'meta.review_responses.'.$this->getKey();
     }
@@ -75,6 +84,7 @@ class ReviewFormItem extends Model implements Sortable
             static::TYPE_CHECKBOX => $this->fieldCheckbox(),
             static::TYPE_RADIO => $this->fieldRadio(),
             static::TYPE_SELECT => $this->fieldSelect(),
+            static::TYPE_UPLOAD => $this->fieldUpload(),
         };
     }
 
@@ -121,6 +131,26 @@ class ReviewFormItem extends Model implements Sortable
             ->options(collect($this->getMeta('select_options') ?? [])->mapWithKeys(fn ($item, $key) => [$item['value'] => $item['label']])->toArray());
     }
 
+    protected function fieldUpload(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make($this->getFieldId())
+            ->label($this->label)
+            ->helperText(new HtmlString($this->getMeta('description')))
+            ->required($this->getMeta('required'))
+            ->disk('private-files')
+            ->visibility('private')
+            ->multiple(false)
+            ->downloadable()
+            ->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
+                if (! $component->getRecord() instanceof Review) {
+                    return;
+                }
+
+                $component->saveUploadedFiles();
+            })
+            ->collection($this->getFieldId());
+    }
+
     protected function getAllDefaultMeta(): array
     {
         return [
@@ -128,13 +158,33 @@ class ReviewFormItem extends Model implements Sortable
         ];
     }
 
-    public function getContentFromValue($value): mixed
+    public function getContentFromValue($value, ?Review $review = null): mixed
     {
         return match ($this->type) {
             static::TYPE_TEXT, static::TYPE_TEXTAREA => $value ?? '-',
             static::TYPE_SELECT => optional(collect($this->getMeta('select_options') ?? [])->firstWhere('value', $value))['label'] ?? '-',
             static::TYPE_CHECKBOX => collect($this->getMeta('checkbox_options') ?? [])->only($value ?? [])->implode(', '),
             static::TYPE_RADIO => collect($this->getMeta('radio_options') ?? [])->get($value, '-'),
+            static::TYPE_UPLOAD => $review?->getMedia($this->getFieldId())
+                ->map(fn (Media $media) => $media->original_file_name)
+                ->implode(', ') ?: '-',
         };
+    }
+
+    public static function filterOutUploadResponses(?array $responses): array
+    {
+        if (! is_array($responses)) {
+            return [];
+        }
+
+        $uploadFieldIds = static::query()
+            ->where('type', static::TYPE_UPLOAD)
+            ->pluck('id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+
+        return collect($responses)
+            ->reject(fn ($value, $key) => in_array((string) $key, $uploadFieldIds, true))
+            ->toArray();
     }
 }

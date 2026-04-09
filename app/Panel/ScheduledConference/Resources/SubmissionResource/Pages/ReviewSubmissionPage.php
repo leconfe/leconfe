@@ -189,6 +189,10 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
 
+                if (array_key_exists('review_responses', data_get($data, 'meta', []))) {
+                    data_set($data, 'meta.review_responses', ReviewFormItem::filterOutUploadResponses(data_get($data, 'meta.review_responses')));
+                }
+
                 if (isset($data['meta']['review_responses'])) {
                     $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses'] ?? []);
                 }
@@ -197,6 +201,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                     DB::beginTransaction();
 
                     ReviewUpdateAction::run($this->review, $data);
+                    $this->form->model($this->review)->saveRelationships();
 
                     Log::make(
                         name: 'submission',
@@ -245,8 +250,13 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->action(function (Action $action) {
                 $data = $this->formData;
 
+                if (array_key_exists('review_responses', data_get($data, 'meta', []))) {
+                    data_set($data, 'meta.review_responses', ReviewFormItem::filterOutUploadResponses(data_get($data, 'meta.review_responses')));
+                }
+
                 try {
                     ReviewUpdateAction::run($this->review, $data);
+                    $this->form->model($this->review)->saveRelationships();
                 } catch (\Throwable $th) {
                     $action->failureNotificationTitle($th->getMessage());
                     $action->failure();
