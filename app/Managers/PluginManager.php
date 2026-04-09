@@ -233,7 +233,7 @@ class PluginManager
         return PluginSetting::query()
             ->updateOrInsert(
                 [
-                    'plugin' => $plugin,
+                    'plugin' => $pluginFolder,
                     'conference_id' => $conferenceId,
                     'scheduled_conference_id' => $scheduledConferenceId,
                     'key' => $key,
