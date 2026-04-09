@@ -66,7 +66,6 @@ class PluginPopulateDefaultSettingAction
 							],
 						);
 				}
-				return;
 			}
 
 			if ($context instanceof Conference) {
@@ -85,7 +84,6 @@ class PluginPopulateDefaultSettingAction
 							],
 						);
 				}
-				return;
 			}
 
 			if ($context instanceof Site) {
@@ -104,7 +102,6 @@ class PluginPopulateDefaultSettingAction
 							],
 						);
 				}
-				return;
 			}
 		}
 	}
