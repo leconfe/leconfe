@@ -303,6 +303,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                     })
                     ->form(
                         fn (Form $form, Review $record) => $form
+                            ->model($record)
                             ->id('readReview')
                             ->schema([
                                 Placeholder::make('')

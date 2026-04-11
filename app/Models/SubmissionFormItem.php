@@ -66,7 +66,13 @@ class SubmissionFormItem extends Model implements Sortable
             static::TYPE_CHECKBOX => 'Checkboxes (you can choose one or more)',
             static::TYPE_RADIO => 'Radio button (you can only choose one)',
             static::TYPE_SELECT => 'Drop down box',
+            static::TYPE_UPLOAD => 'Upload File',
         ];
+    }
+
+    public function isUploadType(): bool
+    {
+        return $this->type === static::TYPE_UPLOAD;
     }
 
     public function getFormField(): Field
@@ -155,9 +161,29 @@ class SubmissionFormItem extends Model implements Sortable
         return SpatieMediaLibraryFileUpload::make($this->getFieldId())
             ->label($this->getMeta('name'))
             ->helperText(new HtmlString($this->getMeta('description')))
+            ->disk('private-files')
+            ->visibility('private')
+            ->multiple(false)
             ->downloadable()
             ->required($this->required)
             ->collection($this->getFieldId());
+    }
+
+    public static function filterOutUploadResponses(?array $responses): array
+    {
+        if (! is_array($responses)) {
+            return [];
+        }
+
+        $uploadFieldIds = static::query()
+            ->where('type', static::TYPE_UPLOAD)
+            ->pluck('id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+
+        return collect($responses)
+            ->reject(fn ($value, $key) => in_array((string) $key, $uploadFieldIds, true))
+            ->toArray();
     }
 
     public static function buildFormSchema(): array
