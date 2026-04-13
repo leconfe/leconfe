@@ -405,7 +405,7 @@ return [
     'submission_complete' => 'الاستلام مكتمل',
     'submission_payment' => 'دفع الاستلام',
     'enable_submission_payment' => 'تمكين الدفع عن طريق الإرسال',
-    'when_submission_invoice_email_sent' => 'متى يجب إرسال بريد فاتورة التقديم؟',
+    'when_submission_payment_available' => 'متى يجب أن يصبح دفع التقديم متاحًا؟',
     'enable_participant_payment' => 'تمكين دفع المشارك',
     'payment_start_date' => 'تاريخ بدء الدفع',
     'payment_end_date' => 'تاريخ انتهاء الدفع',

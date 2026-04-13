@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Payment;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
@@ -12,14 +13,38 @@ class SubmissionBillingNotifier
 {
     public const PAYMENT_META_AUTO_NOTIFIED_AT = 'submission_invoice_notified_at';
 
-    public function maybeNotifyForSubmission(Submission $submission): bool
+    public function isSubmissionPaymentAvailable(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
     {
-        $scheduledConference = $this->resolveScheduledConference($submission);
+        if (! $this->isSubmissionBillingStageReached($submission, $scheduledConference)) {
+            return false;
+        }
+
+        return ! in_array($submission->status, [
+            SubmissionStatus::Declined,
+            SubmissionStatus::Withdrawn,
+        ], true);
+    }
+
+    public function isSubmissionBillingStageReached(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
+    {
+        $scheduledConference ??= $this->resolveScheduledConference($submission);
 
         if (! $scheduledConference || ! $scheduledConference->isSubmissionPaymentEnabled()) {
             return false;
         }
 
+        $currentStage = $submission->stage;
+        $triggerStage = $scheduledConference->getSubmissionBillingStage();
+
+        if (! $currentStage) {
+            return false;
+        }
+
+        return $this->isStageReached($currentStage, $triggerStage);
+    }
+
+    public function maybeNotifyForSubmission(Submission $submission): bool
+    {
         $payment = Payment::withoutGlobalScopes()
             ->where('model_type', Submission::class)
             ->where('model_id', $submission->getKey())
@@ -33,10 +58,7 @@ class SubmissionBillingNotifier
             return false;
         }
 
-        $currentStage = $submission->stage;
-        $triggerStage = $scheduledConference->getSubmissionBillingStage();
-
-        if (! $currentStage || ! $this->isStageReached($currentStage, $triggerStage)) {
+        if (! $this->isSubmissionPaymentAvailable($submission)) {
             return false;
         }
 

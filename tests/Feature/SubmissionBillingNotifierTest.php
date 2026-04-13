@@ -131,6 +131,30 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertCount(1, Notification::sent($contextB['user'], SubmissionPayment::class));
     }
 
+    public function test_it_does_not_send_submission_invoice_for_declined_or_withdrawn_submission(): void
+    {
+        $declined = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Declined,
+            userEmail: 'declined@example.test',
+        );
+
+        $withdrawn = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Withdrawn,
+            userEmail: 'withdrawn@example.test',
+        );
+
+        Notification::fake();
+
+        $this->queueSubmissionPayment($declined['submission'], $declined['paymentFee']);
+        $this->queueSubmissionPayment($withdrawn['submission'], $withdrawn['paymentFee']);
+
+        Notification::assertNothingSent();
+    }
+
     protected function makeSubmissionContext(
         SubmissionStage $billingStage,
         SubmissionStage $submissionStage,

@@ -40,7 +40,7 @@ class PaymentSetting extends Component implements HasForms
                             ->live()
                             ->label(__('general.enable_submission_payment')),
                         Select::make('meta.submission_billing_stage')
-                            ->label(__('general.when_submission_invoice_email_sent'))
+                            ->label(__('general.when_submission_payment_available'))
                             ->options(ScheduledConference::getSubmissionBillingStageOptions())
                             ->visible(fn (Get $get) => (bool) $get('meta.submission_payment')),
                         Checkbox::make('meta.participant_payment')

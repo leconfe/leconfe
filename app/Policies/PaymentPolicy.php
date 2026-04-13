@@ -2,16 +2,42 @@
 
 namespace App\Policies;
 
+use App\Managers\PaymentManager;
 use App\Models\Payment;
+use App\Models\ScheduledConference;
+use App\Models\Submission;
 use App\Models\User;
+use App\Services\Billing\SubmissionBillingNotifier;
 
 class PaymentPolicy
 {
     public function view(User $user, Payment $payment)
     {
-        if ($payment->user?->is($user) || $user->can('Payment:view')) {
+        if ($user->can('Payment:view')) {
             return true;
         }
+
+        if (! $payment->user?->is($user)) {
+            return false;
+        }
+
+        if ($payment->type !== PaymentManager::TYPE_SUBMISSION_FEE) {
+            return true;
+        }
+
+        $submission = Submission::withoutGlobalScopes()->find($payment->model_id);
+
+        if (! $submission) {
+            return false;
+        }
+
+        $scheduledConference = ScheduledConference::withoutGlobalScopes()->find($payment->scheduled_conference_id);
+
+        if (! $scheduledConference || ! $submission->stage) {
+            return false;
+        }
+
+        return app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($submission, $scheduledConference);
     }
 
     public function viewAny(User $user)
