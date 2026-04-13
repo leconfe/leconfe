@@ -14,7 +14,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class RegistrationWarning extends Widget implements HasActions, HasForms
 {
@@ -50,41 +49,18 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
                     ->label('Role')
                     ->multiple()
                     ->required()
-                    ->searchable()
-                    ->preload()
                     ->options($this->getAssignableRoleOptions()),
             ])
             ->modalSubmitActionLabel('Assign')
             ->action(function (array $data): void {
                 $user = auth()->user();
-                $roleIds = collect($data['roles'] ?? [])->filter()->map(fn($roleId) => (int) $roleId)->values();
-                $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
-                $conferenceId = app()->getCurrentConferenceId() ?? app()->getCurrentScheduledConference()?->conference_id ?? 0;
+                $roleNames = collect($data['roles'] ?? [])->filter()->values();
 
-                if (!$user || !$scheduledConferenceId || $roleIds->isEmpty()) {
+                if (!$user || $roleNames->isEmpty()) {
                     return;
                 }
 
-                $availableRoleIds = Role::withoutGlobalScopes()
-                    ->where('scheduled_conference_id', $scheduledConferenceId)
-                    ->whereIn('id', $roleIds)
-                    ->pluck('id');
-
-                $attachPayload = $availableRoleIds
-                    ->mapWithKeys(fn(int $roleId) => [
-                        $roleId => [
-                            'conference_id' => $conferenceId,
-                            'scheduled_conference_id' => $scheduledConferenceId,
-                        ]
-                    ])
-                    ->toArray();
-
-                if (empty($attachPayload)) {
-                    return;
-                }
-
-                $user->roles()->syncWithoutDetaching($attachPayload);
-                $user->unsetRelation('roles');
+                $roleNames->each(fn(string $roleName) => $user->assignRole($roleName));
 
                 Notification::make()
                     ->success()
@@ -111,10 +87,9 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
      */
     protected function getAssignableRoleOptions(): Collection
     {
-        $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
         $scheduledConference = app()->getCurrentScheduledConference();
 
-        if (!$scheduledConferenceId || !$scheduledConference) {
+        if (!$scheduledConference) {
             return collect();
         }
 
@@ -128,18 +103,14 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
         }
 
         return Role::withoutGlobalScopes()
-            ->where('scheduled_conference_id', $scheduledConferenceId)
+            ->availableRolesByContext()
             ->whereIn('name', $allowedSelfAssignRoles)
             ->orderBy('name')
-            ->pluck('name', 'id');
+            ->pluck('name', 'name');
     }
 
     protected static function isRegisteredInCurrentScheduledConference(int $userId, int $scheduledConferenceId): bool
     {
-        return DB::table(config('permission.table_names.model_has_roles', 'model_has_roles'))
-            ->where('model_type', User::class)
-            ->where('model_id', $userId)
-            ->where('scheduled_conference_id', $scheduledConferenceId)
-            ->exists();
+        return User::find($userId)?->roles()->exists() ?? false;
     }
 }
