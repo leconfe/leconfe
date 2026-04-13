@@ -44,6 +44,7 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
             ->label('Assign')
             ->icon('heroicon-o-user-plus')
             ->color('warning')
+            ->modalAutofocus(false)
             ->form([
                 Select::make('roles')
                     ->label('Role')
