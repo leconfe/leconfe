@@ -8,10 +8,11 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 
@@ -41,14 +42,14 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
     public function assignRoleAction(): Action
     {
         return Action::make('assignRole')
-            ->label('Assign')
+            ->label('Assign Roles')
             ->icon('heroicon-o-user-plus')
+            ->modalWidth(MaxWidth::Large)
             ->color('warning')
             ->modalAutofocus(false)
             ->form([
-                Select::make('roles')
-                    ->label('Role')
-                    ->multiple()
+                CheckboxList::make('roles')
+                    ->hiddenLabel()
                     ->required()
                     ->options($this->getAssignableRoleOptions()),
             ])
