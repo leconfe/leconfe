@@ -7,8 +7,10 @@ use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptAbstractMail;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
+use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Notifications\AbstractAccepted;
@@ -20,10 +22,13 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
@@ -228,6 +233,49 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                 return [$paper->getKey() => $paper->type->name];
                             });
                     }),
+                Grid::make()
+                    ->visible(fn () => ! $this->submission->payment && app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled())
+                    ->schema([
+                        Radio::make('payment_fee_id')
+                            ->label('Payment Fee')
+                            ->required()
+                            ->live()
+                            ->options(
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                            )
+                            ->descriptions(
+                                fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
+                                    ->active()
+                                    ->get()
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
+                            ),
+                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                            ->schema(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+                                if (! $paymentFee) {
+                                    return [];
+                                }
+
+                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                    $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
+
+                                    return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
+                                        ->label("{$item['name']} ({$formattedAmount})")
+                                        ->helperText($item['description'] ?? null)
+                                        ->minValue(0)
+                                        ->maxValue(999);
+                                })->toArray();
+                            })
+                            ->columns(1)
+                            ->visible(function (Get $get) {
+                                $paymentFee = PaymentFee::find($get('payment_fee_id'));
+
+                                return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
+                            }),
+                    ]),
                 Fieldset::make('Notification')
                     ->label(__('general.notification'))
                     ->columns(1)
@@ -280,6 +328,33 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                     'category' => SubmissionFileCategory::PAPER_FILES,
                                     'media_id' => $clonedMedia->getKey(),
                                 ]);
+                        }
+
+                        if (! $this->submission->payment && app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()) {
+                            $paymentFee = PaymentFee::find(data_get($data, 'payment_fee_id'));
+
+                            if (! $paymentFee) {
+                                throw new \Exception('Payment Fee not found');
+                            }
+
+                            $additionalItems = data_get($data, 'additional_items', []);
+                            $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+                            $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
+
+                            PaymentManager::get()->queue(
+                                $this->submission,
+                                $paymentFee,
+                                $this->submission->user,
+                                PaymentManager::TYPE_SUBMISSION_FEE,
+                                $this->submission->getMeta('title'),
+                                SubmissionResource::getUrl('view', ['record' => $this->submission]),
+                                $paymentFee->getMeta('description'),
+                                $totalAmount,
+                                $paymentFee->currency,
+                                null,
+                                $selectedAdditionalItems,
+                                $paymentFee->amount,
+                            );
                         }
 
                         if (! $data['no-notification']) {

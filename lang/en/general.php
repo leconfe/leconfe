@@ -411,6 +411,7 @@ return [
     'submission_complete' => 'Submission complete',
     'submission_payment' => 'Submission Payment',
     'enable_submission_payment' => 'Enable Submission Payment',
+    'when_submission_payment_available' => 'When should submission payment become available?',
     'enable_participant_payment' => 'Enable Participant Payment',
     'payment_start_date' => 'Payment Start Date',
     'payment_end_date' => 'Payment End Date',

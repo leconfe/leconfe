@@ -34,6 +34,7 @@ use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
 use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Services\Billing\SubmissionBillingNotifier;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -176,7 +177,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 }),
             Action::make('payment_detail')
                 ->label('Payment Detail')
-                ->visible(fn (Submission $record) => ! $record->stage->is(SubmissionStage::Wizard) && $record->payment)
+                ->visible(fn (Submission $record) => ! $record->stage->is(SubmissionStage::Wizard)
+                    && $record->payment
+                    && app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($record))
                 ->url(fn (Submission $record) => PaymentDetail::getUrl(['record' => $record->payment])),
             Action::make('view')
                 ->icon('heroicon-o-eye')

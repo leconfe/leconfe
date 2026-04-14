@@ -9,7 +9,6 @@ use App\Models\Role;
 use App\Models\Submission;
 use App\Models\User;
 use App\Notifications\NewSubmission;
-use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
@@ -71,10 +70,6 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                         User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
                             ->lazy()
                             ->each(fn($user) => $user->notify(new NewSubmission($this->record)));
-                    }
-
-                    if ($this->record->payment) {
-                        $this->record->user->notify(new SubmissionPayment($this->record));
                     }
 
                     $this->record->touch();

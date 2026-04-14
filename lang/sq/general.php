@@ -392,6 +392,7 @@ return [
     'submission_complete' => 'Dorëzimi i Plotë',
     'submission_payment' => 'Pagesa e Dorëzimit',
     'enable_submission_payment' => 'Aktivizo pagesën e dorëzimit',
+    'when_submission_payment_available' => 'Kur duhet të bëhet e disponueshme pagesa e dorëzimit?',
     'enable_participant_payment' => 'Aktivizo pagesën e pjesëmarrësit',
     'payment_start_date' => 'Data e fillimit të pagesës',
     'payment_end_date' => 'Data e mbarimit të pagesës',

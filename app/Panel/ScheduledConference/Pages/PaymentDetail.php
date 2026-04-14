@@ -151,7 +151,12 @@ class PaymentDetail extends Page
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
                         \Filament\Forms\Components\Fieldset::make('Add-on Items')
-                            ->schema(function (Get $get, Payment $record) {
+                            ->schema(function (Get $get, ?Payment $record) {
+                                $record ??= $this->record;
+                                if (! $record) {
+                                    return [];
+                                }
+
                                 $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
                                 $paymentFee = PaymentFee::find($paymentFeeId);
 
@@ -175,13 +180,19 @@ class PaymentDetail extends Page
                                 })->toArray();
                             })
                             ->columns(1)
-                            ->visible(function (Get $get, Payment $record) {
+                            ->visible(function (Get $get, ?Payment $record) {
+                                $record ??= $this->record;
+                                if (! $record) {
+                                    return false;
+                                }
+
                                 $paymentFeeId = $get('payment_fee_id') ?: $record->payment_fee_id;
                                 $paymentFee = PaymentFee::find($paymentFeeId);
 
                                 return $paymentFee && count($paymentFee->getAdditionalItems()) > 0;
                             }),
                         Checkbox::make('dont_send_notification')
+                            ->visible(fn () => $this->record?->type == PaymentManager::TYPE_PARTICIPANT_FEE)
                             ->label(__('general.dont_send_notification')),
                     ])
                     ->action(function (Action $action, Payment $record, array $data) {
@@ -203,13 +214,8 @@ class PaymentDetail extends Page
                             $updateData['invoice'] = $data['invoice'];
                         }
 
-                        if (! $data['dont_send_notification']) {
-                            if ($this->record->type == PaymentManager::TYPE_SUBMISSION_FEE) {
-                                $this->record?->user->notify(new SubmissionPayment($this->record->model));
-                            } else {
-                                $this->record?->user->notify(new ParticipantPayment($this->record->model));
-                            }
-
+                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+                            $record->user?->notify(new ParticipantPayment($record->model));
                         }
 
                         $record->update($updateData);
@@ -217,6 +223,27 @@ class PaymentDetail extends Page
                         $record->setMeta('base_amount', $paymentFee->amount);
 
                         $action->successNotificationTitle('Payment Fee Updated');
+                        $action->success();
+                    }),
+                Action::make('resend_submission_invoice_email')
+                    ->label('Resend Submission Invoice Email')
+                    ->color('gray')
+                    ->authorize(fn (?Payment $record) => $record ? auth()->user()->can('update', $record) : false)
+                    ->visible(fn (?Payment $record) => $record?->type == PaymentManager::TYPE_SUBMISSION_FEE)
+                    ->requiresConfirmation()
+                    ->action(function (Action $action, Payment $record) {
+                        $submission = $record->model;
+
+                        if (! $submission || ! $record->user) {
+                            $action->failureNotificationTitle(__('general.failed_send_notification'));
+                            $action->failure();
+
+                            return;
+                        }
+
+                        $record->user->notify(new SubmissionPayment($submission));
+
+                        $action->successNotificationTitle('Submission invoice email resent');
                         $action->success();
                     }),
                 Action::make('mark_as_paid')

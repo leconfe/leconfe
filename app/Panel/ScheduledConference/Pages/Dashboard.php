@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
+use App\Actions\Plugins\PluginPopulateDefaultSettingAction;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Models\Enums\UserRole;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ManageSubmissions;
