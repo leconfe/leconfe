@@ -88,8 +88,12 @@ class ProceedingResource extends Resource
                 Repeater::make('meta.additional_content')
                     ->label(__('general.additional_content'))
                     ->addActionAlignment(Alignment::Start)
+                    ->collapsible()
+                    ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
                     ->schema([
-                        TextInput::make('title')->required(),
+                        TextInput::make('title')
+                            ->required()
+                            ->live(onBlur: true),
                         TinyEditor::make('content')
                             ->label(__('general.content'))
                             ->profile('basic')
