@@ -14,7 +14,7 @@
 
         <div class="md:flex" x-data="{ activeTab: 'home' }" x-cloak>
             @if(!empty($additionalContents))
-                <ul class="min-w-48 flex-column space-y space-y-2 text-sm font-medium text-body md:me-4 mb-4 md:mb-0">
+                <ul class="md:w-96 flex-column space-y space-y-2 text-sm font-medium text-body md:me-4 mb-4 md:mb-0">
                     <li>
                         <button type="button"
                             x-on:click="activeTab='home'"
@@ -25,6 +25,7 @@
                         </button>
                     </li>
                     @foreach ($additionalContents as $key => $additionalContent)
+                    <li>
                         <button 
                             x-on:click="activeTab='tab-{{ $key }}'"
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'tab-{{ $key }}', 'hover:bg-gray-100' : activeTab != 'tab-{{ $key }}'}"
@@ -33,6 +34,8 @@
                             aria-current="page">
                             {{ $additionalContent['title'] }}
                         </button>
+                    </li>
+                    
                     @endforeach
                 </ul>
             @endif
