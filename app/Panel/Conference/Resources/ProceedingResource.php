@@ -89,6 +89,7 @@ class ProceedingResource extends Resource
                     ->label(__('general.additional_content'))
                     ->addActionAlignment(Alignment::Start)
                     ->collapsible()
+                    ->reorderableWithButtons()
                     ->itemLabel(fn(array $state): ?string => $state['title'] ?? null)
                     ->schema([
                         TextInput::make('title')
