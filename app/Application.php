@@ -15,6 +15,7 @@ use App\Models\NavigationMenu;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\PaymentFormItem;
 use App\Models\Presentation;
 use App\Models\Proceeding;
 use App\Models\Registration;
@@ -183,6 +184,7 @@ class Application extends LaravelApplication
             RegistrationPayment::class,
             Payment::class,
             PaymentFee::class,
+            PaymentFormItem::class,
             Participant::class,
             ReviewFormItem::class,
             UserInvitation::class,
