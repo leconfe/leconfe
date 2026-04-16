@@ -42,7 +42,7 @@ class AbstractAccepted extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable)
     {
-        return FilamentNotification::make('abstract-accepted')
+        return FilamentNotification::make()
             ->icon('lineawesome-check-circle')
             ->iconColor('success')
             ->title(__('general.abstract_accepted'))

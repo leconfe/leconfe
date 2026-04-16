@@ -33,7 +33,7 @@ class NewDiscussionTopic extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable)
     {
-        return FilamentNotification::make('new-topic-created')
+        return FilamentNotification::make()
             ->icon('lineawesome-check-circle')
             ->iconColor('success')
             ->title(__('general.new_discussion_topic_created'))

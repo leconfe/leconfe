@@ -43,7 +43,7 @@ class DiscussionDetailForm extends \Livewire\Component implements HasForms
 
         $this->form->model($discussion)->saveRelationships();
 
-        Notification::make('discussion-added')
+        Notification::make()
             ->success()
             ->title(__('general.discussion_added'))
             ->body(__('general.discussion_added_has_been_added_succesfully'))

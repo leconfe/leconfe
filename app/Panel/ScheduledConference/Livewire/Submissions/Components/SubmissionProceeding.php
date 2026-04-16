@@ -148,12 +148,12 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
 
             $this->form->model($submission)->saveRelationships();
 
-            Notification::make('success')
+            Notification::make()
                 ->success()
                 ->title(__('general.saved'))
                 ->send();
         } catch (\Throwable $th) {
-            Notification::make('error')
+            Notification::make()
                 ->danger()
                 ->title(__('general.error'))
                 ->body(__('general.there_was_error_please_contact_administrator'))

@@ -28,7 +28,7 @@ class SubmissionWithdrawRequested extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable)
     {
-        return FilamentNotification::make('submission-withdraw-requested')
+        return FilamentNotification::make()
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('danger')
             ->title('Withdrawal Request')
