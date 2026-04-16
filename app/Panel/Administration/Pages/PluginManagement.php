@@ -66,7 +66,7 @@ class PluginManagement extends Page implements HasForms, HasInfolists
                     try {
                         PluginFacade::install(PluginFacade::getTempDisk()->path($data['file']));
                     } catch (\Throwable $th) {
-                        Notification::make('install-failed')
+                        Notification::make()
                             ->danger()
                             ->title(__('general.failed_to_install_plugin'))
                             ->send();
@@ -79,7 +79,7 @@ class PluginManagement extends Page implements HasForms, HasInfolists
 
                     $this->dispatch('refresh-table');
 
-                    Notification::make('install-success')
+                    Notification::make()
                         ->title(__('general.install_success'))
                         ->success()
                         ->body(__('general.plugin_installed_successfully'))

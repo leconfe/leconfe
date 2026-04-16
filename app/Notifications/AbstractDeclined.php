@@ -44,7 +44,7 @@ class AbstractDeclined extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable)
     {
-        return FilamentNotification::make('abstract-declined')
+        return FilamentNotification::make()
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('danger')
             ->title(__('general.abstract_declined'))
