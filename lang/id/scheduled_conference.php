@@ -22,4 +22,8 @@ return [
     'review_form' => 'Formulir Review',
     'form_preview' => 'Pratinjau Formulir',
     'how_to_publish_presentation' => 'Bagaimana cara mempublikasikan presentasi?',
+    'presentation_other_no_preview_title' => 'Preview tidak tersedia.',
+    'presentation_other_no_preview_description' => 'Silakan unduh file presentasi untuk melihat kontennya.',
+    'presentation_other_download_button' => 'Unduh File Presentasi',
+    'presentation_other_file_not_available' => 'File belum tersedia.',
 ];

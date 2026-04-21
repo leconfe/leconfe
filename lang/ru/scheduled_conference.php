@@ -22,4 +22,8 @@ return [
     'review_form' => 'Форма рецензии',
     'form_preview' => 'Предварительный просмотр формы',
     'how_to_publish_presentation' => 'Как опубликовать презентацию?',
+    'presentation_other_no_preview_title' => 'Предварительный просмотр недоступен.',
+    'presentation_other_no_preview_description' => 'Пожалуйста, скачайте файл презентации, чтобы просмотреть его содержимое.',
+    'presentation_other_download_button' => 'Скачать файл презентации',
+    'presentation_other_file_not_available' => 'Файл пока недоступен.',
 ];

@@ -175,6 +175,7 @@ class Presentation extends Model implements HasMedia
     {
         return match ($this->type) {
             PresentationType::PDF => $this->getIframeUrlPdf(),
+            PresentationType::Other => '',
             PresentationType::Youtube => $this->getIframeUrlYoutube(),
             PresentationType::GoogleSlide => $this->getIframeUrlGoogleSlide(),
             default => '',
@@ -191,6 +192,21 @@ class Presentation extends Model implements HasMedia
 
         if ($media->disk === 'private-files') {
             return $media->getTemporaryUrl(Carbon::now()->addMinutes(5), options: ['inline' => 1]);
+        }
+
+        return $media->getUrl();
+    }
+
+    public function getDownloadUrl() : string
+    {
+        $media = $this->getFirstMedia('pdf');
+
+        if (! $media) {
+            return '';
+        }
+
+        if ($media->disk === 'private-files') {
+            return $media->getTemporaryUrl(Carbon::now()->addMinutes(5));
         }
 
         return $media->getUrl();

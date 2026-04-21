@@ -22,4 +22,8 @@ return [
     'review_form' => 'Formulari i Recensimit',
     'form_preview' => 'Parapamje e Formularit',
     'how_to_publish_presentation' => 'Si ta publikoni prezantimin?',
+    'presentation_other_no_preview_title' => 'Parapamja nuk është e disponueshme.',
+    'presentation_other_no_preview_description' => 'Ju lutemi shkarkoni skedarin e prezantimit për të parë përmbajtjen e tij.',
+    'presentation_other_download_button' => 'Shkarko skedarin e prezantimit',
+    'presentation_other_file_not_available' => 'Skedari nuk është ende i disponueshëm.',
 ];

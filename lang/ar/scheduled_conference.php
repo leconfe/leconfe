@@ -22,4 +22,8 @@ return [
     'review_form' => 'نموذج المراجعة',
     'form_preview' => 'معاينة النموذج',
     'how_to_publish_presentation' => 'كيفية نشر العرض التقديمي؟',
+    'presentation_other_no_preview_title' => 'المعاينة غير متاحة.',
+    'presentation_other_no_preview_description' => 'يرجى تنزيل ملف العرض التقديمي لعرض محتواه.',
+    'presentation_other_download_button' => 'تنزيل ملف العرض التقديمي',
+    'presentation_other_file_not_available' => 'الملف غير متاح بعد.',
 ];

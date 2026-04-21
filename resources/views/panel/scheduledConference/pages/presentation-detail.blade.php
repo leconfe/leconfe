@@ -2,9 +2,38 @@
     <div class="space-y-4">
         <div class="grid xl:grid-cols-3 ">
             <div class="xl:col-span-2 fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
-                <div class="container-iframe-16-9 rounded-t-xl">
-                    <iframe class="responsive-iframe" src="{{ $record->getIframeUrl() }}" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-                </div>
+                @if ($record->type === \App\Models\Enums\PresentationType::Other)
+                    <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 p-8">
+                        <div class="mx-auto max-w-xl text-center">
+                            <x-heroicon-o-arrow-down-tray class="mx-auto h-10 w-10 text-primary-600" />
+                            <h2 class="mt-3 text-base font-semibold text-gray-900">
+                                {{ __('scheduled_conference.presentation_other_no_preview_title') }}
+                            </h2>
+                            <p class="mt-2 text-sm text-gray-600">
+                                {{ __('scheduled_conference.presentation_other_no_preview_description') }}
+                            </p>
+
+                            @if ($record->getDownloadUrl())
+                                <a
+                                    href="{{ $record->getDownloadUrl() }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="fi-btn fi-btn-size-sm fi-btn-color-primary mt-4 inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition duration-75"
+                                >
+                                    {{ __('scheduled_conference.presentation_other_download_button') }}
+                                </a>
+                            @else
+                                <p class="mt-3 text-xs text-gray-500">
+                                    {{ __('scheduled_conference.presentation_other_file_not_available') }}
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                @else
+                    <div class="container-iframe-16-9 rounded-t-xl">
+                        <iframe class="responsive-iframe" src="{{ $record->getIframeUrl() }}" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                    </div>
+                @endif
                 <div class="py-2.5 px-3">
                     <h1 class="text-lg font-medium">
                         {{ $record->submission->getMeta('title') }}

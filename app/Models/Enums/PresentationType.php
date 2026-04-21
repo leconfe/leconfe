@@ -14,6 +14,7 @@ enum PresentationType: int implements HasLabel
     case PDF = 1;
     case Youtube = 2;
     case GoogleSlide = 3;
+    case Other = 4;
     // case Image = 4;
 
     public function getLabel(): ?string
@@ -22,6 +23,7 @@ enum PresentationType: int implements HasLabel
             self::PDF => 'PDF',
             self::Youtube => 'Youtube',
             self::GoogleSlide => 'Google Slide',
+            self::Other => 'Other',
         };
     }
 }

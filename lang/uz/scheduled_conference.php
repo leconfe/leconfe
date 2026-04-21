@@ -22,4 +22,8 @@ return [
     'review_form' => 'Ko‘rib chiqish shakli',
     'form_preview' => 'Shaklni ko‘rish',
     'how_to_publish_presentation' => 'Taqdimotni qanday e’lon qilish mumkin?',
+    'presentation_other_no_preview_title' => 'Oldindan ko‘rish mavjud emas.',
+    'presentation_other_no_preview_description' => 'Kontentni ko‘rish uchun taqdimot faylini yuklab oling.',
+    'presentation_other_download_button' => 'Taqdimot faylini yuklab olish',
+    'presentation_other_file_not_available' => 'Fayl hozircha mavjud emas.',
 ];

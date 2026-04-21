@@ -69,9 +69,17 @@ class PresentationList extends \Livewire\Component implements HasForms, HasTable
                         ->collection('pdf')
                         ->disk('private-files')
                         ->maxFiles(1)
-                        ->visible(fn(Get $get) => PresentationType::PDF->is((int) $get('type')))
-                        ->dehydrated(fn(Get $get) => PresentationType::PDF->is((int) $get('type')))
-                        ->acceptedFileTypes(['application/pdf']),
+                        ->visible(function (Get $get) {
+                            $type = PresentationType::tryFrom((int) $get('type'));
+
+                            return $type?->isOneOf(PresentationType::PDF, PresentationType::Other) ?? false;
+                        })
+                        ->dehydrated(function (Get $get) {
+                            $type = PresentationType::tryFrom((int) $get('type'));
+
+                            return $type?->isOneOf(PresentationType::PDF, PresentationType::Other) ?? false;
+                        })
+                        ->rules(fn(Get $get) => PresentationType::PDF->is((int) $get('type')) ? ['mimes:pdf'] : []),
                     TextInput::make('meta.youtube_video_id')
                         ->label('Youtube URL')
                         ->required()
