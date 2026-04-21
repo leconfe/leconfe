@@ -208,9 +208,8 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('keywords')
                                     ->label(__('general.keywords'))
                                     ->color('gray')
-                                    ->getStateUsing(function (Submission $submission) {
-                                        return $submission->tagsWithType('submissionKeywords')->pluck('name')->join(', ') ?: '-';
-                                    }),
+                                    ->badge()
+                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('keywords') ?: '-'),
                                 TextEntry::make('abstract')
                                     ->label(__('general.abstract'))
                                     ->color('gray')
