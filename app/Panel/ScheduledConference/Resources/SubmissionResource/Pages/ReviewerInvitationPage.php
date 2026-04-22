@@ -45,8 +45,9 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
 
     public function mount(Submission $record)
     {
-        $this->review = $this->record->reviews()->where('user_id', auth()->id())->first() ?? null;
-        
+        $this->record = $record;
+        $this->review = $this->record->getReviewForUserInActiveRound(auth()->user());
+
         if (! $this->review) {
             abort(403);
         }

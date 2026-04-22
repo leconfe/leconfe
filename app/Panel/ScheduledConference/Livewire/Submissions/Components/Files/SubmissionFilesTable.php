@@ -33,6 +33,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
     public bool $viewOnly = false;
 
+    public ?int $reviewRoundId = null;
+
     protected ?string $category = null;
 
     protected string $tableHeading = 'Files';
@@ -49,6 +51,16 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     public function getCategory(): string
     {
         return $this->category;
+    }
+
+    protected function shouldFilterByReviewRound(): bool
+    {
+        return false;
+    }
+
+    protected function resolveUploadReviewRoundId(): ?int
+    {
+        return null;
     }
 
     public function tableColumns(): array
@@ -82,7 +94,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->hidden(fn (Table $table): bool => ! $table->getQuery()->exists() || $this->isViewOnly())
             ->color('gray')
             ->action(function (TableAction $action) {
-                $files = $this->submission->media()->where('collection_name', $this->category)->get();
+                $mediaIds = $this->tableQuery()->pluck('media_id');
+                $files = $this->submission->media()
+                    ->whereIn('id', $mediaIds)
+                    ->get();
                 if ($files->count()) {
                     $name = implode('-' , [
                         $this->submission->getKey(),
@@ -130,7 +145,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 $this->submission,
                 $file,
                 $this->category,
-                SubmissionFileType::find($data['type'])
+                SubmissionFileType::find($data['type']),
+                $this->resolveUploadReviewRoundId(),
             );
 
             Log::make(
@@ -275,11 +291,17 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
     public function tableQuery(): Builder
     {
-        return $this->submission
+        $query = $this->submission
             ->submissionFiles()
             ->with(['media'])
             ->where('category', $this->category)
             ->getQuery();
+
+        if ($this->shouldFilterByReviewRound()) {
+            $query->where('review_round_id', $this->reviewRoundId ?: 0);
+        }
+
+        return $query;
     }
 
     public function tableDescription(): string

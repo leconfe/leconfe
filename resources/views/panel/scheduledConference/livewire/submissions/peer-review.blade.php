@@ -16,15 +16,20 @@
             {{-- Papers --}}
             @livewire(Components\Files\PaperFiles::class, ['submission' => $submission])
 
-            {{-- Reviewer List --}}
-            @livewire(Components\ReviewerList::class, ['record' => $submission])
+            <div class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                {{-- Reviewer List + Round Tabs --}}
+                @livewire(Components\ReviewerList::class, ['record' => $submission])
 
-            {{-- Reviews --}}
-            {{-- Revision Files --}}
-            @livewire(Components\Files\RevisionFiles::class, ['submission' => $submission])
+                <div class="border-t border-gray-200 p-4">
+                    {{-- Revision Files --}}
+                    @livewire(Components\Files\RevisionFiles::class, ['submission' => $submission])
+                </div>
 
-            {{-- Discussions --}}
-            @livewire(Components\Discussions\PeerReviewDiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::PeerReview, 'lazy' => true])
+                <div class="border-t border-gray-200 p-4">
+                    {{-- Discussions --}}
+                    @livewire(Components\Discussions\PeerReviewDiscussionTopic::class, ['submission' => $submission, 'stage' => SubmissionStage::PeerReview, 'lazy' => true])
+                </div>
+            </div>
         </div>
 
         @can('actAsEditor', $submission)

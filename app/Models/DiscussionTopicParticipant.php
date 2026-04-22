@@ -17,13 +17,13 @@ class DiscussionTopicParticipant extends Model
     public function getRoleName(): string
     {
         $participant = $this->topic->submission->participants()->where('user_id', $this->user->getKey())->first();
-        $review      = $this->topic->submission->reviews()->where('user_id', $this->user->getKey())->first();
+        $review = $this->topic->submission->getReviewForUserInActiveRound($this->user);
 
-        if($review){
+        if ($review) {
             return $review->reviewMode;
         }
 
-        if($participant){
+        if ($participant) {
             return $participant->role->name;
         }
 

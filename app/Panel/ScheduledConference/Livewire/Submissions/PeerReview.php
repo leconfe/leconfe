@@ -2,7 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
-use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Actions\Submissions\NotifySubmissionRevisionRequestAction;
 use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
@@ -10,7 +10,6 @@ use App\Mail\Templates\DeclinePaperMail;
 use App\Mail\Templates\RevisionRequestMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
-use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
@@ -290,34 +289,19 @@ class PeerReview extends Component implements HasActions, HasForms
             ])
             ->successNotificationTitle(__('general.revision_requested'))
             ->action(function (Action $action, array $data) {
-                SubmissionUpdateAction::run([
-                    'revision_required' => true,
-                    'status' => SubmissionStatus::OnReview,
-                    'stage' => SubmissionStage::PeerReview,
-                ], $this->submission);
+                try {
+                    NotifySubmissionRevisionRequestAction::run(
+                        $this->submission,
+                        $data['subject'],
+                        $data['message'],
+                        ! $data['do-not-notify-author'],
+                        auth()->user(),
+                    );
+                } catch (\Exception $e) {
+                    $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
+                    $action->failure();
 
-                Log::make(
-                    name: 'submission',
-                    subject: $this->submission,
-                    description: __('general.submission_request_revision', [
-                        'name' => auth()->user()?->full_name,
-                    ]),
-                )
-                    ->by(auth()->user())
-                    ->save();
-
-                if (! $data['do-not-notify-author']) {
-                    try {
-                        Mail::to($this->submission->user->email)
-                            ->send(
-                                (new RevisionRequestMail($this->submission))
-                                    ->subjectUsing($data['subject'])
-                                    ->contentUsing($data['message'])
-                            );
-                    } catch (\Exception $e) {
-                        $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
-                        $action->failure();
-                    }
+                    return;
                 }
 
                 $action->successRedirectUrl(

@@ -51,9 +51,9 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     {
         abort_unless(auth()->user()->can('review', $this->record), 403);
 
-        $this->review = $this->record->reviews
-            ->where('user_id', auth()->user()->getKey())
-            ->first() ?? null;
+        $this->review = $this->record->getReviewForUserInActiveRound(auth()->user());
+
+        abort_if(! $this->review, 403);
 
         abort_if($this->review->status == ReviewerStatus::DECLINED, 403, __('general.review_request_declined'));
         abort_if($this->review->status == ReviewerStatus::CANCELED, 403, __('general.review_request_canceled'));

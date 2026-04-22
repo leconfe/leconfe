@@ -6,6 +6,7 @@ use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
+use App\Models\SubmissionReviewRound;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -46,10 +47,12 @@ class SubmissionResource extends Resource
         return parent::getEloquentQuery()
             ->withCount([
                 'editors',
-                'reviews',
-                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed'),
+                'reviews as active_round_reviews_count' => fn ($query) => $query->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
+                'reviews as active_round_completed_reviews_count' => fn ($query) => $query
+                    ->whereNotNull('date_completed')
+                    ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
             ])
-            ->with(['meta', 'user', 'reviews', 'participants', 'editors'])
+            ->with(['meta', 'user', 'participants', 'editors', 'activeReviewRound'])
             ->orderBy('updated_at', 'desc');
     }
 
@@ -57,7 +60,7 @@ class SubmissionResource extends Resource
     {
         return $table
             ->recordUrl(function (Submission $record) {
-                $review = $record->reviews->where('user_id', auth()->id())->first();
+                $review = $record->getReviewForUserInActiveRound(auth()->user());
                 if ($review) {
                     if ($review->needConfirmation() || $review->status == ReviewerStatus::DECLINED) {
                         return static::getUrl('reviewer-invitation', [
@@ -87,7 +90,7 @@ class SubmissionResource extends Resource
                         Tables\Columns\TextColumn::make('title')
                             ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
-                                $review = $record->reviews->where('user_id', auth()->id())->first();
+                                $review = $record->getReviewForUserInActiveRound(auth()->user());
                                 if ($review) {
                                     return $review->isShowAuthor() ? $record->user->fullName : '';
                                 }
@@ -134,15 +137,15 @@ class SubmissionResource extends Resource
                             ->extraCellAttributes([
                                 'style' => 'width: 1px',
                             ])
-                            ->getStateUsing(fn($record) => $record->reviews_count ? view('panel.scheduledConference.components.review-count', [
-                                'reviews_count' => $record->reviews_count,
-                                'completed_reviews_count' => $record->completed_reviews_count,
+                            ->getStateUsing(fn ($record) => $record->active_round_reviews_count ? view('panel.scheduledConference.components.review-count', [
+                                'reviews_count' => $record->active_round_reviews_count,
+                                'completed_reviews_count' => $record->active_round_completed_reviews_count,
                             ]) : ''),
                         Tables\Columns\TextColumn::make('reviewed')
                             ->badge()
                             ->color('success')
                             ->getStateUsing(function (Submission $record) {
-                                $review = $record->reviews->where('user_id', auth()->id())->first();
+                                $review = $record->getReviewForUserInActiveRound(auth()->user());
                                 if (! $review) {
                                     return '';
                                 }
@@ -173,7 +176,7 @@ class SubmissionResource extends Resource
                         return auth()->user()->can('view', $record);
                     })
                     ->url(function (Submission $record) {
-                        $review = $record->reviews->where('user_id', auth()->id())->first();
+                        $review = $record->getReviewForUserInActiveRound(auth()->user());
                         if ($review) {
                             if ($review->needConfirmation() || $review->status == ReviewerStatus::DECLINED) {
                                 return static::getUrl('reviewer-invitation', [

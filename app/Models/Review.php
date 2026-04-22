@@ -28,6 +28,7 @@ class Review extends Model implements HasMedia
 
     protected $fillable = [
         'submission_id',
+        'review_round_id',
         'user_id',
         'status',
         'recommendation',
@@ -69,6 +70,11 @@ class Review extends Model implements HasMedia
     public function submission()
     {
         return $this->belongsTo(Submission::class);
+    }
+
+    public function reviewRound()
+    {
+        return $this->belongsTo(SubmissionReviewRound::class, 'review_round_id');
     }
 
     public function user()

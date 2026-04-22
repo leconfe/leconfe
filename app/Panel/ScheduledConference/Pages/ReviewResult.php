@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
+use App\Models\SubmissionReviewRound;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -47,16 +48,23 @@ class ReviewResult extends Page implements HasForms, HasTable
                         SubmissionStatus::Editing,
                         SubmissionStatus::Published,
                     ])
-                    ->whereHas('reviews', fn ($query) => $query->whereNotNull('date_completed'))
+                    ->whereHas('reviews', fn ($query) => $query
+                        ->whereNotNull('date_completed')
+                        ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)))
                     ->withCount([
-                        'reviews',
-                        'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
+                        'reviews as active_round_reviews_count' => fn ($query) => $query
+                            ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
+                        'reviews as active_round_completed_reviews_count' => fn ($query) => $query
+                            ->whereNotNull('date_completed')
+                            ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
                     ])
-                    ->withAvg(['reviews' => fn ($query) => $query->whereNotNull('date_completed')], 'score'),
+                    ->withAvg(['reviews as active_round_reviews_avg_score' => fn ($query) => $query
+                        ->whereNotNull('date_completed')
+                        ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN))], 'score'),
             )
-            ->defaultSort('reviews_avg_score', 'desc')
+            ->defaultSort('active_round_reviews_avg_score', 'desc')
             ->columns([
-                TextColumn::make('reviews_avg_score')
+                TextColumn::make('active_round_reviews_avg_score')
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])
@@ -68,7 +76,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])
-                    ->getStateUsing(fn ($record) => $record->completed_reviews_count.' / '.$record->reviews_count),
+                    ->getStateUsing(fn ($record) => $record->active_round_completed_reviews_count.' / '.$record->active_round_reviews_count),
                 TextColumn::make('id')
                     ->label('ID')
                     ->extraCellAttributes([
