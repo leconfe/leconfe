@@ -5,11 +5,9 @@ namespace App\Actions\Submissions;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
 use App\Models\Review;
-use App\Models\SubmissionFile;
 use App\Models\Submission;
 use App\Models\SubmissionReviewRound;
 use App\Models\User;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -65,61 +63,13 @@ class StartSubmissionReviewRoundAction
                 'closed_at' => null,
             ]);
 
-            $newDefaultFileIds = $this->cloneFilesToReviewRound($submission, $reviewRound, $defaultFileIds);
-
-            $reviewRound->update([
-                'default_file_ids' => $newDefaultFileIds,
-            ]);
+            CloneSubmissionFilesToReviewRoundAction::run($submission, $reviewRound, $defaultFileIds);
 
             return $reviewRound->refresh();
         });
     }
 
-    protected function cloneFilesToReviewRound(Submission $submission, SubmissionReviewRound $reviewRound, array $defaultFileIds): array
-    {
-        if (empty($defaultFileIds)) {
-            return [];
-        }
-
-        $sourceFiles = $submission->submissionFiles()
-            ->with(['media', 'type'])
-            ->whereIn('id', $defaultFileIds)
-            ->get()
-            ->keyBy('id');
-
-        $newFileIds = [];
-
-        foreach ($defaultFileIds as $fileId) {
-            $sourceFile = $sourceFiles->get($fileId);
-
-            if (! $sourceFile || ! $sourceFile->media || ! $sourceFile->type) {
-                continue;
-            }
-
-            $clonedMedia = $sourceFile->media->copy(
-                $submission,
-                $sourceFile->category,
-                'private-files'
-            );
-
-            $clonedFile = SubmissionFile::withoutEvents(function () use ($submission, $reviewRound, $sourceFile, $clonedMedia) {
-                return SubmissionFile::query()->create([
-                    'submission_id' => $submission->getKey(),
-                    'review_round_id' => $reviewRound->getKey(),
-                    'submission_file_type_id' => $sourceFile->type->getKey(),
-                    'media_id' => $clonedMedia->getKey(),
-                    'user_id' => $reviewRound->triggered_by ?? auth()->id() ?? $submission->user_id,
-                    'category' => $sourceFile->category,
-                ]);
-            });
-
-            $newFileIds[] = $clonedFile->getKey();
-        }
-
-        return $newFileIds;
-    }
-
-    protected function sanitizeDefaultFileIds(array $defaultFileIds): Collection
+    protected function sanitizeDefaultFileIds(array $defaultFileIds): \Illuminate\Support\Collection
     {
         return collect($defaultFileIds)
             ->filter(fn ($id) => is_numeric($id))

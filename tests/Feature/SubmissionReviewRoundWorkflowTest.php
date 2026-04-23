@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
+use App\Actions\Submissions\CloneSubmissionFilesToReviewRoundAction;
 use App\Actions\Submissions\NotifySubmissionRevisionRequestAction;
 use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\SubmissionUpdateAction;
@@ -15,6 +16,7 @@ use App\Models\Enums\UserRole;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\Review;
+use App\Models\Permission;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\SubmissionReviewRound;
@@ -22,12 +24,14 @@ use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class SubmissionReviewRoundWorkflowTest extends TestCase
@@ -218,6 +222,68 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_renaming_a_submission_file_updates_the_displayed_name(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $context['editor']->assignRole($this->createAuthorRole());
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper-round-one',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $media,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $round->getKey(),
+        );
+
+        $file = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $round->getKey())
+            ->firstOrFail();
+
+        Livewire::test(PaperFiles::class, ['submission' => $context['submission']])
+            ->callTableAction('rename', $file, data: [
+                'name' => 'renamed-paper',
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $media->refresh();
+
+        $this->assertSame('renamed-paper', $media->name);
+        $this->assertSame('paper-round-one.pdf', $media->file_name);
+        $this->assertSame('renamed-paper.pdf', $media->original_file_name);
+    }
+
     public function test_selected_files_are_cloned_into_the_next_review_round(): void
     {
         $context = $this->makeSubmissionContext();
@@ -286,6 +352,78 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'review_round_id' => $secondRound->getKey(),
             'category' => SubmissionFileCategory::PAPER_FILES,
         ]);
+        $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
+    }
+
+    public function test_previous_round_files_can_be_taken_into_the_active_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+
+        $firstRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $media,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        $sourceFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $firstRound->getKey())
+            ->firstOrFail();
+
+        $secondRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $clonedFileIds = CloneSubmissionFilesToReviewRoundAction::run(
+            $context['submission'],
+            $secondRound,
+            [$sourceFile->getKey()]
+        );
+
+        $this->assertCount(1, $clonedFileIds);
+
+        $clonedFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $secondRound->getKey())
+            ->firstOrFail();
+
+        $this->assertSame($clonedFileIds[0], $clonedFile->getKey());
+        $this->assertNotSame($sourceFile->getKey(), $clonedFile->getKey());
+        $this->assertNotSame($sourceFile->media_id, $clonedFile->media_id);
         $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
     }
 
@@ -569,5 +707,24 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
             'guard_name' => 'web',
         ]);
+    }
+
+    protected function createAuthorRole(): Role
+    {
+        $role = Role::query()->firstOrCreate([
+            'name' => UserRole::Author->value,
+            'conference_id' => app()->getCurrentConferenceId(),
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+            'guard_name' => 'web',
+        ]);
+
+        Permission::query()->firstOrCreate([
+            'name' => 'Submission:uploadPaper',
+            'guard_name' => 'web',
+        ]);
+
+        $role->syncPermissions(['Submission:uploadPaper']);
+
+        return $role;
     }
 }

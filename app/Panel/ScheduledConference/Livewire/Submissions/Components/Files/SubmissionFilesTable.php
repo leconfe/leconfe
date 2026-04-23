@@ -68,9 +68,9 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TextColumn::make('id')
                 ->wrap(),
-            TextColumn::make('media.original_file_name')
+            TextColumn::make('media.name')
                 ->wrap()
-                ->label(__('general.filename'))
+                ->label(__('general.name'))
                 ->color('primary')
                 ->action(function (SubmissionFile $record){
                     $name = implode('-', [
@@ -209,7 +209,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->successNotificationTitle(__('general.file_renamed_successfully'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
                     $form->fill([
-                        'file_name' => $record->media->file_name,
+                        'name' => $record->media->name,
                     ]);
                 })
                 ->action(function (SubmissionFile $record, array $data, TableAction $action) {
@@ -217,17 +217,18 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         DB::beginTransaction();
 
                         $media = $record->media;
+                        $oldName = $media->name;
+                        $newName = (string) $data['name'];
 
-                        $media->file_name = $data['file_name'];
-                        $media->name = $data['file_name'];
+                        $media->name = $newName;
 
                         $log = Log::make(
                             name: 'submission',
                             subject: $this->submission,
                             description: __('general.submission_file_renamed_activity', [
                                 'id' => $record->getKey(),
-                                'oldName' => $media->getOriginal('name'),
-                                'newName' => $media->name,
+                                'oldName' => $oldName,
+                                'newName' => $newName,
                                 'category' => $this->category,
                             ]),
                             event: 'submission-file-rename',
@@ -246,16 +247,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 })
                 ->modalSubmitActionLabel(__('general.rename'))
                 ->form([
-                    TextInput::make('file_name')
-                        ->label(__('general.new_filename'))
+                    TextInput::make('name')
+                        ->label(__('general.new_name'))
                         ->formatStateUsing(function (SubmissionFile $record) {
-                            return str($record->media->file_name)->beforeLast('.'.$record->media->extension);
-                        })
-                        ->dehydrateStateUsing(function (SubmissionFile $record, $state) {
-                            return str($state)->append('.'.$record->media->extension);
-                        })
-                        ->suffix(function (SubmissionFile $record) {
-                            return '.'.$record->media->extension;
+                            return $record->media->name;
                         }),
                 ]),
             DeleteAction::make()

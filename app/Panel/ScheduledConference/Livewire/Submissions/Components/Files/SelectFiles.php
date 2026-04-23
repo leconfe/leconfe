@@ -26,8 +26,8 @@ final class SelectFiles extends SubmissionFilesTable
     public function tableColumns(): array
     {
         return [
-            TextColumn::make('media.file_name')
-                ->label('Filename')
+            TextColumn::make('media.name')
+                ->label(__('general.name'))
                 ->color('primary')
                 ->wrap()
                 ->action(fn (Model $record) => $record->media)
