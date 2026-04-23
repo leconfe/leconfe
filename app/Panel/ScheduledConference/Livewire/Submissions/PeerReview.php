@@ -132,6 +132,11 @@ class PeerReview extends Component implements HasActions, HasForms
             ->to(ReviewerList::class);
     }
 
+    protected function reviewsEmailMessage(): string
+    {
+        return $this->submission->getReviewsEmailMessage($this->selectedRoundId);
+    }
+
     public function getReviewableFilesProperty(): Collection
     {
         $query = $this->submission
@@ -236,7 +241,7 @@ class PeerReview extends Component implements HasActions, HasForms
                         Actions::make([
                             FormAction::make('add_reviews_to_email')
                                 ->icon('heroicon-m-plus')
-                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->submission->getReviewsEmailMessage())),
+                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->reviewsEmailMessage())),
                         ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
@@ -306,7 +311,7 @@ class PeerReview extends Component implements HasActions, HasForms
                         Actions::make([
                             FormAction::make('add_reviews_to_email')
                                 ->icon('heroicon-m-plus')
-                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->submission->getReviewsEmailMessage())),
+                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->reviewsEmailMessage())),
                         ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))
@@ -431,7 +436,7 @@ class PeerReview extends Component implements HasActions, HasForms
                         Actions::make([
                             FormAction::make('add_reviews_to_email')
                                 ->icon('heroicon-m-plus')
-                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->submission->getReviewsEmailMessage())),
+                                ->action(fn (Set $set, Get $get) => $set('message', $get('message').$this->reviewsEmailMessage())),
                         ]),
                         Checkbox::make('do-not-notify-author')
                             ->label(__('general.dont_send_notification_to_author'))

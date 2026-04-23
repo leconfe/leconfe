@@ -19,6 +19,7 @@ use App\Models\SubmissionReviewRound;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -210,6 +211,103 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'review_round_id' => $round->getKey(),
             'category' => SubmissionFileCategory::PAPER_FILES,
         ]);
+    }
+
+    public function test_review_email_message_is_scoped_to_the_given_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $roundTwo = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $roundOneReview = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'recommendation' => 'Accept',
+            'date_completed' => now()->subHour(),
+        ]);
+        $roundOneReview->setMeta('review_mode', Review::MODE_OPEN);
+        $roundOneReview->save();
+
+        $roundTwoReview = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundTwo->getKey(),
+            'user_id' => $context['reviewerB']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'recommendation' => 'Decline',
+            'date_completed' => now(),
+        ]);
+        $roundTwoReview->setMeta('review_mode', Review::MODE_OPEN);
+        $roundTwoReview->save();
+
+        $roundOneMessage = $context['submission']->getReviewsEmailMessage($roundOne->getKey());
+        $roundTwoMessage = $context['submission']->getReviewsEmailMessage($roundTwo->getKey());
+
+        $this->assertStringContainsString($context['reviewerA']->fullName, $roundOneMessage);
+        $this->assertStringNotContainsString($context['reviewerB']->fullName, $roundOneMessage);
+        $this->assertStringContainsString('Recommendation : Accept', $roundOneMessage);
+
+        $this->assertStringContainsString($context['reviewerB']->fullName, $roundTwoMessage);
+        $this->assertStringNotContainsString($context['reviewerA']->fullName, $roundTwoMessage);
+        $this->assertStringContainsString('Recommendation : Decline', $roundTwoMessage);
+    }
+
+    public function test_submission_resource_summary_uses_the_latest_review_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 5,
+            'recommendation' => 'Accept',
+            'date_completed' => now()->subHours(2),
+        ]);
+
+        $roundTwo = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundTwo->getKey(),
+            'user_id' => $context['reviewerB']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 2,
+            'recommendation' => 'Decline',
+            'date_completed' => now()->subHour(),
+        ]);
+
+        $submission = SubmissionResource::getEloquentQuery()
+            ->whereKey($context['submission']->getKey())
+            ->first();
+
+        $this->assertNotNull($submission?->latestReviewRound);
+        $this->assertSame($roundTwo->getKey(), $submission->latestReviewRound->getKey());
+        $this->assertSame(1, $submission->latestReviewRound->latest_round_reviews_count);
+        $this->assertSame(1, $submission->latestReviewRound->latest_round_completed_reviews_count);
+        $this->assertSame(2.0, (float) $submission->latestReviewRound->latest_round_reviews_avg_score);
     }
 
     protected function makeSubmissionContext(array $overrides = []): array

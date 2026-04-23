@@ -349,12 +349,18 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         $this->setMeta('primary_contact_id', $author->getKey());
     }
 
-    public function getReviewsEmailMessage(): string
+    public function getReviewsEmailMessage(?int $reviewRoundId = null): string
     {
+        $reviewRoundId ??= $this->activeReviewRound?->getKey();
+
+        if (! $reviewRoundId) {
+            return '';
+        }
+
         $message = '';
 
         $this->reviews()
-            ->getQuery()
+            ->where('review_round_id', $reviewRoundId)
             ->with(['user'])
             ->whereNotNull('date_completed')
             ->get()

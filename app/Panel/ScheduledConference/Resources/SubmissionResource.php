@@ -6,7 +6,6 @@ use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
-use App\Models\SubmissionReviewRound;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -47,12 +46,24 @@ class SubmissionResource extends Resource
         return parent::getEloquentQuery()
             ->withCount([
                 'editors',
-                'reviews as active_round_reviews_count' => fn ($query) => $query->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
-                'reviews as active_round_completed_reviews_count' => fn ($query) => $query
-                    ->whereNotNull('date_completed')
-                    ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
             ])
-            ->with(['meta', 'user', 'participants', 'editors', 'activeReviewRound'])
+            ->with([
+                'meta',
+                'user' => ['meta'],
+                'participants',
+                'editors',
+                'activeReviewRound',
+                'latestReviewRound' => fn ($query) => $query
+                    ->withCount([
+                        'reviews as latest_round_reviews_count',
+                        'reviews as latest_round_completed_reviews_count' => fn ($reviewQuery) => $reviewQuery
+                            ->whereNotNull('date_completed'),
+                    ])
+                    ->withAvg([
+                        'reviews as latest_round_reviews_avg_score' => fn ($reviewQuery) => $reviewQuery
+                            ->whereNotNull('date_completed'),
+                    ], 'score'),
+            ])
             ->orderBy('updated_at', 'desc');
     }
 
@@ -137,10 +148,12 @@ class SubmissionResource extends Resource
                             ->extraCellAttributes([
                                 'style' => 'width: 1px',
                             ])
-                            ->getStateUsing(fn ($record) => $record->active_round_reviews_count ? view('panel.scheduledConference.components.review-count', [
-                                'reviews_count' => $record->active_round_reviews_count,
-                                'completed_reviews_count' => $record->active_round_completed_reviews_count,
-                            ]) : ''),
+                            ->getStateUsing(fn (Submission $record) => $record->latestReviewRound && $record->latestReviewRound->latest_round_reviews_count
+                                ? view('panel.scheduledConference.components.review-count', [
+                                    'reviews_count' => $record->latestReviewRound->latest_round_reviews_count,
+                                    'completed_reviews_count' => $record->latestReviewRound->latest_round_completed_reviews_count,
+                                ])
+                                : ''),
                         Tables\Columns\TextColumn::make('reviewed')
                             ->badge()
                             ->color('success')
