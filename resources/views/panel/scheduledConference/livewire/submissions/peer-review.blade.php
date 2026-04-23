@@ -10,7 +10,7 @@
 <div class="space-y-6">
     <div class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         @if($this->reviewRounds->isNotEmpty() || $user->can('assignReviewer', $submission))
-            <x-filament::tabs :contained="true" class="!mx-0">
+            <x-filament::tabs :contained="true" class="peer-review-round-tabs !mx-0">
                 @foreach($this->reviewRounds as $round)
                     <x-filament::tabs.item
                         :active="$this->selectedRoundId === $round->getKey()"

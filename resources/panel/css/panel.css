@@ -8,6 +8,27 @@
     /* TODO Apply alignment tabs to left, currently break contained tab when this css applied */
     /* @apply ml-0 mr-auto; */
 }
+
+.peer-review-round-tabs .fi-tabs-item {
+    @apply border border-slate-200 bg-transparent text-slate-700;
+}
+
+.peer-review-round-tabs .fi-tabs-item.fi-active {
+    @apply border-sky-600 bg-sky-600 text-white shadow-md;
+}
+
+.peer-review-round-tabs .fi-tabs-item.fi-active .fi-tabs-item-label,
+.peer-review-round-tabs .fi-tabs-item.fi-active .fi-tabs-item-icon {
+    @apply text-white;
+}
+
+.peer-review-round-tabs .fi-tabs-item:not(.fi-active):hover {
+    @apply border-slate-300 text-slate-900;
+}
+
+.peer-review-round-tabs .fi-tabs-item .fi-tabs-item-label {
+    @apply font-semibold;
+}
 /* 
 .fi-sidebar {
     @apply lg:!bg-white dark:lg:!bg-gray-900 !rounded-xl my-4 ml-4 -left-6 lg:left-0;

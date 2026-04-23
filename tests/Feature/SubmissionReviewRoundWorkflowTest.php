@@ -11,7 +11,9 @@ use App\Constants\SubmissionFileCategory;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Enums\UserRole;
 use App\Models\Media;
+use App\Models\Role;
 use App\Models\Review;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
@@ -19,6 +21,8 @@ use App\Models\SubmissionReviewRound;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
+use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
+use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -310,6 +314,106 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertSame(2.0, (float) $submission->latestReviewRound->latest_round_reviews_avg_score);
     }
 
+    public function test_stale_review_submission_page_rejects_submit_after_a_new_round_starts(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $reviewerRole = $this->createReviewerRole();
+        $context['reviewerA']->assignRole($reviewerRole);
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $review = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'date_confirmed' => now(),
+        ]);
+        $review->setMeta('review_mode', Review::MODE_OPEN);
+        $review->save();
+
+        $this->actingAs($context['reviewerA']);
+
+        $page = new class extends ReviewSubmissionPage {
+            public function probeResolveCurrentReview(): ?Review
+            {
+                return $this->resolveCurrentReview();
+            }
+        };
+
+        $page->record = $context['submission'];
+        $page->review = $review;
+
+        $this->assertNotNull($page->probeResolveCurrentReview());
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $this->assertNull($page->probeResolveCurrentReview());
+
+        $review->refresh();
+
+        $this->assertSame(ReviewerStatus::CANCELED, $review->status);
+        $this->assertNull($review->date_completed);
+        $this->assertNull($review->recommendation);
+    }
+
+    public function test_stale_reviewer_invitation_page_rejects_accept_after_a_new_round_starts(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $reviewerRole = $this->createReviewerRole();
+        $context['reviewerA']->assignRole($reviewerRole);
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $review = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::PENDING,
+        ]);
+        $review->setMeta('review_mode', Review::MODE_OPEN);
+        $review->save();
+
+        $this->actingAs($context['reviewerA']);
+
+        $page = new class extends ReviewerInvitationPage {
+            public function probeResolveCurrentReview(): ?Review
+            {
+                return $this->resolveCurrentReview();
+            }
+        };
+
+        $page->record = $context['submission'];
+        $page->review = $review;
+
+        $this->assertNotNull($page->probeResolveCurrentReview());
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $this->assertNull($page->probeResolveCurrentReview());
+
+        $review->refresh();
+
+        $this->assertSame(ReviewerStatus::CANCELED, $review->status);
+        $this->assertNull($review->date_confirmed);
+    }
+
     protected function makeSubmissionContext(array $overrides = []): array
     {
         $conference = Conference::query()->create([
@@ -383,5 +487,15 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
                 'password' => 'password123456',
             ]),
         ];
+    }
+
+    protected function createReviewerRole(): Role
+    {
+        return Role::query()->firstOrCreate([
+            'name' => UserRole::Reviewer->value,
+            'conference_id' => app()->getCurrentConferenceId(),
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+            'guard_name' => 'web',
+        ]);
     }
 }
