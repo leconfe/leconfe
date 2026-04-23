@@ -2,21 +2,26 @@
 
 namespace Tests\Feature;
 
+use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
 use App\Actions\Submissions\NotifySubmissionRevisionRequestAction;
 use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Constants\ReviewerStatus;
+use App\Constants\SubmissionFileCategory;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Media;
 use App\Models\Review;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\SubmissionReviewRound;
+use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class SubmissionReviewRoundWorkflowTest extends TestCase
@@ -154,6 +159,56 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'submission_id' => $context['submission']->getKey(),
             'round_number' => 1,
             'status' => SubmissionReviewRound::STATUS_OPEN,
+        ]);
+    }
+
+    public function test_paper_files_are_assigned_to_the_active_review_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $this->actingAs($context['editor']);
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper',
+            'file_name' => 'paper.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $media,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $round->getKey(),
+        );
+
+        $this->assertDatabaseHas('submission_files', [
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $media->getKey(),
+            'review_round_id' => $round->getKey(),
+            'category' => SubmissionFileCategory::PAPER_FILES,
         ]);
     }
 

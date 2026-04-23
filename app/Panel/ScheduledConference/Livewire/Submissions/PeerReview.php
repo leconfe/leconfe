@@ -2,18 +2,27 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\NotifySubmissionRevisionRequestAction;
 use App\Classes\Log;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclinePaperMail;
 use App\Mail\Templates\RevisionRequestMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
-use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
+use App\Models\SubmissionFile;
+use App\Models\SubmissionReviewRound;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
+use App\Constants\SubmissionFileCategory;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -32,9 +41,13 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Squire\Models\Currency;
 
 class PeerReview extends Component implements HasActions, HasForms
@@ -44,11 +57,149 @@ class PeerReview extends Component implements HasActions, HasForms
 
     public Submission $submission;
 
+    public ?int $selectedRoundId = null;
+
     protected $listeners = [
         'refreshSubmission' => '$refresh',
     ];
 
-    public function mount(Submission $submission) {}
+    public function mount(Submission $submission): void
+    {
+        $this->submission = $submission;
+
+        if (
+            $this->submission->stage->is(SubmissionStage::PeerReview) &&
+            in_array($this->submission->status, [SubmissionStatus::OnReview, SubmissionStatus::OnPayment], true) &&
+            ! $this->submission->reviewRounds()->exists() &&
+            auth()->user()?->can('assignReviewer', $this->submission)
+        ) {
+            StartSubmissionReviewRoundAction::run($this->submission, [], auth()->user());
+            $this->submission->refresh();
+        }
+
+        $this->selectedRoundId = $this->submission->activeReviewRound?->getKey()
+            ?? $this->submission->latestReviewRound?->getKey();
+    }
+
+    public function getReviewRoundsProperty(): Collection
+    {
+        return $this->submission->reviewRounds()
+            ->orderBy('round_number')
+            ->get();
+    }
+
+    public function getSelectedRoundProperty(): ?SubmissionReviewRound
+    {
+        if (! $this->selectedRoundId) {
+            return null;
+        }
+
+        return $this->reviewRounds->firstWhere('id', $this->selectedRoundId);
+    }
+
+    public function selectRound(int $roundId): void
+    {
+        if (! $this->reviewRounds->pluck('id')->contains($roundId)) {
+            return;
+        }
+
+        $this->selectedRoundId = $roundId;
+        $this->dispatchSelectedRound();
+    }
+
+    #[On('peer-review-round-selected')]
+    public function onReviewRoundSelected(int $roundId): void
+    {
+        $this->selectedRoundId = $roundId;
+    }
+
+    protected function dispatchSelectedRound(): void
+    {
+        if (! $this->selectedRoundId) {
+            return;
+        }
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PaperFiles::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(RevisionFiles::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PeerReviewDiscussionTopic::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(ReviewerList::class);
+    }
+
+    public function getReviewableFilesProperty(): Collection
+    {
+        $query = $this->submission
+            ->submissionFiles()
+            ->with(['media', 'type'])
+            ->where(function ($query) {
+                if ($this->selectedRoundId) {
+                    $query->where(function ($paperQuery) {
+                        $paperQuery->where('category', SubmissionFileCategory::PAPER_FILES)
+                            ->where('review_round_id', $this->selectedRoundId);
+                    })->orWhere(function ($revisionQuery) {
+                        $revisionQuery->where('category', SubmissionFileCategory::REVISION_FILES)
+                            ->where('review_round_id', $this->selectedRoundId);
+                    });
+                } else {
+                    $query->where('category', SubmissionFileCategory::PAPER_FILES);
+                }
+            });
+
+        return $query->get();
+    }
+
+    public function newReviewRoundAction(): Action
+    {
+        return Action::make('newReviewRoundAction')
+            ->authorize('assignReviewer', $this->submission)
+            ->icon('heroicon-o-arrow-path')
+            ->color('gray')
+            ->label(__('general.new_review_round'))
+            ->modalWidth(MaxWidth::ExtraLarge)
+            ->closeModalByClickingAway()
+            ->form([
+                CheckboxList::make('default_file_ids')
+                    ->label(__('general.files_to_include_in_this_round'))
+                    ->options(
+                        fn () => $this->reviewableFiles
+                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->media?->original_file_name ?? 'File #'.$file->getKey()])
+                            ->toArray()
+                    )
+                    ->descriptions(
+                        fn () => $this->reviewableFiles
+                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->name.' ('.$file->category.')'])
+                            ->toArray()
+                    ),
+            ])
+            ->successNotificationTitle(__('general.review_round_started'))
+            ->action(function (Action $action, array $data) {
+                $reviewRound = StartSubmissionReviewRoundAction::run(
+                    $this->submission,
+                    $data['default_file_ids'] ?? [],
+                    auth()->user(),
+                );
+
+                Log::make(
+                    name: 'submission',
+                    subject: $this->submission,
+                    description: __('general.review_round_started_activity', ['number' => $reviewRound->round_number]),
+                    event: 'submission-review-round-started',
+                )
+                    ->by(auth()->user())
+                    ->save();
+
+                $this->selectedRoundId = $reviewRound->getKey();
+                $this->dispatchSelectedRound();
+
+                $action->success();
+            });
+    }
 
     public function declineSubmissionAction()
     {

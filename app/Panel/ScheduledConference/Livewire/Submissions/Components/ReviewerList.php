@@ -23,7 +23,9 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionReviewRound;
 use App\Models\User;
+use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\Shout;
@@ -62,6 +64,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class ReviewerList extends Component implements HasActions, HasForms, HasTable
@@ -95,6 +98,13 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
             ?? $this->record->latestReviewRound?->getKey();
 
         $this->dispatchSelectedRound();
+    }
+
+    #[On('peer-review-round-selected')]
+    public function onReviewRoundSelected(int $roundId): void
+    {
+        $this->selectedRoundId = $roundId;
+        $this->resetTable();
     }
 
     public function selectRound(int $roundId): void
@@ -135,13 +145,16 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
             ->submissionFiles()
             ->with(['media', 'type'])
             ->where(function ($query) {
-                $query->where('category', SubmissionFileCategory::PAPER_FILES);
-
                 if ($this->selectedRoundId) {
-                    $query->orWhere(function ($revisionQuery) {
+                    $query->where(function ($paperQuery) {
+                        $paperQuery->where('category', SubmissionFileCategory::PAPER_FILES)
+                            ->where('review_round_id', $this->selectedRoundId);
+                    })->orWhere(function ($revisionQuery) {
                         $revisionQuery->where('category', SubmissionFileCategory::REVISION_FILES)
                             ->where('review_round_id', $this->selectedRoundId);
                     });
+                } else {
+                    $query->where('category', SubmissionFileCategory::PAPER_FILES);
                 }
             });
 
@@ -185,56 +198,16 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
         }
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PeerReview::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PaperFiles::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
             ->to(RevisionFiles::class);
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
             ->to(PeerReviewDiscussionTopic::class);
-    }
-
-    public function newReviewRoundAction(): FilamentAction
-    {
-        return FilamentAction::make('newReviewRoundAction')
-            ->authorize('assignReviewer', $this->record)
-            ->icon('heroicon-o-arrow-path')
-            ->color('gray')
-            ->label('New Review Round')
-            ->form([
-                CheckboxList::make('default_file_ids')
-                    ->label('Files to include in this round')
-                    ->options(
-                        fn () => $this->reviewableFiles
-                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->media?->file_name ?? 'File #'.$file->getKey()])
-                            ->toArray()
-                    )
-                    ->descriptions(
-                        fn () => $this->reviewableFiles
-                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->name.' ('.$file->category.')'])
-                            ->toArray()
-                    ),
-            ])
-            ->successNotificationTitle('Review round started')
-            ->action(function (FilamentAction $action, array $data) {
-                $reviewRound = StartSubmissionReviewRoundAction::run(
-                    $this->record,
-                    $data['default_file_ids'] ?? [],
-                    auth()->user(),
-                );
-
-                Log::make(
-                    name: 'submission',
-                    subject: $this->record,
-                    description: sprintf('Review round %d started.', $reviewRound->round_number),
-                    event: 'submission-review-round-started',
-                )
-                    ->by(auth()->user())
-                    ->save();
-
-                $this->selectedRoundId = $reviewRound->getKey();
-                $this->resetTable();
-                $this->dispatchSelectedRound();
-
-                $action->success();
-            });
     }
 
     public function form(Form $form): Form
