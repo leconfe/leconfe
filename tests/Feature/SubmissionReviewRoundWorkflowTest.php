@@ -18,6 +18,7 @@ use App\Models\Review;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\SubmissionReviewRound;
+use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
@@ -215,6 +216,77 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'review_round_id' => $round->getKey(),
             'category' => SubmissionFileCategory::PAPER_FILES,
         ]);
+    }
+
+    public function test_selected_files_are_cloned_into_the_next_review_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+
+        $firstRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $media,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        $sourceFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $firstRound->getKey())
+            ->firstOrFail();
+
+        $secondRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [$sourceFile->getKey()],
+            $context['editor'],
+        );
+
+        $clonedFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $secondRound->getKey())
+            ->firstOrFail();
+
+        $this->assertNotSame($sourceFile->getKey(), $clonedFile->getKey());
+        $this->assertNotSame($sourceFile->media_id, $clonedFile->media_id);
+        $this->assertSame($sourceFile->submission_file_type_id, $clonedFile->submission_file_type_id);
+        $this->assertSame(SubmissionFileCategory::PAPER_FILES, $clonedFile->category);
+        $this->assertDatabaseHas('submission_files', [
+            'id' => $clonedFile->getKey(),
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $secondRound->getKey(),
+            'category' => SubmissionFileCategory::PAPER_FILES,
+        ]);
+        $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
     }
 
     public function test_review_email_message_is_scoped_to_the_given_round(): void
