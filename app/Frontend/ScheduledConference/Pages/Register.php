@@ -4,7 +4,6 @@ namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Actions\User\UserCreateAction;
 use App\Frontend\Website\Pages\Page;
-use App\Models\Enums\UserRole;
 use App\Panel\ScheduledConference\Pages\Dashboard;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
@@ -39,8 +38,6 @@ class Register extends Page
     public $password_confirmation = null;
 
     public $privacy_statement_agree = false;
-
-    public $selfAssignRoles = [];
 
     public $registerComplete = false;
 
@@ -100,11 +97,6 @@ class Register extends Page
             ],
         ];
 
-        $rules['selfAssignRoles'] = [
-            'array',
-            'required',
-        ];
-
         return $rules;
     }
 
@@ -115,7 +107,7 @@ class Register extends Page
 
     public function register()
     {
-        if (! app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
+        if (!app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
             abort(403);
         }
 
@@ -132,29 +124,12 @@ class Register extends Page
 
         $data = $this->validate();
 
-        $allowedRoles = array_values(UserRole::getAllowedSelfAssignRoleNames());
-
-        // Filter only allowed roles to register
-        $selfAssignRoles = collect($data['selfAssignRoles'])
-            ->filter(fn ($role) => in_array($role, $allowedRoles))
-            ->toArray();
-
         try {
             DB::beginTransaction();
             $user = UserCreateAction::run([
                 ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
                 'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
             ]);
-
-            if (app()->getCurrentConference()) {
-                $user->assignRole($selfAssignRoles);
-            } else {
-                foreach ($selfAssignRoles as $conferenceId => $roles) {
-                    // get keys of roles where value is true
-                    $roles = array_keys(array_filter($roles));
-                    $user->assignRole($roles);
-                }
-            }
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -179,7 +154,6 @@ class Register extends Page
 
         $data = [
             'countries' => Country::all(),
-            'roles' => UserRole::getAllowedSelfAssignRoleNames(),
             'loginUrl' => app()->getLoginUrl(),
             'allowRegistration' => $scheduledConference->getMeta('allow_registration'),
             'scheduledConference' => $scheduledConference,
