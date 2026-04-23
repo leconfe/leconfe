@@ -173,7 +173,7 @@ class PeerReview extends Component implements HasActions, HasForms
                     ->label(__('general.files_to_include_in_this_round'))
                     ->options(
                         fn () => $this->reviewableFiles
-                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->media?->original_file_name ?? 'File #'.$file->getKey()])
+                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->media?->name ?? 'File #'.$file->getKey()])
                             ->toArray()
                     )
                     ->descriptions(

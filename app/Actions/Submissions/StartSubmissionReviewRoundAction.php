@@ -63,7 +63,12 @@ class StartSubmissionReviewRoundAction
                 'closed_at' => null,
             ]);
 
-            CloneSubmissionFilesToReviewRoundAction::run($submission, $reviewRound, $defaultFileIds);
+            CloneSubmissionFilesToReviewRoundAction::run(
+                $submission,
+                $reviewRound,
+                $defaultFileIds,
+                SubmissionFileCategory::PAPER_FILES
+            );
 
             return $reviewRound->refresh();
         });

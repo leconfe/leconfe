@@ -355,6 +355,95 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
     }
 
+    public function test_selected_revision_files_are_cloned_as_paper_files_in_the_next_review_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+
+        $firstRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $paperMedia = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper-round-one',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $revisionMedia = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::REVISION_FILES,
+            'name' => 'revision-round-one',
+            'file_name' => 'revision-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 321,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 2,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $paperMedia,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $revisionMedia,
+            SubmissionFileCategory::REVISION_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        $revisionSourceFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $firstRound->getKey())
+            ->where('category', SubmissionFileCategory::REVISION_FILES)
+            ->firstOrFail();
+
+        $secondRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [$revisionSourceFile->getKey()],
+            $context['editor'],
+        );
+
+        $clonedFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $secondRound->getKey())
+            ->firstOrFail();
+
+        $this->assertSame(SubmissionFileCategory::PAPER_FILES, $clonedFile->category);
+        $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
+    }
+
     public function test_previous_round_files_can_be_taken_into_the_active_round(): void
     {
         $context = $this->makeSubmissionContext();

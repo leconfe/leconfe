@@ -12,7 +12,12 @@ class CloneSubmissionFilesToReviewRoundAction
 {
     use AsAction;
 
-    public function handle(Submission $submission, SubmissionReviewRound $reviewRound, array $sourceFileIds = []): array
+    public function handle(
+        Submission $submission,
+        SubmissionReviewRound $reviewRound,
+        array $sourceFileIds = [],
+        ?string $targetCategory = null
+    ): array
     {
         $sourceFileIds = $this->sanitizeFileIds($sourceFileIds);
 
@@ -35,20 +40,22 @@ class CloneSubmissionFilesToReviewRoundAction
                 continue;
             }
 
+            $clonedCategory = $targetCategory ?? $sourceFile->category;
+
             $clonedMedia = $sourceFile->media->copy(
                 $submission,
-                $sourceFile->category,
+                $clonedCategory,
                 'private-files'
             );
 
-            $clonedFile = SubmissionFile::withoutEvents(function () use ($submission, $reviewRound, $sourceFile, $clonedMedia) {
+            $clonedFile = SubmissionFile::withoutEvents(function () use ($submission, $reviewRound, $sourceFile, $clonedMedia, $clonedCategory) {
                 return SubmissionFile::query()->create([
                     'submission_id' => $submission->getKey(),
                     'review_round_id' => $reviewRound->getKey(),
                     'submission_file_type_id' => $sourceFile->type->getKey(),
                     'media_id' => $clonedMedia->getKey(),
                     'user_id' => $reviewRound->triggered_by ?? auth()->id() ?? $submission->user_id,
-                    'category' => $sourceFile->category,
+                    'category' => $clonedCategory,
                 ]);
             });
 

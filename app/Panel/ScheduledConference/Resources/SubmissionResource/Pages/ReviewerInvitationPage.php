@@ -219,7 +219,6 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->record($this->record)
             ->schema([
                 Section::make()
-                    ->aside()
                     ->heading(__('general.request_for_review'))
                     ->description(__('general.request_for_review_description'))
                     ->schema([
