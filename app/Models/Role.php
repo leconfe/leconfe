@@ -319,6 +319,9 @@ class Role extends Model
                     'DiscussionTopic:create',
                     'DiscussionTopic:update',
                 ],
+                UserRole::Participant->value => [
+                    // WIP: tambahkan permission registration participant
+                ],
             ];
         }
 

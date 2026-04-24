@@ -26,6 +26,7 @@ enum UserRole: string implements HasLabel
         return [
             self::Author,
             self::Reviewer,
+            self::Participant,
         ];
     }
 
