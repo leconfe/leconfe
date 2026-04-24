@@ -36,7 +36,8 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
             return false;
         }
 
-        return !static::isRegisteredInCurrentScheduledConference($user->getKey(), $scheduledConferenceId);
+        // ensure user is from another scheduled conference and does not have any roles in this scheduled conference
+        return $user->roles()->withoutGlobalScopes()->exists() && !$user->roles()->exists();
     }
 
     public function assignRoleAction(): Action
@@ -109,10 +110,5 @@ class RegistrationWarning extends Widget implements HasActions, HasForms
             ->whereIn('name', $allowedSelfAssignRoles)
             ->orderBy('name')
             ->pluck('name', 'name');
-    }
-
-    protected static function isRegisteredInCurrentScheduledConference(int $userId, int $scheduledConferenceId): bool
-    {
-        return User::find($userId)?->roles()->exists() ?? false;
     }
 }
