@@ -48,35 +48,48 @@
                     {{ __('general.select_your_roles') }}
                 </h3>
                 <div class="flex-1 space-y-4">
-                    @forelse ($roleCards as $roleCard)
+                    @forelse ($roleCards as $role)
+                        @php
+                            $color = $role['color'];
+                        @endphp
+
                         <label
                             class="group relative flex cursor-pointer items-center rounded-2xl border-2 border-transparent bg-gray-50 p-4 transition-all hover:bg-gray-100 dark:bg-gray-800/60 dark:hover:bg-gray-800 sm:p-5">
-                            <input type="checkbox" wire:model.live="formData.roles" value="{{ $roleCard['name'] }}"
+
+                            <input type="checkbox" wire:model.live="formData.roles" value="{{ $role['name'] }}"
                                 class="peer sr-only" />
 
+                            {{-- Border aktif --}}
                             <div
-                                class="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-colors {{ $roleCard['checkedRingClass'] }}">
+                                class="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-colors peer-checked:border-{{ $color }}-500 peer-checked:bg-{{ $color }}-50/50 dark:peer-checked:bg-{{ $color }}-900/20">
                             </div>
 
+                            {{-- Icon --}}
                             <div
-                                class="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-105 group-hover:shadow-md dark:bg-gray-800 {{ $roleCard['iconClass'] }}">
-                                <x-dynamic-component :component="'heroicon-o-' . $roleCard['icon']" class="h-7 w-7" />
+                                class="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-105 group-hover:shadow-md dark:bg-gray-800 text-{{ $color }}-600 dark:text-{{ $color }}-400">
+
+                                <x-dynamic-component :component="'heroicon-o-' . $role['icon']" class="h-7 w-7" />
                             </div>
 
+                            {{-- Text --}}
                             <div class="relative ml-4 flex-1 sm:ml-5">
-                                <h3
-                                    class="text-lg font-bold text-gray-900 transition-colors dark:text-white {{ $roleCard['titleClass'] }}">
-                                    {{ $roleCard['name'] }}
+                                <h3 class="text-lg font-bold text-gray-900 transition-colors dark:text-white
+                                                    group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
+                                    {{ $role['name'] }}
                                 </h3>
+
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $roleCard['description'] }}
+                                    {{ $role['description'] }}
                                 </p>
                             </div>
 
+                            {{-- Check icon --}}
                             <div
-                                class="relative ml-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-transparent transition-colors dark:border-gray-600 dark:bg-gray-700 peer-checked:text-white {{ $roleCard['checkClass'] }}">
+                                class="relative ml-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-transparent transition-colors dark:border-gray-600 dark:bg-gray-700 peer-checked:text-white peer-checked:border-{{ $color }}-500 peer-checked:bg-{{ $color }}-500">
+
                                 <x-heroicon-m-check class="h-5 w-5" />
                             </div>
+
                         </label>
                     @empty
                         <div
@@ -84,7 +97,6 @@
                             {{ __('scheduled_conference.no_self_assignable_roles_available') }}
                         </div>
                     @endforelse
-
                 </div>
 
                 <!-- Footer Action -->

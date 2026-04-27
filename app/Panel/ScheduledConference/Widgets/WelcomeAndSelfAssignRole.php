@@ -15,14 +15,9 @@ class WelcomeAndSelfAssignRole extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
-    public array $formData = [];
-
-    public function mount(): void
-    {
-        $this->form->fill([
-            'roles' => [],
-        ]);
-    }
+    public array $formData = [
+        'roles' => [],
+    ];
 
     public static function canView(): bool
     {
@@ -52,56 +47,36 @@ class WelcomeAndSelfAssignRole extends Widget
         ];
     }
 
-    protected function buildRoleCards(array $availableRoles, array $availableRoleDescriptions): array
+    protected function buildRoleCards(array $roles, array $descriptions): array
     {
-        $styleMap = [
-            'Author' => [
-                'icon' => 'pencil-square',
-                'checkedRingClass' => 'peer-checked:border-primary-500 peer-checked:bg-primary-50/50 dark:peer-checked:border-primary-500 dark:peer-checked:bg-primary-900/20',
-                'iconClass' => 'text-primary-600 dark:text-primary-400',
-                'titleClass' => 'group-hover:text-primary-600 dark:group-hover:text-primary-400',
-                'checkClass' => 'peer-checked:border-primary-500 peer-checked:bg-primary-500',
-            ],
-            'Reviewer' => [
-                'icon' => 'clipboard-document-check',
-                'checkedRingClass' => 'peer-checked:border-warning-500 peer-checked:bg-warning-50/50 dark:peer-checked:border-warning-500 dark:peer-checked:bg-warning-900/20',
-                'iconClass' => 'text-warning-600 dark:text-warning-400',
-                'titleClass' => 'group-hover:text-warning-600 dark:group-hover:text-warning-400',
-                'checkClass' => 'peer-checked:border-warning-500 peer-checked:bg-warning-500',
-            ],
-            'Participant' => [
-                'icon' => 'users',
-                'checkedRingClass' => 'peer-checked:border-success-500 peer-checked:bg-success-50/50 dark:peer-checked:border-success-500 dark:peer-checked:bg-success-900/20',
-                'iconClass' => 'text-success-600 dark:text-success-400',
-                'titleClass' => 'group-hover:text-success-600 dark:group-hover:text-success-400',
-                'checkClass' => 'peer-checked:border-success-500 peer-checked:bg-success-500',
-            ],
+        $colorMap = [
+            'Author' => 'primary',
+            'Reviewer' => 'warning',
+            'Participant' => 'success',
         ];
 
-        $defaultStyle = [
-            'icon' => 'user',
-            'checkedRingClass' => 'peer-checked:border-gray-500 peer-checked:bg-gray-100 dark:peer-checked:border-gray-400 dark:peer-checked:bg-gray-700/40',
-            'iconClass' => 'text-gray-600 dark:text-gray-300',
-            'titleClass' => 'group-hover:text-gray-900 dark:group-hover:text-gray-100',
-            'checkClass' => 'peer-checked:border-gray-500 peer-checked:bg-gray-500',
-        ];
-
-        return collect($availableRoles)
-            ->map(function (string $roleName) use ($styleMap, $defaultStyle, $availableRoleDescriptions): array {
-                $style = $styleMap[$roleName] ?? $defaultStyle;
-
+        return collect($roles)
+            ->map(function ($role) use ($colorMap, $descriptions) {
                 return [
-                    'name' => $roleName,
-                    'description' => $availableRoleDescriptions[$roleName] ?? 'Select this role to continue with your conference activities.',
-                    'icon' => $style['icon'],
-                    'checkedRingClass' => $style['checkedRingClass'],
-                    'iconClass' => $style['iconClass'],
-                    'titleClass' => $style['titleClass'],
-                    'checkClass' => $style['checkClass'],
+                    'name' => $role,
+                    'description' => $descriptions[$role]
+                        ?? 'Select this role to continue with your conference activities.',
+                    'icon' => $this->getRoleIcon($role),
+                    'color' => $colorMap[$role] ?? 'gray',
                 ];
             })
             ->values()
             ->toArray();
+    }
+
+    protected function getRoleIcon(string $role): string
+    {
+        return match ($role) {
+            'Author' => 'pencil-square',
+            'Reviewer' => 'clipboard-document-check',
+            'Participant' => 'users',
+            default => 'user',
+        };
     }
 
     public function submitRoles(): void
