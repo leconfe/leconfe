@@ -16,7 +16,7 @@
                         class="h-10 w-10 object-contain" />
                 </div>
                 <h2 class="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
-                    {{ __('general.welcome_message_title', ['conference' => $scheduledConference ? $scheduledConference->title : __('general.conference')]) }}
+                    {!! __('general.welcome_message_title', ['conference' => $scheduledConference ? $scheduledConference->title : __('general.conference')]) !!}
                 </h2>
                 <p class="text-lg leading-relaxed text-primary-100">
                     {{ __('general.role_selection_description') }}
