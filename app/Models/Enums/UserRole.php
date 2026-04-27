@@ -15,6 +15,7 @@ enum UserRole: string implements HasLabel
     case TrackEditor = 'Track Editor';
     case Reviewer = 'Reviewer';
     case Author = 'Author';
+    case Participant = 'Participant';
 
     public function getLabel(): ?string
     {
@@ -54,6 +55,7 @@ enum UserRole: string implements HasLabel
             self::TrackEditor,
             self::Reviewer,
             self::Author,
+            self::Participant,
         ];
     }
 
@@ -73,8 +75,32 @@ enum UserRole: string implements HasLabel
 
         $setting = $scheduledConference?->getMeta('allowed_self_assign_roles') ?? [];
 
-        return collect(self::selfAssignedRoleNames())
-            ->filter(fn ($role) => in_array($role, $setting))
+        return collect(self::selfAssignedRoleNames())->filter(function ($role) use ($setting) {
+            if ($role !== self::Reviewer) {
+                return true;
+            } else {
+                return in_array($role, $setting);
+            }
+        })->toArray();
+    }
+
+    public static function getRoleDescriptions(): array
+    {
+        return [
+            'Author' => 'Submit papers and participate in the conference as an author.',
+            'Reviewer' => 'Review submitted papers and provide feedback on research quality.',
+            'Participant' => 'Attend the conference.',
+        ];
+    }
+
+    public static function getAllowedSelfAssignRoleDescriptions(): array
+    {
+        $allowedRoles = self::getAllowedSelfAssignRoleNames();
+        $descriptions = self::getRoleDescriptions();
+
+        return collect($allowedRoles)
+            ->mapWithKeys(fn(string $roleName, string $key) => [$key => $descriptions[$roleName] ?? ''])
+            ->filter()
             ->toArray();
     }
 }
