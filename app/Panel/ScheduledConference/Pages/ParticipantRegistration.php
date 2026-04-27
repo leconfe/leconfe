@@ -51,7 +51,7 @@ class ParticipantRegistration extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && !auth()->user()?->isRegisteredAsParticipant() && auth()->user()->can('registerParticipant', Payment::class);
+        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && !auth()->user()?->isRegisteredAsParticipant() && auth()->user()?->can('registerParticipant', Payment::class);
     }
 
     /**
