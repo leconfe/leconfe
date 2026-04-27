@@ -14,12 +14,6 @@ return new class extends Migration {
         Schema::table('topics', function (Blueprint $table) {
             $table->unsignedInteger('order_column')->nullable()->after('name');
         });
-
-        DB::table('topics')->orderBy('id')->lazyById()->each(function ($topic, int $index) {
-            DB::table('topics')
-                ->where('id', $topic->id)
-                ->update(['order_column' => $index + 1]);
-        });
     }
 
     /**
