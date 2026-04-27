@@ -51,12 +51,12 @@ class SetupSetting extends Component implements HasForms
                             ->helperText(__('general.allow_registration_helper')),
                         CheckboxList::make('meta.allowed_self_assign_roles')
                             ->label('Allow User to self register as role')
-                            ->options(UserRole::selfAssignedRoleNames()),
+                            ->options(UserRole::selfAssignedRoleSetupNames()),
                         Select::make('meta.default_register_country')
                             ->label(__('general.default_register_country'))
                             ->placeholder(__('general.select_a_country'))
                             ->searchable()
-                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                            ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->id => $country->flag . ' ' . $country->name]))
                             ->optionsLimit(250),
                         Select::make('meta.timezone')
                             ->options(Timezonelist::toArray(false))

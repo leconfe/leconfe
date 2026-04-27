@@ -31,6 +31,18 @@ enum UserRole: string implements HasLabel
         ];
     }
 
+    public static function selfAssignedRolesSetup(): array
+    {
+        return [
+            self::Reviewer,
+        ];
+    }
+
+    public static function selfAssignedRoleSetupNames(): array
+    {
+        return array_column(self::selfAssignedRolesSetup(), 'name', 'value');
+    }
+
     public static function selfAssignedRoleNames(): array
     {
         return array_column(self::selfAssignedRoles(), 'name', 'value');
