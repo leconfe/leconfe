@@ -49,7 +49,8 @@ class InvoiceSetting extends Component implements HasForms
                         Grid::make(1)
                             ->schema([
                                 Checkbox::make('meta.receipt_enable')
-                                    ->label('Enable Receipt'),
+                                    ->label('Enable Receipt')
+                                    ->live(),
                                 TinyEditor::make('meta.invoice_sender_information')
                                     ->label('Sender Information'),
                                 TinyEditor::make('meta.invoice_notes')
@@ -65,6 +66,17 @@ class InvoiceSetting extends Component implements HasForms
                                         TextInput::make('meta.invoice_suffix_number')
                                             ->label('Suffix Number of Invoice'),
                                     ]),
+                                Grid::make(3)
+                                    ->schema([
+                                        TextInput::make('meta.receipt_prefix_number')
+                                            ->label('Prefix Number of Receipt'),
+                                        TextInput::make('meta.receipt_number')
+                                            ->numeric()
+                                            ->label('Next Receipt Number'),
+                                        TextInput::make('meta.receipt_suffix_number')
+                                            ->label('Suffix Number of Receipt'),
+                                    ])
+                                    ->visible(fn(Get $get) => $get('meta.receipt_enable')),
                             ])
                             ->visible(fn(Get $get) => $get('meta.invoice_enable')),
                     ]),

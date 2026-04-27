@@ -400,9 +400,10 @@ class PaymentDetail extends Page
                                     ->visible(fn (Payment $record) => $record->payment_method)
                                     ->getStateUsing(fn ($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
+                                    ->label(fn (Payment $record) => $record->receipt ? "Receipt No.: {$record->receipt}" : 'Receipt')
                                     ->state('Download')
                                     ->color('primary')
-                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
+                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->receipt && $record->paid_at)
                                     ->url(fn (Payment $record) => Receipt::getUrl(['record' => $record]))
                                     ->openUrlInNewTab(),
                             ]),
