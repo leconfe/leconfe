@@ -1046,4 +1046,7 @@ return [
     'scheduled_conference_categories_hint' => 'يُستخدم هذا لتصفية وتصنيف المؤتمرات المجدولة ومساعدة المستخدمين في العثور على المحتوى المناسب.',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
+
+    'roles_assigned_successfully' => 'تم تعيين الأدوار بنجاح',
+    'no_roles_selected' => 'لم يتم اختيار أي أدوار',
 ];

@@ -1030,4 +1030,7 @@ return [
     'scheduled_conference_categories_hint' => 'Përdoret për të filtruar dhe kategorizuar konferencat e planifikuara dhe për të ndihmuar përdoruesit të gjejnë përmbajtje relevante.',
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',
+
+    'roles_assigned_successfully' => 'Roli u caktua me sukses',
+    'no_roles_selected' => 'Nuk u zgjodhën role',
 ];

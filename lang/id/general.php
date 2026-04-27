@@ -1029,4 +1029,7 @@ return [
     'scheduled_conference_categories_hint' => 'Ini digunakan untuk memfilter dan mengkategorikan konferensi yang sudah terjadwal serta membantu pengguna menemukan konten yang relevan.',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
+
+    'roles_assigned_successfully' => 'Peran berhasil ditetapkan',
+    'no_roles_selected' => 'Tidak ada peran yang dipilih'
 ];

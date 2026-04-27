@@ -117,7 +117,7 @@ class WelcomeAndSelfAssignRole extends Widget
         if (empty($selfAssignRoles)) {
             Notification::make()
                 ->warning()
-                ->title(__('general'))
+                ->title(__('general.no_roles_selected'))
                 ->send();
 
             return;
@@ -128,7 +128,7 @@ class WelcomeAndSelfAssignRole extends Widget
         if (!$user) {
             Notification::make()
                 ->error()
-                ->title('User not found')
+                ->title(__('general.user_not_found'))
                 ->send();
 
             return;
@@ -138,8 +138,7 @@ class WelcomeAndSelfAssignRole extends Widget
 
         Notification::make()
             ->success()
-            ->title('Roles assigned successfully!')
-            ->body('You can now proceed with your selected roles.')
+            ->title(__('general.roles_assigned_successfully'))
             ->send();
     }
 }
