@@ -26,4 +26,9 @@ return [
     'presentation_other_no_preview_description' => 'يرجى تنزيل ملف العرض التقديمي لعرض محتواه.',
     'presentation_other_download_button' => 'تنزيل ملف العرض التقديمي',
     'presentation_other_file_not_available' => 'الملف غير متاح بعد.',
+    'welcome_message_title' => 'مرحبًا بك في <br /> :conference !',
+    'role_selection_description' => 'للبدء، يرجى اختيار الأدوار الخاصة بك. سيؤدي اختيارك إلى تخصيص لوحة التحكم والميزات الخاصة بك.',
+    'welcome_overview_description' => 'يُقام المؤتمر من :start_date إلى :end_date.',
+    'no_self_assignable_roles_available' => 'لا توجد أدوار قابلة للتعيين الذاتي متاحة لهذا المؤتمر.',
+    'submit_paper' => 'إرسال البحث',
 ];

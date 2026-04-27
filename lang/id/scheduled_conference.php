@@ -26,4 +26,9 @@ return [
     'presentation_other_no_preview_description' => 'Silakan unduh file presentasi untuk melihat kontennya.',
     'presentation_other_download_button' => 'Unduh File Presentasi',
     'presentation_other_file_not_available' => 'File belum tersedia.',
+    'welcome_message_title' => 'Selamat datang di <br /> :conference !',
+    'role_selection_description' => 'Untuk memulai, silakan pilih peran Anda. Pilihan Anda akan menyesuaikan dasbor dan fitur Anda.',
+    'welcome_overview_description' => 'Konferensi berlangsung dari :start_date hingga :end_date.',
+    'no_self_assignable_roles_available' => 'Tidak ada peran yang dapat dipilih sendiri untuk konferensi ini.',
+    'submit_paper' => 'Kirim Makalah',
 ];
