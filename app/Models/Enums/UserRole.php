@@ -99,9 +99,9 @@ enum UserRole: string implements HasLabel
     public static function getRoleDescriptions(): array
     {
         return [
-            'Author' => 'Submit papers and participate in the conference as an author.',
-            'Reviewer' => 'Review submitted papers and provide feedback on research quality.',
-            'Participant' => 'Attend the conference.',
+            self::Author->name => __('general.role_description_author'),
+            self::Reviewer->name => __('general.role_description_reviewer'),
+            self::Participant->name => __('general.role_description_participant'),
         ];
     }
 

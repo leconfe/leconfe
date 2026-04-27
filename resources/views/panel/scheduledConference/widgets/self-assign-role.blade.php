@@ -12,15 +12,14 @@
             <div class="relative z-10">
                 <div
                     class="mb-6 inline-flex rounded-2xl bg-white/20 p-3 shadow-inner shadow-white/10 ring-1 ring-white/30 backdrop-blur-md">
-                    <img src="{{ asset('logo.png') }}" alt="Leconfe Icon" class="h-10 w-10 object-contain" />
+                    <img src="{{ asset('logo.png') }}" alt="{{ __('general.logo') }}"
+                        class="h-10 w-10 object-contain" />
                 </div>
                 <h2 class="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
-                    Welcome to <br />
-                    <span class="text-primary-200">{{ $scheduledConference ? $scheduledConference->title : 'the
-                        Conference' }}</span>
+                    {{ __('general.welcome_message_title', ['conference' => $scheduledConference ? $scheduledConference->title : __('general.conference')]) }}
                 </h2>
                 <p class="text-lg leading-relaxed text-primary-100">
-                    To get started, please select your roles. Your selection will customize your dashboard and features.
+                    {{ __('general.role_selection_description') }}
                 </p>
             </div>
 
@@ -28,14 +27,15 @@
                 <div
                     class="flex items-center gap-3 rounded-xl bg-black/20 p-4 text-sm font-medium text-primary-100 backdrop-blur-sm">
                     <x-heroicon-m-information-circle class="h-6 w-6 text-primary-300" />
-                    <span>You can confidently select multiple roles if they apply to you.</span>
+                    <span>{{ __('general.multiple_roles_notice') }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Right Side: Role Selection List -->
         <div class="flex flex-col p-6 sm:p-8 lg:w-3/5 lg:p-12">
-            <h3 class="mb-6 text-xl font-bold text-gray-950 dark:text-white lg:hidden">Select Your Roles</h3>
+            <h3 class="mb-6 text-xl font-bold text-gray-950 dark:text-white lg:hidden">
+                {{ __('general.select_your_roles') }}</h3>
             <div class="flex-1 space-y-4">
                 @forelse ($roleCards as $roleCard)
                     <label
@@ -70,7 +70,7 @@
                 @empty
                     <div
                         class="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
-                        No self-assignable roles are available for this conference.
+                        {{ __('general.no_self_assignable_roles_available') }}
                     </div>
                 @endforelse
 
@@ -80,7 +80,7 @@
             <div class="mt-8 flex items-center justify-between border-t border-gray-100 pt-6 dark:border-gray-800">
                 <x-filament::button type="button" size="lg" color="primary" wire:click="submitRoles"
                     class="ml-auto w-full rounded-xl px-8 py-3 shadow-md transition-all hover:shadow-lg lg:w-auto">
-                    Continue
+                    {{ __('general.continue') }}
                     <x-heroicon-m-arrow-right class="ml-2 inline h-5 w-5" />
                 </x-filament::button>
             </div>
