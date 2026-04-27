@@ -15,13 +15,13 @@ class WelcomeAndSelfAssignRole extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
-    public array $formData = [
-        'roles' => [],
-    ];
+    public array $formData = [];
 
     public function mount(): void
     {
-        $this->formData['roles'] = [];
+        $this->form->fill([
+            'roles' => [],
+        ]);
     }
 
     public static function canView(): bool
