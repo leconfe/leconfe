@@ -26,7 +26,7 @@ return [
     'presentation_other_no_preview_description' => 'Please download the presentation file to view its contents.',
     'presentation_other_download_button' => 'Download Presentation File',
     'presentation_other_file_not_available' => 'File is not available yet.',
-    'welcome_message_title' => 'Welcome to :conference !',
+    'welcome_message_title' => 'Welcome to <br /> :conference !',
     'welcome_message_submit_paper' => 'To submit your paper, please <a class="text-primary-600" href=":submit_link">click here</a> instead.',
     'welcome_message_non_presenter' => 'If you are participating as a non-presenter, you may <a class="text-primary-600" href=":register_link">register here</a> instead.',
     'welcome_message_registered_non_presenter' => 'You are registered as non-presenter, you may check the <a class="text-primary-600" href=":participant_detail_link">information here</a>.',

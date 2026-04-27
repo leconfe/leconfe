@@ -56,7 +56,7 @@ return [
     'privacy_statement_agree_without_link' => 'I accept and approve according to Privacy Statement.',
     'registration_closed' => 'Conference user registration is closed.',
     'registration_complete_message' => 'Thank you for completing the registration! What would you like to proceed with next?',
-    'welcome_message_title' => 'Welcome to :conference !',
+    'welcome_message_title' => 'Welcome to <br /> :conference !',
     'select_your_roles' => 'Select Your Roles',
     'role_selection_description' => 'To get started, please select your roles. Your selection will customize your dashboard and features.',
     'multiple_roles_notice' => 'You can confidently select multiple roles if they apply to you.',

@@ -44,7 +44,7 @@ return [
     'privacy_statement_agree' => 'Unë pranoj dhe miratoj sipas <a class="link link-primary link-hover" href=":url">Deklaratës së Privatësisë.</a>',
     'registration_closed' => 'Kjo konferencë aktualisht ka mbyllur regjistrimet e përdoruesve',
     'registration_complete_message' => 'Faleminderit që përfunduat regjistrimin! Çfarë dëshironi të bëni më pas?',
-    'welcome_message_title' => 'Mirë se vini në :conference!',
+    'welcome_message_title' => 'Mirë se vini në <br /> :conference!',
     'select_your_roles' => 'Zgjidh rolet tuaja',
     'role_selection_description' => 'Për të filluar, ju lutemi zgjidhni rolet tuaja. Përzgjedhja juaj do të përshtasë panelin dhe veçoritë tuaja.',
     'multiple_roles_notice' => 'Mund të zgjidhni më shumë role me besim nëse ju përshtaten.',

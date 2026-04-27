@@ -50,7 +50,7 @@ return [
     'privacy_statement_agree' => 'Я соглашаюсь и одобряю согласно <a class="link link-primary link-hover" href=":url">Политике конфиденциальности</a>',
     'registration_closed' => 'Регистрация пользователей конференции закрыта',
     'registration_complete_message' => 'Спасибо за завершение регистрации! Что вы хотите сделать дальше?',
-    'welcome_message_title' => 'Добро пожаловать на :conference!',
+    'welcome_message_title' => 'Добро пожаловать на <br /> :conference!',
     'select_your_roles' => 'Выберите свои роли',
     'role_selection_description' => 'Чтобы начать, выберите свои роли. Ваш выбор настроит панель управления и функции под вас.',
     'multiple_roles_notice' => 'Вы можете смело выбрать несколько ролей, если они вам подходят.',

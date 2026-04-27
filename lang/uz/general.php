@@ -50,7 +50,7 @@ return [
     'privacy_statement_agree' => 'Men <a class="link link-primary link-hover" href=":url">Maxfiylik siyosati</a>ga roziman va tasdiqlayman',
     'registration_closed' => 'Konferensiyaga ro‘yxatdan o‘tish yopilgan',
     'registration_complete_message' => 'Ro‘yxatdan o‘tganingiz uchun rahmat! Endi nimani davom ettirmoqchisiz?',
-    'welcome_message_title' => ':conference ga xush kelibsiz!',
+    'welcome_message_title' => 'Xush kelibsiz <br /> :conference ga!',
     'select_your_roles' => 'Rollaringizni tanlang',
     'role_selection_description' => 'Boshlash uchun, rollaringizni tanlang. Tanlovingiz boshqaruv paneli va funksiyalaringizni moslashtiradi.',
     'multiple_roles_notice' => 'Agar mos kelsa, bir nechta rolni bemalol tanlashingiz mumkin.',

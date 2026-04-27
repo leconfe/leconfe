@@ -55,7 +55,7 @@ return [
     'privacy_statement_agree' => 'أوافق وأقر بما يتوافق مع <a class="link link-primary link-hover" href=":url">بيان الخصوصية.</a>',
     'registration_closed' => 'تم إغلاق تسجيل المستخدمين لهذا المؤتمر',
     'registration_complete_message' => 'شكراً لإكمال التسجيل! ماذا تود القيام به بعد ذلك؟',
-    'welcome_message_title' => 'مرحبًا بك في :conference !',
+    'welcome_message_title' => 'مرحبًا بك في <br /> :conference !',
     'select_your_roles' => 'اختر أدوارك',
     'role_selection_description' => 'للبدء، يرجى اختيار الأدوار الخاصة بك. سيؤدي اختيارك إلى تخصيص لوحة التحكم والميزات الخاصة بك.',
     'multiple_roles_notice' => 'يمكنك اختيار عدة أدوار بثقة إذا كانت تنطبق عليك.',

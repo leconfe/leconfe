@@ -46,7 +46,7 @@ return [
     'privacy_statement_agree_without_link' => 'Saya menerima dan menyetujui sesuai dengan Pernyataan Privasi.',
     'registration_closed' => 'Konferensi ini saat ini menutup pendaftaran pengguna',
     'registration_complete_message' => 'Terima kasih telah menyelesaikan pendaftaran! Apa yang ingin Anda lakukan selanjutnya?',
-    'welcome_message_title' => 'Selamat datang di :conference !',
+    'welcome_message_title' => 'Selamat datang di <br /> :conference !',
     'select_your_roles' => 'Pilih Peran Anda',
     'role_selection_description' => 'Untuk memulai, silakan pilih peran Anda. Pilihan Anda akan menyesuaikan dasbor dan fitur Anda.',
     'multiple_roles_notice' => 'Anda dapat memilih beberapa peran jika memang sesuai untuk Anda.',
