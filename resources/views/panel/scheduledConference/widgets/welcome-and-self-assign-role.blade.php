@@ -12,8 +12,7 @@
             <div class="relative z-10">
                 <div
                     class="mb-6 inline-flex rounded-2xl bg-white/20 p-3 shadow-inner shadow-white/10 ring-1 ring-white/30 backdrop-blur-md">
-                    <img src="{{ asset('logo.png') }}" alt="{{ __('general.logo') }}"
-                        class="h-10 w-10 object-contain" />
+                    <img src="{{ asset('logo.png') }}" alt="{{ __('general.logo') }}" class="size-5 object-contain" />
                 </div>
                 <h2 class="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
                     {!! __('scheduled_conference.welcome_message_title', ['conference' => $scheduledConference ? $scheduledConference->title : __('general.conference')]) !!}
@@ -33,9 +32,9 @@
             @if ($isAssignRole)
                 <div class="relative z-10 mt-10 hidden lg:block">
                     <div
-                        class="flex items-center gap-3 rounded-xl bg-black/20 p-4 text-sm font-medium text-primary-100 backdrop-blur-sm">
+                        class="flex items-center gap-3 rounded-xl bg-black/20 p-4 text-sm font-medium text-primary-200 backdrop-blur-sm">
                         <x-heroicon-m-information-circle class="h-6 w-6 text-primary-300" />
-                        <span>{{ __('general.multiple_roles_notice') }}</span>
+                        <span class="text-primary-100">{{ __('general.multiple_roles_notice') }}</span>
                     </div>
                 </div>
             @endif
@@ -73,8 +72,9 @@
 
                             {{-- Text --}}
                             <div class="relative ml-4 flex-1 sm:ml-5">
-                                <h3 class="text-lg font-bold text-gray-900 transition-colors dark:text-white
-                                                    group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
+                                <h3
+                                    class="text-lg font-bold text-gray-900 transition-colors dark:text-white
+                                                                                                                            group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
                                     {{ $role['name'] }}
                                 </h3>
 
