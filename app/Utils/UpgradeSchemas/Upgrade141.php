@@ -2,6 +2,7 @@
 
 namespace App\Utils\UpgradeSchemas;
 
+use App\Models\Enums\UserRole;
 use App\Models\Permission;
 use App\Models\ScheduledConference;
 use Illuminate\Support\Facades\Artisan;
@@ -70,7 +71,7 @@ class Upgrade141 extends UpgradeBase
             ->chunk(100, function ($scheduledConferences): void {
                 foreach ($scheduledConferences as $scheduledConference) {
                     Role::withoutGlobalScopes()->firstOrCreate([
-                        'name' => 'participant',
+                        'name' => UserRole::Participant->value,
                         'conference_id' => $scheduledConference->conference_id,
                         'scheduled_conference_id' => $scheduledConference->getKey(),
                     ]);
