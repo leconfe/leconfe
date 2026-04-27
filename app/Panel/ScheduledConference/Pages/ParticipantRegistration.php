@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\Participant;
+use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
 use App\Models\User;
@@ -50,7 +51,7 @@ class ParticipantRegistration extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && ! auth()->user()?->isRegisteredAsParticipant();
+        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && auth()->user()->can('registerAsParticipant', Payment::class);
     }
 
     /**
