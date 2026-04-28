@@ -8,6 +8,7 @@ use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\RichEditor;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -95,6 +97,28 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('send-invoice')
+                        ->label(__('general.send_invoice'))
+                        ->icon('heroicon-o-envelope')
+                        ->color('gray')
+                        ->visible(fn (Payment $record) => ! $record->isPaid())
+                        ->requiresConfirmation()
+                        ->action(function (Action $action, Payment $record) {
+                            $submission = $record->model;
+
+                            if (! $submission || ! $record->user) {
+                                $action->failureNotificationTitle(__('general.failed_send_notification'));
+                                $action->failure();
+
+                                return;
+                            }
+
+                            $record->user->notify(new SubmissionPayment($submission));
+                            $record->setMeta(\App\Services\Billing\SubmissionBillingNotifier::PAYMENT_META_AUTO_NOTIFIED_AT, now()->toDateTimeString());
+
+                            $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+                            $action->success();
+                        }),
                     DeleteAction::make()
                         ->hidden(fn(Payment $record) => $record->isPaid()),
                 ])

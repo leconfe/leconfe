@@ -105,6 +105,27 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('send-invoice')
+                        ->label(__('general.send_invoice'))
+                        ->icon('heroicon-o-envelope')
+                        ->color('gray')
+                        ->visible(fn (Payment $record) => ! $record->isPaid())
+                        ->requiresConfirmation()
+                        ->action(function (Action $action, Payment $record) {
+                            $participant = $record->model;
+
+                            if (! $participant || ! $participant->email) {
+                                $action->failureNotificationTitle(__('general.failed_send_notification'));
+                                $action->failure();
+
+                                return;
+                            }
+
+                            $participant->notify(new ParticipantPayment($participant));
+
+                            $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+                            $action->success();
+                        }),
                     DeleteAction::make()
                         ->hidden(fn(Payment $record) => $record->isPaid())
                         ->using(function (Payment $record) {

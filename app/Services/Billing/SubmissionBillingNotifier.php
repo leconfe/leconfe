@@ -45,6 +45,12 @@ class SubmissionBillingNotifier
 
     public function maybeNotifyForSubmission(Submission $submission): bool
     {
+        $scheduledConference = $this->resolveScheduledConference($submission);
+
+        if ($scheduledConference && ! $scheduledConference->isSubmissionPaymentAutoNotify()) {
+            return false;
+        }
+
         $payment = Payment::withoutGlobalScopes()
             ->where('model_type', Submission::class)
             ->where('model_id', $submission->getKey())
