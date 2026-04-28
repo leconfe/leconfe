@@ -32,8 +32,9 @@ class TopicTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Topic::query())
+            ->query(fn() => Topic::query()->orderBy('order_column'))
             ->heading(__('general.topic'))
+            ->reorderable('order_column')
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
@@ -42,8 +43,8 @@ class TopicTable extends Component implements HasForms, HasTable
             ->headerActions([
                 CreateAction::make('createtopic')
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn (Form $form) => $this->form($form))
-                    ->using(fn (array $data) => TopicCreateAction::run($data)),
+                    ->form(fn(Form $form) => $this->form($form))
+                    ->using(fn(array $data) => TopicCreateAction::run($data)),
             ])
             ->filters([
                 // ...
@@ -51,8 +52,8 @@ class TopicTable extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn (Form $form) => $this->form($form))
-                    ->action(fn (Topic $record, array $data) => TopicUpdateAction::run($record, $data)),
+                    ->form(fn(Form $form) => $this->form($form))
+                    ->action(fn(Topic $record, array $data) => TopicUpdateAction::run($record, $data)),
                 DeleteAction::make(),
             ])
             ->bulkActions([
