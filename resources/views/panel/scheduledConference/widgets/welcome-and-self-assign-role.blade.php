@@ -49,32 +49,55 @@
                 <div class="flex-1 space-y-4">
                     @forelse ($roleCards as $role)
                         @php
-                            $color = $role['color'];
+                            $checkedBorderClass = match ($role['color']) {
+                                'primary' => 'peer-checked:border-primary-500 peer-checked:bg-primary-50/50 dark:peer-checked:bg-primary-900/20',
+                                'warning' => 'peer-checked:border-warning-500 peer-checked:bg-warning-50/50 dark:peer-checked:bg-warning-900/20',
+                                'success' => 'peer-checked:border-success-500 peer-checked:bg-success-50/50 dark:peer-checked:bg-success-900/20',
+                                default => 'peer-checked:border-gray-500 peer-checked:bg-gray-50/50 dark:peer-checked:bg-gray-900/20',
+                            };
+
+                            $iconClass = match ($role['color']) {
+                                'primary' => 'text-primary-600 dark:text-primary-400',
+                                'warning' => 'text-warning-600 dark:text-warning-400',
+                                'success' => 'text-success-600 dark:text-success-400',
+                                default => 'text-gray-600 dark:text-gray-400',
+                            };
+
+                            $titleHoverClass = match ($role['color']) {
+                                'primary' => 'group-hover:text-primary-600 dark:group-hover:text-primary-400',
+                                'warning' => 'group-hover:text-warning-600 dark:group-hover:text-warning-400',
+                                'success' => 'group-hover:text-success-600 dark:group-hover:text-success-400',
+                                default => 'group-hover:text-gray-600 dark:group-hover:text-gray-400',
+                            };
+
+                            $checkedIconClass = match ($role['color']) {
+                                'primary' => 'peer-checked:border-primary-500 peer-checked:bg-primary-500 peer-checked:text-white',
+                                'warning' => 'peer-checked:border-warning-500 peer-checked:bg-warning-500 peer-checked:text-white',
+                                'success' => 'peer-checked:border-success-500 peer-checked:bg-success-500 peer-checked:text-white',
+                                default => 'peer-checked:border-gray-500 peer-checked:bg-gray-500 peer-checked:text-white',
+                            };
                         @endphp
 
                         <label
                             class="group relative flex cursor-pointer items-center rounded-2xl border-2 border-transparent bg-gray-50 p-4 transition-all hover:bg-gray-100 dark:bg-gray-800/60 dark:hover:bg-gray-800 sm:p-5">
-
                             <input type="checkbox" wire:model.live="formData.roles" value="{{ $role['name'] }}"
                                 class="peer sr-only" />
 
                             {{-- Border aktif --}}
                             <div
-                                class="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-colors peer-checked:border-{{ $color }}-500 peer-checked:bg-{{ $color }}-50/50 dark:peer-checked:bg-{{ $color }}-900/20">
+                                class="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-colors {{ $checkedBorderClass }}">
                             </div>
 
                             {{-- Icon --}}
                             <div
-                                class="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-105 group-hover:shadow-md dark:bg-gray-800 text-{{ $color }}-600 dark:text-{{ $color }}-400">
-
+                                class="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-105 group-hover:shadow-md dark:bg-gray-800 {{ $iconClass }}">
                                 <x-dynamic-component :component="'heroicon-o-' . $role['icon']" class="h-7 w-7" />
                             </div>
 
                             {{-- Text --}}
                             <div class="relative ml-4 flex-1 sm:ml-5">
                                 <h3
-                                    class="text-lg font-bold text-gray-900 transition-colors dark:text-white
-                                                                                                                                    group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
+                                    class="text-lg font-bold text-gray-900 transition-colors dark:text-white {{ $titleHoverClass }}">
                                     {{ $role['name'] }}
                                 </h3>
 
@@ -85,8 +108,7 @@
 
                             {{-- Check icon --}}
                             <div
-                                class="relative ml-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-transparent transition-colors dark:border-gray-600 dark:bg-gray-700 peer-checked:text-white peer-checked:border-{{ $color }}-500 peer-checked:bg-{{ $color }}-500">
-
+                                class="relative ml-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-transparent transition-colors dark:border-gray-600 dark:bg-gray-700 {{ $checkedIconClass }}">
                                 <x-heroicon-m-check class="h-5 w-5" />
                             </div>
 
