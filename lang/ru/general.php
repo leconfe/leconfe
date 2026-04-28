@@ -1045,6 +1045,6 @@ return [
     'faculty' => 'Факультет',
     'faculties' => 'Факультеты',
 
-    'roles_assigned_successfully' => 'Роли успешно назначены',
+    'role_assigned_successfully' => 'Роль успешно назначена',
     'no_roles_selected' => 'Роли не выбраны'
 ];

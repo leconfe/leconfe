@@ -1106,6 +1106,6 @@ return [
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
 
-    'roles_assigned_successfully' => 'Roles assigned successfully',
+    'role_assigned_successfully' => 'Role assigned successfully',
     'no_roles_selected' => 'No roles selected',
 ];

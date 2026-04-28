@@ -29,22 +29,13 @@
                 </p>
             </div>
 
-            @if ($isAssignRole)
-                <div class="relative z-10 mt-10 hidden lg:block">
-                    <div
-                        class="flex items-center gap-3 rounded-xl bg-black/20 p-4 text-sm font-medium text-primary-200 backdrop-blur-sm">
-                        <x-heroicon-m-information-circle class="h-6 w-6 text-primary-300" />
-                        <span class="text-primary-100">{{ __('general.multiple_roles_notice') }}</span>
-                    </div>
-                </div>
-            @endif
         </div>
 
         <!-- Right Side: Role Selection List -->
         <div class="flex flex-col p-6 sm:p-8 lg:w-3/5 lg:p-12">
             @if ($isAssignRole)
                 <h3 class="mb-6 text-xl font-bold text-gray-950 dark:text-white lg:hidden">
-                    {{ __('general.select_your_roles') }}
+                    {{ __('general.select_role') }}
                 </h3>
                 <div class="flex-1 space-y-4">
                     @forelse ($roleCards as $role)
@@ -80,7 +71,7 @@
 
                         <label
                             class="group relative flex cursor-pointer items-center rounded-2xl border-2 border-transparent bg-gray-50 p-4 transition-all hover:bg-gray-100 dark:bg-gray-800/60 dark:hover:bg-gray-800 sm:p-5">
-                            <input type="checkbox" wire:model.live="formData.roles" value="{{ $role['name'] }}"
+                            <input type="radio" wire:model.live="formData.role" value="{{ $role['name'] }}"
                                 class="peer sr-only" />
 
                             {{-- Border aktif --}}

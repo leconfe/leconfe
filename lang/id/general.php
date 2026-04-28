@@ -1030,6 +1030,6 @@ return [
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
 
-    'roles_assigned_successfully' => 'Peran berhasil ditetapkan',
+    'role_assigned_successfully' => 'Peran berhasil ditetapkan',
     'no_roles_selected' => 'Tidak ada peran yang dipilih'
 ];

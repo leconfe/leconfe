@@ -16,7 +16,7 @@ class WelcomeAndSelfAssignRole extends Widget
     protected int|string|array $columnSpan = 'full';
 
     public array $formData = [
-        'roles' => [],
+        'role' => null,
     ];
 
     public static function canView(): bool
@@ -83,13 +83,9 @@ class WelcomeAndSelfAssignRole extends Widget
     {
         $allowedRoles = array_values(UserRole::getAllowedSelfAssignRoleNames());
 
-        $selfAssignRoles = collect($this->formData['roles'] ?? [])
-            ->filter(fn($role) => is_string($role) && in_array($role, $allowedRoles, true))
-            ->unique()
-            ->values()
-            ->toArray();
+        $selectedRoleInput = $this->formData['role'] ?? null;
 
-        if (empty($selfAssignRoles)) {
+        if (!$selectedRoleInput && is_string($selectedRoleInput) && in_array($selectedRoleInput, $allowedRoles, true)) {
             Notification::make()
                 ->warning()
                 ->title(__('general.no_roles_selected'))
@@ -109,11 +105,11 @@ class WelcomeAndSelfAssignRole extends Widget
             return;
         }
 
-        $user->assignRole($selfAssignRoles);
+        $user->assignRole($selectedRoleInput);
 
         Notification::make()
             ->success()
-            ->title(__('general.roles_assigned_successfully'))
+            ->title(__('general.role_assigned_successfully'))
             ->send();
     }
 }

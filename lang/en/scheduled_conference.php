@@ -30,7 +30,7 @@ return [
     'welcome_message_submit_paper' => 'To submit your paper, please <span class="text-primary-600">click here</span> instead.',
     'welcome_message_non_presenter' => 'Non-presenter registration is available <span class="text-primary-600">here</span>.',
     'welcome_message_registered_non_presenter' => 'You are registered as non-presenter, you may check the <span class="text-primary-600">information here</span>.',
-    'role_selection_description' => 'To get started, please select your roles. Your selection will customize your dashboard and features.',
+    'role_selection_description' => 'To get started, please select your role. Your selection will customize your dashboard and features.',
     'welcome_overview_description' => 'The conference runs from :start_date to :end_date.',
     'no_self_assignable_roles_available' => 'No self-assignable roles are available for this conference.',
     'submit_paper' => 'Submit Paper',

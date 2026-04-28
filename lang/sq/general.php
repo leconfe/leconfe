@@ -1031,6 +1031,6 @@ return [
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',
 
-    'roles_assigned_successfully' => 'Roli u caktua me sukses',
+    'role_assigned_successfully' => 'Roli u caktua me sukses',
     'no_roles_selected' => 'Nuk u zgjodhën role',
 ];

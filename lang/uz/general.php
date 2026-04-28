@@ -1045,6 +1045,6 @@ return [
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
 
-    'roles_assigned_successfully' => 'Rollar muvaffaqiyatli tayinlandi',
+    'role_assigned_successfully' => 'Rol muvaffaqiyatli tayinlandi',
     'no_roles_selected' => 'Hech bir rol seçilmedi',
 ];

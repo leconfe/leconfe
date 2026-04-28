@@ -1047,6 +1047,6 @@ return [
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
 
-    'roles_assigned_successfully' => 'تم تعيين الأدوار بنجاح',
+    'role_assigned_successfully' => 'تم تعيين الدور بنجاح',
     'no_roles_selected' => 'لم يتم اختيار أي أدوار',
 ];

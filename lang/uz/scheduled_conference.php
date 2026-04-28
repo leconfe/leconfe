@@ -27,7 +27,7 @@ return [
     'presentation_other_download_button' => 'Taqdimot faylini yuklab olish',
     'presentation_other_file_not_available' => 'Fayl hozircha mavjud emas.',
     'welcome_message_title' => 'Xush kelibsiz <br /> <span class="text-primary-200">:conference ga!</span>',
-    'role_selection_description' => 'Boshlash uchun, rollaringizni tanlang. Tanlovingiz boshqaruv paneli va funksiyalaringizni moslashtiradi.',
+    'role_selection_description' => 'Boshlash uchun, rolingizni tanlang. Tanlovingiz boshqaruv paneli va funksiyalaringizni moslashtiradi.',
     'welcome_overview_description' => 'Konferensiya :start_date dan :end_date gacha davom etadi.',
     'no_self_assignable_roles_available' => 'Ushbu konferensiya uchun o‘zini-o‘zi tanlash mumkin bo‘lgan rollar mavjud emas.',
     'submit_paper' => 'Maqola yuborish',

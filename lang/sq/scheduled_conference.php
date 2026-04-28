@@ -27,7 +27,7 @@ return [
     'presentation_other_download_button' => 'Shkarko skedarin e prezantimit',
     'presentation_other_file_not_available' => 'Skedari nuk është ende i disponueshëm.',
     'welcome_message_title' => 'Mirë se vini në <br /> <span class="text-primary-200">:conference!</span>',
-    'role_selection_description' => 'Për të filluar, ju lutemi zgjidhni rolet tuaja. Përzgjedhja juaj do të përshtasë panelin dhe veçoritë tuaja.',
+    'role_selection_description' => 'Për të filluar, ju lutemi zgjidhni rolin tuaj. Përzgjedhja juaj do të përshtasë panelin dhe veçoritë tuaja.',
     'welcome_overview_description' => 'Konferenca zhvillohet nga :start_date deri më :end_date.',
     'no_self_assignable_roles_available' => 'Nuk ka role që mund të caktohen vetë për këtë konferencë.',
     'submit_paper' => 'Dërgo Punimin',
