@@ -20,10 +20,10 @@
                 <p class="text-lg leading-relaxed text-primary-100">
                     @if ($isAssignRole)
                         {{ __('scheduled_conference.role_selection_description') }}
-                    @else
+                    @elseif ($scheduledConference?->date_start && $scheduledConference?->date_end)
                                         {{ __('scheduled_conference.welcome_overview_description', [
-                            'start_date' => $scheduledConference?->date_start?->format(\App\Facades\Setting::get('format_date')) ?? '-',
-                            'end_date' => $scheduledConference?->date_end?->format(\App\Facades\Setting::get('format_date')) ?? '-',
+                            'start_date' => $scheduledConference->date_start->format(\App\Facades\Setting::get('format_date')),
+                            'end_date' => $scheduledConference->date_end->format(\App\Facades\Setting::get('format_date')),
                         ]) }}
                     @endif
                 </p>
@@ -74,7 +74,7 @@
                             <div class="relative ml-4 flex-1 sm:ml-5">
                                 <h3
                                     class="text-lg font-bold text-gray-900 transition-colors dark:text-white
-                                                                                                                            group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
+                                                                                                                                    group-hover:text-{{ $color }}-600 dark:group-hover:text-{{ $color }}-400">
                                     {{ $role['name'] }}
                                 </h3>
 
