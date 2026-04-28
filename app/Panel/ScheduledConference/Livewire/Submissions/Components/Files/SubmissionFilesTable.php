@@ -63,7 +63,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->action(function (SubmissionFile $record){
                     $name = implode('-', [
                         $record->getKey(),
-                        $record->user->full_name,
+                        str_replace(['/', '\\'], '-', $record->user->full_name),
                         Str::limit(basename($record->media->name), 100, '')
                     ]);
 
