@@ -38,7 +38,7 @@ class WelcomeAndSelfAssignRole extends Widget
         $user = auth()->user();
 
         return [
-            'isAssignRole' => !$user->roles()->exists() && !$user->roles()->withoutGlobalScopes()->exists(),
+            'isAssignRole' => !$user->roles()->exists(),
             'scheduledConference' => app()->getCurrentScheduledConference(),
             'submissionUrl' => SubmissionResource::getUrl(),
             'participantRegistrationUrl' => ParticipantRegistration::getUrl(),
