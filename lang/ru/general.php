@@ -54,7 +54,7 @@ return [
     'multiple_roles_notice' => 'Вы можете смело выбрать несколько ролей, если они вам подходят.',
     'role_description_author' => 'Подавайте материалы и участвуйте в конференции как автор.',
     'role_description_reviewer' => 'Рецензируйте поданные материалы и давайте обратную связь по качеству исследования.',
-    'role_description_participant' => 'Участвуйте в конференции.',
+    'role_description_participant' => 'Только присутствовать на конференции.',
     'discover' => 'Откройте',
     'registration' => 'Регистрация',
     'continue' => 'Продолжить',

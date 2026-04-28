@@ -48,7 +48,7 @@ return [
     'multiple_roles_notice' => 'Mund të zgjidhni më shumë role me besim nëse ju përshtaten.',
     'role_description_author' => 'Dërgo punime dhe merr pjesë në konferencë si autor.',
     'role_description_reviewer' => 'Rishiko punimet e dorëzuara dhe jep komente mbi cilësinë e kërkimit.',
-    'role_description_participant' => 'Merr pjesë në konferencë.',
+    'role_description_participant' => 'Vetëm merrni pjesë në konferencë.',
     'discover' => 'Zbulo',
     'registration' => 'Regjistrimi',
     'continue' => 'Vazhdo',

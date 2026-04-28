@@ -60,7 +60,7 @@ return [
     'multiple_roles_notice' => 'You can confidently select multiple roles if they apply to you.',
     'role_description_author' => 'Submit papers and participate in the conference as an author.',
     'role_description_reviewer' => 'Review submitted papers and provide feedback on research quality.',
-    'role_description_participant' => 'Attend the conference.',
+    'role_description_participant' => 'Only attend the conference.',
     'discover' => 'Discover',
     'registration' => 'Registration',
     'continue' => 'Continue',

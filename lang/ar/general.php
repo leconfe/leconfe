@@ -59,7 +59,7 @@ return [
     'multiple_roles_notice' => 'يمكنك اختيار عدة أدوار بثقة إذا كانت تنطبق عليك.',
     'role_description_author' => 'قدّم الأبحاث وشارك في المؤتمر بصفتك مؤلفًا.',
     'role_description_reviewer' => 'راجع الأبحاث المقدّمة وقدم ملاحظات حول جودة البحث.',
-    'role_description_participant' => 'احضر المؤتمر.',
+    'role_description_participant' => 'حضور المؤتمر فقط.',
     'discover' => 'اكتشف ',
     'registration' => 'التسجيل',
     'continue' => 'متابعة',

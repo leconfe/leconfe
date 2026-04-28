@@ -50,7 +50,7 @@ return [
     'multiple_roles_notice' => 'Anda dapat memilih beberapa peran jika memang sesuai untuk Anda.',
     'role_description_author' => 'Kirim makalah dan berpartisipasi dalam konferensi sebagai penulis.',
     'role_description_reviewer' => 'Tinjau makalah yang dikirim dan berikan masukan terhadap kualitas riset.',
-    'role_description_participant' => 'Menghadiri konferensi.',
+    'role_description_participant' => 'Hanya menghadiri konferensi.',
     'discover' => 'Jelajahi',
     'registration' => 'Pendaftaran',
     'continue' => 'Lanjutkan',

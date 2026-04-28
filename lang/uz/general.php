@@ -54,7 +54,7 @@ return [
     'multiple_roles_notice' => 'Agar mos kelsa, bir nechta rolni bemalol tanlashingiz mumkin.',
     'role_description_author' => 'Maqolalarni yuboring va konferensiyada muallif sifatida qatnashing.',
     'role_description_reviewer' => 'Yuborilgan maqolalarni ko‘rib chiqing va tadqiqot sifati bo‘yicha fikr bildiring.',
-    'role_description_participant' => 'Konferensiyada qatnashing.',
+    'role_description_participant' => 'Faqat konferensiyada qatnashing.',
     'discover' => 'Kashf eting',
     'registration' => 'Ro‘yxatdan o‘tish',
     'continue' => 'Davom etish',
