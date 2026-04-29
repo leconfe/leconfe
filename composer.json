@@ -73,7 +73,6 @@
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0"
     },
-   
     "autoload": {
         "psr-4": {
             "App\\": "app/",
@@ -122,6 +121,27 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.3",
+            "ext-gd": "8.3",
+            "ext-intl": "8.3",
+            "ext-pcntl": "8.3",
+            "ext-bcmath": "8.3",
+            "ext-zip": "8.3",
+            "ext-exif": "8.3",
+            "ext-mbstring": "8.3",
+            "ext-pdo": "8.3",
+            "ext-pdo_mysql": "8.3",
+            "ext-opcache": "8.3",
+            "ext-simplexml": "8.3",
+            "ext-xml": "8.3",
+            "ext-dom": "8.3",
+            "ext-fileinfo": "8.3",
+            "ext-ctype": "8.3",
+            "ext-iconv": "8.3",
+            "ext-session": "8.3",
+            "ext-tokenizer": "8.3"
         }
     },
     "minimum-stability": "dev",
