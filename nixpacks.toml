@@ -1,2 +1,5 @@
 [variables]
-PHP_VERSION = '8.3'
+NIXPACKS_PHP_ROOT_DIR = '/app/public'
+
+[phases.setup]
+nixPkgs = ['php83', 'php83Extensions.gd', 'php83Extensions.intl', 'php83Extensions.pcntl', 'php83Extensions.bcmath', 'php83Extensions.zip', 'php83Extensions.exif', 'php83Extensions.mbstring', 'php83Extensions.pdo', 'php83Extensions.pdo_mysql', 'php83Extensions.opcache', 'php83Extensions.simplexml', 'php83Extensions.xml', 'php83Extensions.dom']
