@@ -8,3 +8,6 @@ cmds = ['composer install --optimize-autoloader --no-scripts --no-interaction --
 
 [phases.build]
 cmds = ['npm run build']
+
+[start]
+cmd = 'mkdir -p /var/log/nginx && node /assets/scripts/prestart.mjs /assets/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)'
