@@ -1,5 +1,10 @@
 [variables]
 PHP_VERSION = '8.3'
+NIXPACKS_PHP_ROOT_DIR = '/app/public'
+COMPOSER_NO_DEV = '1'
 
 [phases.install]
-cmds = ['composer install --optimize-autoloader --no-scripts --no-interaction --ignore-platform-reqs']
+cmds = ['composer install --optimize-autoloader --no-scripts --no-interaction --ignore-platform-reqs', 'npm install']
+
+[phases.build]
+cmds = ['npm run build']
