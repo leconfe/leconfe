@@ -46,6 +46,14 @@ return [
     'privacy_statement_agree_without_link' => 'Saya menerima dan menyetujui sesuai dengan Pernyataan Privasi.',
     'registration_closed' => 'Konferensi ini saat ini menutup pendaftaran pengguna',
     'registration_complete_message' => 'Terima kasih telah menyelesaikan pendaftaran! Apa yang ingin Anda lakukan selanjutnya?',
+    'select_your_roles' => 'Pilih Peran Anda',
+    'multiple_roles_notice' => 'Anda dapat memilih beberapa peran jika memang sesuai untuk Anda.',
+    'role_description_author' => 'Kirim makalah dan berpartisipasi dalam konferensi sebagai penulis.',
+    'role_description_reviewer' => 'Tinjau makalah yang dikirim dan berikan masukan terhadap kualitas riset.',
+    'role_description_participant' => 'Hanya menghadiri konferensi.',
+    'discover' => 'Jelajahi',
+    'registration' => 'Pendaftaran',
+    'continue' => 'Lanjutkan',
     'edit_my_profile' => 'Edit Profil Saya',
     'continue_browsing' => 'Lanjutkan Menjelajah',
     'no_content_provided' => 'Tidak ada konten yang disediakan.',
@@ -1021,4 +1029,7 @@ return [
     'scheduled_conference_categories_hint' => 'Ini digunakan untuk memfilter dan mengkategorikan konferensi yang sudah terjadwal serta membantu pengguna menemukan konten yang relevan.',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
+
+    'role_assigned_successfully' => 'Peran berhasil ditetapkan',
+    'no_roles_selected' => 'Tidak ada peran yang dipilih'
 ];

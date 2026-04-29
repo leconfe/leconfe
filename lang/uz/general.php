@@ -50,6 +50,14 @@ return [
     'privacy_statement_agree' => 'Men <a class="link link-primary link-hover" href=":url">Maxfiylik siyosati</a>ga roziman va tasdiqlayman',
     'registration_closed' => 'Konferensiyaga ro‘yxatdan o‘tish yopilgan',
     'registration_complete_message' => 'Ro‘yxatdan o‘tganingiz uchun rahmat! Endi nimani davom ettirmoqchisiz?',
+    'select_your_roles' => 'Rollaringizni tanlang',
+    'multiple_roles_notice' => 'Agar mos kelsa, bir nechta rolni bemalol tanlashingiz mumkin.',
+    'role_description_author' => 'Maqolalarni yuboring va konferensiyada muallif sifatida qatnashing.',
+    'role_description_reviewer' => 'Yuborilgan maqolalarni ko‘rib chiqing va tadqiqot sifati bo‘yicha fikr bildiring.',
+    'role_description_participant' => 'Faqat konferensiyada qatnashing.',
+    'discover' => 'Kashf eting',
+    'registration' => 'Ro‘yxatdan o‘tish',
+    'continue' => 'Davom etish',
     'edit_my_profile' => 'Profilimni tahrirlash',
     'continue_browsing' => 'Ko‘rishda davom etish',
     'no_content_provided' => 'Hech qanday ma’lumot berilmagan.',
@@ -1036,4 +1044,7 @@ return [
     'scheduled_conference_categories_hint' => 'Bu rejalashtirilgan konferensiyalarni filtrlash va toifalash hamda foydalanuvchilarga mos kontentni topishga yordam berish uchun ishlatiladi.',
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
+
+    'role_assigned_successfully' => 'Rol muvaffaqiyatli tayinlandi',
+    'no_roles_selected' => 'Hech bir rol seçilmedi',
 ];

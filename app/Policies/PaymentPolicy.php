@@ -17,7 +17,7 @@ class PaymentPolicy
             return true;
         }
 
-        if (! $payment->user?->is($user)) {
+        if (!$payment->user?->is($user)) {
             return false;
         }
 
@@ -27,13 +27,13 @@ class PaymentPolicy
 
         $submission = Submission::withoutGlobalScopes()->find($payment->model_id);
 
-        if (! $submission) {
+        if (!$submission) {
             return false;
         }
 
         $scheduledConference = ScheduledConference::withoutGlobalScopes()->find($payment->scheduled_conference_id);
 
-        if (! $scheduledConference || ! $submission->stage) {
+        if (!$scheduledConference || !$submission->stage) {
             return false;
         }
 
@@ -80,6 +80,13 @@ class PaymentPolicy
     public function setUnpaid(User $user, Payment $payment)
     {
         if ($user->can('Payment:setUnpaid')) {
+            return true;
+        }
+    }
+
+    public function registerParticipant(User $user)
+    {
+        if ($user->can('Payment:registerParticipant')) {
             return true;
         }
     }

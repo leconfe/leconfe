@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\Participant;
+use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
 use App\Models\User;
@@ -50,7 +51,7 @@ class ParticipantRegistration extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && ! auth()->user()?->isRegisteredAsParticipant();
+        return app()->getCurrentScheduledConference()->isParticipantRegistrationEnabled() && !auth()->user()?->isRegisteredAsParticipant() && auth()->user()?->can('registerParticipant', Payment::class);
     }
 
     /**
@@ -95,7 +96,7 @@ class ParticipantRegistration extends Page implements HasForms
                         Select::make('meta.country')
                             ->label('Country')
                             ->searchable()
-                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                            ->options(fn() => Country::all()->mapWithKeys(fn($country) => [$country->id => $country->flag . ' ' . $country->name]))
                             ->optionsLimit(250),
                         ...PaymentFormItem::buildFormSchema(PaymentManager::TYPE_PARTICIPANT_FEE),
                         Radio::make('payment_fee_id')
@@ -103,21 +104,21 @@ class ParticipantRegistration extends Page implements HasForms
                             ->required()
                             ->live()
                             ->options(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
                             )
                             ->descriptions(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                fn() => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
                                     ->active()
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
+                                    ->mapWithKeys(fn(PaymentFee $paymentFee) => [$paymentFee->getKey() => '(' . $paymentFee->getFormattedFee() . ')'])
                             ),
                         \Filament\Forms\Components\Fieldset::make('Add-on Items')
                             ->schema(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
-                                if (! $paymentFee) {
+                                if (!$paymentFee) {
                                     return [];
                                 }
 
@@ -194,7 +195,7 @@ class ParticipantRegistration extends Page implements HasForms
 
             User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
                 ->lazy()
-                ->each(fn ($user) => $user->notify(new ParticipantRegistered($participant)));
+                ->each(fn($user) => $user->notify(new ParticipantRegistered($participant)));
 
             DB::commit();
         } catch (\Throwable $th) {

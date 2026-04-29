@@ -55,6 +55,14 @@ return [
     'privacy_statement_agree' => 'أوافق وأقر بما يتوافق مع <a class="link link-primary link-hover" href=":url">بيان الخصوصية.</a>',
     'registration_closed' => 'تم إغلاق تسجيل المستخدمين لهذا المؤتمر',
     'registration_complete_message' => 'شكراً لإكمال التسجيل! ماذا تود القيام به بعد ذلك؟',
+    'select_your_roles' => 'اختر أدوارك',
+    'multiple_roles_notice' => 'يمكنك اختيار عدة أدوار بثقة إذا كانت تنطبق عليك.',
+    'role_description_author' => 'قدّم الأبحاث وشارك في المؤتمر بصفتك مؤلفًا.',
+    'role_description_reviewer' => 'راجع الأبحاث المقدّمة وقدم ملاحظات حول جودة البحث.',
+    'role_description_participant' => 'حضور المؤتمر فقط.',
+    'discover' => 'اكتشف ',
+    'registration' => 'التسجيل',
+    'continue' => 'متابعة',
     'edit_my_profile' => 'تعديل ملفي الشخصي',
     'continue_browsing' => 'مواصلة التصفح',
     'no_content_provided' => 'لم يتم تقديم أي محتوى.',
@@ -1038,4 +1046,7 @@ return [
     'scheduled_conference_categories_hint' => 'يُستخدم هذا لتصفية وتصنيف المؤتمرات المجدولة ومساعدة المستخدمين في العثور على المحتوى المناسب.',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
+
+    'role_assigned_successfully' => 'تم تعيين الدور بنجاح',
+    'no_roles_selected' => 'لم يتم اختيار أي أدوار',
 ];

@@ -44,6 +44,14 @@ return [
     'privacy_statement_agree' => 'Unë pranoj dhe miratoj sipas <a class="link link-primary link-hover" href=":url">Deklaratës së Privatësisë.</a>',
     'registration_closed' => 'Kjo konferencë aktualisht ka mbyllur regjistrimet e përdoruesve',
     'registration_complete_message' => 'Faleminderit që përfunduat regjistrimin! Çfarë dëshironi të bëni më pas?',
+    'select_your_roles' => 'Zgjidh rolet tuaja',
+    'multiple_roles_notice' => 'Mund të zgjidhni më shumë role me besim nëse ju përshtaten.',
+    'role_description_author' => 'Dërgo punime dhe merr pjesë në konferencë si autor.',
+    'role_description_reviewer' => 'Rishiko punimet e dorëzuara dhe jep komente mbi cilësinë e kërkimit.',
+    'role_description_participant' => 'Vetëm merrni pjesë në konferencë.',
+    'discover' => 'Zbulo',
+    'registration' => 'Regjistrimi',
+    'continue' => 'Vazhdo',
     'edit_my_profile' => 'Ndrysho Profilin Tim',
     'continue_browsing' => 'Vazhdo Shfletimin',
     'no_content_provided' => 'Asnjë përmbajtje nuk është ofruar.',
@@ -1022,4 +1030,7 @@ return [
     'scheduled_conference_categories_hint' => 'Përdoret për të filtruar dhe kategorizuar konferencat e planifikuara dhe për të ndihmuar përdoruesit të gjejnë përmbajtje relevante.',
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',
+
+    'role_assigned_successfully' => 'Roli u caktua me sukses',
+    'no_roles_selected' => 'Nuk u zgjodhën role',
 ];

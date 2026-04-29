@@ -2,6 +2,8 @@
 
 namespace App\Utils\UpgradeSchemas;
 
+use App\Models\Enums\UserRole;
+use App\Models\Permission;
 use App\Models\ScheduledConference;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +20,7 @@ class Upgrade141 extends UpgradeBase
         ]);
 
         $this->removeReaderRole();
+        $this->newRoleParticipant();
     }
 
     private function removeReaderRole(): void
@@ -50,11 +53,29 @@ class Upgrade141 extends UpgradeBase
             ->get()
             ->each(function (ScheduledConference $scheduledConference) {
                 $allowedRoles = collect($scheduledConference->getMeta('allowed_self_assign_roles') ?? [])
-                    ->reject(fn ($role) => $role === self::READER_ROLE)
+                    ->reject(fn($role) => $role === self::READER_ROLE)
                     ->values()
                     ->all();
 
                 $scheduledConference->setMeta('allowed_self_assign_roles', $allowedRoles);
+            });
+    }
+
+    private function newRoleParticipant(): void
+    {
+        Permission::firstOrCreate([
+            'name' => 'Payment:registerParticipant',
+        ]);
+
+        ScheduledConference::withoutGlobalScopes()
+            ->chunk(100, function ($scheduledConferences): void {
+                foreach ($scheduledConferences as $scheduledConference) {
+                    Role::withoutGlobalScopes()->firstOrCreate([
+                        'name' => UserRole::Participant->value,
+                        'conference_id' => $scheduledConference->conference_id,
+                        'scheduled_conference_id' => $scheduledConference->getKey(),
+                    ]);
+                }
             });
     }
 }

@@ -50,6 +50,14 @@ return [
     'privacy_statement_agree' => 'Я соглашаюсь и одобряю согласно <a class="link link-primary link-hover" href=":url">Политике конфиденциальности</a>',
     'registration_closed' => 'Регистрация пользователей конференции закрыта',
     'registration_complete_message' => 'Спасибо за завершение регистрации! Что вы хотите сделать дальше?',
+    'select_your_roles' => 'Выберите свои роли',
+    'multiple_roles_notice' => 'Вы можете смело выбрать несколько ролей, если они вам подходят.',
+    'role_description_author' => 'Подавайте материалы и участвуйте в конференции как автор.',
+    'role_description_reviewer' => 'Рецензируйте поданные материалы и давайте обратную связь по качеству исследования.',
+    'role_description_participant' => 'Только присутствовать на конференции.',
+    'discover' => 'Откройте',
+    'registration' => 'Регистрация',
+    'continue' => 'Продолжить',
     'edit_my_profile' => 'Редактировать мой профиль',
     'continue_browsing' => 'Продолжить просмотр',
     'no_content_provided' => 'Контент не предоставлен.',
@@ -1036,4 +1044,7 @@ return [
     'scheduled_conference_categories_hint' => 'Используется для фильтрации и категоризации запланированных конференций и помогает пользователям находить релевантный контент.',
     'faculty' => 'Факультет',
     'faculties' => 'Факультеты',
+
+    'role_assigned_successfully' => 'Роль успешно назначена',
+    'no_roles_selected' => 'Роли не выбраны'
 ];

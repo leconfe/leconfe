@@ -26,4 +26,9 @@ return [
     'presentation_other_no_preview_description' => 'Пожалуйста, скачайте файл презентации, чтобы просмотреть его содержимое.',
     'presentation_other_download_button' => 'Скачать файл презентации',
     'presentation_other_file_not_available' => 'Файл пока недоступен.',
+    'welcome_message_title' => 'Добро пожаловать на <br /> <span class="text-primary-200">:conference !</span>',
+    'role_selection_description' => 'Чтобы начать, выберите свою роль. Ваш выбор настроит панель управления и функции под вас.',
+    'welcome_overview_description' => 'Конференция проходит с :start_date по :end_date.',
+    'no_self_assignable_roles_available' => 'Для этой конференции нет доступных для самостоятельного выбора ролей.',
+    'submit_paper' => 'Отправить материал',
 ];

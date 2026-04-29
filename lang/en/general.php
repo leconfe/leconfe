@@ -56,6 +56,14 @@ return [
     'privacy_statement_agree_without_link' => 'I accept and approve according to Privacy Statement.',
     'registration_closed' => 'Conference user registration is closed.',
     'registration_complete_message' => 'Thank you for completing the registration! What would you like to proceed with next?',
+    'select_your_roles' => 'Select Your Roles',
+    'multiple_roles_notice' => 'You can confidently select multiple roles if they apply to you.',
+    'role_description_author' => 'Submit papers and participate in the conference as an author.',
+    'role_description_reviewer' => 'Review submitted papers and provide feedback on research quality.',
+    'role_description_participant' => 'Only attend the conference.',
+    'discover' => 'Discover',
+    'registration' => 'Registration',
+    'continue' => 'Continue',
     'edit_my_profile' => 'Edit My Profile',
     'continue_browsing' => 'Continue Browsing',
     'no_content_provided' => 'No content provided.',
@@ -1098,4 +1106,6 @@ return [
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
 
+    'role_assigned_successfully' => 'Role assigned successfully',
+    'no_roles_selected' => 'No roles selected',
 ];
