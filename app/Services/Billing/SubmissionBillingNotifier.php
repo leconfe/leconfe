@@ -62,6 +62,11 @@ class SubmissionBillingNotifier
             return false;
         }
 
+        $scheduledConference = $this->resolveScheduledConference($submission);
+        if ($scheduledConference && ! $scheduledConference->isSubmissionPaymentAutoNotify()) {
+            return false;
+        }
+
         $submission->user->notify(new SubmissionPayment($submission));
         $payment->setMeta(self::PAYMENT_META_AUTO_NOTIFIED_AT, now()->toDateTimeString());
 

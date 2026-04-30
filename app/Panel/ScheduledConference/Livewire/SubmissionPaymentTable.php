@@ -15,6 +15,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use App\Notifications\SubmissionPayment;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -94,6 +96,23 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->nullable(),
             ])
             ->actions([
+                Action::make('send-invoice')
+                    ->label(__('general.send_invoice'))
+                    ->icon('heroicon-o-envelope')
+                    ->color('gray')
+                    ->visible(fn (Payment $record) => ! $record->isPaid())
+                    ->requiresConfirmation()
+                    ->action(function (Action $action, Payment $record) {
+                        $submission = $record->model;
+                        if (! $submission || ! $submission->user) {
+                            $action->failureNotificationTitle(__('general.failed_send_notification'));
+                            $action->failure();
+                            return;
+                        }
+                        $submission->user->notify(new SubmissionPayment($submission));
+                        $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+                        $action->success();
+                    }),
                 ActionGroup::make([
                     DeleteAction::make()
                         ->hidden(fn(Payment $record) => $record->isPaid()),
