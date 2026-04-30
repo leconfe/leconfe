@@ -324,7 +324,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public static function getSubmissionBillingStageOptions(): array
     {
         return [
-            SubmissionStage::CallforAbstract->value => SubmissionStage::CallforAbstract->value,
+            SubmissionStage::CallforAbstract->value => __('general.submission'),
             SubmissionStage::PeerReview->value => SubmissionStage::PeerReview->value,
             SubmissionStage::Presentation->value => SubmissionStage::Presentation->value,
             SubmissionStage::Editing->value => SubmissionStage::Editing->value,
