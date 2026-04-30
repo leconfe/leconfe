@@ -313,12 +313,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isSubmissionPaymentAutoNotify(): bool
     {
-        return $this->getMeta('submission_payment_auto_notify', true);
+        return (bool) $this->getMeta('submission_payment_auto_notify', true);
     }
 
     public function isParticipantPaymentAutoNotify(): bool
     {
-        return $this->getMeta('participant_payment_auto_notify', true);
+        return (bool) $this->getMeta('participant_payment_auto_notify', true);
     }
 
     public static function getSubmissionBillingStageOptions(): array
