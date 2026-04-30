@@ -191,7 +191,9 @@ class ParticipantRegistration extends Page implements HasForms
 
             $this->form->model($payment)->saveRelationships();
 
-            auth()->user()->notify(new ParticipantPayment($participant));
+            if (app()->getCurrentScheduledConference()->isParticipantPaymentAutoNotify()) {
+                auth()->user()->notify(new ParticipantPayment($participant));
+            }
 
             User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
                 ->lazy()

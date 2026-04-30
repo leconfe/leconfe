@@ -44,7 +44,12 @@ class PaymentSetting extends Component implements HasForms
                             ->options(ScheduledConference::getSubmissionBillingStageOptions())
                             ->visible(fn (Get $get) => (bool) $get('meta.submission_payment')),
                         Checkbox::make('meta.participant_payment')
+                            ->live()
                             ->label(__('general.enable_participant_payment')),
+                        Checkbox::make('meta.participant_payment_auto_notify')
+                            ->label(__('general.participant_auto_send_invoice'))
+                            ->helperText(__('general.participant_auto_send_invoice_help'))
+                            ->visible(fn (Get $get) => (bool) $get('meta.participant_payment')),
                         Grid::make(2)
                             ->schema([
                                 DatePicker::make('meta.payment_opened_at')
