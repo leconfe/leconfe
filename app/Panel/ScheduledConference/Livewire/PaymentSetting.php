@@ -35,7 +35,7 @@ class PaymentSetting extends Component implements HasForms
     {
         return $form
             ->schema([
-                Section::make()
+                Section::make(__('general.submission_payment'))
                     ->schema([
                         Checkbox::make('meta.submission_payment')
                             ->live()
@@ -59,6 +59,9 @@ class PaymentSetting extends Component implements HasForms
                             ->label(__('general.when_submission_payment_available'))
                             ->options(ScheduledConference::getSubmissionBillingStageOptions())
                             ->visible(fn (Get $get) => (bool) $get('meta.submission_payment') && $get('meta.submission_payment_auto_notify') !== '0'),
+                    ]),
+                Section::make(__('general.participant_payment'))
+                    ->schema([
                         Checkbox::make('meta.participant_payment')
                             ->live()
                             ->label(__('general.enable_participant_payment')),
@@ -77,22 +80,22 @@ class PaymentSetting extends Component implements HasForms
                             })
                             ->live()
                             ->visible(fn (Get $get) => (bool) $get('meta.participant_payment')),
-                        Section::make(__('general.payment_period'))
-                            ->collapsible()
-                            ->collapsed()
+                    ]),
+                Section::make(__('general.payment_period'))
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        Grid::make(2)
                             ->schema([
-                                Grid::make(2)
-                                    ->schema([
-                                        DatePicker::make('meta.payment_opened_at')
-                                            ->label(__('general.payment_start_date'))
-                                            ->native(false)
-                                            ->prefixIcon('heroicon-m-calendar-days'),
-                                        DatePicker::make('meta.payment_closed_at')
-                                            ->label(__('general.payment_end_date'))
-                                            ->native(false)
-                                            ->prefixIcon('heroicon-m-calendar-days')
-                                            ->after('meta.payment_opened_at'),
-                                    ]),
+                                DatePicker::make('meta.payment_opened_at')
+                                    ->label(__('general.payment_start_date'))
+                                    ->native(false)
+                                    ->prefixIcon('heroicon-m-calendar-days'),
+                                DatePicker::make('meta.payment_closed_at')
+                                    ->label(__('general.payment_end_date'))
+                                    ->native(false)
+                                    ->prefixIcon('heroicon-m-calendar-days')
+                                    ->after('meta.payment_opened_at'),
                             ]),
                     ]),
                 Actions::make([

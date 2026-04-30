@@ -402,6 +402,7 @@ return [
     'participant_auto_send_invoice_help' => 'When enabled, the invoice email will be automatically sent to the participant upon registration.',
     'send_invoice' => 'Отправить счет',
     'invoice_sent_successfully' => 'Счет успешно отправлен.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'Включить оплату участника',
     'payment_start_date' => 'Дата начала оплаты',
     'payment_end_date' => 'Дата окончания оплаты',

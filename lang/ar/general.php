@@ -425,6 +425,7 @@ return [
     'participant_auto_send_invoice_help' => 'When enabled, the invoice email will be automatically sent to the participant upon registration.',
     'send_invoice' => 'إرسال الفاتورة',
     'invoice_sent_successfully' => 'تم إرسال الفاتورة بنجاح.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'تمكين دفع المشارك',
     'payment_start_date' => 'تاريخ بدء الدفع',
     'payment_end_date' => 'تاريخ انتهاء الدفع',

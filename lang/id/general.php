@@ -412,6 +412,7 @@ return [
     'participant_auto_send_invoice_help' => 'When enabled, the invoice email will be automatically sent to the participant upon registration.',
     'send_invoice' => 'Kirim Invoice',
     'invoice_sent_successfully' => 'Invoice berhasil dikirim.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'Aktifkan Pembayaran Partisipan',
     'payment_start_date' => 'Tanggal Mulai Pembayaran',
     'payment_end_date' => 'Tanggal Akhir Pembayaran',

@@ -431,6 +431,7 @@ return [
     'participant_auto_send_invoice_help' => 'When enabled, the invoice email will be automatically sent to the participant upon registration.',
     'send_invoice' => 'Send Invoice',
     'invoice_sent_successfully' => 'Invoice sent successfully.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'Enable Participant Payment',
     'payment_start_date' => 'Payment Start Date',
     'payment_end_date' => 'Payment End Date',
