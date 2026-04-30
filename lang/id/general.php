@@ -397,6 +397,7 @@ return [
     'auto_send_invoice_help' => 'Jika diaktifkan, email invoice akan dikirim otomatis ke penulis setelah pengajuan mencapai tahap penagihan yang dikonfigurasi.',
     'send_invoice' => 'Kirim Invoice',
     'invoice_sent_successfully' => 'Invoice berhasil dikirim.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'Aktifkan Pembayaran Partisipan',
     'payment_start_date' => 'Tanggal Mulai Pembayaran',
     'payment_end_date' => 'Tanggal Akhir Pembayaran',

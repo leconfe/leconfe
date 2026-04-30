@@ -397,6 +397,7 @@ return [
     'auto_send_invoice_help' => 'Kur aktivizohet, emaili i faturës do t\'i dërgohet automatikisht autorit sapo dorëzimi të arrijë fazën e faturimit të konfiguruar.',
     'send_invoice' => 'Dërgo Faturën',
     'invoice_sent_successfully' => 'Fatura u dërgua me sukses.',
+    'participant_payment' => 'Participant Payment',
     'enable_participant_payment' => 'Aktivizo pagesën e pjesëmarrësit',
     'payment_start_date' => 'Data e fillimit të pagesës',
     'payment_end_date' => 'Data e mbarimit të pagesës',
