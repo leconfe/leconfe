@@ -86,8 +86,8 @@ class PaymentPolicy
 
     public function registerParticipant(User $user)
     {
-        if ($user->can('Payment:registerParticipant')) {
-            return true;
-        }
+        // Any authenticated user can attempt registration. The page's canAccess()
+        // already gates on participant payment being enabled and no duplicate registration.
+        return true;
     }
 }
