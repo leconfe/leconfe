@@ -29,6 +29,7 @@ class Payment extends Model implements HasMedia
         'amount',
         'currency',
         'invoice',
+        'receipt',
         'payment_method',
         'expired_at',
         'paid_at',
@@ -52,6 +53,16 @@ class Payment extends Model implements HasMedia
                 ]);
 
                 $scheduledConference->updateLatestInvoiceNumber($number + 1);
+            }
+
+            if ($scheduledConference?->isReceiptEnabled()) {
+                $receiptNumber = $scheduledConference->getLatestReceiptNumber();
+
+                $payment->update([
+                    'receipt' => $scheduledConference->generateReceiptNumber($receiptNumber),
+                ]);
+
+                $scheduledConference->updateLatestReceiptNumber($receiptNumber + 1);
             }
         });
     }

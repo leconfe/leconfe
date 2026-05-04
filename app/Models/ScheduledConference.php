@@ -159,6 +159,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'invoice_number' => 1,
             'invoice_enable' => false,
             'receipt_enable' => false,
+            'receipt_number' => 1,
+            'receipt_prefix_number' => '',
+            'receipt_suffix_number' => '',
             'submission_payment' => false,
             'participant_payment' => false,
             'submission_billing_stage' => SubmissionStage::PeerReview->value,
@@ -409,6 +412,25 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function updateLatestInvoiceNumber(int $number): void
     {
         $this->setMeta('invoice_number', $number);
+    }
+
+    public function generateReceiptNumber(?int $number = null)
+    {
+        $number ??= $this->getMeta('receipt_number');
+
+        $generatedNumber = $this->getMeta('receipt_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('receipt_suffix_number');
+
+        return $generatedNumber;
+    }
+
+    public function getLatestReceiptNumber(): int
+    {
+        return $this->getMeta('receipt_number');
+    }
+
+    public function updateLatestReceiptNumber(int $number): void
+    {
+        $this->setMeta('receipt_number', $number);
     }
 
     public function getEntityUniqueId(): ?string
