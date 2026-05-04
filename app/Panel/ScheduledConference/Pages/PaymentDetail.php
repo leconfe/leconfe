@@ -400,7 +400,7 @@ class PaymentDetail extends Page
                                     ->visible(fn (Payment $record) => $record->payment_method)
                                     ->getStateUsing(fn ($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
-                                    ->label(fn (Payment $record) => $record->receipt ? "Receipt No.: {$record->receipt}" : 'Receipt')
+                                    ->label(fn (Payment $record) => $record->receipt ? "Receipt No: {$record->receipt}" : 'Receipt')
                                     ->state('Download')
                                     ->color('primary')
                                     ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->receipt && $record->paid_at)
