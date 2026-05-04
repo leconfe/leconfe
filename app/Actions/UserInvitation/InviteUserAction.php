@@ -43,6 +43,7 @@ class InviteUserAction
             ->where('scheduled_conference_id', $scheduledConferenceId)
             ->whereNull('track_id')
             ->where('status', 'pending')
+            ->where('expires_at', '>', now())
             ->exists();
 
         if ($existsPendingInvitation) {
