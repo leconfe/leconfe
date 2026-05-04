@@ -193,11 +193,15 @@ class Overview extends Widget implements HasForms, HasInfolists
                         ...$currencies->map(function ($total, $code) {
                             $currency = Currency::find($code);
 
+                            if (!$currency) {
+                                return null;
+                            }
+
                             return TextEntry::make('paid_' . $currency)
                                 ->label('Paid (' . $currency->name . ')')
                                 ->size(TextEntrySize::Large)
                                 ->state(money($total, $code, true)->formatWithoutZeroes());
-                        })
+                        })->filter()
                     ])
             ]);
     }
