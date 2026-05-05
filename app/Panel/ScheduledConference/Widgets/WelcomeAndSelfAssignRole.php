@@ -37,11 +37,6 @@ class WelcomeAndSelfAssignRole extends Widget
         $availableRoleDescriptions = UserRole::getAllowedSelfAssignRoleDescriptions();
         $user = auth()->user();
 
-        if ($user && $user->submissions()->exists()) {
-            unset($availableRoles['Participant']);
-            unset($availableRoleDescriptions['Participant']);
-        }
-
         return [
             'isAssignRole' => !$user->roles()->exists(),
             'scheduledConference' => app()->getCurrentScheduledConference(),
