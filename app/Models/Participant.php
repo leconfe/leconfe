@@ -9,6 +9,7 @@ use App\Models\Concerns\InteractsWithPayment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
@@ -16,7 +17,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Participant extends Model implements HasMedia, HasPayment
 {
-    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, InteractsWithPayment, Metable;
+    use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, InteractsWithPayment, Metable, Notifiable;
 
     protected $fillable = [
         'given_name',
