@@ -152,6 +152,7 @@
                     @endrole
 
                     @role(App\Models\Enums\UserRole::Participant->value)
+                    @if (!(auth()->user()->isRegisteredAsParticipant() && auth()->user()->submissions()->exists()))
                     <div
                         class="rounded-2xl border border-success-200/70 bg-gradient-to-r from-success-50 to-white p-5 shadow-sm transition-all hover:shadow-md dark:border-success-900/40 dark:from-success-950/30 dark:to-gray-900">
                         <a href="{{ $scheduledConference->isParticipantRegistrationEnabled() ? (auth()->user()->isRegisteredAsParticipant() ? $participantPaymentUrl : $participantRegistrationUrl) : '#' }}"
@@ -191,6 +192,7 @@
                             </div>
                         </a>
                     </div>
+                    @endif
                     @endrole
                 </div>
             @endif
