@@ -4,8 +4,6 @@ namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Actions\User\UserCreateAction;
 use App\Frontend\Website\Pages\Page;
-use App\Models\Conference;
-use App\Models\Enums\UserRole;
 use App\Panel\ScheduledConference\Pages\Dashboard;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
@@ -42,8 +40,6 @@ class Register extends Page
     public $privacy_statement_agree = false;
 
     public $registerComplete = false;
-
-    public $selfAssignRoles = [];
 
     public function mount()
     {
@@ -170,8 +166,6 @@ class Register extends Page
                 'country' => $scheduledConference->getMeta('required_country'),
                 'phone' => $scheduledConference->getMeta('required_phone'),
             ],
-            'conferences' => Conference::all(),
-            'roles' => array_values(UserRole::selfAssignedRoleNames()),
         ];
 
         return $data;
