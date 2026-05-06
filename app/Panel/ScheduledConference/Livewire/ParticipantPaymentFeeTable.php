@@ -109,7 +109,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                         ->label(__('general.send_invoice'))
                         ->icon('heroicon-o-envelope')
                         ->color('gray')
-                        ->visible(fn (Payment $record) => ! $record->isPaid())
+                        ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
                             $participant = $record->model;

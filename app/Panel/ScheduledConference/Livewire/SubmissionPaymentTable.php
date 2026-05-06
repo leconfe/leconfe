@@ -46,7 +46,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
     {
         return Payment::query()
             ->type(PaymentManager::TYPE_SUBMISSION_FEE)
-            ->with(['model.conference', 'user']);
+            ->with(['model.conference', 'user', 'scheduledConference']);
     }
 
     public function table(Table $table): Table
@@ -101,7 +101,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                         ->label(__('general.send_invoice'))
                         ->icon('heroicon-o-envelope')
                         ->color('gray')
-                        ->visible(fn (Payment $record) => ! $record->isPaid())
+                        ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
                             $submission = $record->model;
