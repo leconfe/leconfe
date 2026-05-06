@@ -261,9 +261,18 @@ class PaymentDetail extends Page
                             ->displayFormat(Setting::get('format_date').' '.Setting::get('format_time')),
                     ])
                     ->action(function (Action $action, Payment $record, $data) {
-                        $record->update([
+                        $scheduledConference = $record->scheduledConference;
+                        $updateData = [
                             'paid_at' => $data['paid_at'],
-                        ]);
+                        ];
+
+                        if ($scheduledConference?->isReceiptEnabled() && ! $record->receipt) {
+                            $receiptNumber = $scheduledConference->getLatestReceiptNumber();
+                            $updateData['receipt'] = $scheduledConference->generateReceiptNumber($receiptNumber);
+                            $scheduledConference->updateLatestReceiptNumber($receiptNumber + 1);
+                        }
+
+                        $record->update($updateData);
 
                         $action->successNotificationTitle('Payment Marked as Paid');
                         $action->success();
