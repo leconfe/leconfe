@@ -104,6 +104,15 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                         ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
+                            $scheduledConference = $record->scheduledConference;
+                            if ($scheduledConference?->isInvoiceEnabled() && ! $record->invoice) {
+                                $number = $scheduledConference->getLatestInvoiceNumber();
+                                $record->update([
+                                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
+                                ]);
+                                $scheduledConference->updateLatestInvoiceNumber($number + 1);
+                            }
+
                             $submission = $record->model;
                             if (! $submission || ! $submission->user) {
                                 $action->failureNotificationTitle(__('general.failed_send_notification'));

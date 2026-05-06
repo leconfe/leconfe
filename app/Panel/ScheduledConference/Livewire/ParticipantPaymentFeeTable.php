@@ -112,6 +112,15 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                         ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
+                            $scheduledConference = $record->scheduledConference;
+                            if ($scheduledConference?->isInvoiceEnabled() && ! $record->invoice) {
+                                $number = $scheduledConference->getLatestInvoiceNumber();
+                                $record->update([
+                                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
+                                ]);
+                                $scheduledConference->updateLatestInvoiceNumber($number + 1);
+                            }
+
                             $participant = $record->model;
 
                             if (! $participant || ! $participant->email) {
