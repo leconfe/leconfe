@@ -105,6 +105,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->options(fn () => SubmissionFileType::ordered()->pluck('name', 'id')->toArray())
                 ->searchable(),
             SpatieMediaLibraryFileUpload::make('files')
+                ->preserveFilenames()
                 ->required()
                 ->previewable(false)
                 ->downloadable()
