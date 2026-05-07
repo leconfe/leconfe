@@ -159,7 +159,6 @@ class SubmissionFormItem extends Model implements Sortable
     protected function fieldUpload(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make($this->getFieldId())
-            ->preserveFilenames()
             ->label($this->getMeta('name'))
             ->helperText(new HtmlString($this->getMeta('description')))
             ->disk('private-files')
