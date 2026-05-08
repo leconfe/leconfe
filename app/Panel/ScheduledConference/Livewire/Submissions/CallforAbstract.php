@@ -215,8 +215,8 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             ->mapWithKeys(function (SubmissionFile $paper) {
                                 return [
                                     $paper->getKey() => new HtmlString(
-                                        Action::make($paper->media->file_name)
-                                            ->label($paper->media->file_name)
+                                        Action::make($paper->media->original_file_name)
+                                            ->label($paper->media->original_file_name)
                                             ->url(fn() => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                             ->link()
                                             ->toHtml()

@@ -34,7 +34,7 @@ class ReviewerAssignedFiles extends \Livewire\Component implements HasForms, Has
                 fn (): Builder => $this->record->assignedFiles()->getQuery()
             )
             ->columns([
-                TextColumn::make('submissionFile.media.file_name')
+                TextColumn::make('submissionFile.media.original_file_name')
                     ->color('primary')
                     ->action(function (ReviewerAssignedFile $record) {
                         return $record->submissionFile->media;
