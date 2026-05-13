@@ -26,6 +26,6 @@ class Home extends BaseNavigationItemType
             return route('livewirePageGroup.conference.pages.home');
         }
 
-        return route('livewirePageGroup.administration.pages.home');
+        return route('livewirePageGroup.website.pages.home');
     }
 }
