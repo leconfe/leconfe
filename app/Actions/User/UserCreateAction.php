@@ -15,7 +15,11 @@ class UserCreateAction
         try {
             DB::beginTransaction();
 
-            $user = User::create($data);
+            $user = User::create([
+                ...$data,
+                'given_name' => $data['given_name'] ?? '',
+                'family_name' => $data['family_name'] ?? '',
+            ]);
 
             if (data_get($data, 'meta')) {
                 $user->setManyMeta($data['meta']);
