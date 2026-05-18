@@ -1,41 +1,101 @@
 # Leconfe - Conference Management System
 
-Leconfe is an open-source conference management system that allows users to manage conferences, papers, reviews, including publishing the issue. 
-This project is created to make the conference management seamless including the management of the participant, venue, registration, payment, and the crucial aspect of the conference event. 
+> This is a custom Docker build of [Leconfe](https://github.com/leconfe/leconfe) with pre-built frontend assets, ready to deploy.
 
-[Leconfe](https://leconfe.com) is a [Open Journal Theme](https://openjournalteam.com) product.
+[![Docker Pulls](https://img.shields.io/docker/pulls/amirul123/leconfe)](https://hub.docker.com/r/amirul123/leconfe)
+[![Docker Image Size](https://img.shields.io/docker/image-size/amirul123/leconfe/latest)](https://hub.docker.com/r/amirul123/leconfe)
+[![Docker Build](https://github.com/Amirul78800/leconfe/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Amirul78800/leconfe/actions)
 
-## Features ✨
+## 🐳 Docker Image
 
-- Manage Multiple Conference Series.
-- Publish Conference Proceedings and Paper.
-- Held scheduled conferences repeatedly easily.
-- Paper Submission Workflow
-- Participant Registration & Attendance
+Docker Hub: **[amirul123/leconfe](https://hub.docker.com/r/amirul123/leconfe)**
 
-## Requirements ⚙️
+```bash
+docker pull amirul123/leconfe:latest
+```
 
-Leconfe is a regular Laravel application that can be installed on any server that meets the [Laravel server requirements](https://laravel.com/docs/10.x/deployment#server-requirements).
+## 🚀 Quick Deploy (Docker Compose)
 
-### Structure and Maintainability
+```yaml
+services:
+  leconfe-db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: leconfe
+      MYSQL_USER: leconfe
+      MYSQL_PASSWORD: yourpassword
+    volumes:
+      - leconfe_db_data:/var/lib/mysql
 
--   Avoid adding new dependencies unless absolutely necessary.
--   Use the `__()` helper function instead of hardcoding translations.
--   Each Eloquent model should have a sensible [Database Factory](https://laravel.com/docs/10.x/database-testing#factories).
--   Use [Queued Jobs](https://laravel.com/docs/10.x/queues) to perform long-running tasks. Notify users that a task is running.
--   Use [Notifications](https://laravel.com/docs/10.x/notifications) to send emails to users, or a [Mailable](https://laravel.com/docs/10.x/mail) when it's unimaginable that a notification would be sent to anything other than the main channel.
--   Prefer enums over constants.
+  leconfe:
+    image: amirul123/leconfe:latest
+    restart: unless-stopped
+    ports:
+      - "8086:8080"
+    depends_on:
+      - leconfe-db
+    environment:
+      APP_NAME: Leconfe
+      APP_ENV: production
+      APP_KEY: base64:your-generated-key-here
+      APP_URL: http://your-server-ip:8086
+      APP_INSTALLED: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: leconfe-db
+      DB_PORT: "3306"
+      DB_DATABASE: leconfe
+      DB_USERNAME: leconfe
+      DB_PASSWORD: yourpassword
+      CACHE_DRIVER: file
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: file
+      MAIL_MAILER: log
+    volumes:
+      - leconfe_storage:/var/www/html/storage
 
-### Security and Performance
+volumes:
+  leconfe_db_data:
+  leconfe_storage:
+```
 
--   Encrypt all sensitive data in Eloquent models.
--   Each Eloquent model should have a corresponding [Policy](https://laravel.com/docs/10.x/authorization#creating-policies) to handle authorization.
--   All actions should be Logged.
--   Always use pagination on index pages.
--   The following Eloquent protections are enabled by default
-    -   Prevent Lazy Loading to avoid N+1 queries
-    -   Require a morph map when using polymorphic relations
+## ⚙️ Setup Steps
 
-## Security Vulnerabilities
+**1. Generate APP_KEY**
+```bash
+docker run --rm amirul123/leconfe:latest sh -c "cd /var/www/html && php artisan key:generate --show"
+```
 
-If you discover a security vulnerability within Leconfe, please e-mail Leconfe via [support@leconfe.com](mailto:support@leconfe.com). All security vulnerabilities will be promptly addressed.
+**2. Start containers**
+```bash
+docker compose up -d
+```
+
+**3. Open installation wizard**
+```
+http://your-server-ip:8086/installation
+```
+
+**4. Complete setup, then update environment**
+```
+APP_INSTALLED=true
+```
+
+**5. Restart container**
+```bash
+docker compose restart leconfe
+```
+
+## 📦 What's Inside
+
+- PHP 8.1 + Nginx (Alpine)
+- Pre-built frontend assets (Vite/Bun)
+- Composer dependencies pre-installed
+- Compatible with MySQL, MariaDB, PostgreSQL
+
+## 🔗 Links
+
+- Original Project: https://github.com/leconfe/leconfe
+- Docker Hub: https://hub.docker.com/r/amirul123/leconfe
+- Live Demo: https://conference.my-edu.my
