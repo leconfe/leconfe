@@ -30,6 +30,16 @@ done
 echo "Running composer install..."
 composer install --no-dev --optimize-autoloader --no-scripts --no-interaction --ignore-platform-reqs
 
+# Run composer install for plugins that have their own vendor autoloader
+echo "Installing plugin dependencies..."
+find plugins -maxdepth 2 -name composer.json -not -path "*/vendor/*" | sort | while read -r plugin_composer; do
+    plugin_dir=$(dirname "$plugin_composer")
+    if [ -f "$plugin_dir/composer.lock" ]; then
+        echo "  Installing dependencies for $plugin_dir ..."
+        (cd "$plugin_dir" && composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs 2>&1 | sed 's/^/    /') || echo "  Warning: composer install failed for $plugin_dir, continuing..."
+    fi
+done
+
 # Fix permissions
 echo "Fixing permissions..."
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
