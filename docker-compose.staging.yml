@@ -23,7 +23,7 @@ services:
     container_name: leconfe-staging-mailpit-${STAGING_PR}
     labels:
       traefik.enable: "true"
-      traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.rule: Host(`leconfe-staging-mailpit-${STAGING_PR}-${STAGING_IP}.traefik.me`)
+      traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.rule: Host(`leconfe-staging-mailpit-${STAGING_PR}-${STAGING_IP}.nip.io`)
       traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.entrypoints: web
       traefik.http.services.leconfe-staging-mailpit-${STAGING_PR}.loadbalancer.server.port: "8025"
     networks:
@@ -45,7 +45,7 @@ services:
       APP_ENV: production
       APP_KEY: base64:yv7ba7W38mH8WC06OAWcokwKhfyaiNR4ranj0gWS7aw=
       APP_DEBUG: "true"
-      APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me
+      APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io
       APP_INSTALLED: "true"
       APP_QUICK_SETUP: "true"
       DB_CONNECTION: mysql
@@ -81,7 +81,7 @@ services:
         target: /etc/entrypoint.d/2-leconfe-setup.sh
     labels:
       traefik.enable: "true"
-      traefik.http.routers.leconfe-staging-${STAGING_PR}.rule: Host(`leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me`)
+      traefik.http.routers.leconfe-staging-${STAGING_PR}.rule: Host(`leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io`)
       traefik.http.routers.leconfe-staging-${STAGING_PR}.entrypoints: web
       traefik.http.services.leconfe-staging-${STAGING_PR}.loadbalancer.server.port: "8080"
     networks:

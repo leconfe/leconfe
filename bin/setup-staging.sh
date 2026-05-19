@@ -10,7 +10,7 @@ echo "=== Setting up staging for PR #${STAGING_PR} ==="
 rm -f .env
 
 echo "Compose file: docker-compose.staging.yml"
-echo "APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me"
+echo "APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io"
 
 # Start DB first
 echo "Starting database..."
@@ -50,7 +50,7 @@ STAGING_PR="${STAGING_PR}" STAGING_IP="${STAGING_IP}" docker compose -f docker-c
 
 echo ""
 echo "=== Setup complete ==="
-echo "Staging URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me"
+echo "Staging URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io"
 
 # Verify
 echo "Checking container status..."
