@@ -43,6 +43,10 @@ class Register extends Page
 
     public function mount()
     {
+        if (!app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
+            abort(403);
+        }
+
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
 
