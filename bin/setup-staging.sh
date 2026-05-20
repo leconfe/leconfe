@@ -10,7 +10,7 @@ echo "=== Setting up staging for PR #${STAGING_PR} ==="
 rm -f .env
 
 echo "Compose file: docker-compose.staging.yml"
-echo "APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me"
+echo "APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io"
 
 # Start DB first
 echo "Starting database..."
@@ -30,6 +30,16 @@ done
 echo "Running composer install..."
 composer install --no-dev --optimize-autoloader --no-scripts --no-interaction --ignore-platform-reqs
 
+# Run composer install for plugins that have their own vendor autoloader
+echo "Installing plugin dependencies..."
+find plugins -maxdepth 2 -name composer.json -not -path "*/vendor/*" | sort | while read -r plugin_composer; do
+    plugin_dir=$(dirname "$plugin_composer")
+    if [ -f "$plugin_dir/composer.lock" ]; then
+        echo "  Installing dependencies for $plugin_dir ..."
+        (cd "$plugin_dir" && composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs 2>&1 | sed 's/^/    /') || echo "  Warning: composer install failed for $plugin_dir, continuing..."
+    fi
+done
+
 # Fix permissions
 echo "Fixing permissions..."
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
@@ -40,7 +50,7 @@ STAGING_PR="${STAGING_PR}" STAGING_IP="${STAGING_IP}" docker compose -f docker-c
 
 echo ""
 echo "=== Setup complete ==="
-echo "Staging URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.traefik.me"
+echo "Staging URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io"
 
 # Verify
 echo "Checking container status..."
