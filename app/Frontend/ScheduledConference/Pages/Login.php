@@ -8,9 +8,13 @@ class Login extends WebsiteLogin
 {
     public function getViewData(): array
     {
+        $allowRegistration = app()->getCurrentScheduledConference()->getMeta('allow_registration');
+
         return [
             'resetPasswordUrl' => route('livewirePageGroup.scheduledConference.pages.reset-password'),
-            'registerUrl' => route('livewirePageGroup.scheduledConference.pages.register'),
+            'registerUrl' => $allowRegistration
+                ? route('livewirePageGroup.scheduledConference.pages.register')
+                : null,
         ];
     }
 
