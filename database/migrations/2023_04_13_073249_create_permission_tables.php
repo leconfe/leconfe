@@ -28,8 +28,11 @@ return new class extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->bigIncrements('id'); // permission id
-            $table->string('name');       // For MySQL 8.0 use string('name', 125);
-            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+            // Shortened so the (name, guard_name) composite unique index
+            // stays under the 1000-byte MySQL/MariaDB MyISAM limit with
+            // utf8mb4 (4 bytes/char).
+            $table->string('name', 125);
+            $table->string('guard_name', 60);
 
             $table->timestamps();
 
@@ -41,8 +44,10 @@ return new class extends Migration
             $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
 
-            $table->string('name');       // For MySQL 8.0 use string('name', 125);
-            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+            // Same length cap as the permissions table: the composite unique
+            // index includes two strings plus two big-ints.
+            $table->string('name', 125);
+            $table->string('guard_name', 60);
             $table->timestamps();
 
             $table->unique(['name', 'guard_name', 'conference_id', 'scheduled_conference_id'], 'roles_keys_unique');

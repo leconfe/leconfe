@@ -16,10 +16,13 @@ class CreateMetaTable extends Migration
         if (! Schema::hasTable('meta')) {
             Schema::create('meta', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('metable_type');
+                // Shortened so the (metable_type, metable_id, key) composite
+                // unique index stays under the 1000-byte MySQL/MariaDB MyISAM
+                // limit with utf8mb4 (4 bytes/char).
+                $table->string('metable_type', 125);
                 $table->unsignedBigInteger('metable_id');
                 $table->string('type')->default('null');
-                $table->string('key')->index();
+                $table->string('key', 100)->index();
                 $table->longtext('value');
 
                 $table->unique(['metable_type', 'metable_id', 'key']);

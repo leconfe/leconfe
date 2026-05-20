@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Conference::class)->default(0);
             $table->foreignIdFor(ScheduledConference::class)->default(0);
-            $table->string('plugin');
-            $table->string('key');
+            // Shortened so the composite unique index stays under the
+            // 1000-byte MySQL/MariaDB MyISAM limit with utf8mb4.
+            $table->string('plugin', 125);
+            $table->string('key', 100);
             $table->text('value')->nullable();
             $table->string('type');
 

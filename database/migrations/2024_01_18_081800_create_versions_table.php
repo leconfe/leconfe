@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('versions', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
-            $table->string('product_folder');
-            $table->string('version');
+            // Shortened so the (product_name, product_folder, version)
+            // composite unique index stays under the 1000-byte MySQL/MariaDB
+            // MyISAM limit with utf8mb4.
+            $table->string('product_name', 100);
+            $table->string('product_folder', 80);
+            $table->string('version', 40);
             $table->timestamp('installed_at');
             $table->timestamps();
 
