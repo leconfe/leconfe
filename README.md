@@ -1,7 +1,7 @@
 # Leconfe - Conference Management System
 
 > This is a custom Docker build of [Leconfe](https://github.com/leconfe/leconfe) with pre-built frontend assets, ready to deploy.
-
+[![DOI](https://zenodo.org/badge/1241972788.svg)](https://doi.org/10.5281/zenodo.20308110)
 [![Docker Pulls](https://img.shields.io/docker/pulls/amirul123/leconfe)](https://hub.docker.com/r/amirul123/leconfe)
 [![Docker Image Size](https://img.shields.io/docker/image-size/amirul123/leconfe/latest)](https://hub.docker.com/r/amirul123/leconfe)
 [![Docker Build](https://github.com/Amirul78800/leconfe/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Amirul78800/leconfe/actions)
