@@ -3,6 +3,7 @@
 namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Events\UserLoggedIn;
+use App\Frontend\ScheduledConference\Pages\Concerns\HasScheduledConferenceAuthLogo;
 use App\Frontend\Website\Pages\Login as WebsiteLogin;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
@@ -22,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends WebsiteLogin implements HasForms, HasActions
 {
+    use HasScheduledConferenceAuthLogo;
     use InteractsWithActions;
     use InteractsWithFormActions;
     use InteractsWithForms;
@@ -59,11 +61,6 @@ class Login extends WebsiteLogin implements HasForms, HasActions
     public function getSubheading(): string|Htmlable|null
     {
         return null;
-    }
-
-    public function hasLogo(): bool
-    {
-        return true;
     }
 
     /**

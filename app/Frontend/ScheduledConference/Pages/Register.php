@@ -3,6 +3,7 @@
 namespace App\Frontend\ScheduledConference\Pages;
 
 use App\Actions\User\UserCreateAction;
+use App\Frontend\ScheduledConference\Pages\Concerns\HasScheduledConferenceAuthLogo;
 use App\Frontend\Website\Pages\Page;
 use App\Panel\ScheduledConference\Pages\Dashboard;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
@@ -30,6 +31,7 @@ use Squire\Models\Country;
 
 class Register extends Page implements HasForms, HasActions
 {
+    use HasScheduledConferenceAuthLogo;
     use InteractsWithActions;
     use InteractsWithFormActions;
     use InteractsWithForms;
@@ -110,11 +112,6 @@ class Register extends Page implements HasForms, HasActions
     public function getSubheading(): string|Htmlable|null
     {
         return null;
-    }
-
-    public function hasLogo(): bool
-    {
-        return true;
     }
 
     public function rules()
