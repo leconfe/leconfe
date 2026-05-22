@@ -30,7 +30,7 @@ class Login extends WebsiteLogin implements HasForms, HasActions
 
     protected static string $view = 'frontend.scheduledConference.pages.login';
 
-    protected static string $layout = 'filament-panels::components.layout.simple';
+    protected static string $layout = 'frontend.scheduledConference.components.layout.simple-with-platform-footer';
 
     public static function getLayout(): string
     {
