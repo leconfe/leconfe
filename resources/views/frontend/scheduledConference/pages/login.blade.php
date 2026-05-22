@@ -27,6 +27,8 @@
         </x-filament-panels::form>
     </section>
 
+    <x-footer-platform-panel />
+
     <x-filament-actions::modals />
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
