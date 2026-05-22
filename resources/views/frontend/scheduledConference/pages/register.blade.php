@@ -1,6 +1,14 @@
 <div class="fi-simple-page">
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
+    <a
+        href="{{ $this->getAuthLogoHomeUrl() }}"
+        class="mb-6 inline-flex items-center gap-x-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-white/5"
+    >
+        <x-heroicon-m-arrow-left class="h-4 w-4" />
+        Back to home
+    </a>
+
     <section class="grid auto-cols-fr gap-y-6">
         <header class="fi-simple-header flex flex-col items-center">
             <a href="{{ $this->getAuthLogoHomeUrl() }}" class="mb-4">
