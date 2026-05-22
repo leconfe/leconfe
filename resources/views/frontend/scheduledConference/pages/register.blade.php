@@ -7,8 +7,7 @@
                 <img
                     src="{{ $this->getAuthLogoUrl() }}"
                     alt="{{ $this->getAuthLogoAltText() }}"
-                    class="fi-logo object-contain"
-                    style="max-height: 8rem;"
+                    class="fi-logo max-h-32 object-contain"
                 />
             </a>
 
