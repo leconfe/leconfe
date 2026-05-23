@@ -81,7 +81,7 @@ class SubmissionFormItem extends Model implements Sortable
 
     public function getFormField(): Field
     {
-        return match ($this->type) {
+        return match ((int) $this->type) {
             static::TYPE_TEXT => $this->fieldText(),
             static::TYPE_TEXTAREA => $this->fieldTextarea(),
             static::TYPE_CHECKBOX => $this->fieldCheckbox(),
