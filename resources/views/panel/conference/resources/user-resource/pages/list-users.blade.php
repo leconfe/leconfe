@@ -12,9 +12,11 @@
                 <x-filament::tabs.item alpine-active="activeTab === 'users-table'" x-on:click="activeTab = 'users-table'">
                     {{ __('general.users') }}
                 </x-filament::tabs.item>
-                <x-filament::tabs.item alpine-active="activeTab === 'role'" x-on:click="activeTab = 'role'">
-                    {{ __('general.roles') }}
-                </x-filament::tabs.item>
+                @can('viewAny', App\Models\Role::class)
+                    <x-filament::tabs.item alpine-active="activeTab === 'role'" x-on:click="activeTab = 'role'">
+                        {{ __('general.roles') }}
+                    </x-filament::tabs.item>
+                @endcan
                 <x-filament::tabs.item alpine-active="activeTab === 'notify-form'" x-on:click="activeTab = 'notify-form'">
                     {{ __('general.notify') }}
                 </x-filament::tabs.item>
@@ -50,9 +52,11 @@
                 {{ $this->table }}
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
             </div>
-            <div x-show="activeTab === 'role'">
-                @livewire(App\Panel\Conference\Livewire\UserRoleTable::class, ['lazy' => true])
-            </div>
+            @can('viewAny', App\Models\Role::class)
+                <div x-show="activeTab === 'role'">
+                    @livewire(App\Panel\Conference\Livewire\UserRoleTable::class, ['lazy' => true])
+                </div>
+            @endcan
             <div x-show="activeTab === 'notify-form'" style="display: none;">
                 <x-filament::section>
                     <x-slot name="heading">

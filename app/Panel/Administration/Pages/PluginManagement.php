@@ -52,6 +52,7 @@ class PluginManagement extends Page implements HasForms, HasInfolists
             Action::make('upload-plugin')
                 ->label(__('general.upload_plugin'))
                 ->modalHeading(__('general.upload_plugin'))
+                ->authorize(fn () => auth()->user()->can('install', Plugin::class))
                 ->visible(fn () => auth()->user()->can('install', Plugin::class))
                 ->form([
                     FileUpload::make('file')
