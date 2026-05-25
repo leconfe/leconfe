@@ -30,6 +30,8 @@ class ListUsers extends ListRecords implements HasForms
 
     public function mount(): void
     {
+        parent::mount();
+
         $this->notifyForm->fill();
     }
 
