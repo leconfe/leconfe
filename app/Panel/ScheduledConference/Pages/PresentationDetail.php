@@ -8,6 +8,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Renderless;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PresentationDetail extends Page implements HasForms
 {
@@ -27,6 +28,10 @@ class PresentationDetail extends Page implements HasForms
 
     public function mount(): void
     {
+        if (! $this->record->is_final) {
+            throw new NotFoundHttpException;
+        }
+
         $this->record->load(['submission' => ['authors.role', 'meta']]);
         $this->record->registerView((int) auth()->id());
     }
