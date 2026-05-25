@@ -248,7 +248,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->hidden(fn () => $this->review->reviewSubmitted())
             ->successNotificationTitle(__('general.review_saved'))
             ->action(function (Action $action) {
-                $data = $this->formData;
+                $data = $this->form->getState();
 
                 if (array_key_exists('review_responses', data_get($data, 'meta', []))) {
                     data_set($data, 'meta.review_responses', ReviewFormItem::filterOutUploadResponses(data_get($data, 'meta.review_responses')));
