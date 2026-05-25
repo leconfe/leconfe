@@ -214,7 +214,7 @@ class PaymentDetail extends Page
                             $updateData['invoice'] = $data['invoice'];
                         }
 
-                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+                        if ($this->shouldSendParticipantPaymentNotification($record, $data)) {
                             $record->user?->notify(new ParticipantPayment($record->model));
                         }
 
@@ -300,6 +300,15 @@ class PaymentDetail extends Page
                 ->label('Actions')
                 ->color('gray'),
         ];
+    }
+
+    protected function shouldSendParticipantPaymentNotification(Payment $record, array $data): bool
+    {
+        if ($record->type != PaymentManager::TYPE_PARTICIPANT_FEE) {
+            return false;
+        }
+
+        return ! data_get($data, 'dont_send_notification', false);
     }
 
     public function infolist(Infolist $infolist): Infolist
