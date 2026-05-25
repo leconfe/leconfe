@@ -27,8 +27,8 @@ class Role extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('conferences', function (Builder $builder) {
-            $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
-            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
+            $conferenceScopeColumn = config('permission.table_names.roles', 'roles').'.conference_id';
+            $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles').'.scheduled_conference_id';
 
             $conferenceId = app()->getCurrentConferenceId();
             $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
@@ -43,7 +43,12 @@ class Role extends Model
 
             $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
                 if ($scheduledConferenceId) {
-                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId);
+                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId)
+                        ->orWhere(function (Builder $query) use ($scheduledConferenceScopeColumn) {
+                            $query
+                                ->where('name', UserRole::Admin->value)
+                                ->where($scheduledConferenceScopeColumn, 0);
+                        });
                 } else {
                     $query->where($scheduledConferenceScopeColumn, 0);
                 }
@@ -53,8 +58,8 @@ class Role extends Model
 
     public function scopeAvailableRolesByContext(Builder $builder)
     {
-        $conferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.conference_id';
-        $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles') . '.scheduled_conference_id';
+        $conferenceScopeColumn = config('permission.table_names.roles', 'roles').'.conference_id';
+        $scheduledConferenceScopeColumn = config('permission.table_names.roles', 'roles').'.scheduled_conference_id';
 
         $conferenceId = app()->getCurrentConferenceId();
         $scheduledConferenceId = app()->getCurrentScheduledConferenceId();
@@ -321,7 +326,7 @@ class Role extends Model
                     'DiscussionTopic:update',
                 ],
                 UserRole::Participant->value => [
-                    'Payment:registerParticipant'
+                    'Payment:registerParticipant',
                 ],
             ];
         }
