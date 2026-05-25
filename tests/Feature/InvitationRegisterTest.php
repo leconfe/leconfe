@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Frontend\Website\Pages\InvitationRegister;
+use App\Mail\Templates\VerifyUserEmail;
 use App\Models\Conference;
 use App\Models\Role;
 use App\Models\User;
@@ -17,7 +18,7 @@ class InvitationRegisterTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_invitation_registration_marks_new_user_email_as_verified(): void
+    public function test_invitation_registration_keeps_new_user_unverified_and_sends_verification_email(): void
     {
         Config::set('app.must_verify_email', true);
         Mail::fake();
@@ -49,16 +50,16 @@ class InvitationRegisterTest extends TestCase
             ->where('email', 'invitee@example.com')
             ->firstOrFail();
 
-        $this->assertNotNull($user->email_verified_at);
+        $this->assertNull($user->email_verified_at);
         $this->assertAuthenticatedAs($user);
         $this->assertDatabaseHas('user_invitations', [
             'id' => $invitation->id,
             'status' => 'accepted',
         ]);
-        Mail::assertNothingSent();
+        Mail::assertSent(VerifyUserEmail::class, 1);
     }
 
-    public function test_invitation_registration_marks_existing_user_email_as_verified(): void
+    public function test_invitation_registration_keeps_existing_user_unverified_and_sends_verification_email(): void
     {
         Config::set('app.must_verify_email', true);
         Mail::fake();
@@ -95,13 +96,13 @@ class InvitationRegisterTest extends TestCase
 
         $user->refresh();
 
-        $this->assertNotNull($user->email_verified_at);
+        $this->assertNull($user->email_verified_at);
         $this->assertAuthenticatedAs($user);
         $this->assertDatabaseHas('user_invitations', [
             'id' => $invitation->id,
             'status' => 'accepted',
         ]);
-        Mail::assertNothingSent();
+        Mail::assertSent(VerifyUserEmail::class, 1);
     }
 
     protected function createInvitationRole(Conference $conference): void

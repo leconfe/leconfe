@@ -74,7 +74,7 @@ class InvitationRegister extends Page
             ->first();
 
         if ($existingUser) {
-            $this->markInvitationEmailAsVerified($existingUser);
+            $this->sendInvitationEmailVerificationNotification($existingUser);
 
             Filament::auth()->login($existingUser);
             session()->regenerate();
@@ -91,7 +91,7 @@ class InvitationRegister extends Page
             'password' => $this->password,
         ]);
 
-        $this->markInvitationEmailAsVerified($user);
+        $this->sendInvitationEmailVerificationNotification($user);
 
         Filament::auth()->login($user);
         session()->regenerate();
@@ -156,14 +156,12 @@ class InvitationRegister extends Page
         return route('filament.administration.home');
     }
 
-    protected function markInvitationEmailAsVerified(User $user): void
+    protected function sendInvitationEmailVerificationNotification(User $user): void
     {
-        if ($user->hasVerifiedEmail()) {
+        if (! config('app.must_verify_email') || $user->hasVerifiedEmail()) {
             return;
         }
 
-        $user->forceFill([
-            'email_verified_at' => now(),
-        ])->saveQuietly();
+        $user->sendEmailVerificationNotification();
     }
 }
