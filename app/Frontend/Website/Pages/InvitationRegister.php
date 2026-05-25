@@ -37,6 +37,16 @@ class InvitationRegister extends Page
 
             return;
         }
+
+        $invitedUserExists = User::query()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower($invitation->email)])
+            ->exists();
+
+        if ($invitedUserExists) {
+            $this->redirect($this->getLoginUrl($invitation), navigate: false);
+
+            return;
+        }
     }
 
     public function getTitle(): string|Htmlable
@@ -74,14 +84,7 @@ class InvitationRegister extends Page
             ->first();
 
         if ($existingUser) {
-            $this->markInvitationEmailAsVerified($existingUser);
-
-            Filament::auth()->login($existingUser);
-            session()->regenerate();
-
-            AcceptUserInvitationAction::run($invitation, $existingUser);
-
-            return $this->redirect($this->getSuccessUrl($invitation), navigate: false);
+            return $this->redirect($this->getLoginUrl($invitation), navigate: false);
         }
 
         $user = UserCreateAction::run([
@@ -141,6 +144,24 @@ class InvitationRegister extends Page
             ->with(['conference', 'scheduledConference'])
             ->where('token', $token)
             ->firstOrFail();
+    }
+
+    protected function getLoginUrl(UserInvitation $invitation): string
+    {
+        if ($invitation->scheduledConference && $invitation->conference) {
+            return route('livewirePageGroup.scheduledConference.pages.login', [
+                'conference' => $invitation->conference->path,
+                'serie' => $invitation->scheduledConference->path,
+            ]);
+        }
+
+        if ($invitation->conference) {
+            return route('livewirePageGroup.conference.pages.login', [
+                'conference' => $invitation->conference->path,
+            ]);
+        }
+
+        return route('livewirePageGroup.website.pages.login');
     }
 
     protected function getSuccessUrl(UserInvitation $invitation): string
