@@ -181,6 +181,16 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->belongsTo(Conference::class);
     }
 
+    public static function findByConferenceAndExactPath(Conference|int $conference, string $path): ?self
+    {
+        $conferenceId = $conference instanceof Conference ? $conference->getKey() : $conference;
+
+        return static::query()
+            ->where('conference_id', $conferenceId)
+            ->get()
+            ->first(fn (ScheduledConference $scheduledConference): bool => $scheduledConference->path === $path);
+    }
+
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class);
