@@ -76,7 +76,7 @@ class SubmissionFormItem extends Model implements Sortable
 
     public function isUploadType(): bool
     {
-        return $this->type === static::TYPE_UPLOAD;
+        return (int) $this->type === static::TYPE_UPLOAD;
     }
 
     public function getFormField(): Field

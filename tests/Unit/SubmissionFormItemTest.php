@@ -3,7 +3,8 @@
 namespace Tests\Unit;
 
 use App\Models\SubmissionFormItem;
-use PHPUnit\Framework\TestCase;
+use Filament\Forms\Components\TextInput;
+use Tests\TestCase;
 
 class SubmissionFormItemTest extends TestCase
 {
@@ -15,5 +16,23 @@ class SubmissionFormItemTest extends TestCase
         ]);
 
         $this->assertSame(SubmissionFormItem::TYPE_TEXT, $item->type);
+    }
+
+    public function test_get_form_field_handles_raw_string_type(): void
+    {
+        $item = new class extends SubmissionFormItem
+        {
+            protected function fieldText(): TextInput
+            {
+                return TextInput::make('test');
+            }
+        };
+        $item->setRawAttributes([
+            'id' => 1,
+            'type' => '1',
+            'required' => false,
+        ]);
+
+        $this->assertInstanceOf(TextInput::class, $item->getFormField());
     }
 }
