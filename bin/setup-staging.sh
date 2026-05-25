@@ -42,7 +42,7 @@ done
 
 # Fix permissions
 echo "Fixing permissions..."
-chmod -R 777 storage bootstrap/cache 2>/dev/null || true
+chmod -R 777 storage bootstrap/cache public/plugin 2>/dev/null || true
 
 # Start app - entrypoint handles artisan commands
 echo "Starting application..."
