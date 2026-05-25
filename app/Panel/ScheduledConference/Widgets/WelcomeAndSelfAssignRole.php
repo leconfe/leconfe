@@ -85,7 +85,7 @@ class WelcomeAndSelfAssignRole extends Widget
 
         $selectedRoleInput = $this->formData['role'] ?? null;
 
-        if (!$selectedRoleInput && is_string($selectedRoleInput) && in_array($selectedRoleInput, $allowedRoles, true)) {
+        if (!is_string($selectedRoleInput) || !in_array($selectedRoleInput, $allowedRoles, true)) {
             Notification::make()
                 ->warning()
                 ->title(__('general.no_roles_selected'))

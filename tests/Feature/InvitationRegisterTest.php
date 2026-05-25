@@ -56,10 +56,10 @@ class InvitationRegisterTest extends TestCase
             'id' => $invitation->id,
             'status' => 'accepted',
         ]);
-        Mail::assertSent(VerifyUserEmail::class, 1);
+        Mail::assertQueued(VerifyUserEmail::class, 1);
     }
 
-    public function test_invitation_registration_keeps_existing_user_unverified_and_sends_verification_email(): void
+    public function test_invitation_registration_rejects_existing_user_email(): void
     {
         Config::set('app.must_verify_email', true);
         Mail::fake();
@@ -92,17 +92,18 @@ class InvitationRegisterTest extends TestCase
             ->set('password', 'password12345')
             ->set('password_confirmation', 'password12345')
             ->set('privacy_statement_agree', true)
-            ->call('register');
+            ->call('register')
+            ->assertHasErrors(['token']);
 
         $user->refresh();
 
         $this->assertNull($user->email_verified_at);
-        $this->assertAuthenticatedAs($user);
+        $this->assertGuest();
         $this->assertDatabaseHas('user_invitations', [
             'id' => $invitation->id,
-            'status' => 'accepted',
+            'status' => 'pending',
         ]);
-        Mail::assertSent(VerifyUserEmail::class, 1);
+        Mail::assertNothingQueued();
     }
 
     protected function createInvitationRole(Conference $conference): void

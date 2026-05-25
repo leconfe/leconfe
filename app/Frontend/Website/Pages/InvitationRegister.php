@@ -9,6 +9,7 @@ use App\Models\UserInvitation;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
 class InvitationRegister extends Page
@@ -74,14 +75,9 @@ class InvitationRegister extends Page
             ->first();
 
         if ($existingUser) {
-            $this->sendInvitationEmailVerificationNotification($existingUser);
-
-            Filament::auth()->login($existingUser);
-            session()->regenerate();
-
-            AcceptUserInvitationAction::run($invitation, $existingUser);
-
-            return $this->redirect($this->getSuccessUrl($invitation), navigate: false);
+            throw ValidationException::withMessages([
+                'token' => 'An account already exists for this invitation email. Please sign in to accept the invitation.',
+            ]);
         }
 
         $user = UserCreateAction::run([

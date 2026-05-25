@@ -104,6 +104,8 @@ class PluginGalleryTable extends Component implements HasForms, HasTable
 
     public function install(PluginGallery $record)
     {
+        abort_unless(auth()->user()?->can('install', $record), 403);
+
         $message = $record->isUpgradable() ? 'Upgrade' : 'Install';
 
         $process = $record->install();

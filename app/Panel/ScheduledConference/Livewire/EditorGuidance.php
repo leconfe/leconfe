@@ -11,6 +11,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
+use Stevebauman\Purify\Facades\Purify;
 
 class EditorGuidance extends Component implements HasForms
 {
@@ -43,7 +44,8 @@ class EditorGuidance extends Component implements HasForms
                         TinyEditor::make('meta.editor_guidelines')
                             ->label(__('general.editor_guidelines'))
                             ->plugins('autoresize link wordcount image code lists')
-                            ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist'),
+                            ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist')
+                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
                     ]),
                 Actions::make([
                     Action::make('save')

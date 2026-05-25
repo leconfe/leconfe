@@ -20,11 +20,18 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class UserRoleTable extends Component implements HasForms, HasTable
 {
+    use AuthorizesRequests;
     use InteractsWithForms, InteractsWithTable;
+
+    public function mount(): void
+    {
+        $this->authorize('viewAny', Role::class);
+    }
 
     public function render()
     {
@@ -91,6 +98,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             ->disabled(true),
                     ])
                     ->action(function (Role $record, array $data) {
+                        $this->authorize('update', $record);
                         $meta = $data['meta'] ?? [];
                         $meta['permission_level'] = $meta['permission_level'] ?? $record->getMeta('permission_level') ?? $record->name;
 
@@ -104,6 +112,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                     ->label(__('general.delete'))
                     ->requiresConfirmation()
                     ->action(function (Role $record) {
+                        $this->authorize('delete', $record);
                         if ($record->users_count > 0) {
                             Notification::make()
                                 ->title(__('general.failed'))
@@ -132,6 +141,7 @@ class UserRoleTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (array $data) {
+                        $this->authorize('create', Role::class);
                         RoleCreateAction::run([
                             'name' => $data['name'],
                             'meta' => $data['meta'],
