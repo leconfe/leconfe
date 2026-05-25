@@ -35,10 +35,17 @@ class QuickInstall
             return;
         }
 
+        $adminPassword = env('APP_ADMIN_PASSWORD');
+        if (blank($adminPassword) || $adminPassword === 'admin') {
+            alert('Quick install requires APP_ADMIN_PASSWORD to be set to a non-default value.');
+
+            return;
+        }
+
         $data = [
             'given_name' => 'Admin',
             'email' => env('APP_ADMIN_EMAIL', 'admin@leconfe.com'),
-            'password' => Hash::make(env("APP_ADMIN_PASSWORD", 'admin')),
+            'password' => Hash::make($adminPassword),
         ];
 
         try {
