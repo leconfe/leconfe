@@ -9,7 +9,6 @@ use App\Models\UserInvitation;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\ValidationException;
 use Rahmanramsi\LivewirePageGroup\PageGroup;
 
 class InvitationRegister extends Page
@@ -35,6 +34,16 @@ class InvitationRegister extends Page
 
         if (Filament::auth()->check()) {
             $this->redirect($invitation->getAcceptUrl(), navigate: false);
+
+            return;
+        }
+
+        $invitedUserExists = User::query()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower($invitation->email)])
+            ->exists();
+
+        if ($invitedUserExists) {
+            $this->redirect($this->getLoginUrl($invitation), navigate: false);
 
             return;
         }
@@ -75,9 +84,7 @@ class InvitationRegister extends Page
             ->first();
 
         if ($existingUser) {
-            throw ValidationException::withMessages([
-                'token' => 'An account already exists for this invitation email. Please sign in to accept the invitation.',
-            ]);
+            return $this->redirect($this->getLoginUrl($invitation), navigate: false);
         }
 
         $user = UserCreateAction::run([
@@ -137,6 +144,24 @@ class InvitationRegister extends Page
             ->with(['conference', 'scheduledConference'])
             ->where('token', $token)
             ->firstOrFail();
+    }
+
+    protected function getLoginUrl(UserInvitation $invitation): string
+    {
+        if ($invitation->scheduledConference && $invitation->conference) {
+            return route('livewirePageGroup.scheduledConference.pages.login', [
+                'conference' => $invitation->conference->path,
+                'serie' => $invitation->scheduledConference->path,
+            ]);
+        }
+
+        if ($invitation->conference) {
+            return route('livewirePageGroup.conference.pages.login', [
+                'conference' => $invitation->conference->path,
+            ]);
+        }
+
+        return route('livewirePageGroup.website.pages.login');
     }
 
     protected function getSuccessUrl(UserInvitation $invitation): string

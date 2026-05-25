@@ -59,7 +59,7 @@ class InvitationRegisterTest extends TestCase
         Mail::assertQueued(VerifyUserEmail::class, 1);
     }
 
-    public function test_invitation_registration_rejects_existing_user_email(): void
+    public function test_invitation_registration_redirects_existing_user_email_to_login(): void
     {
         Config::set('app.must_verify_email', true);
         Mail::fake();
@@ -87,13 +87,9 @@ class InvitationRegisterTest extends TestCase
         ]);
 
         Livewire::test(InvitationRegister::class, ['token' => $invitation->token])
-            ->set('given_name', 'Ignored')
-            ->set('family_name', 'Ignored')
-            ->set('password', 'password12345')
-            ->set('password_confirmation', 'password12345')
-            ->set('privacy_statement_agree', true)
-            ->call('register')
-            ->assertHasErrors(['token']);
+            ->assertRedirect(route('livewirePageGroup.conference.pages.login', [
+                'conference' => $conference->path,
+            ]));
 
         $user->refresh();
 
