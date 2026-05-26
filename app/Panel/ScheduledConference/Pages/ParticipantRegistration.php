@@ -192,6 +192,8 @@ class ParticipantRegistration extends Page implements HasForms
             $this->form->model($payment)->saveRelationships();
 
             if (app()->getCurrentScheduledConference()->isParticipantPaymentAutoNotify()) {
+                $payment->ensureInvoice();
+                $participant->setRelation('payment', $payment->refresh());
                 auth()->user()->notify(new ParticipantPayment($participant));
             }
 

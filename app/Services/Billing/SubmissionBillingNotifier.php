@@ -67,6 +67,8 @@ class SubmissionBillingNotifier
             return false;
         }
 
+        $payment->ensureInvoice();
+        $submission->setRelation('payment', $payment->refresh());
         $submission->user->notify(new SubmissionPayment($submission));
         $payment->setMeta(self::PAYMENT_META_AUTO_NOTIFIED_AT, now()->toDateTimeString());
 

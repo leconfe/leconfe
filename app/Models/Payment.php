@@ -44,17 +44,9 @@ class Payment extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Payment $payment) {
-            $scheduledConference = app()->getCurrentScheduledConference();
-            if ($scheduledConference?->isInvoiceEnabled()) {
-                $number = $scheduledConference->getLatestInvoiceNumber();
+            $payment->ensureInvoice();
 
-                $payment->update([
-                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
-                ]);
-
-                $scheduledConference->updateLatestInvoiceNumber($number + 1);
-            }
-
+            $scheduledConference = $payment->scheduledConference ?: app()->getCurrentScheduledConference();
             if ($scheduledConference?->isReceiptEnabled()) {
                 $receiptNumber = $scheduledConference->getLatestReceiptNumber();
 
@@ -65,6 +57,28 @@ class Payment extends Model implements HasMedia
                 $scheduledConference->updateLatestReceiptNumber($receiptNumber + 1);
             }
         });
+    }
+
+    public function ensureInvoice(): bool
+    {
+        if ($this->invoice) {
+            return false;
+        }
+
+        $scheduledConference = $this->scheduledConference ?: app()->getCurrentScheduledConference();
+        if (! $scheduledConference?->isInvoiceEnabled()) {
+            return false;
+        }
+
+        $number = $scheduledConference->getLatestInvoiceNumber();
+
+        $this->update([
+            'invoice' => $scheduledConference->generateInvoiceNumber($number),
+        ]);
+
+        $scheduledConference->updateLatestInvoiceNumber($number + 1);
+
+        return true;
     }
 
     public function scopeType($query, $type): Builder

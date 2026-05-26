@@ -214,13 +214,19 @@ class PaymentDetail extends Page
                             $updateData['invoice'] = $data['invoice'];
                         }
 
-                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
-                            $record->user?->notify(new ParticipantPayment($record->model));
-                        }
-
                         $record->update($updateData);
                         $record->setMeta('additional_items', $selectedAdditionalItems);
                         $record->setMeta('base_amount', $paymentFee->amount);
+
+                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+                            $participant = $record->model;
+
+                            if ($participant) {
+                                $record->ensureInvoice();
+                                $participant->setRelation('payment', $record->refresh());
+                                $record->user?->notify(new ParticipantPayment($participant));
+                            }
+                        }
 
                         $action->successNotificationTitle('Payment Fee Updated');
                         $action->success();
@@ -241,6 +247,8 @@ class PaymentDetail extends Page
                             return;
                         }
 
+                        $record->ensureInvoice();
+                        $submission->setRelation('payment', $record->refresh());
                         $record->user->notify(new SubmissionPayment($submission));
 
                         $action->successNotificationTitle('Submission invoice email resent');
