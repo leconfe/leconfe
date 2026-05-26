@@ -339,7 +339,7 @@ class Register extends Page implements HasForms, HasActions
 
         session()->regenerate();
 
-        $this->redirect(route('filament.scheduledConference.pages.profile'));
+        $this->redirect($this->getRedirectUrl());
 
         $this->registerComplete = true;
     }

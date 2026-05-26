@@ -49,9 +49,8 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        // User can delete themselves
         if ($user->is($model)) {
-            return true;
+            return false;
         }
 
         if ($model->hasRole(UserRole::Admin)) {
@@ -68,9 +67,8 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        // User can delete themselves
         if ($user->is($model)) {
-            return true;
+            return false;
         }
 
         if ($model->hasRole(UserRole::Admin)) {
