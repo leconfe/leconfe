@@ -70,7 +70,9 @@ class UserResource extends Resource
             ->when(!app()->isOnSite(), fn(Builder $query) => $query->where(function (Builder $query) {
                 $query
                     ->where('id', auth()->id())
-                    ->orWhereDoesntHave('roles', fn(Builder $query) => $query->where('name', UserRole::Admin));
+                    ->orWhereHas('roles', fn(Builder $query) => $query
+                        ->withoutGlobalScopes()
+                        ->availableRolesByContext());
             }));
     }
 

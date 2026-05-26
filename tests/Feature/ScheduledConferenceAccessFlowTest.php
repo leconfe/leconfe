@@ -104,6 +104,78 @@ class ScheduledConferenceAccessFlowTest extends TestCase
         );
     }
 
+    public function test_previous_scheduled_author_is_not_listed_in_new_conference_or_schedule_context(): void
+    {
+        $previousConference = Conference::query()->create([
+            'name' => 'Previous Conference',
+            'path' => 'previous-conference',
+        ]);
+        $previousScheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $previousConference->getKey(),
+            'title' => 'Previous Scheduled Conference',
+            'path' => 'previous-schedule',
+        ]);
+
+        $newConference = Conference::query()->create([
+            'name' => 'New Conference',
+            'path' => 'new-conference',
+        ]);
+        $newScheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $newConference->getKey(),
+            'title' => 'New Scheduled Conference',
+            'path' => 'new-schedule',
+        ]);
+
+        $this->createAdminRole();
+
+        $admin = User::factory()->create([
+            'email' => 'admin-new-context@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+        $admin->assignRole(UserRole::Admin->value);
+
+        $previousAuthor = User::factory()->create([
+            'email' => 'previous-author@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+        $currentAuthor = User::factory()->create([
+            'email' => 'current-author@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+
+        $previousAuthor->assignRole(Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => $previousConference->getKey(),
+            'scheduled_conference_id' => $previousScheduledConference->getKey(),
+        ]));
+        $currentAuthor->assignRole(Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => $newConference->getKey(),
+            'scheduled_conference_id' => $newScheduledConference->getKey(),
+        ]));
+
+        $this->actingAs($admin);
+
+        app()->setCurrentConferenceId($newConference->getKey());
+        app()->setCurrentScheduledConferenceId($newScheduledConference->getKey());
+
+        $scheduledVisibleUserIds = UserResource::getEloquentQuery()->pluck('id');
+
+        $this->assertTrue($scheduledVisibleUserIds->contains($admin->getKey()));
+        $this->assertTrue($scheduledVisibleUserIds->contains($currentAuthor->getKey()));
+        $this->assertFalse($scheduledVisibleUserIds->contains($previousAuthor->getKey()));
+
+        app()->setCurrentScheduledConferenceId(0);
+
+        $conferenceVisibleUserIds = UserResource::getEloquentQuery()->pluck('id');
+
+        $this->assertTrue($conferenceVisibleUserIds->contains($admin->getKey()));
+        $this->assertFalse($conferenceVisibleUserIds->contains($previousAuthor->getKey()));
+        $this->assertFalse($conferenceVisibleUserIds->contains($currentAuthor->getKey()));
+    }
+
     protected function createAdminRole(): void
     {
         Role::withoutGlobalScopes()->firstOrCreate([
