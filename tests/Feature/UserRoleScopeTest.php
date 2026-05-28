@@ -7,6 +7,7 @@ use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\User;
+use App\Panel\Conference\Resources\UserResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
@@ -116,5 +117,59 @@ class UserRoleScopeTest extends TestCase
 
         $this->assertTrue($admin->fresh()->hasRole(UserRole::Admin->value));
         $this->assertTrue(Gate::forUser($admin->fresh())->allows('view', $draft));
+    }
+
+    public function test_admin_is_listed_in_scheduled_conference_user_resource(): void
+    {
+        $conference = Conference::create([
+            'name' => 'Demo Conference',
+            'path' => 'demo',
+        ]);
+
+        $draft = ScheduledConference::create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft',
+            'date_start' => now(),
+            'date_end' => now()->addDays(3),
+            'is_published' => false,
+        ]);
+
+        Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => 999,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $admin = User::factory()->create([
+            'email' => 'admin@example.test',
+        ]);
+        $admin->assignRole(UserRole::Admin->value);
+
+        $foreignUser = User::factory()->create([
+            'email' => 'foreign@example.test',
+        ]);
+        app()->setCurrentConferenceId(999);
+        app()->setCurrentScheduledConferenceId(null);
+        $foreignUser->assignRole(UserRole::Author->value);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($draft->getKey());
+        $this->actingAs($admin);
+
+        $listedUserIds = UserResource::getEloquentQuery()->pluck('id');
+
+        $this->assertTrue($listedUserIds->contains($admin->getKey()));
+        $this->assertFalse($listedUserIds->contains($foreignUser->getKey()));
+        $this->assertFalse(Gate::forUser($admin)->allows('update', $admin));
+        $this->assertFalse(Gate::forUser($admin)->allows('delete', $admin));
     }
 }
