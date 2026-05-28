@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Conference;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
+use App\Models\ScheduledConference;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
 class UserRoleScopeTest extends TestCase
@@ -75,5 +78,43 @@ class UserRoleScopeTest extends TestCase
 
         $this->assertTrue($scopedRoleIds->contains($allowedRole->getKey()));
         $this->assertFalse($scopedRoleIds->contains($foreignRole->getKey()));
+    }
+
+    public function test_admin_can_view_draft_scheduled_conference_in_scheduled_context(): void
+    {
+        $conference = Conference::create([
+            'name' => 'Demo Conference',
+            'path' => 'demo',
+        ]);
+
+        $draft = ScheduledConference::create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft',
+            'date_start' => now(),
+            'date_end' => now()->addDays(3),
+            'is_published' => false,
+        ]);
+
+        $adminRole = Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $admin = User::create([
+            'given_name' => 'Admin',
+            'family_name' => 'User',
+            'email' => 'admin@example.test',
+            'password' => 'password123456',
+        ]);
+        $admin->assignRole($adminRole);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($draft->getKey());
+
+        $this->assertTrue($admin->fresh()->hasRole(UserRole::Admin->value));
+        $this->assertTrue(Gate::forUser($admin->fresh())->allows('view', $draft));
     }
 }
