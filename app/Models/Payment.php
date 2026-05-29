@@ -147,6 +147,17 @@ class Payment extends Model implements HasMedia
         return money($this->amount, $this->currency, true)->formatWithoutZeroes();
     }
 
+    public function getPaymentDetailUrl(): string
+    {
+        $scheduledConference = $this->scheduledConference;
+
+        return route('filament.scheduledConference.pages.payment-detail', [
+            'conference' => $scheduledConference->conference->path,
+            'serie' => $scheduledConference->path,
+            'record' => $this,
+        ]);
+    }
+
     public function isPaid(): bool
     {
         return $this->paid_at ? true : false;
