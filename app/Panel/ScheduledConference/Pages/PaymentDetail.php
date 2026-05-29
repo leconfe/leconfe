@@ -4,9 +4,11 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
+use App\Models\Submission;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\PaymentConfirmed;
 use App\Notifications\SubmissionPayment;
@@ -81,7 +83,7 @@ class PaymentDetail extends Page
                 fn (Action $action) => $action
                     ->record($this->record)
                     ->model(Payment::class)
-                    ->visible(fn (Payment $record) => ! $record->isPaid())
+                    ->visible(fn (Payment $record) => ! $record->isPaid() && static::canUsePaymentMethodActions($record))
                     ->disabled(fn (Payment $record) => ! $record->isPaid() && ! (app()->getCurrentScheduledConference()?->isPaymentOpen() ?? true))
             );
 
@@ -257,7 +259,7 @@ class PaymentDetail extends Page
 
                         $record->user->notify(new PaymentConfirmed($record));
                     })
-                    ->visible(fn (Payment $record) => ! $record->isPaid()),
+                    ->visible(fn (Payment $record) => ! $record->isPaid() && static::canUsePaymentMethodActions($record)),
                 Action::make('mark_as_unpaid')
                     ->label('Mark as Unpaid')
                     ->color('danger')
@@ -312,6 +314,24 @@ class PaymentDetail extends Page
                 $record->user?->notify(new ParticipantPayment($participant));
             }
         }
+    }
+
+    public static function canUsePaymentMethodActions(Payment $record): bool
+    {
+        if ($record->type !== PaymentManager::TYPE_SUBMISSION_FEE) {
+            return true;
+        }
+
+        $submission = $record->model;
+
+        if (! $submission instanceof Submission) {
+            return false;
+        }
+
+        return ! in_array($submission->status, [
+            SubmissionStatus::Declined,
+            SubmissionStatus::Withdrawn,
+        ], true);
     }
 
     public function infolist(Infolist $infolist): Infolist

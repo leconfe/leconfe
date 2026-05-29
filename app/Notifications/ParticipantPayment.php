@@ -3,12 +3,7 @@
 namespace App\Notifications;
 
 use App\Mail\Templates\ParticipantPaymentMail;
-use App\Mail\Templates\PaymentRequiredMail;
-use App\Mail\Templates\SubmissionPaymentMail;
 use App\Models\Participant;
-use App\Models\Payment;
-use App\Models\Submission;
-use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -57,7 +52,7 @@ class ParticipantPayment extends Notification implements ShouldQueue
             ->body("Participant Payment for: " . $this->participant->payment->fee->name)
             ->actions([
                 Action::make('new-submission')
-                    ->url(PaymentDetail::getUrl(['record' => $this->participant->payment]))
+                    ->url($this->participant->payment->getPaymentDetailUrl())
                     ->label('Pay')
                     ->openUrlInNewTab()
                     ->markAsRead(),

@@ -7,11 +7,13 @@ use App\Managers\PaymentManager;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Participant;
 use App\Models\PaymentFee;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\Track;
 use App\Models\User;
+use App\Notifications\ParticipantPayment;
 use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Services\Billing\SubmissionBillingNotifier;
@@ -282,6 +284,29 @@ class SubmissionBillingNotifierTest extends TestCase
             )
         );
         $this->assertTrue(app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
+        $this->assertTrue(PaymentDetail::canUsePaymentMethodActions($payment));
+    }
+
+    public function test_manual_submission_invoice_keeps_detail_view_only_for_declined_or_withdrawn_submission(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::Presentation,
+            submissionStage: SubmissionStage::CallforAbstract,
+            submissionStatus: SubmissionStatus::Declined,
+        );
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->update(['invoice' => 'INV-001']);
+
+        $this->assertTrue(app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
+        $this->assertFalse(PaymentDetail::canUsePaymentMethodActions($payment));
+
+        $context['submission']->update(['status' => SubmissionStatus::Withdrawn]);
+
+        $this->assertTrue(app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
+        $this->assertFalse(PaymentDetail::canUsePaymentMethodActions($payment->refresh()));
     }
 
     public function test_submission_payment_notification_builds_payment_link_without_current_context(): void
@@ -307,6 +332,66 @@ class SubmissionBillingNotifierTest extends TestCase
 
         $url = $payment->getPaymentDetailUrl();
         $databaseMessage = (new SubmissionPayment($context['submission']))->toDatabase($context['user']);
+
+        $this->assertSame(
+            route('filament.scheduledConference.pages.payment-detail', [
+                'conference' => $context['conference']->path,
+                'serie' => $context['scheduledConference']->path,
+                'record' => $payment,
+            ]),
+            $url
+        );
+        $this->assertStringContainsString($url, json_encode($databaseMessage));
+    }
+
+    public function test_participant_payment_notification_builds_payment_link_without_current_context(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $participant = Participant::withoutGlobalScopes()->create([
+            'given_name' => 'Participant',
+            'family_name' => 'Tester',
+            'email' => 'participant@example.test',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+        ]);
+
+        $paymentFee = PaymentFee::withoutGlobalScopes()->create([
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Participant Fee',
+            'type' => PaymentManager::TYPE_PARTICIPANT_FEE,
+            'amount' => 150,
+            'currency' => 'usd',
+            'is_active' => true,
+        ]);
+
+        $payment = PaymentManager::get()->queue(
+            $participant,
+            $paymentFee,
+            $context['user'],
+            PaymentManager::TYPE_PARTICIPANT_FEE,
+            $participant->full_name,
+            '/participant/'.$participant->getKey(),
+            'Participant billing',
+        )->loadMissing(['scheduledConference.conference', 'fee']);
+
+        $payment->update(['invoice' => 'INV-002']);
+        $participant->setRelation('payment', $payment);
+
+        (function () {
+            $this->currentConferenceId = null;
+            $this->currentConference = null;
+            $this->currentScheduledConferenceId = null;
+            $this->currentScheduledConference = null;
+        })->call(app());
+
+        $url = $payment->getPaymentDetailUrl();
+        $databaseMessage = (new ParticipantPayment($participant))->toDatabase($context['user']);
 
         $this->assertSame(
             route('filament.scheduledConference.pages.payment-detail', [

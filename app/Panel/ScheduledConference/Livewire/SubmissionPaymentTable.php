@@ -141,14 +141,23 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model' => [
-                            'user',
-                            'payment' => ['scheduledConference']
-                        ]]);
+                        $records->load([
+                            'model.user',
+                            'scheduledConference.conference',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $submission = $record->model;
 
+                            if (! $submission || ! $submission->user) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $submission->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing('scheduledConference.conference')
+                            );
 
                             $mailTemplate = new SubmissionPaymentMail($submission);
                             

@@ -159,14 +159,24 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model.payment' => [
-                            'scheduledConference',
-                            'fee'
-                        ]]);
+                        $records->load([
+                            'model',
+                            'scheduledConference.conference',
+                            'fee',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $participant = $record->model;
 
+                            if (! $participant || ! $participant->email) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $participant->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing(['scheduledConference.conference', 'fee'])
+                            );
 
                             $mailTemplate = new ParticipantPaymentMail($participant);
                             $mailTemplate->subjectUsing($data['subject']);
