@@ -189,6 +189,35 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
     }
 
+    public function test_manual_submission_invoice_allows_payment_detail_before_billing_stage(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::Presentation,
+            submissionStage: SubmissionStage::CallforAbstract,
+            submissionStatus: SubmissionStatus::Queued,
+        );
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+
+        $this->assertFalse(
+            app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($context['submission'], $context['scheduledConference'])
+        );
+        $this->assertFalse((bool) app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
+
+        $payment->update(['invoice' => 'INV-001']);
+
+        $this->assertTrue(
+            app(SubmissionBillingNotifier::class)->canViewSubmissionPaymentDetail(
+                $context['submission'],
+                $payment->refresh(),
+                $context['scheduledConference'],
+            )
+        );
+        $this->assertTrue(app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
+    }
+
     protected function makeSubmissionContext(
         SubmissionStage $billingStage,
         SubmissionStage $submissionStage,

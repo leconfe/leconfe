@@ -25,6 +25,15 @@ class SubmissionBillingNotifier
         ], true);
     }
 
+    public function canViewSubmissionPaymentDetail(Submission $submission, ?Payment $payment = null, ?ScheduledConference $scheduledConference = null): bool
+    {
+        if ($payment?->invoice) {
+            return true;
+        }
+
+        return $this->isSubmissionPaymentAvailable($submission, $scheduledConference);
+    }
+
     public function isSubmissionBillingStageReached(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
     {
         $scheduledConference ??= $this->resolveScheduledConference($submission);

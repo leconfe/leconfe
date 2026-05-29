@@ -177,9 +177,8 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 }),
             Action::make('payment_detail')
                 ->label('Payment Detail')
-                ->visible(fn (Submission $record) => ! $record->stage->is(SubmissionStage::Wizard)
-                    && $record->payment
-                    && app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($record))
+                ->visible(fn (Submission $record) => $record->payment
+                    && app(SubmissionBillingNotifier::class)->canViewSubmissionPaymentDetail($record, $record->payment))
                 ->url(fn (Submission $record) => PaymentDetail::getUrl(['record' => $record->payment])),
             Action::make('view')
                 ->icon('heroicon-o-eye')
