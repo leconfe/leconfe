@@ -284,6 +284,41 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertTrue(app(\App\Policies\PaymentPolicy::class)->view($context['user'], $payment));
     }
 
+    public function test_submission_payment_notification_builds_payment_link_without_current_context(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->with('scheduledConference.conference')->firstOrFail();
+        $payment->update(['invoice' => 'INV-001']);
+        $context['submission']->setRelation('payment', $payment);
+
+        (function () {
+            $this->currentConferenceId = null;
+            $this->currentConference = null;
+            $this->currentScheduledConferenceId = null;
+            $this->currentScheduledConference = null;
+        })->call(app());
+
+        $url = $payment->getPaymentDetailUrl();
+        $databaseMessage = (new SubmissionPayment($context['submission']))->toDatabase($context['user']);
+
+        $this->assertSame(
+            route('filament.scheduledConference.pages.payment-detail', [
+                'conference' => $context['conference']->path,
+                'serie' => $context['scheduledConference']->path,
+                'record' => $payment,
+            ]),
+            $url
+        );
+        $this->assertStringContainsString($url, json_encode($databaseMessage));
+    }
+
     protected function makeSubmissionContext(
         SubmissionStage $billingStage,
         SubmissionStage $submissionStage,
