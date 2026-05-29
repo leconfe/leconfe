@@ -44,8 +44,6 @@ class Payment extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Payment $payment) {
-            $payment->ensureInvoice();
-
             $scheduledConference = $payment->scheduledConference ?: app()->getCurrentScheduledConference();
             if ($scheduledConference?->isReceiptEnabled()) {
                 $receiptNumber = $scheduledConference->getLatestReceiptNumber();

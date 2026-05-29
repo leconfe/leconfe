@@ -155,6 +155,37 @@ class SubmissionBillingNotifierTest extends TestCase
         Notification::assertNothingSent();
     }
 
+    public function test_manual_submission_invoice_does_not_generate_when_payment_is_created(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'submission_payment_auto_notify' => false,
+            'invoice_enable' => true,
+            'invoice_prefix_number' => 'INV-',
+            'invoice_number' => 7,
+            'invoice_suffix_number' => '-SC',
+        ]);
+
+        Notification::fake();
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+
+        $this->assertNull($payment->invoice);
+        $this->assertSame(7, $context['scheduledConference']->getLatestInvoiceNumber());
+        Notification::assertNothingSent();
+
+        $this->assertTrue($payment->ensureInvoice());
+        $this->assertSame('INV-007-SC', $payment->refresh()->invoice);
+        $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
+    }
+
     public function test_manual_submission_invoice_generation_can_assign_invoice_to_existing_payment(): void
     {
         $context = $this->makeSubmissionContext(
