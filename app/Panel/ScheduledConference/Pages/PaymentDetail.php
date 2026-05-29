@@ -108,8 +108,8 @@ class PaymentDetail extends Page
                         $additionalItemsData = [];
                         $existingItems = $this->record->getMeta('additional_items', []);
 
-                        if ($this->record->payment_fee) {
-                            foreach ($this->record->payment_fee->getAdditionalItems() as $item) {
+                        if ($this->record->fee) {
+                            foreach ($this->record->fee->getAdditionalItems() as $item) {
                                 $key = $item['key'];
                                 $existingItem = collect($existingItems)->firstWhere('key', $key);
                                 $additionalItemsData[$key] = $existingItem ? (int) data_get($existingItem, 'quantity', 0) : 0;
@@ -196,37 +196,7 @@ class PaymentDetail extends Page
                             ->label(__('general.dont_send_notification')),
                     ])
                     ->action(function (Action $action, Payment $record, array $data) {
-                        $paymentFeeId = data_get($data, 'payment_fee_id');
-
-                        $paymentFee = PaymentFee::find($paymentFeeId);
-
-                        $additionalItems = data_get($data, 'additional_items', []);
-                        $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
-                        $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
-
-                        $updateData = [
-                            'payment_fee_id' => $paymentFeeId,
-                            'amount' => $totalAmount,
-                            'currency' => $paymentFee->currency,
-                        ];
-
-                        if (array_key_exists('invoice', $data)) {
-                            $updateData['invoice'] = $data['invoice'];
-                        }
-
-                        $record->update($updateData);
-                        $record->setMeta('additional_items', $selectedAdditionalItems);
-                        $record->setMeta('base_amount', $paymentFee->amount);
-
-                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
-                            $participant = $record->model;
-
-                            if ($participant) {
-                                $record->ensureInvoice();
-                                $participant->setRelation('payment', $record->refresh());
-                                $record->user?->notify(new ParticipantPayment($participant));
-                            }
-                        }
+                        static::updatePaymentFeeRecord($record, $data);
 
                         $action->successNotificationTitle('Payment Fee Updated');
                         $action->success();
@@ -308,6 +278,40 @@ class PaymentDetail extends Page
                 ->label('Actions')
                 ->color('gray'),
         ];
+    }
+
+    public static function updatePaymentFeeRecord(Payment $record, array $data): void
+    {
+        $paymentFeeId = data_get($data, 'payment_fee_id');
+        $paymentFee = PaymentFee::findOrFail($paymentFeeId);
+
+        $additionalItems = data_get($data, 'additional_items', []);
+        $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+        $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
+
+        $updateData = [
+            'payment_fee_id' => $paymentFeeId,
+            'amount' => $totalAmount,
+            'currency' => $paymentFee->currency,
+        ];
+
+        if (array_key_exists('invoice', $data)) {
+            $updateData['invoice'] = $data['invoice'];
+        }
+
+        $record->update($updateData);
+        $record->setMeta('additional_items', $selectedAdditionalItems);
+        $record->setMeta('base_amount', $paymentFee->amount);
+
+        if (! data_get($data, 'dont_send_notification', false) && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+            $participant = $record->model;
+
+            if ($participant) {
+                $record->ensureInvoice();
+                $participant->setRelation('payment', $record->refresh());
+                $record->user?->notify(new ParticipantPayment($participant));
+            }
+        }
     }
 
     public function infolist(Infolist $infolist): Infolist

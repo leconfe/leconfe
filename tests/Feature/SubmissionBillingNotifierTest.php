@@ -13,6 +13,7 @@ use App\Models\Submission;
 use App\Models\Track;
 use App\Models\User;
 use App\Notifications\SubmissionPayment;
+use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Services\Billing\SubmissionBillingNotifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -218,6 +219,40 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
         $this->assertFalse($payment->ensureInvoice());
         $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
+    }
+
+    public function test_submission_payment_fee_can_be_changed_without_participant_notification_field(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $newPaymentFee = PaymentFee::withoutGlobalScopes()->create([
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Updated Submission Fee',
+            'type' => PaymentManager::TYPE_SUBMISSION_FEE,
+            'amount' => 250,
+            'currency' => 'usd',
+            'is_active' => true,
+        ]);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+
+        PaymentDetail::updatePaymentFeeRecord($payment, [
+            'payment_fee_id' => $newPaymentFee->getKey(),
+            'additional_items' => [],
+        ]);
+
+        $payment->refresh();
+
+        $this->assertSame($newPaymentFee->getKey(), $payment->payment_fee_id);
+        $this->assertSame(250.0, (float) $payment->amount);
+        $this->assertSame(250.0, (float) $payment->getMeta('base_amount'));
     }
 
     public function test_manual_submission_invoice_allows_payment_detail_before_billing_stage(): void
