@@ -394,6 +394,8 @@ return [
     'after_submitting' => 'After you submit, one of our editorial team members will be assigned to review your submission. It is important that you enter the details as accurately as possible.',
     'provide_information_submission' => 'Please provide information for all contributors involved in this submission.',
     'no_files_added_to_submission' => 'No files were added to the submission',
+    'required_submission_files_missing' => 'Please upload all required submission files before continuing',
+    'required' => 'Required',
     'include_any_necessary_files' => 'Please include any necessary files for our editorial team to evaluate your submission. Along with the primary work, you may also choose to submit supplementary files such as data sets, conflict of interest statements, or other relevant materials that could assist our editors.',
 
     'filename' => 'Filename',
@@ -549,6 +551,8 @@ return [
     'submission_payment_items' => 'Submission Payment Items',
     'paper_components' => 'Paper Components',
     'add_a_component' => 'Add a Component',
+    'required_upload' => 'Required upload',
+    'required_upload_helper' => 'Authors must upload at least one file of this type before continuing in the submission wizard.',
     'author_guidelines' => 'Author Guidelines',
     'editor_guidelines' => 'Editor Guidelines',
     'brief_explanation' => 'Provide a brief explanation of the submission process so that the author knows what to expect.',

@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps;
 
 use App\Models\Submission;
+use App\Models\SubmissionFileType;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
 use Filament\Actions\Action as PageAction;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -33,14 +34,33 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
     {
         return PageAction::make('nextStep')
             ->label(__('general.next'))
-            ->failureNotificationTitle(__('general.no_files_added_to_submission'))
+            ->failureNotificationTitle(__('general.required_submission_files_missing'))
             ->successNotificationTitle(__('general.saved'))
             ->action(function (PageAction $action) {
-                if (! $this->record->submissionFiles()->exists()) {
+                if (! $this->hasRequiredUploads()) {
                     return $action->failure();
                 }
                 $action->success();
                 $this->dispatch('next-wizard-step');
             });
+    }
+
+    public function hasRequiredUploads(): bool
+    {
+        $requiredTypeIds = SubmissionFileType::withoutGlobalScopes()
+            ->where('scheduled_conference_id', $this->record->scheduled_conference_id)
+            ->where('required', true)
+            ->pluck('id');
+
+        if ($requiredTypeIds->isEmpty()) {
+            return $this->record->submissionFiles()->exists();
+        }
+
+        $uploadedRequiredTypeIds = $this->record->submissionFiles()
+            ->whereIn('submission_file_type_id', $requiredTypeIds)
+            ->distinct()
+            ->pluck('submission_file_type_id');
+
+        return $requiredTypeIds->diff($uploadedRequiredTypeIds)->isEmpty();
     }
 }
