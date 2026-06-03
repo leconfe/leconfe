@@ -395,6 +395,7 @@ return [
     'provide_information_submission' => 'Please provide information for all contributors involved in this submission.',
     'no_files_added_to_submission' => 'No files were added to the submission',
     'required_submission_files_missing' => 'Please upload all required submission files before continuing',
+    'required_submission_file_types_missing' => 'Missing required file type(s): :types',
     'required' => 'Required',
     'include_any_necessary_files' => 'Please include any necessary files for our editorial team to evaluate your submission. Along with the primary work, you may also choose to submit supplementary files such as data sets, conflict of interest statements, or other relevant materials that could assist our editors.',
 
