@@ -42,15 +42,10 @@ class Role extends Model
             });
 
             $builder->where(function (Builder $query) use ($scheduledConferenceScopeColumn, $scheduledConferenceId) {
+                $query->where($scheduledConferenceScopeColumn, 0);
+
                 if ($scheduledConferenceId) {
-                    $query->where($scheduledConferenceScopeColumn, $scheduledConferenceId)
-                        ->orWhere(function (Builder $query) use ($scheduledConferenceScopeColumn) {
-                            $query
-                                ->where('name', UserRole::Admin->value)
-                                ->where($scheduledConferenceScopeColumn, 0);
-                        });
-                } else {
-                    $query->where($scheduledConferenceScopeColumn, 0);
+                    $query->orWhere($scheduledConferenceScopeColumn, $scheduledConferenceId);
                 }
             });
         });
