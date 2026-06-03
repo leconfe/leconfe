@@ -25,7 +25,12 @@
                 </div>
             @endif
 
-            @if($submission->status !== SubmissionStatus::Published)
+            @if(! in_array($submission->status, [
+                SubmissionStatus::Published,
+                SubmissionStatus::Withdrawn,
+                SubmissionStatus::OnPayment,
+                SubmissionStatus::PaymentDeclined,
+            ]))
                 <div x-data="{ decision:@js($submissionDecision) }" class="space-y-4">
                     @if($submissionDecision)
                         <div class="px-6 py-5 space-y-3 overflow-hidden bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10">
@@ -41,13 +46,9 @@
                     <div @class([
                         'space-y-4',
                     ]) x-show="!decision">
-                        @if (!in_array($this->submission->status, [SubmissionStatus::OnPayment, SubmissionStatus::OnReview, SubmissionStatus::PaymentDeclined, SubmissionStatus::Editing, SubmissionStatus::OnPresentation]))
-                            {{ $this->acceptAction() }}
-                            {{ $this->acceptAndSkipReview() }}
-                        @endif
-                        @if (!in_array($this->submission->status, [SubmissionStatus::Declined]))
-                            {{ $this->declineAction() }}
-                        @endif
+                        {{ $this->acceptAction() }}
+                        {{ $this->acceptAndSkipReview() }}
+                        {{ $this->declineAction() }}
                     </div>
                     @endif
                 </div>

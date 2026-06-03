@@ -32,6 +32,9 @@
                         <div class="text-base">
                             {{ __('general.submission_send_to_editing') }}
                         </div>
+                        <button class="text-sm underline text-primary-500"
+                            @@click="decision = !decision" x-text="decision ? 'Change Decision' : 'Cancel'"
+                        ></button>
                     </div>
                 @endif
 
@@ -41,6 +44,7 @@
                         SubmissionStatus::Queued,
                         SubmissionStatus::OnPayment,
                         SubmissionStatus::Published,
+                        SubmissionStatus::Withdrawn,
                         SubmissionStatus::PaymentDeclined,
                     ]),
                 ]) x-show="!decision">
