@@ -259,7 +259,7 @@ class AppServiceProvider extends ServiceProvider
             }
             // Detect scheduledConference from URL path when conference is set
             if ($conference && $isOnScheduledPath) {
-                $scheduledConference = ScheduledConference::where('path', $scheduledConferencePath)->first();
+                $scheduledConference = ScheduledConference::findByConferenceAndExactPath($conference, $scheduledConferencePath);
                 if ($scheduledConference) {
                     $this->app->setCurrentScheduledConferenceId($scheduledConference->getKey());
                     $this->app->scopeCurrentScheduledConference();
