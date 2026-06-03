@@ -1048,6 +1048,8 @@ return [
     'new_category' => 'Kategori Baru',
     'loading' => 'Memuat',
     'scheduled_conference_categories_hint' => 'Ini digunakan untuk memfilter dan mengkategorikan konferensi yang sudah terjadwal serta membantu pengguna menemukan konten yang relevan.',
+    'new_faculty' => 'Fakultas Baru',
+    'scheduled_conference_faculties_hint' => 'Ini digunakan untuk memfilter dan mengelompokkan konferensi yang sudah terjadwal berdasarkan fakultas.',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
 
