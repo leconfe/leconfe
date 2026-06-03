@@ -30,6 +30,12 @@ class SubmissionWizardRequiredFilesTest extends TestCase
             'required' => true,
         ]);
 
+        $ethicsApproval = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Ethics Approval',
+            'required' => true,
+        ]);
+
         SubmissionFileType::withoutGlobalScopes()->create([
             'scheduled_conference_id' => $context['scheduledConference']->getKey(),
             'name' => 'Supplementary',
@@ -37,6 +43,14 @@ class SubmissionWizardRequiredFilesTest extends TestCase
         ]);
 
         $this->actingAs($context['user']);
+
+        $uploadStep = new UploadFilesStep();
+        $uploadStep->record = $submission;
+
+        $this->assertSame(
+            ['Manuscript', 'Ethics Approval'],
+            $uploadStep->missingRequiredUploadTypeNames()->all()
+        );
 
         Livewire::test(UploadFilesStep::class, ['record' => $submission])
             ->call('mountAction', 'nextStep')
@@ -50,6 +64,27 @@ class SubmissionWizardRequiredFilesTest extends TestCase
             'submission_id' => $submission->getKey(),
             'media_id' => $media->getKey(),
             'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $this->assertSame(
+            ['Ethics Approval'],
+            $uploadStep->missingRequiredUploadTypeNames()->all()
+        );
+
+        Livewire::test(UploadFilesStep::class, ['record' => $submission->refresh()])
+            ->call('mountAction', 'nextStep')
+            ->assertNotDispatched('next-wizard-step');
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $ethicsApproval->getKey(),
             'user_id' => $context['user']->getKey(),
             'category' => SubmissionFileCategory::ABSTRACT_FILES,
         ]);

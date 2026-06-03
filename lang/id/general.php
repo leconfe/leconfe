@@ -379,6 +379,7 @@ return [
     'provide_information_submission' => 'Silakan berikan informasi untuk semua kontributor yang terlibat dalam pengiriman ini.',
     'no_files_added_to_submission' => 'Tidak ada berkas yang ditambahkan ke pengiriman',
     'required_submission_files_missing' => 'Silakan unggah semua berkas pengiriman wajib sebelum melanjutkan',
+    'required_submission_file_types_missing' => 'Tipe berkas wajib yang belum diunggah: :types',
     'required' => 'Wajib',
     'include_any_necessary_files' => 'Silakan sertakan berkas-berkas yang diperlukan agar tim editorial kami dapat mengevaluasi pengiriman Anda. Selain karya utama, Anda juga dapat memilih untuk mengirimkan berkas tambahan seperti set data, pernyataan konflik kepentingan, atau materi relevan lainnya yang dapat membantu editor kami.',
     'filename' => 'Nama Berkas',
