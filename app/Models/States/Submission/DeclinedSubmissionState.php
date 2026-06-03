@@ -10,6 +10,11 @@ use App\Models\Enums\SubmissionStatus;
 
 class DeclinedSubmissionState extends BaseSubmissionState
 {
+    public function decline(): void
+    {
+        // Repeating the current decision is allowed so editors can resend its notification.
+    }
+
     public function acceptAbstract(): void
     {
         SubmissionUpdateAction::run([
@@ -22,6 +27,25 @@ class DeclinedSubmissionState extends BaseSubmissionState
             subject: $this->submission,
             description: __('general.submission_send_to_review'),
             event : 'submission-abstract-accepted',
+        )
+            ->by(auth()->user())
+            ->save();
+    }
+
+    public function acceptAndSkipReview(): void
+    {
+        SubmissionUpdateAction::run([
+            'skipped_review' => true,
+            'revision_required' => false,
+            'status' => SubmissionStatus::OnPresentation,
+            'stage' => SubmissionStage::Presentation,
+        ], $this->submission);
+
+        Log::make(
+            name: 'submission',
+            subject: $this->submission,
+            description: __('general.submission_accept_and_skip_review'),
+            event: 'submission-skip-review',
         )
             ->by(auth()->user())
             ->save();

@@ -332,7 +332,12 @@ class PeerReview extends Component implements HasActions, HasForms
 
     public function render()
     {
-        if ($this->submission->status->isBefore(SubmissionStatus::OnReview)) {
+        if (! in_array($this->submission->stage, [
+            SubmissionStage::PeerReview,
+            SubmissionStage::Presentation,
+            SubmissionStage::Editing,
+            SubmissionStage::Proceeding,
+        ])) {
             return view('panel.scheduledConference.livewire.submissions.message', ['message' => 'Stage not initiated']);
         }
 
