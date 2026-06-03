@@ -10,8 +10,11 @@ use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\AbstractFiles;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Steps\UploadFilesStep;
+use Filament\Tables\Actions\Action as TableAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -44,7 +47,7 @@ class SubmissionWizardRequiredFilesTest extends TestCase
 
         $this->actingAs($context['user']);
 
-        $uploadStep = new UploadFilesStep();
+        $uploadStep = new UploadFilesStep;
         $uploadStep->record = $submission;
 
         $this->assertSame(
@@ -92,6 +95,115 @@ class SubmissionWizardRequiredFilesTest extends TestCase
         Livewire::test(UploadFilesStep::class, ['record' => $submission->refresh()])
             ->call('mountAction', 'nextStep')
             ->assertDispatched('next-wizard-step');
+    }
+
+    public function test_upload_step_shows_required_file_type_statuses(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Ethics Approval',
+            'required' => true,
+        ]);
+
+        SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Supplementary',
+            'required' => false,
+        ]);
+
+        $this->actingAs($context['user']);
+
+        Livewire::test(UploadFilesStep::class, ['record' => $submission])
+            ->assertSee('Required files')
+            ->assertSee('Manuscript')
+            ->assertSee('Ethics Approval')
+            ->assertSee('Not uploaded')
+            ->assertSeeHtml('bg-danger-600 text-white')
+            ->assertSeeHtml('required-upload-missing-icon h-4 w-4 text-white')
+            ->assertDontSee('Supplementary');
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        Livewire::test(UploadFilesStep::class, ['record' => $submission->refresh()])
+            ->assertSee('Manuscript')
+            ->assertSee('Uploaded')
+            ->assertSee('Ethics Approval')
+            ->assertSee('Not uploaded');
+    }
+
+    public function test_uploading_submission_file_dispatches_refresh_event_for_required_file_statuses(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $this->actingAs($context['user']);
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission])
+            ->set('uploadFilesData', [
+                ['files' => [$media->uuid]],
+            ])
+            ->call('handleUploadAction', ['type' => $manuscript->getKey()], TableAction::make('upload'))
+            ->assertDispatched('refreshLivewire');
+    }
+
+    public function test_deleting_submission_file_dispatches_refresh_event_for_required_file_statuses(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $this->actingAs($context['user']);
+        Gate::before(fn () => true);
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission])
+            ->callTableAction('delete', $submissionFile)
+            ->assertDispatched('refreshLivewire');
     }
 
     protected function makeSubmissionContext(): array

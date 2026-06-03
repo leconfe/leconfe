@@ -397,6 +397,10 @@ return [
     'required_submission_files_missing' => 'Please upload all required submission files before continuing',
     'required_submission_file_types_missing' => 'Missing required file type(s): :types',
     'required' => 'Required',
+    'required_files' => 'Required files',
+    'required_files_helper' => 'Upload one file for each required type before continuing.',
+    'uploaded' => 'Uploaded',
+    'not_uploaded' => 'Not uploaded',
     'include_any_necessary_files' => 'Please include any necessary files for our editorial team to evaluate your submission. Along with the primary work, you may also choose to submit supplementary files such as data sets, conflict of interest statements, or other relevant materials that could assist our editors.',
 
     'filename' => 'Filename',

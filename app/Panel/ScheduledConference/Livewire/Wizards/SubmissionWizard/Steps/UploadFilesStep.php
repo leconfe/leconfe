@@ -52,13 +52,36 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
 
     public function hasRequiredUploads(): bool
     {
-        $requiredTypeIds = $this->requiredUploadTypes()->pluck('id');
+        $requiredUploadStatuses = $this->requiredUploadTypeStatuses();
 
-        if ($requiredTypeIds->isEmpty()) {
+        if ($requiredUploadStatuses->isEmpty()) {
             return $this->record->submissionFiles()->exists();
         }
 
-        return $this->missingRequiredUploadTypes()->isEmpty();
+        return $requiredUploadStatuses->where('uploaded', false)->isEmpty();
+    }
+
+    public function requiredUploadTypeStatuses(): Collection
+    {
+        $requiredTypes = $this->requiredUploadTypes();
+
+        if ($requiredTypes->isEmpty()) {
+            return collect();
+        }
+
+        $requiredTypeIds = $requiredTypes->pluck('id');
+        $uploadedRequiredTypeIds = $this->record->submissionFiles()
+            ->whereIn('submission_file_type_id', $requiredTypeIds)
+            ->distinct()
+            ->pluck('submission_file_type_id');
+
+        return $requiredTypes
+            ->map(fn (SubmissionFileType $type) => [
+                'id' => $type->getKey(),
+                'name' => $type->name,
+                'uploaded' => $uploadedRequiredTypeIds->contains($type->getKey()),
+            ])
+            ->values();
     }
 
     public function missingRequiredUploadTypeNames(): Collection
@@ -90,21 +113,8 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
 
     protected function missingRequiredUploadTypes(): Collection
     {
-        $requiredTypes = $this->requiredUploadTypes();
-
-        if ($requiredTypes->isEmpty()) {
-            return collect();
-        }
-
-        $requiredTypeIds = $requiredTypes->pluck('id');
-
-        $uploadedRequiredTypeIds = $this->record->submissionFiles()
-            ->whereIn('submission_file_type_id', $requiredTypeIds)
-            ->distinct()
-            ->pluck('submission_file_type_id');
-
-        return $requiredTypes
-            ->whereIn('id', $requiredTypeIds->diff($uploadedRequiredTypeIds))
+        return $this->requiredUploadTypeStatuses()
+            ->where('uploaded', false)
             ->values();
     }
 
