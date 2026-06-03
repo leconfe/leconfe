@@ -186,7 +186,7 @@ class SubmissionBillingNotifierTest extends TestCase
 
         $this->assertTrue($payment->ensureInvoice());
         $this->assertSame('INV-007-SC', $payment->refresh()->invoice);
-        $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
+        $this->assertSame(8, $context['scheduledConference']->refresh()->getLatestInvoiceNumber());
     }
 
     public function test_manual_submission_invoice_generation_can_assign_invoice_to_existing_payment(): void
@@ -218,9 +218,9 @@ class SubmissionBillingNotifierTest extends TestCase
 
         $this->assertTrue($payment->ensureInvoice());
         $this->assertSame('INV-007-SC', $payment->refresh()->invoice);
-        $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
+        $this->assertSame(8, $context['scheduledConference']->refresh()->getLatestInvoiceNumber());
         $this->assertFalse($payment->ensureInvoice());
-        $this->assertSame(8, $context['scheduledConference']->getLatestInvoiceNumber());
+        $this->assertSame(8, $context['scheduledConference']->refresh()->getLatestInvoiceNumber());
     }
 
     public function test_submission_payment_fee_can_be_changed_without_participant_notification_field(): void
@@ -331,7 +331,8 @@ class SubmissionBillingNotifierTest extends TestCase
         })->call(app());
 
         $url = $payment->getPaymentDetailUrl();
-        $databaseMessage = (new SubmissionPayment($context['submission']))->toDatabase($context['user']);
+        $notification = new SubmissionPayment($context['submission']);
+        $databaseMessage = $notification->toDatabase($context['user']);
 
         $this->assertSame(
             route('filament.scheduledConference.pages.payment-detail', [
@@ -341,7 +342,8 @@ class SubmissionBillingNotifierTest extends TestCase
             ]),
             $url
         );
-        $this->assertStringContainsString($url, json_encode($databaseMessage));
+        $this->assertSame($url, data_get($databaseMessage, 'actions.0.url'));
+        $this->assertSame($url, data_get($notification->toMail($context['user'])->buildViewData(), 'Payment Link'));
     }
 
     public function test_participant_payment_notification_builds_payment_link_without_current_context(): void
@@ -391,7 +393,8 @@ class SubmissionBillingNotifierTest extends TestCase
         })->call(app());
 
         $url = $payment->getPaymentDetailUrl();
-        $databaseMessage = (new ParticipantPayment($participant))->toDatabase($context['user']);
+        $notification = new ParticipantPayment($participant);
+        $databaseMessage = $notification->toDatabase($context['user']);
 
         $this->assertSame(
             route('filament.scheduledConference.pages.payment-detail', [
@@ -401,7 +404,8 @@ class SubmissionBillingNotifierTest extends TestCase
             ]),
             $url
         );
-        $this->assertStringContainsString($url, json_encode($databaseMessage));
+        $this->assertSame($url, data_get($databaseMessage, 'actions.0.url'));
+        $this->assertSame($url, data_get($notification->toMail($context['user'])->buildViewData(), 'Payment Link'));
     }
 
     protected function makeSubmissionContext(

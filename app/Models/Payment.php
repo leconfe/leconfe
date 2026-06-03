@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Frontend\ScheduledConference\Pages\PaymentForm;
 use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
@@ -63,10 +62,15 @@ class Payment extends Model implements HasMedia
             return false;
         }
 
-        $scheduledConference = $this->scheduledConference ?: app()->getCurrentScheduledConference();
+        $scheduledConference = ScheduledConference::withoutGlobalScopes()
+            ->find($this->scheduled_conference_id)
+            ?: app()->getCurrentScheduledConference();
+
         if (! $scheduledConference?->isInvoiceEnabled()) {
             return false;
         }
+
+        $this->setRelation('scheduledConference', $scheduledConference);
 
         $number = $scheduledConference->getLatestInvoiceNumber();
 
@@ -136,7 +140,7 @@ class Payment extends Model implements HasMedia
 
         return now()->gte($this->expired_at);
     }
-    
+
     public function getPaymentType()
     {
         return PaymentManager::get()->getPaymentTypeName($this->type);
