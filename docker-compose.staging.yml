@@ -22,10 +22,10 @@ services:
     image: axllent/mailpit
     container_name: leconfe-staging-mailpit-${STAGING_PR}
     labels:
-      traefik.enable: "true"
-      traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.rule: Host(`leconfe-staging-mailpit-${STAGING_PR}-${STAGING_IP}.nip.io`)
-      traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.entrypoints: web
-      traefik.http.services.leconfe-staging-mailpit-${STAGING_PR}.loadbalancer.server.port: "8025"
+      - "traefik.enable=true"
+      - "traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.rule=Host(`${STAGING_MAILPIT_HOST:-leconfe-staging-mailpit-${STAGING_PR}-${STAGING_IP}.nip.io}`)"
+      - "traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.entrypoints=web"
+      - "traefik.http.services.leconfe-staging-mailpit-${STAGING_PR}.loadbalancer.server.port=8025"
     networks:
       - dokploy-network
 
@@ -45,7 +45,7 @@ services:
       APP_ENV: production
       APP_KEY: ${APP_KEY:?APP_KEY is required for staging}
       APP_DEBUG: ${APP_DEBUG:-"false"}
-      APP_URL: http://leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io
+      APP_URL: http://${STAGING_HOST:-leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io}
       APP_INSTALLED: "true"
       APP_QUICK_SETUP: "true"
       APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:?APP_ADMIN_EMAIL is required when APP_QUICK_SETUP is enabled}
@@ -82,10 +82,10 @@ services:
         source: ./.dockerdata/entrypoint.d/2-leconfe-setup.sh
         target: /etc/entrypoint.d/2-leconfe-setup.sh
     labels:
-      traefik.enable: "true"
-      traefik.http.routers.leconfe-staging-${STAGING_PR}.rule: Host(`leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io`)
-      traefik.http.routers.leconfe-staging-${STAGING_PR}.entrypoints: web
-      traefik.http.services.leconfe-staging-${STAGING_PR}.loadbalancer.server.port: "8080"
+      - "traefik.enable=true"
+      - "traefik.http.routers.leconfe-staging-${STAGING_PR}.rule=Host(`${STAGING_HOST:-leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io}`)"
+      - "traefik.http.routers.leconfe-staging-${STAGING_PR}.entrypoints=web"
+      - "traefik.http.services.leconfe-staging-${STAGING_PR}.loadbalancer.server.port=8080"
     networks:
       - dokploy-network
 

@@ -76,4 +76,29 @@ class UserRoleScopeTest extends TestCase
         $this->assertTrue($scopedRoleIds->contains($allowedRole->getKey()));
         $this->assertFalse($scopedRoleIds->contains($foreignRole->getKey()));
     }
+
+    public function test_admin_role_is_available_in_scheduled_conference_scope(): void
+    {
+        Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $user = User::create([
+            'given_name' => 'Admin',
+            'family_name' => 'User',
+            'email' => 'admin-scope@example.test',
+            'password' => 'password123456',
+        ]);
+
+        $user->assignRole(UserRole::Admin->value);
+
+        app()->setCurrentConferenceId(103);
+        app()->setCurrentScheduledConferenceId(106);
+
+        $this->assertTrue($user->fresh()->hasRole(UserRole::Admin));
+        $this->assertTrue($user->fresh()->hasPermissionTo('ScheduledConference:update'));
+    }
 }

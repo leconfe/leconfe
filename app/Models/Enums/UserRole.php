@@ -87,12 +87,16 @@ enum UserRole: string implements HasLabel
 
         $setting = $scheduledConference?->getMeta('allowed_self_assign_roles') ?? [];
 
-        return collect(self::selfAssignedRoleNames())->filter(function ($role) use ($setting) {
-            if ($role !== self::Reviewer->name) {
-                return true;
-            } else {
+        return collect(self::selfAssignedRoleNames())->filter(function ($role) use ($scheduledConference, $setting) {
+            if ($role === self::Reviewer->name) {
                 return in_array($role, $setting);
             }
+
+            if ($role === self::Participant->name) {
+                return (bool) $scheduledConference?->isParticipantRegistrationEnabled();
+            }
+
+            return true;
         })->toArray();
     }
 
