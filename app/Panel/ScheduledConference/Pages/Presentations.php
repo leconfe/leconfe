@@ -32,8 +32,9 @@ class Presentations extends Page implements HasForms
     public static function canAccess(): bool
     {
         $user = auth()->user();
+        $scheduledConference = app()->getCurrentScheduledConference();
 
-        if ($user?->hasPermissionTo('ScheduledConference:update')) {
+        if ($scheduledConference && $user?->can('update', $scheduledConference)) {
             return true;
         }
 
