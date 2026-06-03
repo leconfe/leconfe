@@ -297,10 +297,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
 
     public function hasPermissionTo($permission, $guardName = null): bool
     {
-        if ($this->hasRole(UserRole::Admin)) {
-            return true;
-        }
-
         if ($this->getWildcardClass()) {
             return $this->hasWildcardPermission($permission, $guardName);
         }

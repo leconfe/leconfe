@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Conference;
 use App\Models\Enums\UserRole;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Models\ScheduledConference;
 use App\Models\User;
+use App\Panel\ScheduledConference\Pages\Presentations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -77,13 +81,28 @@ class UserRoleScopeTest extends TestCase
         $this->assertFalse($scopedRoleIds->contains($foreignRole->getKey()));
     }
 
-    public function test_admin_role_is_available_in_scheduled_conference_scope(): void
+    public function test_admin_role_is_available_in_scheduled_conference_scope_without_direct_permission_bypass(): void
     {
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        $scheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Test Scheduled Conference',
+            'path' => 'test-scheduled-conference',
+        ]);
+
         Role::withoutGlobalScopes()->firstOrCreate([
             'name' => UserRole::Admin->value,
             'guard_name' => 'web',
             'conference_id' => 0,
             'scheduled_conference_id' => 0,
+        ]);
+        Permission::query()->firstOrCreate([
+            'name' => 'ScheduledConference:update',
+            'guard_name' => 'web',
         ]);
 
         $user = User::create([
@@ -95,10 +114,12 @@ class UserRoleScopeTest extends TestCase
 
         $user->assignRole(UserRole::Admin->value);
 
-        app()->setCurrentConferenceId(103);
-        app()->setCurrentScheduledConferenceId(106);
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
+        $this->actingAs($user);
 
         $this->assertTrue($user->fresh()->hasRole(UserRole::Admin));
-        $this->assertTrue($user->fresh()->hasPermissionTo('ScheduledConference:update'));
+        $this->assertFalse($user->fresh()->hasPermissionTo('ScheduledConference:update'));
+        $this->assertTrue(Presentations::canAccess());
     }
 }
