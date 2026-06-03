@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Frontend\ScheduledConference\Pages\PaymentForm;
 use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
@@ -44,17 +43,7 @@ class Payment extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Payment $payment) {
-            $scheduledConference = app()->getCurrentScheduledConference();
-            if ($scheduledConference?->isInvoiceEnabled()) {
-                $number = $scheduledConference->getLatestInvoiceNumber();
-
-                $payment->update([
-                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
-                ]);
-
-                $scheduledConference->updateLatestInvoiceNumber($number + 1);
-            }
-
+            $scheduledConference = $payment->scheduledConference ?: app()->getCurrentScheduledConference();
             if ($scheduledConference?->isReceiptEnabled()) {
                 $receiptNumber = $scheduledConference->getLatestReceiptNumber();
 
@@ -65,6 +54,33 @@ class Payment extends Model implements HasMedia
                 $scheduledConference->updateLatestReceiptNumber($receiptNumber + 1);
             }
         });
+    }
+
+    public function ensureInvoice(): bool
+    {
+        if ($this->invoice) {
+            return false;
+        }
+
+        $scheduledConference = ScheduledConference::withoutGlobalScopes()
+            ->find($this->scheduled_conference_id)
+            ?: app()->getCurrentScheduledConference();
+
+        if (! $scheduledConference?->isInvoiceEnabled()) {
+            return false;
+        }
+
+        $this->setRelation('scheduledConference', $scheduledConference);
+
+        $number = $scheduledConference->getLatestInvoiceNumber();
+
+        $this->update([
+            'invoice' => $scheduledConference->generateInvoiceNumber($number),
+        ]);
+
+        $scheduledConference->updateLatestInvoiceNumber($number + 1);
+
+        return true;
     }
 
     public function scopeType($query, $type): Builder
@@ -124,7 +140,7 @@ class Payment extends Model implements HasMedia
 
         return now()->gte($this->expired_at);
     }
-    
+
     public function getPaymentType()
     {
         return PaymentManager::get()->getPaymentTypeName($this->type);
@@ -133,6 +149,17 @@ class Payment extends Model implements HasMedia
     public function getFormattedFee()
     {
         return money($this->amount, $this->currency, true)->formatWithoutZeroes();
+    }
+
+    public function getPaymentDetailUrl(): string
+    {
+        $scheduledConference = $this->scheduledConference;
+
+        return route('filament.scheduledConference.pages.payment-detail', [
+            'conference' => $scheduledConference->conference->path,
+            'serie' => $scheduledConference->path,
+            'record' => $this,
+        ]);
     }
 
     public function isPaid(): bool

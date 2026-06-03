@@ -59,7 +59,7 @@ services:
       BROADCAST_DRIVER: log
       CACHE_DRIVER: file
       FILESYSTEM_DISK: local
-      QUEUE_CONNECTION: async
+      QUEUE_CONNECTION: sync
       SESSION_DRIVER: file
       SESSION_LIFETIME: "10080"
       LOG_CHANNEL: stack

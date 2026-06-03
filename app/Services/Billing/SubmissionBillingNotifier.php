@@ -25,6 +25,15 @@ class SubmissionBillingNotifier
         ], true);
     }
 
+    public function canViewSubmissionPaymentDetail(Submission $submission, ?Payment $payment = null, ?ScheduledConference $scheduledConference = null): bool
+    {
+        if ($payment?->invoice) {
+            return true;
+        }
+
+        return $this->isSubmissionPaymentAvailable($submission, $scheduledConference);
+    }
+
     public function isSubmissionBillingStageReached(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
     {
         $scheduledConference ??= $this->resolveScheduledConference($submission);
@@ -67,6 +76,8 @@ class SubmissionBillingNotifier
             return false;
         }
 
+        $payment->ensureInvoice();
+        $submission->setRelation('payment', $payment->refresh());
         $submission->user->notify(new SubmissionPayment($submission));
         $payment->setMeta(self::PAYMENT_META_AUTO_NOTIFIED_AT, now()->toDateTimeString());
 

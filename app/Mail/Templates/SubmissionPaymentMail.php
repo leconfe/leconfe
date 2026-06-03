@@ -5,7 +5,6 @@ namespace App\Mail\Templates;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Payment;
 use App\Models\Submission;
-use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class SubmissionPaymentMail extends TemplateMailable
 {
@@ -19,7 +18,7 @@ class SubmissionPaymentMail extends TemplateMailable
             'Submission Title' => $submission->getMeta('title'),
             'Submission ID' => $submission->getKey(),
             'Payment Amount' => $submission->payment->getFormattedFee(),
-            'Payment Link' => PaymentDetail::getUrl(['record' => $submission->payment])
+            'Payment Link' => $submission->payment->getPaymentDetailUrl()
         ]);
     }
 

@@ -112,14 +112,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                         ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
-                            $scheduledConference = $record->scheduledConference;
-                            if ($scheduledConference?->isInvoiceEnabled() && ! $record->invoice) {
-                                $number = $scheduledConference->getLatestInvoiceNumber();
-                                $record->update([
-                                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
-                                ]);
-                                $scheduledConference->updateLatestInvoiceNumber($number + 1);
-                            }
+                            $record->ensureInvoice();
 
                             $participant = $record->model;
 
@@ -130,6 +123,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                                 return;
                             }
 
+                            $participant->setRelation('payment', $record->refresh());
                             $participant->notify(new ParticipantPayment($participant));
 
                             $action->successNotificationTitle(__('general.invoice_sent_successfully'));
@@ -165,14 +159,24 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model.payment' => [
-                            'scheduledConference',
-                            'fee'
-                        ]]);
+                        $records->load([
+                            'model',
+                            'scheduledConference.conference',
+                            'fee',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $participant = $record->model;
 
+                            if (! $participant || ! $participant->email) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $participant->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing(['scheduledConference.conference', 'fee'])
+                            );
 
                             $mailTemplate = new ParticipantPaymentMail($participant);
                             $mailTemplate->subjectUsing($data['subject']);

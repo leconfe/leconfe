@@ -6,7 +6,6 @@ use App\Mail\Templates\PaymentRequiredMail;
 use App\Mail\Templates\SubmissionPaymentMail;
 use App\Models\Payment;
 use App\Models\Submission;
-use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -55,7 +54,7 @@ class SubmissionPayment extends Notification implements ShouldQueue
             ->body('Title: '.$this->submission->payment->getMeta('title'))
             ->actions([
                 Action::make('new-submission')
-                    ->url(PaymentDetail::getUrl(['record' => $this->submission->payment]))
+                    ->url($this->submission->payment->getPaymentDetailUrl())
                     ->label('Pay')
                     ->openUrlInNewTab()
                     ->markAsRead(),

@@ -33,11 +33,15 @@ class PaymentPolicy
 
         $scheduledConference = ScheduledConference::withoutGlobalScopes()->find($payment->scheduled_conference_id);
 
-        if (!$scheduledConference || !$submission->stage) {
+        if (!$scheduledConference) {
             return false;
         }
 
-        return app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($submission, $scheduledConference);
+        return app(SubmissionBillingNotifier::class)->canViewSubmissionPaymentDetail(
+            $submission,
+            $payment,
+            $scheduledConference,
+        );
     }
 
     public function viewAny(User $user)

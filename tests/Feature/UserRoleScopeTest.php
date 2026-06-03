@@ -8,8 +8,10 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\User;
+use App\Panel\Conference\Resources\UserResource;
 use App\Panel\ScheduledConference\Pages\Presentations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
 class UserRoleScopeTest extends TestCase
@@ -81,6 +83,100 @@ class UserRoleScopeTest extends TestCase
         $this->assertFalse($scopedRoleIds->contains($foreignRole->getKey()));
     }
 
+    public function test_admin_can_view_draft_scheduled_conference_in_scheduled_context(): void
+    {
+        $conference = Conference::create([
+            'name' => 'Demo Conference',
+            'path' => 'demo',
+        ]);
+
+        $draft = ScheduledConference::create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft',
+            'date_start' => now(),
+            'date_end' => now()->addDays(3),
+            'is_published' => false,
+        ]);
+
+        $adminRole = Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $admin = User::create([
+            'given_name' => 'Admin',
+            'family_name' => 'User',
+            'email' => 'admin@example.test',
+            'password' => 'password123456',
+        ]);
+        $admin->assignRole($adminRole);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($draft->getKey());
+
+        $this->assertTrue($admin->fresh()->hasRole(UserRole::Admin->value));
+        $this->assertTrue(Gate::forUser($admin->fresh())->allows('view', $draft));
+    }
+
+    public function test_admin_is_listed_in_scheduled_conference_user_resource(): void
+    {
+        $conference = Conference::create([
+            'name' => 'Demo Conference',
+            'path' => 'demo',
+        ]);
+
+        $draft = ScheduledConference::create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft',
+            'date_start' => now(),
+            'date_end' => now()->addDays(3),
+            'is_published' => false,
+        ]);
+
+        Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        Role::withoutGlobalScopes()->create([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => 999,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $admin = User::factory()->create([
+            'email' => 'admin@example.test',
+            'password' => 'password123456',
+        ]);
+        $admin->assignRole(UserRole::Admin->value);
+
+        $foreignUser = User::factory()->create([
+            'email' => 'foreign@example.test',
+            'password' => 'password123456',
+        ]);
+        app()->setCurrentConferenceId(999);
+        app()->setCurrentScheduledConferenceId(0);
+        $foreignUser->assignRole(UserRole::Author->value);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($draft->getKey());
+        $this->actingAs($admin);
+
+        $listedUserIds = UserResource::getEloquentQuery()->pluck('id');
+
+        $this->assertTrue($listedUserIds->contains($admin->getKey()));
+        $this->assertFalse($listedUserIds->contains($foreignUser->getKey()));
+        $this->assertFalse(Gate::forUser($admin)->allows('update', $admin));
+        $this->assertFalse(Gate::forUser($admin)->allows('delete', $admin));
+    }
+
     public function test_admin_role_is_available_in_scheduled_conference_scope_without_direct_permission_bypass(): void
     {
         $conference = Conference::query()->create([
@@ -100,6 +196,7 @@ class UserRoleScopeTest extends TestCase
             'conference_id' => 0,
             'scheduled_conference_id' => 0,
         ]);
+
         Permission::query()->firstOrCreate([
             'name' => 'ScheduledConference:update',
             'guard_name' => 'web',

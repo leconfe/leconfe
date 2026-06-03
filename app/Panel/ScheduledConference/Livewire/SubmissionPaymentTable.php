@@ -104,14 +104,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                         ->visible(fn (Payment $record) => ! $record->isPaid() && $record->scheduledConference?->isInvoiceEnabled())
                         ->requiresConfirmation()
                         ->action(function (Action $action, Payment $record) {
-                            $scheduledConference = $record->scheduledConference;
-                            if ($scheduledConference?->isInvoiceEnabled() && ! $record->invoice) {
-                                $number = $scheduledConference->getLatestInvoiceNumber();
-                                $record->update([
-                                    'invoice' => $scheduledConference->generateInvoiceNumber($number),
-                                ]);
-                                $scheduledConference->updateLatestInvoiceNumber($number + 1);
-                            }
+                            $record->ensureInvoice();
 
                             $submission = $record->model;
                             if (! $submission || ! $submission->user) {
@@ -119,6 +112,8 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                                 $action->failure();
                                 return;
                             }
+
+                            $submission->setRelation('payment', $record->refresh());
                             $submission->user->notify(new SubmissionPayment($submission));
                             $action->successNotificationTitle(__('general.invoice_sent_successfully'));
                             $action->success();
@@ -146,14 +141,23 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model' => [
-                            'user',
-                            'payment' => ['scheduledConference']
-                        ]]);
+                        $records->load([
+                            'model.user',
+                            'scheduledConference.conference',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $submission = $record->model;
 
+                            if (! $submission || ! $submission->user) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $submission->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing('scheduledConference.conference')
+                            );
 
                             $mailTemplate = new SubmissionPaymentMail($submission);
                             
