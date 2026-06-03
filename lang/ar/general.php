@@ -1056,6 +1056,8 @@ return [
     'new_category' => 'فئة جديدة',
     'loading' => 'جارٍ التحميل',
     'scheduled_conference_categories_hint' => 'يُستخدم هذا لتصفية وتصنيف المؤتمرات المجدولة ومساعدة المستخدمين في العثور على المحتوى المناسب.',
+    'new_faculty' => 'كلية جديدة',
+    'scheduled_conference_faculties_hint' => 'يُستخدم هذا لتصفية وتجميع المؤتمرات المجدولة حسب الكلية.',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
 

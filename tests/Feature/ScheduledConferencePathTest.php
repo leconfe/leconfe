@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Frontend\Website\Pages\Home as WebsiteHome;
 use App\Models\Conference;
 use App\Models\ScheduledConference;
+use App\Models\Site;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -58,5 +60,60 @@ class ScheduledConferencePathTest extends TestCase
         $this->assertTrue(
             $secondScheduledConference->is(ScheduledConference::findByConferenceAndExactPath($secondConference, 'shared-path'))
         );
+    }
+
+    public function test_website_home_loads_faculties_from_site_master_list(): void
+    {
+        Site::query()->create()->setMeta('scheduled_conference_faculties', [
+            'Engineering',
+            'Medicine',
+            'Business',
+        ]);
+
+        $page = new WebsiteHome();
+        $page->filter['faculty']['search'] = 'med';
+
+        $page->loadFaculties();
+
+        $this->assertSame(['Medicine'], $page->filter['faculty']['options']->all());
+    }
+
+    public function test_website_home_filters_scheduled_conferences_by_faculty(): void
+    {
+        Site::query()->create()->setMeta('scheduled_conference_faculties', [
+            'Engineering',
+            'Medicine',
+        ]);
+
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        $engineering = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Engineering Conference',
+            'path' => 'engineering',
+            'is_published' => true,
+        ]);
+        $engineering->setMeta('faculty', 'Engineering');
+
+        $medicine = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Medicine Conference',
+            'path' => 'medicine',
+            'is_published' => true,
+        ]);
+        $medicine->setMeta('faculty', 'Medicine');
+
+        $page = new WebsiteHome();
+        $page->filter['faculty']['value'] = ['Engineering'];
+
+        $method = new \ReflectionMethod($page, 'getViewData');
+        $method->setAccessible(true);
+        $viewData = $method->invoke($page);
+
+        $this->assertTrue($viewData['scheduledConferences']->contains($engineering));
+        $this->assertFalse($viewData['scheduledConferences']->contains($medicine));
     }
 }

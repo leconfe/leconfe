@@ -55,6 +55,10 @@ class SetupSetting extends Component implements HasForms
                             ->placeholder(__('general.new_category'))
                             ->label(__('general.categories'))
                             ->helperText(__('general.scheduled_conference_categories_hint')),
+                        TagsInput::make('meta.scheduled_conference_faculties')
+                            ->placeholder(__('general.new_faculty'))
+                            ->label(__('general.faculties'))
+                            ->helperText(__('general.scheduled_conference_faculties_hint')),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->collection('logo')
                             ->label(__('general.logo'))

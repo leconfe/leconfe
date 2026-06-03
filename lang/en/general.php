@@ -1124,6 +1124,8 @@ return [
     'new_category' => 'New Category',
     'loading' => 'Loading',
     'scheduled_conference_categories_hint' => 'This is used to filter and categorize scheduled conferences and help users find relevant content.',
+    'new_faculty' => 'New Faculty',
+    'scheduled_conference_faculties_hint' => 'This is used to filter and group scheduled conferences by faculty.',
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
 

@@ -1054,6 +1054,8 @@ return [
     'new_category' => 'Yangi kategoriya',
     'loading' => 'Yuklanmoqda',
     'scheduled_conference_categories_hint' => 'Bu rejalashtirilgan konferensiyalarni filtrlash va toifalash hamda foydalanuvchilarga mos kontentni topishga yordam berish uchun ishlatiladi.',
+    'new_faculty' => 'Yangi fakultet',
+    'scheduled_conference_faculties_hint' => 'Bu rejalashtirilgan konferensiyalarni fakultet bo‘yicha filtrlash va guruhlash uchun ishlatiladi.',
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
 
