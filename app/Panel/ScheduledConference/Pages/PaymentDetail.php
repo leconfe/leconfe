@@ -305,7 +305,7 @@ class PaymentDetail extends Page
         $record->setMeta('additional_items', $selectedAdditionalItems);
         $record->setMeta('base_amount', $paymentFee->amount);
 
-        if (! data_get($data, 'dont_send_notification', false) && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+        if (static::shouldSendParticipantPaymentNotificationFor($record, $data)) {
             $participant = $record->model;
 
             if ($participant) {
@@ -332,6 +332,20 @@ class PaymentDetail extends Page
             SubmissionStatus::Declined,
             SubmissionStatus::Withdrawn,
         ], true);
+    }
+
+    protected function shouldSendParticipantPaymentNotification(Payment $record, array $data): bool
+    {
+        return static::shouldSendParticipantPaymentNotificationFor($record, $data);
+    }
+
+    protected static function shouldSendParticipantPaymentNotificationFor(Payment $record, array $data): bool
+    {
+        if ($record->type != PaymentManager::TYPE_PARTICIPANT_FEE) {
+            return false;
+        }
+
+        return ! data_get($data, 'dont_send_notification', false);
     }
 
     public function infolist(Infolist $infolist): Infolist

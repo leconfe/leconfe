@@ -13,13 +13,9 @@ class FilesTypePopulateAction
     public function handle(ScheduledConference $scheduledConference)
     {
         foreach ([
-            'Research Instrument',
-            'Research Material',
-            'Research Result',
-            'Transcripts',
-            'Data Analysis',
-            'Data Set',
-            'Source Text',
+            'Abstract',
+            'Full Paper',
+            'Poster',
             'Other',
         ] as $name) {
             SubmissionFileType::firstOrCreate([

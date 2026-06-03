@@ -67,7 +67,13 @@ class UserResource extends Resource
     {
         return static::getModel()::query()
             ->with(['meta', 'media', 'bans'])
-            ->when(!app()->isOnSite(), fn(Builder $query) => $query->whereHas('roles'));
+            ->when(!app()->isOnSite(), fn(Builder $query) => $query->where(function (Builder $query) {
+                $query
+                    ->where('id', auth()->id())
+                    ->orWhereHas('roles', fn(Builder $query) => $query
+                        ->withoutGlobalScopes()
+                        ->availableRolesByContext());
+            }));
     }
 
     public static function isDiscovered(): bool

@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Models\SubmissionFileType;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -12,6 +13,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -39,6 +41,9 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 TextColumn::make('name')
                     ->label(__('general.name'))
                     ->searchable(),
+                IconColumn::make('required')
+                    ->label(__('general.required'))
+                    ->boolean(),
                 TextColumn::make('files_count')
                     ->label(__('general.files')),
             ])
@@ -67,6 +72,9 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 TextInput::make('name')
                     ->label(__('general.name'))
                     ->required(),
+                Checkbox::make('required')
+                    ->label(__('general.required_upload'))
+                    ->helperText(__('general.required_upload_helper')),
             ]);
     }
 }

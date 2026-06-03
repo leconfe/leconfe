@@ -139,10 +139,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                     ->reactive()
                                     ->options(
                                         fn (Get $get): array => User::with('roles')
-                                            ->whereHas(
-                                                'roles',
-                                                fn (Builder $query) => $query->whereId($get('role_id'))
-                                            )
+                                            ->where(fn (Builder $query) => $this->matchingAssignableRoleQuery($query, $get('role_id')))
                                             ->whereNotIn('id', $this->submission->participants->pluck('user_id'))
                                             ->get()
                                             ->mapWithKeys(
@@ -155,10 +152,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                     ->searchable()
                                     ->getSearchResultsUsing(function (Get $get, string $search) {
                                         return User::with('roles')
-                                            ->whereHas(
-                                                'roles',
-                                                fn (Builder $query) => $query->whereId($get('role_id'))
-                                            )
+                                            ->where(fn (Builder $query) => $this->matchingAssignableRoleQuery($query, $get('role_id')))
                                             ->whereNotIn('id', $this->submission->participants->pluck('user_id'))
                                             ->where(function ($query) use ($search) {
                                                 $query
@@ -307,6 +301,17 @@ class ParticipantList extends Component implements HasForms, HasTable
                 ]),
             ])
             ->paginated(false);
+    }
+
+    protected function matchingAssignableRoleQuery(Builder $query, mixed $roleId): Builder
+    {
+        if (blank($roleId)) {
+            return $query->whereRaw('0 = 1');
+        }
+
+        return $query
+            ->whereHas('roles', fn (Builder $query) => $query->whereId($roleId))
+            ->orWhereHas('roles', fn (Builder $query) => $query->where('name', UserRole::Admin));
     }
 
     public function render()

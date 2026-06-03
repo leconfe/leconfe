@@ -16,7 +16,12 @@ class SubmissionFileType extends Model implements Sortable
 
     protected $fillable = [
         'name',
+        'required',
         'scheduled_conference_id',
+    ];
+
+    protected $casts = [
+        'required' => 'boolean',
     ];
 
     public function files(): HasMany

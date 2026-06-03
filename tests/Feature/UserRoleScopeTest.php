@@ -4,10 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Conference;
 use App\Models\Enums\UserRole;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\User;
 use App\Panel\Conference\Resources\UserResource;
+use App\Panel\ScheduledConference\Pages\Presentations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
@@ -151,14 +153,16 @@ class UserRoleScopeTest extends TestCase
 
         $admin = User::factory()->create([
             'email' => 'admin@example.test',
+            'password' => 'password123456',
         ]);
         $admin->assignRole(UserRole::Admin->value);
 
         $foreignUser = User::factory()->create([
             'email' => 'foreign@example.test',
+            'password' => 'password123456',
         ]);
         app()->setCurrentConferenceId(999);
-        app()->setCurrentScheduledConferenceId(null);
+        app()->setCurrentScheduledConferenceId(0);
         $foreignUser->assignRole(UserRole::Author->value);
 
         app()->setCurrentConferenceId($conference->getKey());
@@ -171,5 +175,48 @@ class UserRoleScopeTest extends TestCase
         $this->assertFalse($listedUserIds->contains($foreignUser->getKey()));
         $this->assertFalse(Gate::forUser($admin)->allows('update', $admin));
         $this->assertFalse(Gate::forUser($admin)->allows('delete', $admin));
+    }
+
+    public function test_admin_role_is_available_in_scheduled_conference_scope_without_direct_permission_bypass(): void
+    {
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        $scheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Test Scheduled Conference',
+            'path' => 'test-scheduled-conference',
+        ]);
+
+        Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        Permission::query()->firstOrCreate([
+            'name' => 'ScheduledConference:update',
+            'guard_name' => 'web',
+        ]);
+
+        $user = User::create([
+            'given_name' => 'Admin',
+            'family_name' => 'User',
+            'email' => 'admin-scope@example.test',
+            'password' => 'password123456',
+        ]);
+
+        $user->assignRole(UserRole::Admin->value);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
+        $this->actingAs($user);
+
+        $this->assertTrue($user->fresh()->hasRole(UserRole::Admin));
+        $this->assertFalse($user->fresh()->hasPermissionTo('ScheduledConference:update'));
+        $this->assertTrue(Presentations::canAccess());
     }
 }

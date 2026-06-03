@@ -4,11 +4,11 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files;
 
 use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
 use App\Classes\Log;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -20,7 +20,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Support\MediaStream;
@@ -60,14 +59,14 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->wrap()
                 ->label(__('general.filename'))
                 ->color('primary')
-                ->action(function (SubmissionFile $record){
+                ->action(function (SubmissionFile $record) {
                     $name = implode('-', [
                         $record->getKey(),
                         str_replace(['/', '\\'], '-', $record->user->full_name),
-                        Str::limit(basename($record->media->name), 100, '')
+                        Str::limit(basename($record->media->name), 100, ''),
                     ]);
 
-                    return response()->download($record->media->getPath(), $name . '.' . $record->media->extension);
+                    return response()->download($record->media->getPath(), $name.'.'.$record->media->extension);
                 })
                 ->description(fn (SubmissionFile $record) => $record->type->name),
         ];
@@ -84,12 +83,12 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->action(function (TableAction $action) {
                 $files = $this->submission->media()->where('collection_name', $this->category)->get();
                 if ($files->count()) {
-                    $name = implode('-' , [
+                    $name = implode('-', [
                         $this->submission->getKey(),
                         'files',
                     ]);
 
-                    return MediaStream::create($name . '.zip')->addMedia($files);
+                    return MediaStream::create($name.'.zip')->addMedia($files);
                 }
                 $action->failureNotificationTitle(__('general.nothing_to_download'));
                 $action->failure();
@@ -150,6 +149,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         $this->uploadFilesData = [];
 
         $action->success();
+        $this->dispatch('refreshLivewire');
     }
 
     public function uploadAction()
@@ -268,6 +268,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                         throw $th;
                     }
+
+                    $this->dispatch('refreshLivewire');
                 })
                 ->hidden(fn () => $this->isViewOnly()),
         ];
