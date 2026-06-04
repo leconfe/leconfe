@@ -204,7 +204,7 @@ class PaymentDetail extends Page
                         $action->success();
                     }),
                 Action::make('resend_submission_invoice_email')
-                    ->label('Resend Submission Invoice Email')
+                    ->label(__('general.send_submission_invoice_email'))
                     ->color('gray')
                     ->authorize(fn (?Payment $record) => $record ? auth()->user()->can('update', $record) : false)
                     ->visible(fn (?Payment $record) => $record?->type == PaymentManager::TYPE_SUBMISSION_FEE)
@@ -222,8 +222,9 @@ class PaymentDetail extends Page
                         $record->ensureInvoice();
                         $submission->setRelation('payment', $record->refresh());
                         $record->user->notify(new SubmissionPayment($submission));
+                        $record->markInvoiceAsSent();
 
-                        $action->successNotificationTitle('Submission invoice email resent');
+                        $action->successNotificationTitle(__('general.invoice_sent_successfully'));
                         $action->success();
                     }),
                 Action::make('mark_as_paid')
@@ -308,10 +309,11 @@ class PaymentDetail extends Page
         if (static::shouldSendParticipantPaymentNotificationFor($record, $data)) {
             $participant = $record->model;
 
-            if ($participant) {
+            if ($participant && $record->user) {
                 $record->ensureInvoice();
                 $participant->setRelation('payment', $record->refresh());
-                $record->user?->notify(new ParticipantPayment($participant));
+                $record->user->notify(new ParticipantPayment($participant));
+                $record->markInvoiceAsSent();
             }
         }
     }
@@ -448,6 +450,20 @@ class PaymentDetail extends Page
                                     ->color('primary')
                                     ->url(fn (Payment $record) => Invoice::getUrl(['record' => $record]))
                                     ->openUrlInNewTab(),
+                                TextEntry::make('invoice_email_status')
+                                    ->label(__('general.invoice_email'))
+                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                                    ->badge()
+                                    ->state(function (Payment $record) {
+                                        $sentAt = $record->getInvoiceSentAt();
+
+                                        return $sentAt
+                                            ? __('general.invoice_sent_at', [
+                                                'date' => $sentAt->format(Setting::get('format_date').' '.Setting::get('format_time')),
+                                            ])
+                                            : __('general.not_sent');
+                                    })
+                                    ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                                 TextEntry::make('paid_at')
                                     ->visible(fn (Payment $record) => $record->paid_at)
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),

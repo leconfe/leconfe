@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -18,6 +19,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Payment extends Model implements HasMedia
 {
     use BelongsToConference, BelongsToScheduledConference, HasFactory, InteractsWithMedia, Metable;
+
+    public const INVOICE_SENT_AT_META = 'invoice_sent_at';
+
+    public const LEGACY_SUBMISSION_INVOICE_NOTIFIED_AT_META = 'submission_invoice_notified_at';
 
     protected $fillable = [
         'type',
@@ -81,6 +86,33 @@ class Payment extends Model implements HasMedia
         $scheduledConference->updateLatestInvoiceNumber($number + 1);
 
         return true;
+    }
+
+    public function hasInvoiceBeenSent(): bool
+    {
+        return filled($this->getInvoiceSentAtValue());
+    }
+
+    public function markInvoiceAsSent(): void
+    {
+        $this->setMeta(self::INVOICE_SENT_AT_META, now()->toDateTimeString());
+    }
+
+    public function getInvoiceSentAt(): ?Carbon
+    {
+        $sentAt = $this->getInvoiceSentAtValue();
+
+        return $sentAt ? Carbon::parse($sentAt) : null;
+    }
+
+    protected function getInvoiceSentAtValue(): ?string
+    {
+        if (! $this->exists) {
+            return null;
+        }
+
+        return $this->getMeta(self::INVOICE_SENT_AT_META)
+            ?: $this->getMeta(self::LEGACY_SUBMISSION_INVOICE_NOTIFIED_AT_META);
     }
 
     public function scopeType($query, $type): Builder
