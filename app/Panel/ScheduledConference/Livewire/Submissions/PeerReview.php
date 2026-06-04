@@ -442,6 +442,9 @@ class PeerReview extends Component implements HasActions, HasForms
             ])
             ->successNotificationTitle(__('general.revision_requested'))
             ->action(function (Action $action, array $data) {
+                $this->submission->state()->requestRevision();
+                $this->submission->refresh();
+
                 try {
                     NotifySubmissionRevisionRequestAction::run(
                         $this->submission,
@@ -469,7 +472,12 @@ class PeerReview extends Component implements HasActions, HasForms
 
     public function render()
     {
-        if ($this->submission->status->isBefore(SubmissionStatus::OnReview)) {
+        if (! in_array($this->submission->stage, [
+            SubmissionStage::PeerReview,
+            SubmissionStage::Presentation,
+            SubmissionStage::Editing,
+            SubmissionStage::Proceeding,
+        ])) {
             return view('panel.scheduledConference.livewire.submissions.message', ['message' => 'Stage not initiated']);
         }
 

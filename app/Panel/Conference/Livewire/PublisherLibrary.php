@@ -114,7 +114,7 @@ class PublisherLibrary extends Component implements HasForms, HasTable
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('primary')
                         ->label(__('general.download'))
-                        ->action(fn (Media $record) => response()->download($record->getPath(), $record->originalFileName)),
+                        ->action(fn (Media $record) => response()->download($record->getPath(), str_replace(['/', '\\'], '-', $record->originalFileName))),
                     DeleteAction::make(),
                 ]),
             ])

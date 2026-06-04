@@ -11,7 +11,7 @@ use App\Notifications\SubmissionPayment;
 
 class SubmissionBillingNotifier
 {
-    public const PAYMENT_META_AUTO_NOTIFIED_AT = 'submission_invoice_notified_at';
+    public const PAYMENT_META_AUTO_NOTIFIED_AT = Payment::LEGACY_SUBMISSION_INVOICE_NOTIFIED_AT_META;
 
     public function isSubmissionPaymentAvailable(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
     {
@@ -23,6 +23,15 @@ class SubmissionBillingNotifier
             SubmissionStatus::Declined,
             SubmissionStatus::Withdrawn,
         ], true);
+    }
+
+    public function canViewSubmissionPaymentDetail(Submission $submission, ?Payment $payment = null, ?ScheduledConference $scheduledConference = null): bool
+    {
+        if ($payment?->invoice) {
+            return true;
+        }
+
+        return $this->isSubmissionPaymentAvailable($submission, $scheduledConference);
     }
 
     public function isSubmissionBillingStageReached(Submission $submission, ?ScheduledConference $scheduledConference = null): bool
@@ -54,7 +63,7 @@ class SubmissionBillingNotifier
             return false;
         }
 
-        if ($payment->getMeta(self::PAYMENT_META_AUTO_NOTIFIED_AT)) {
+        if ($payment->hasInvoiceBeenSent()) {
             return false;
         }
 
@@ -62,7 +71,15 @@ class SubmissionBillingNotifier
             return false;
         }
 
+        $scheduledConference = $this->resolveScheduledConference($submission);
+        if ($scheduledConference && ! $scheduledConference->isSubmissionPaymentAutoNotify()) {
+            return false;
+        }
+
+        $payment->ensureInvoice();
+        $submission->setRelation('payment', $payment->refresh());
         $submission->user->notify(new SubmissionPayment($submission));
+        $payment->markInvoiceAsSent();
         $payment->setMeta(self::PAYMENT_META_AUTO_NOTIFIED_AT, now()->toDateTimeString());
 
         return true;

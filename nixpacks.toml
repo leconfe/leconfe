@@ -1,0 +1,13 @@
+[variables]
+PHP_VERSION = '8.1'
+NIXPACKS_PHP_ROOT_DIR = '/app/public'
+COMPOSER_NO_DEV = '1'
+
+[phases.install]
+cmds = ['composer install --optimize-autoloader --no-scripts --no-interaction --ignore-platform-reqs', 'npm install']
+
+[phases.build]
+cmds = ['npm run build', 'mkdir -p /app/bootstrap/cache && chmod -R 775 /app/bootstrap/cache']
+
+[start]
+cmd = 'mkdir -p /var/log/nginx && mkdir -p /app/bootstrap/cache && chown -R www-data:www-data /app/storage /app/bootstrap/cache && node /assets/scripts/prestart.mjs /assets/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)'

@@ -265,7 +265,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 return [
                                     $paper->getKey() => new HtmlString(
                                         Action::make('paper-'.$paper->getKey())
-                                            ->label($paper->media->name)
+                                            ->label($paper->media->original_file_name)
                                             ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                             ->link()
                                             ->toHtml()

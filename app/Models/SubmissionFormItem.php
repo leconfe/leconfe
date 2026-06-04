@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Concerns\BelongsToScheduledConference;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Plank\Metable\Metable;
@@ -25,10 +23,15 @@ class SubmissionFormItem extends Model implements Sortable
     use BelongsToScheduledConference, Cachable, Metable, SortableTrait;
 
     public const TYPE_TEXT = 1;
+
     public const TYPE_TEXTAREA = 2;
+
     public const TYPE_CHECKBOX = 3;
+
     public const TYPE_RADIO = 4;
+
     public const TYPE_SELECT = 5;
+
     public const TYPE_UPLOAD = 6;
 
     /**
@@ -50,6 +53,7 @@ class SubmissionFormItem extends Model implements Sortable
      * @var array
      */
     protected $casts = [
+        'type' => 'integer',
         'is_active' => 'boolean',
     ];
 
@@ -72,12 +76,12 @@ class SubmissionFormItem extends Model implements Sortable
 
     public function isUploadType(): bool
     {
-        return $this->type === static::TYPE_UPLOAD;
+        return (int) $this->type === static::TYPE_UPLOAD;
     }
 
     public function getFormField(): Field
     {
-        return match ($this->type) {
+        return match ((int) $this->type) {
             static::TYPE_TEXT => $this->fieldText(),
             static::TYPE_TEXTAREA => $this->fieldTextarea(),
             static::TYPE_CHECKBOX => $this->fieldCheckbox(),
@@ -98,12 +102,12 @@ class SubmissionFormItem extends Model implements Sortable
     {
         return TextEntry::make($this->getFieldId())
             ->label($this->getMeta('name'))
-            ->getStateUsing(fn($record) => $record->getFormItemResponse($this));
+            ->getStateUsing(fn ($record) => $record->getFormItemResponse($this));
     }
 
     protected function getFieldId(): string
     {
-        return 'submission_form_responses.' . $this->getKey();
+        return 'submission_form_responses.'.$this->getKey();
     }
 
     protected function getResponseOptions(): array
@@ -191,7 +195,7 @@ class SubmissionFormItem extends Model implements Sortable
         return static::query()
             ->ordered()
             ->lazy()
-            ->map(fn(self $item) => $item->getFormField())
+            ->map(fn (self $item) => $item->getFormField())
             ->toArray();
     }
 
@@ -200,7 +204,7 @@ class SubmissionFormItem extends Model implements Sortable
         return static::query()
             ->ordered()
             ->lazy()
-            ->map(fn(self $item) =>  $item->getInfolistEntry())
+            ->map(fn (self $item) => $item->getInfolistEntry())
             ->toArray();
     }
 }

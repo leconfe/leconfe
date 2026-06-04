@@ -17,7 +17,7 @@ class PaymentPolicy
             return true;
         }
 
-        if (! $payment->user?->is($user)) {
+        if (!$payment->user?->is($user)) {
             return false;
         }
 
@@ -27,17 +27,21 @@ class PaymentPolicy
 
         $submission = Submission::withoutGlobalScopes()->find($payment->model_id);
 
-        if (! $submission) {
+        if (!$submission) {
             return false;
         }
 
         $scheduledConference = ScheduledConference::withoutGlobalScopes()->find($payment->scheduled_conference_id);
 
-        if (! $scheduledConference || ! $submission->stage) {
+        if (!$scheduledConference) {
             return false;
         }
 
-        return app(SubmissionBillingNotifier::class)->isSubmissionPaymentAvailable($submission, $scheduledConference);
+        return app(SubmissionBillingNotifier::class)->canViewSubmissionPaymentDetail(
+            $submission,
+            $payment,
+            $scheduledConference,
+        );
     }
 
     public function viewAny(User $user)
@@ -82,5 +86,12 @@ class PaymentPolicy
         if ($user->can('Payment:setUnpaid')) {
             return true;
         }
+    }
+
+    public function registerParticipant(User $user)
+    {
+        // Any authenticated user can attempt registration. The page's canAccess()
+        // already gates on participant payment being enabled and no duplicate registration.
+        return true;
     }
 }

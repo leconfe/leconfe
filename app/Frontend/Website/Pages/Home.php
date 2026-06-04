@@ -3,7 +3,6 @@
 namespace App\Frontend\Website\Pages;
 
 use App\Http\Middleware\RedirectToConference;
-use App\Models\Meta;
 use App\Models\ScheduledConference;
 use App\Models\Scopes\ConferenceScope;
 use App\Models\Site;
@@ -124,11 +123,13 @@ class Home extends Page
 
     public function loadFaculties(): void
     {
-        $facultiesQuery = Meta::whereNot('type', 'null')->where('key', 'faculty');
+        $faculties = collect(Site::getSite()->getMeta('scheduled_conference_faculties', []));
         if (!empty($this->filter['faculty']['search'])) {
-            $facultiesQuery->whereRaw('LOWER(value) LIKE ?', ['%' . mb_strtolower($this->filter['faculty']['search']) . '%']);
+            $search = $this->filter['faculty']['search'];
+            $faculties = $faculties->filter(function ($value) use ($search) {
+                return stripos($value, $search) !== false;
+            })->values();
         }
-        $faculties = $facultiesQuery->distinct()->orderBy('value')->get()->pluck('value')->unique()->values();
         $this->filter['faculty']['options'] = $faculties;
     }
 

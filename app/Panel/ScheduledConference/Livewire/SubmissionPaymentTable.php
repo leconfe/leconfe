@@ -2,12 +2,12 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Mail\Templates\ParticipantPaymentMail;
 use App\Mail\Templates\SubmissionPaymentMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\RichEditor;
@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -40,11 +41,17 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
         return view('tables.table');
     }
 
+    public static function canSendInvoiceFor(Payment $record): bool
+    {
+        return ! $record->isPaid()
+            && (bool) $record->scheduledConference?->isInvoiceEnabled();
+    }
+
     public function getTableQuery(): Builder
     {
         return Payment::query()
             ->type(PaymentManager::TYPE_SUBMISSION_FEE)
-            ->with(['model.conference', 'user']);
+            ->with(['model.conference', 'user', 'scheduledConference']);
     }
 
     public function table(Table $table): Table
@@ -59,6 +66,12 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
                     ->searchable()
                     ->wrap(),
+                TextColumn::make('invoice_email_status')
+                    ->label(__('general.invoice_email'))
+                    ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                    ->badge()
+                    ->state(fn (Payment $record) => $record->hasInvoiceBeenSent() ? __('general.sent') : __('general.not_sent'))
+                    ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                 TextColumn::make('title')
                     ->label('Submission Title')
                     ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
@@ -95,11 +108,34 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('send-invoice')
+                        ->label(__('general.send_invoice'))
+                        ->icon('heroicon-o-envelope')
+                        ->color('gray')
+                        ->visible(fn (Payment $record) => static::canSendInvoiceFor($record))
+                        ->requiresConfirmation()
+                        ->action(function (Action $action, Payment $record) {
+                            $record->ensureInvoice();
+
+                            $submission = $record->model;
+                            if (! $submission || ! $submission->user) {
+                                $action->failureNotificationTitle(__('general.failed_send_notification'));
+                                $action->failure();
+
+                                return;
+                            }
+
+                            $submission->setRelation('payment', $record->refresh());
+                            $submission->user->notify(new SubmissionPayment($submission));
+                            $record->markInvoiceAsSent();
+                            $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+                            $action->success();
+                        }),
                     DeleteAction::make()
-                        ->hidden(fn(Payment $record) => $record->isPaid()),
-                ])
+                        ->hidden(fn (Payment $record) => $record->isPaid()),
+                ]),
             ])
-             ->bulkActions([
+            ->bulkActions([
                 BulkAction::make('send-email')
                     ->mountUsing(function (Form $form): void {
                         $mailTemplate = DefaultMailTemplate::where('mailable', SubmissionPaymentMail::class)->first();
@@ -118,25 +154,35 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model' => [
-                            'user',
-                            'payment' => ['scheduledConference']
-                        ]]);
+                        $records->load([
+                            'model.user',
+                            'scheduledConference.conference',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $submission = $record->model;
 
+                            if (! $submission || ! $submission->user) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $submission->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing('scheduledConference.conference')
+                            );
 
                             $mailTemplate = new SubmissionPaymentMail($submission);
-                            
+
                             $mailTemplate->subjectUsing($data['subject']);
                             $mailTemplate->contentUsing($data['message']);
                             Mail::to($submission->user)->send($mailTemplate);
+                            $record->markInvoiceAsSent();
                         });
 
                         $action->success();
                     })
-                    ->successNotificationTitle('Success sending email.')
+                    ->successNotificationTitle('Success sending email.'),
             ]);
     }
 }

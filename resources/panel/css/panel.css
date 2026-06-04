@@ -29,6 +29,10 @@
 .peer-review-round-tabs .fi-tabs-item .fi-tabs-item-label {
     @apply font-semibold;
 }
+
+.fi-simple-link {
+    @apply text-primary-600 underline transition hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 dark:text-primary-400 dark:hover:text-primary-300 dark:focus-visible:ring-primary-500;
+}
 /* 
 .fi-sidebar {
     @apply lg:!bg-white dark:lg:!bg-gray-900 !rounded-xl my-4 ml-4 -left-6 lg:left-0;

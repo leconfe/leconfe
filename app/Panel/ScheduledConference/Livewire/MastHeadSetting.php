@@ -79,8 +79,12 @@ class MastHeadSetting extends Component implements HasForms
                                     ->label(__('general.acronym'))
                                     ->rule('alpha_dash')
                                     ->helperText(__('general.acronym_rather_than_the_full_conference')),
-                                TextInput::make('meta.faculty')
-                                    ->label(__('general.faculty')),
+                                Select::make('meta.faculty')
+                                    ->label(__('general.faculty'))
+                                    ->searchable()
+                                    ->options(fn() => collect(
+                                        Site::getSite()->getMeta('scheduled_conference_faculties', [])
+                                    )->mapWithKeys(fn($item) => [$item => $item])->toArray()),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),

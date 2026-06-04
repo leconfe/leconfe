@@ -2,8 +2,6 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Forms\Components\TinyEditor;
-use App\Mail\MailUser;
 use App\Mail\Templates\ParticipantPaymentMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
@@ -51,6 +49,12 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
         return view('tables.table');
     }
 
+    public static function canSendInvoiceFor(Payment $record): bool
+    {
+        return ! $record->isPaid()
+            && (bool) $record->scheduledConference?->isInvoiceEnabled();
+    }
+
     public function getTableQuery(): Builder
     {
         return Payment::query()
@@ -58,7 +62,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ->with([
                 'model',
                 'user',
-                'scheduledConference'
+                'scheduledConference',
             ]);
     }
 
@@ -67,18 +71,24 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
         return $table
             ->query($this->getTableQuery())
             ->queryStringIdentifier('participant_payment_fees')
-            ->recordUrl(fn(Payment $record) => PaymentDetail::getUrl(['record' => $record]))
+            ->recordUrl(fn (Payment $record) => PaymentDetail::getUrl(['record' => $record]))
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('invoice')
                     ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
                     ->searchable()
                     ->wrap(),
+                TextColumn::make('invoice_email_status')
+                    ->label(__('general.invoice_email'))
+                    ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                    ->badge()
+                    ->state(fn (Payment $record) => $record->hasInvoiceBeenSent() ? __('general.sent') : __('general.not_sent'))
+                    ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                 TextColumn::make('model.full_name')
                     ->label('Name')
-                    ->description(fn($record) => $record->model->email),
+                    ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
-                    ->description(fn(Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
+                    ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')
                     ->label('Registered at')
@@ -105,8 +115,33 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('send-invoice')
+                        ->label(__('general.send_invoice'))
+                        ->icon('heroicon-o-envelope')
+                        ->color('gray')
+                        ->visible(fn (Payment $record) => static::canSendInvoiceFor($record))
+                        ->requiresConfirmation()
+                        ->action(function (Action $action, Payment $record) {
+                            $record->ensureInvoice();
+
+                            $participant = $record->model;
+
+                            if (! $participant || ! $participant->email) {
+                                $action->failureNotificationTitle(__('general.failed_send_notification'));
+                                $action->failure();
+
+                                return;
+                            }
+
+                            $participant->setRelation('payment', $record->refresh());
+                            $participant->notify(new ParticipantPayment($participant));
+                            $record->markInvoiceAsSent();
+
+                            $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+                            $action->success();
+                        }),
                     DeleteAction::make()
-                        ->hidden(fn(Payment $record) => $record->isPaid())
+                        ->hidden(fn (Payment $record) => $record->isPaid())
                         ->using(function (Payment $record) {
                             $record->delete();
 
@@ -135,24 +170,35 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->required(),
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
-                        $records->load(['model.payment' => [
-                            'scheduledConference',
-                            'fee'
-                        ]]);
+                        $records->load([
+                            'model',
+                            'scheduledConference.conference',
+                            'fee',
+                        ]);
 
                         $records->each(function ($record) use ($data) {
                             $participant = $record->model;
 
+                            if (! $participant || ! $participant->email) {
+                                return;
+                            }
+
+                            $record->ensureInvoice();
+                            $participant->setRelation(
+                                'payment',
+                                $record->refresh()->loadMissing(['scheduledConference.conference', 'fee'])
+                            );
 
                             $mailTemplate = new ParticipantPaymentMail($participant);
                             $mailTemplate->subjectUsing($data['subject']);
                             $mailTemplate->contentUsing($data['message']);
                             Mail::to($participant->email)->send($mailTemplate);
+                            $record->markInvoiceAsSent();
                         });
 
                         $action->success();
                     })
-                    ->successNotificationTitle('Success sending email.')
+                    ->successNotificationTitle('Success sending email.'),
             ]);
     }
 
@@ -166,8 +212,8 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             ->label(__('general.name'))
                             ->required()
                             ->unique(
-                                ignorable: fn() => $form->getRecord(),
-                                modifyRuleUsing: fn(Unique $rule) => $rule->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId()),
+                                ignorable: fn () => $form->getRecord(),
+                                modifyRuleUsing: fn (Unique $rule) => $rule->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId()),
                             ),
                         TextInput::make('limit')
                             ->label('Limit')
@@ -183,8 +229,8 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->schema([
                         Select::make('currency')
                             ->label(__('general.currency'))
-                            ->formatStateUsing(fn($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
-                            ->options(fn() => Currency::query()->orderBy('code_numeric', 'asc')->get()
+                            ->formatStateUsing(fn ($state) => ($state !== null) ? ($state !== 'free' ? $state : null) : null)
+                            ->options(fn () => Currency::query()->orderBy('code_numeric', 'asc')->get()
                                 ->mapWithKeys(function (?Currency $value, int $key) {
                                     $currencyCode = Str::upper($value->id);
                                     $currencyName = $value->name;

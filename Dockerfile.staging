@@ -1,0 +1,5 @@
+FROM serversideup/php:8.1-fpm-nginx
+
+USER root
+RUN install-php-extensions intl bcmath gd exif pdo_mysql
+USER www-data

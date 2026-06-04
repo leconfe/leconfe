@@ -18,7 +18,7 @@ class Announcements extends BaseNavigationItemType
 
     public static function getIsDisplayed(NavigationMenuItem $navigationMenuItem): bool
     {
-        return app()->getCurrentScheduledConferenceId();
+        return (bool) app()->getCurrentScheduledConferenceId();
     }
 
     public static function getUrl(NavigationMenuItem $navigationMenuItem): string

@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
-use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -118,7 +119,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
@@ -159,6 +160,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'invoice_number' => 1,
             'invoice_enable' => false,
             'receipt_enable' => false,
+            'receipt_number' => 1,
+            'receipt_prefix_number' => '',
+            'receipt_suffix_number' => '',
             'submission_payment' => false,
             'participant_payment' => false,
             'submission_billing_stage' => SubmissionStage::PeerReview->value,
@@ -178,9 +182,25 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->belongsTo(Conference::class);
     }
 
+    public static function findByConferenceAndExactPath(Conference|int $conference, string $path): ?self
+    {
+        $conferenceId = $conference instanceof Conference ? $conference->getKey() : $conference;
+
+        return static::query()
+            ->where('conference_id', $conferenceId)
+            ->get()
+            ->first(fn (ScheduledConference $scheduledConference): bool => $scheduledConference->path === $path);
+    }
+
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class);
+    }
+
+    public function submittedSubmissions(): HasMany
+    {
+        return $this->submissions()
+            ->whereNotIn('status', [SubmissionStatus::Incomplete]);
     }
 
     public function participants(): HasMany
@@ -267,7 +287,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isSubmissionRequirePayment(): bool
     {
-        if (!$this->getMeta('submission_payment')) {
+        if (! $this->getMeta('submission_payment')) {
             return false;
         }
 
@@ -311,10 +331,20 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('submission_payment');
     }
 
+    public function isSubmissionPaymentAutoNotify(): bool
+    {
+        return (bool) $this->getMeta('submission_payment_auto_notify', true);
+    }
+
+    public function isParticipantPaymentAutoNotify(): bool
+    {
+        return (bool) $this->getMeta('participant_payment_auto_notify', true);
+    }
+
     public static function getSubmissionBillingStageOptions(): array
     {
         return [
-            SubmissionStage::CallforAbstract->value => SubmissionStage::CallforAbstract->value,
+            SubmissionStage::CallforAbstract->value => __('general.submission'),
             SubmissionStage::PeerReview->value => SubmissionStage::PeerReview->value,
             SubmissionStage::Presentation->value => SubmissionStage::Presentation->value,
             SubmissionStage::Editing->value => SubmissionStage::Editing->value,
@@ -386,7 +416,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
@@ -401,6 +431,25 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         $this->setMeta('invoice_number', $number);
     }
 
+    public function generateReceiptNumber(?int $number = null)
+    {
+        $number ??= $this->getMeta('receipt_number');
+
+        $generatedNumber = $this->getMeta('receipt_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('receipt_suffix_number');
+
+        return $generatedNumber;
+    }
+
+    public function getLatestReceiptNumber(): int
+    {
+        return $this->getMeta('receipt_number');
+    }
+
+    public function updateLatestReceiptNumber(int $number): void
+    {
+        $this->setMeta('receipt_number', $number);
+    }
+
     public function getEntityUniqueId(): ?string
     {
         return $this->getMeta('entity_unique_id');
@@ -409,7 +458,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function getEntityToken(): ?string
     {
         $token = $this->getMeta('entity_token');
-        if (!$token) {
+        if (! $token) {
             $this->registerEntity();
 
             $token = $this->getMeta('entity_token');
@@ -420,8 +469,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        if (!app()->isProduction())
+        if (! app()->isProduction()) {
             return;
+        }
 
         $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
@@ -471,7 +521,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function ping()
     {
-        if (!Cache::has('scheduled_conference_ping_' . $this->getKey())) {
+        if (! Cache::has('scheduled_conference_ping_'.$this->getKey())) {
             ScheduledConferencePing::dispatch($this)->onConnection('async');
         }
     }

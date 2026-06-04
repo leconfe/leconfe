@@ -69,6 +69,7 @@
             @can('actAsEditor', $submission)
                 @php
                     $selectedRoundOpen = (bool) ($this->selectedRound?->isOpen());
+                    $showDecisionPanel = $selectedRoundOpen || $submissionDecision;
                 @endphp
 
                 <div class="border-t border-gray-200 p-4 lg:col-span-4 lg:border-l lg:border-t-0" x-data="{ decision: @js($submissionDecision) }">
@@ -80,7 +81,7 @@
                                 </div>
                             @endif
 
-                            @if($selectedRoundOpen)
+                            @if($showDecisionPanel)
                                 @if ($submission->revision_required)
                                     <div class="flex items-center p-4 text-sm border rounded-lg border-warning-400 bg-warning-200 text-warning-600" x-show="!decision" role="alert">
                                         <span class="text-base text-center">
@@ -112,6 +113,7 @@
                                         'hidden' => in_array($submission->status, [
                                             SubmissionStatus::Queued,
                                             SubmissionStatus::Published,
+                                            SubmissionStatus::Withdrawn,
                                             SubmissionStatus::OnPayment,
                                             SubmissionStatus::PaymentDeclined,
                                         ]),
@@ -119,10 +121,10 @@
                                         @if ($user->can('requestRevision', $submission))
                                             {{ $this->requestRevisionAction() }}
                                         @endif
-                                        @if ($user->can('acceptPaper', $submission) && ($submission->status != SubmissionStatus::Editing || $submission->skipped_review))
+                                        @if ($user->can('acceptPaper', $submission))
                                             {{ $this->acceptSubmissionAction() }}
                                         @endif
-                                        @if ($user->can('declinePaper', $submission) && ! in_array($submission->status, [SubmissionStatus::Declined]))
+                                        @if ($user->can('declinePaper', $submission))
                                             {{ $this->declineSubmissionAction() }}
                                         @endif
                                     </div>

@@ -109,6 +109,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                                         ->where('scheduled_conference_id', $role->scheduled_conference_id ?: null)
                                         ->whereNull('track_id')
                                         ->where('status', 'pending')
+                                        ->where('expires_at', '>', now())
                                         ->exists();
 
                                     if ($existsPendingInvitation) {

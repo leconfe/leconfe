@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>
-        Receipt - {{ $record->invoice }} - {{ $scheduledConference->title }}
-    </title>
+        <title>
+            Receipt - {{ $record->receipt }} - {{ $scheduledConference->title }}
+        </title>
 
     @vite(['resources/panel/css/panel.css'])
     @filamentStyles
@@ -66,7 +66,7 @@
             {!! $scheduledConference->getMeta('invoice_sender_information') !!}
         </div>
         <div class="bg-gray-200 p-2 mt-4">
-            <p class="text-xl font-bold">Invoice No.: {{ $record->invoice }}</p>
+            <p class="text-xl font-bold">Receipt No: {{ $record->receipt }}</p>
              <p>Registration Date: {{ $record->created_at->format('jS M Y, h:i:sa') }} </p>
         </div>
         <div class="mt-8 text-base">

@@ -4,9 +4,11 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
+use App\Models\Submission;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\PaymentConfirmed;
 use App\Notifications\SubmissionPayment;
@@ -81,7 +83,7 @@ class PaymentDetail extends Page
                 fn (Action $action) => $action
                     ->record($this->record)
                     ->model(Payment::class)
-                    ->visible(fn (Payment $record) => ! $record->isPaid())
+                    ->visible(fn (Payment $record) => ! $record->isPaid() && static::canUsePaymentMethodActions($record))
                     ->disabled(fn (Payment $record) => ! $record->isPaid() && ! (app()->getCurrentScheduledConference()?->isPaymentOpen() ?? true))
             );
 
@@ -108,8 +110,8 @@ class PaymentDetail extends Page
                         $additionalItemsData = [];
                         $existingItems = $this->record->getMeta('additional_items', []);
 
-                        if ($this->record->payment_fee) {
-                            foreach ($this->record->payment_fee->getAdditionalItems() as $item) {
+                        if ($this->record->fee) {
+                            foreach ($this->record->fee->getAdditionalItems() as $item) {
                                 $key = $item['key'];
                                 $existingItem = collect($existingItems)->firstWhere('key', $key);
                                 $additionalItemsData[$key] = $existingItem ? (int) data_get($existingItem, 'quantity', 0) : 0;
@@ -196,37 +198,13 @@ class PaymentDetail extends Page
                             ->label(__('general.dont_send_notification')),
                     ])
                     ->action(function (Action $action, Payment $record, array $data) {
-                        $paymentFeeId = data_get($data, 'payment_fee_id');
-
-                        $paymentFee = PaymentFee::find($paymentFeeId);
-
-                        $additionalItems = data_get($data, 'additional_items', []);
-                        $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
-                        $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
-
-                        $updateData = [
-                            'payment_fee_id' => $paymentFeeId,
-                            'amount' => $totalAmount,
-                            'currency' => $paymentFee->currency,
-                        ];
-
-                        if (array_key_exists('invoice', $data)) {
-                            $updateData['invoice'] = $data['invoice'];
-                        }
-
-                        if (! $data['dont_send_notification'] && $record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
-                            $record->user?->notify(new ParticipantPayment($record->model));
-                        }
-
-                        $record->update($updateData);
-                        $record->setMeta('additional_items', $selectedAdditionalItems);
-                        $record->setMeta('base_amount', $paymentFee->amount);
+                        static::updatePaymentFeeRecord($record, $data);
 
                         $action->successNotificationTitle('Payment Fee Updated');
                         $action->success();
                     }),
                 Action::make('resend_submission_invoice_email')
-                    ->label('Resend Submission Invoice Email')
+                    ->label(__('general.send_submission_invoice_email'))
                     ->color('gray')
                     ->authorize(fn (?Payment $record) => $record ? auth()->user()->can('update', $record) : false)
                     ->visible(fn (?Payment $record) => $record?->type == PaymentManager::TYPE_SUBMISSION_FEE)
@@ -241,9 +219,12 @@ class PaymentDetail extends Page
                             return;
                         }
 
+                        $record->ensureInvoice();
+                        $submission->setRelation('payment', $record->refresh());
                         $record->user->notify(new SubmissionPayment($submission));
+                        $record->markInvoiceAsSent();
 
-                        $action->successNotificationTitle('Submission invoice email resent');
+                        $action->successNotificationTitle(__('general.invoice_sent_successfully'));
                         $action->success();
                     }),
                 Action::make('mark_as_paid')
@@ -261,16 +242,25 @@ class PaymentDetail extends Page
                             ->displayFormat(Setting::get('format_date').' '.Setting::get('format_time')),
                     ])
                     ->action(function (Action $action, Payment $record, $data) {
-                        $record->update([
+                        $scheduledConference = $record->scheduledConference;
+                        $updateData = [
                             'paid_at' => $data['paid_at'],
-                        ]);
+                        ];
+
+                        if ($scheduledConference?->isReceiptEnabled() && ! $record->receipt) {
+                            $receiptNumber = $scheduledConference->getLatestReceiptNumber();
+                            $updateData['receipt'] = $scheduledConference->generateReceiptNumber($receiptNumber);
+                            $scheduledConference->updateLatestReceiptNumber($receiptNumber + 1);
+                        }
+
+                        $record->update($updateData);
 
                         $action->successNotificationTitle('Payment Marked as Paid');
                         $action->success();
 
                         $record->user->notify(new PaymentConfirmed($record));
                     })
-                    ->visible(fn (Payment $record) => ! $record->isPaid()),
+                    ->visible(fn (Payment $record) => ! $record->isPaid() && static::canUsePaymentMethodActions($record)),
                 Action::make('mark_as_unpaid')
                     ->label('Mark as Unpaid')
                     ->color('danger')
@@ -291,6 +281,73 @@ class PaymentDetail extends Page
                 ->label('Actions')
                 ->color('gray'),
         ];
+    }
+
+    public static function updatePaymentFeeRecord(Payment $record, array $data): void
+    {
+        $paymentFeeId = data_get($data, 'payment_fee_id');
+        $paymentFee = PaymentFee::findOrFail($paymentFeeId);
+
+        $additionalItems = data_get($data, 'additional_items', []);
+        $selectedAdditionalItems = $paymentFee->getSelectedAdditionalItemsFromData(['additional_items' => $additionalItems]);
+        $totalAmount = $paymentFee->getAmountWithAdditionalItemsFromData(['additional_items' => $additionalItems]);
+
+        $updateData = [
+            'payment_fee_id' => $paymentFeeId,
+            'amount' => $totalAmount,
+            'currency' => $paymentFee->currency,
+        ];
+
+        if (array_key_exists('invoice', $data)) {
+            $updateData['invoice'] = $data['invoice'];
+        }
+
+        $record->update($updateData);
+        $record->setMeta('additional_items', $selectedAdditionalItems);
+        $record->setMeta('base_amount', $paymentFee->amount);
+
+        if (static::shouldSendParticipantPaymentNotificationFor($record, $data)) {
+            $participant = $record->model;
+
+            if ($participant && $record->user) {
+                $record->ensureInvoice();
+                $participant->setRelation('payment', $record->refresh());
+                $record->user->notify(new ParticipantPayment($participant));
+                $record->markInvoiceAsSent();
+            }
+        }
+    }
+
+    public static function canUsePaymentMethodActions(Payment $record): bool
+    {
+        if ($record->type !== PaymentManager::TYPE_SUBMISSION_FEE) {
+            return true;
+        }
+
+        $submission = $record->model;
+
+        if (! $submission instanceof Submission) {
+            return false;
+        }
+
+        return ! in_array($submission->status, [
+            SubmissionStatus::Declined,
+            SubmissionStatus::Withdrawn,
+        ], true);
+    }
+
+    protected function shouldSendParticipantPaymentNotification(Payment $record, array $data): bool
+    {
+        return static::shouldSendParticipantPaymentNotificationFor($record, $data);
+    }
+
+    protected static function shouldSendParticipantPaymentNotificationFor(Payment $record, array $data): bool
+    {
+        if ($record->type != PaymentManager::TYPE_PARTICIPANT_FEE) {
+            return false;
+        }
+
+        return ! data_get($data, 'dont_send_notification', false);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -393,6 +450,20 @@ class PaymentDetail extends Page
                                     ->color('primary')
                                     ->url(fn (Payment $record) => Invoice::getUrl(['record' => $record]))
                                     ->openUrlInNewTab(),
+                                TextEntry::make('invoice_email_status')
+                                    ->label(__('general.invoice_email'))
+                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                                    ->badge()
+                                    ->state(function (Payment $record) {
+                                        $sentAt = $record->getInvoiceSentAt();
+
+                                        return $sentAt
+                                            ? __('general.invoice_sent_at', [
+                                                'date' => $sentAt->format(Setting::get('format_date').' '.Setting::get('format_time')),
+                                            ])
+                                            : __('general.not_sent');
+                                    })
+                                    ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                                 TextEntry::make('paid_at')
                                     ->visible(fn (Payment $record) => $record->paid_at)
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
@@ -400,9 +471,10 @@ class PaymentDetail extends Page
                                     ->visible(fn (Payment $record) => $record->payment_method)
                                     ->getStateUsing(fn ($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
+                                    ->label(fn (Payment $record) => $record->receipt ? "Receipt No: {$record->receipt}" : 'Receipt')
                                     ->state('Download')
                                     ->color('primary')
-                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->invoice && $record->paid_at)
+                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isReceiptEnabled() && $record->receipt && $record->paid_at)
                                     ->url(fn (Payment $record) => Receipt::getUrl(['record' => $record]))
                                     ->openUrlInNewTab(),
                             ]),

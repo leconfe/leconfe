@@ -21,6 +21,7 @@
 - 'Payment:setUnpaid'
 - 'Payment:update'
 - 'Payment:view'
+- 'Payment:registerParticipant'
 - 'Permission:assign'
 - 'Permission:create'
 - 'Permission:delete'

@@ -4,11 +4,12 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files;
 
 use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
 use App\Classes\Log;
+use App\Facades\Setting;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -20,7 +21,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Support\MediaStream;
@@ -68,20 +68,24 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TextColumn::make('id')
                 ->wrap(),
-            TextColumn::make('media.name')
+            TextColumn::make('media.original_file_name')
                 ->wrap()
-                ->label(__('general.name'))
+                ->label(__('general.filename'))
                 ->color('primary')
-                ->action(function (SubmissionFile $record){
+                ->action(function (SubmissionFile $record) {
                     $name = implode('-', [
                         $record->getKey(),
-                        $record->user->full_name,
-                        Str::limit(basename($record->media->name), 100, '')
+                        str_replace(['/', '\\'], '-', $record->user->full_name),
+                        Str::limit(basename($record->media->name), 100, ''),
                     ]);
 
-                    return response()->download($record->media->getPath(), $name . '.' . $record->media->extension);
+                    return response()->download($record->media->getPath(), $name.'.'.$record->media->extension);
                 })
                 ->description(fn (SubmissionFile $record) => $record->type->name),
+            TextColumn::make('created_at')
+                ->label(__('general.uploaded_at'))
+                ->formatStateUsing(fn ($state) => $state?->format(Setting::get('format_date').' '.Setting::get('format_time')))
+                ->sortable(),
         ];
     }
 
@@ -99,12 +103,12 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                     ->whereIn('id', $mediaIds)
                     ->get();
                 if ($files->count()) {
-                    $name = implode('-' , [
+                    $name = implode('-', [
                         $this->submission->getKey(),
                         'files',
                     ]);
 
-                    return MediaStream::create($name . '.zip')->addMedia($files);
+                    return MediaStream::create($name.'.zip')->addMedia($files);
                 }
                 $action->failureNotificationTitle(__('general.nothing_to_download'));
                 $action->failure();
@@ -166,6 +170,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         $this->uploadFilesData = [];
 
         $action->success();
+        $this->dispatch('refreshLivewire');
     }
 
     public function uploadAction()
@@ -217,10 +222,11 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         DB::beginTransaction();
 
                         $media = $record->media;
-                        $oldName = $media->name;
+                        $oldName = $media->original_file_name;
                         $newName = (string) $data['name'];
 
                         $media->name = $newName;
+                        $renamedFileName = $media->original_file_name;
 
                         $log = Log::make(
                             name: 'submission',
@@ -228,7 +234,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                             description: __('general.submission_file_renamed_activity', [
                                 'id' => $record->getKey(),
                                 'oldName' => $oldName,
-                                'newName' => $newName,
+                                'newName' => $renamedFileName,
                                 'category' => $this->category,
                             ]),
                             event: 'submission-file-rename',
@@ -248,9 +254,12 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->modalSubmitActionLabel(__('general.rename'))
                 ->form([
                     TextInput::make('name')
-                        ->label(__('general.new_name'))
+                        ->label(__('general.new_filename'))
                         ->formatStateUsing(function (SubmissionFile $record) {
                             return $record->media->name;
+                        })
+                        ->suffix(function (SubmissionFile $record) {
+                            return '.'.$record->media->extension;
                         }),
                 ]),
             DeleteAction::make()
@@ -279,6 +288,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                         throw $th;
                     }
+
+                    $this->dispatch('refreshLivewire');
                 })
                 ->hidden(fn () => $this->isViewOnly()),
         ];

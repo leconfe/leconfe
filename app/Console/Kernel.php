@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Actions;
 use App\Actions\Submissions\RemoveDeletedDiscussion;
+use App\Models\UserInvitation;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -40,6 +41,13 @@ class Kernel extends ConsoleKernel
                 config('cleaner.day_interval')
             )
         )->name('Remove deleted discussions');
+
+        $schedule->call(function () {
+            UserInvitation::query()
+                ->where('status', 'pending')
+                ->where('expires_at', '<', now())
+                ->update(['status' => 'expired']);
+        })->hourly()->name('Mark expired invitations');
     }
 
     /**

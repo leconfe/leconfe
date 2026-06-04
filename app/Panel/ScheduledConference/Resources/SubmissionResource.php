@@ -41,6 +41,11 @@ class SubmissionResource extends Resource
         return __('general.submissions');
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('viewAny', Submission::class);
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -140,7 +145,7 @@ class SubmissionResource extends Resource
                             ->getStateUsing(function (Submission $record) {
                                 $isEditorAssigned = $record->editors_count;
 
-                                if (! $isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
+                                if (!$isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
                                     return __('general.no_editor_assigned');
                                 }
                             }),
@@ -211,7 +216,7 @@ class SubmissionResource extends Resource
                     ->label(__('general.view_as_editor'))
                     ->icon('lineawesome-eye-solid')
                     ->color('warning')
-                    ->visible(fn (Submission $record) => $record->isParticipantEditor(auth()->user()) && $record->isReviewer(auth()->user()))
+                    ->visible(fn(Submission $record) => $record->isParticipantEditor(auth()->user()) && $record->isReviewer(auth()->user()))
                     ->url(fn(Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),

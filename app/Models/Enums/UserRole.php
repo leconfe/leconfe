@@ -15,6 +15,7 @@ enum UserRole: string implements HasLabel
     case TrackEditor = 'Track Editor';
     case Reviewer = 'Reviewer';
     case Author = 'Author';
+    case Participant = 'Participant';
 
     public function getLabel(): ?string
     {
@@ -26,7 +27,20 @@ enum UserRole: string implements HasLabel
         return [
             self::Author,
             self::Reviewer,
+            self::Participant,
         ];
+    }
+
+    public static function selfAssignedRolesSetup(): array
+    {
+        return [
+            self::Reviewer,
+        ];
+    }
+
+    public static function selfAssignedRoleSetupNames(): array
+    {
+        return array_column(self::selfAssignedRolesSetup(), 'name', 'value');
     }
 
     public static function selfAssignedRoleNames(): array
@@ -53,6 +67,7 @@ enum UserRole: string implements HasLabel
             self::TrackEditor,
             self::Reviewer,
             self::Author,
+            self::Participant,
         ];
     }
 
@@ -72,8 +87,36 @@ enum UserRole: string implements HasLabel
 
         $setting = $scheduledConference?->getMeta('allowed_self_assign_roles') ?? [];
 
-        return collect(self::selfAssignedRoleNames())
-            ->filter(fn ($role) => in_array($role, $setting))
+        return collect(self::selfAssignedRoleNames())->filter(function ($role) use ($scheduledConference, $setting) {
+            if ($role === self::Reviewer->name) {
+                return in_array($role, $setting);
+            }
+
+            if ($role === self::Participant->name) {
+                return (bool) $scheduledConference?->isParticipantRegistrationEnabled();
+            }
+
+            return true;
+        })->toArray();
+    }
+
+    public static function getRoleDescriptions(): array
+    {
+        return [
+            self::Author->name => __('general.role_description_author'),
+            self::Reviewer->name => __('general.role_description_reviewer'),
+            self::Participant->name => __('general.role_description_participant'),
+        ];
+    }
+
+    public static function getAllowedSelfAssignRoleDescriptions(): array
+    {
+        $allowedRoles = self::getAllowedSelfAssignRoleNames();
+        $descriptions = self::getRoleDescriptions();
+
+        return collect($allowedRoles)
+            ->mapWithKeys(fn(string $roleName, string $key) => [$key => $descriptions[$roleName] ?? ''])
+            ->filter()
             ->toArray();
     }
 }

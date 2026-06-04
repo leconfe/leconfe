@@ -19,7 +19,9 @@ class SubmissionPolicy
 
     public function viewAny(User $user)
     {
-        return true;
+        if ($user->can('Submission:viewAny')) {
+            return true;
+        }
     }
 
     public function view(User $user, Submission $submission)
@@ -113,7 +115,15 @@ class SubmissionPolicy
 
     public function declinePaper(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued, SubmissionStatus::Declined])) {
+        if ($submission->status === SubmissionStatus::Declined) {
+            return in_array($submission->stage, [
+                SubmissionStage::PeerReview,
+                SubmissionStage::Presentation,
+                SubmissionStage::Editing,
+            ]) && $user->can('actAsEditor', $submission);
+        }
+
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
@@ -143,12 +153,14 @@ class SubmissionPolicy
 
     public function uploadPresentation(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [
-            SubmissionStatus::Declined,
-            SubmissionStatus::Withdrawn,
-            SubmissionStatus::Published,
-            SubmissionStatus::OnReview,
-        ])) {
+        if (
+            in_array($submission->status, [
+                SubmissionStatus::Declined,
+                SubmissionStatus::Withdrawn,
+                SubmissionStatus::Published,
+                SubmissionStatus::OnReview,
+            ])
+        ) {
             return false;
         }
 
@@ -194,7 +206,19 @@ class SubmissionPolicy
 
     public function acceptPaper(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPresentation, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+        if ($submission->status === SubmissionStatus::Declined) {
+            return in_array($submission->stage, [
+                SubmissionStage::PeerReview,
+                SubmissionStage::Presentation,
+            ]) && $user->can('actAsEditor', $submission);
+        }
+
+        if ($submission->status === SubmissionStatus::OnPresentation) {
+            return $submission->stage === SubmissionStage::Presentation
+                && $user->can('actAsEditor', $submission);
+        }
+
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
@@ -252,7 +276,12 @@ class SubmissionPolicy
 
     public function requestRevision(User $user, Submission $submission)
     {
-        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+        if ($submission->status === SubmissionStatus::Declined) {
+            return $submission->stage === SubmissionStage::PeerReview
+                && $user->can('actAsEditor', $submission);
+        }
+
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
             return false;
         }
 
@@ -270,7 +299,11 @@ class SubmissionPolicy
 
     public function sendToEditing(User $user, Submission $submission)
     {
-        if ($submission->stage != SubmissionStage::Presentation) {
+        if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+            return false;
+        }
+
+        if (! in_array($submission->stage, [SubmissionStage::Presentation, SubmissionStage::Editing])) {
             return false;
         }
 

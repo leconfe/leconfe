@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -270,12 +270,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             $class = \get_class($model);
 
             $class::saved(function ($object) use ($model, $persistRoles) {
-                    if ($model->getKey() != $object->getKey()) {
-                        return;
-                    }
+                if ($model->getKey() != $object->getKey()) {
+                    return;
+                }
 
-                    $persistRoles($model);
-                });
+                $persistRoles($model);
+            });
         }
 
         if (is_a($this, Permission::class)) {
@@ -330,7 +330,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     protected function getAllDefaultMeta(): array
     {
         return [
-            'enable_new_announcement_email' => true
+            'enable_new_announcement_email' => true,
         ];
     }
 }

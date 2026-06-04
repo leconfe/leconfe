@@ -1,0 +1,98 @@
+services:
+  leconfe-db:
+    image: mariadb:10.11
+    container_name: leconfe-staging-db-${STAGING_PR}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-leconfe}
+      MYSQL_DATABASE: ${DB_DATABASE:-leconfe}
+      MYSQL_USER: ${DB_USERNAME:-leconfe}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-leconfe}
+    volumes:
+      - leconfe-db-data:/var/lib/mysql
+      - ${STAGING_DB_FILE:-/dev/null}:/docker-entrypoint-initdb.d/dump.sql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - dokploy-network
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: leconfe-staging-mailpit-${STAGING_PR}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.rule=Host(`${STAGING_MAILPIT_HOST:-leconfe-staging-mailpit-${STAGING_PR}-${STAGING_IP}.nip.io}`)"
+      - "traefik.http.routers.leconfe-staging-mailpit-${STAGING_PR}.entrypoints=web"
+      - "traefik.http.services.leconfe-staging-mailpit-${STAGING_PR}.loadbalancer.server.port=8025"
+    networks:
+      - dokploy-network
+
+  leconfe-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    container_name: leconfe-staging-${STAGING_PR}
+    depends_on:
+      leconfe-db:
+        condition: service_healthy
+    environment:
+      APP_BASE_DIR: /var/www/html
+      SSL_MODE: "off"
+      PHP_OPCACHE_ENABLE: "0"
+      PHP_FPM_PM_MAX_CHILDREN: "5"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY:?APP_KEY is required for staging}
+      APP_DEBUG: ${APP_DEBUG:-"false"}
+      APP_URL: http://${STAGING_HOST:-leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io}
+      APP_INSTALLED: "true"
+      APP_QUICK_SETUP: "true"
+      APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:?APP_ADMIN_EMAIL is required when APP_QUICK_SETUP is enabled}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:?APP_ADMIN_PASSWORD is required when APP_QUICK_SETUP is enabled}
+      DB_CONNECTION: mysql
+      DB_HOST: leconfe-staging-db-${STAGING_PR}
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-leconfe}
+      DB_USERNAME: ${DB_USERNAME:-leconfe}
+      DB_PASSWORD: ${DB_PASSWORD:-leconfe}
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: file
+      FILESYSTEM_DISK: local
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: file
+      SESSION_LIFETIME: "10080"
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: "1025"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_ENCRYPTION: ""
+      MAIL_FROM_ADDRESS: noreply@leconfe.com
+      MAX_FILE_UPLOAD_SIZE: "30"
+      ACCEPTED_FILE_TYPES: "pdf,doc,docx,xls,xlsx,odt,txt,xml,jpg,jpeg,csv,png,webp,text/xml,ppt,pptx"
+      CLEANER_SCHEDULER: "30"
+    volumes:
+      - type: bind
+        source: .
+        target: /var/www/html
+      - type: bind
+        source: ./.dockerdata/entrypoint.d/2-leconfe-setup.sh
+        target: /etc/entrypoint.d/2-leconfe-setup.sh
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.leconfe-staging-${STAGING_PR}.rule=Host(`${STAGING_HOST:-leconfe-staging-${STAGING_PR}-${STAGING_IP}.nip.io}`)"
+      - "traefik.http.routers.leconfe-staging-${STAGING_PR}.entrypoints=web"
+      - "traefik.http.services.leconfe-staging-${STAGING_PR}.loadbalancer.server.port=8080"
+    networks:
+      - dokploy-network
+
+volumes:
+  leconfe-db-data:
+    name: leconfe-db-data-${STAGING_PR}
+
+networks:
+  dokploy-network:
+    external: true

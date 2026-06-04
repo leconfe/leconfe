@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -98,6 +99,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->setupSchema();
         $this->setupModel();
         $this->setupStorage();
         $this->extendStr();
@@ -106,6 +108,14 @@ class AppServiceProvider extends ServiceProvider
         $this->handleEvent();
         $this->forceHttps();
         $this->registerFeatureFlags();
+    }
+
+    protected function setupSchema(): void
+    {
+        // Keep the default VARCHAR length under the 767/1000-byte index limit
+        // imposed by older MySQL/MariaDB versions and MyISAM tables when
+        // combined with the utf8mb4 charset.
+        Schema::defaultStringLength(191);
     }
 
     protected function registerFeatureFlags(): void
@@ -249,7 +259,7 @@ class AppServiceProvider extends ServiceProvider
             }
             // Detect scheduledConference from URL path when conference is set
             if ($conference && $isOnScheduledPath) {
-                $scheduledConference = ScheduledConference::where('path', $scheduledConferencePath)->first();
+                $scheduledConference = ScheduledConference::findByConferenceAndExactPath($conference, $scheduledConferencePath);
                 if ($scheduledConference) {
                     $this->app->setCurrentScheduledConferenceId($scheduledConference->getKey());
                     $this->app->scopeCurrentScheduledConference();
