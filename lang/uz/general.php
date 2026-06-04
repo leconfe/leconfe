@@ -368,6 +368,7 @@ return [
     'no_files_added_to_submission' => 'Ishga hech qanday fayl qo‘shilmagan',
     'include_any_necessary_files' => 'Iltimos, muharrirlarimiz topshirig‘ingizni baholashi uchun zarur fayllarni yuklang. Asosiy ish bilan birga qo‘shimcha fayllar, masalan, ma’lumotlar to‘plami, manfaatlar to‘qnashuvi bayonoti yoki boshqa tegishli materiallarni ham topshirishingiz mumkin.',
     'filename' => 'Fayl nomi',
+    'uploaded_at' => 'Yuklangan vaqti',
     'rename' => 'Nomini o‘zgartirish',
     'new_filename' => 'Yangi fayl nomi',
     'upload_files' => 'Fayllarni yuklash',
