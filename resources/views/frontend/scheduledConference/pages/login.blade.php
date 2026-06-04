@@ -29,7 +29,7 @@
 
             <label class="label-text">
                 <x-website::link :href="$resetPasswordUrl"
-                    class="link link-primary">{{ __('general.forgot_password_question') }}</x-website::link>
+                    class="fi-simple-link">{{ __('general.forgot_password_question') }}</x-website::link>
             </label>
             <x-filament-panels::form.actions :actions="$this->getFormActions()" :fullWidth="true" />
         </x-filament-panels::form>

@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Squire\Models\Country;
 
-class Register extends Page implements HasForms, HasActions
+class Register extends Page implements HasActions, HasForms
 {
     use HasScheduledConferenceAuthLogo;
     use InteractsWithActions;
@@ -192,7 +192,7 @@ class Register extends Page implements HasForms, HasActions
                             ->columnSpan(1),
                         Select::make('country')
                             ->label(__('general.country'))
-                            ->options(fn() => Country::all()->pluck('name', 'id'))
+                            ->options(fn () => Country::all()->pluck('name', 'id'))
                             ->searchable()
                             ->rules($rules['country'])
                             ->required(in_array('required', $rules['country']))
@@ -222,9 +222,7 @@ class Register extends Page implements HasForms, HasActions
                             ->required()
                             ->columnSpan(1),
                         Checkbox::make('privacy_statement_agree')
-                            ->label(fn() => new HtmlString(__('general.privacy_statement_agree', [
-                                'url' => route(PrivacyStatement::getRouteName()),
-                            ])))
+                            ->label(fn () => $this->getPrivacyStatementAgreeLabel())
                             ->rules($rules['privacy_statement_agree'])
                             ->required(in_array('required', $rules['privacy_statement_agree']))
                             ->columnSpanFull(),
@@ -237,6 +235,17 @@ class Register extends Page implements HasForms, HasActions
     public function form(Form $form): Form
     {
         return $form;
+    }
+
+    protected function getPrivacyStatementAgreeLabel(): HtmlString
+    {
+        return new HtmlString(str_replace(
+            'class="link link-primary link-hover"',
+            'class="fi-simple-link"',
+            __('general.privacy_statement_agree', [
+                'url' => route(PrivacyStatement::getRouteName()),
+            ]),
+        ));
     }
 
     /**
@@ -304,7 +313,7 @@ class Register extends Page implements HasForms, HasActions
 
     public function register()
     {
-        if (!app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
+        if (! app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
             abort(403);
         }
 

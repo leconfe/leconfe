@@ -1,14 +1,33 @@
-<x-website::layouts.main>
-    <div class="mb-6">
-        <x-website::breadcrumbs :breadcrumbs="$this->getBreadcrumbs()" />
-    </div>
-    <div class="relative">
-        <div class="flex mb-5 space-x-4">
-            <h1 class="text-xl font-semibold min-w-fit">{{ $this->getTitle() }}</h1>
-            <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
-        </div>
-        <div class="user-content">
+<div class="fi-simple-page">
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
+
+    <a
+        href="{{ $this->getAuthLogoHomeUrl() }}"
+        class="mb-6 inline-flex items-center gap-x-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-white/5"
+    >
+        <x-heroicon-m-arrow-left class="h-4 w-4" />
+        Back to home
+    </a>
+
+    <section class="grid auto-cols-fr gap-y-6">
+        <header class="fi-simple-header flex flex-col items-center">
+            <a href="{{ $this->getAuthLogoHomeUrl() }}" class="mb-4">
+                <img
+                    src="{{ $this->getAuthLogoUrl() }}"
+                    alt="{{ $this->getAuthLogoAltText() }}"
+                    class="fi-logo max-h-20 w-auto object-contain"
+                />
+            </a>
+
+            <h1 class="fi-simple-header-heading text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                {{ $this->getHeading() }}
+            </h1>
+        </header>
+
+        <div class="user-content text-gray-700 dark:text-gray-200">
             {{ new Illuminate\Support\HtmlString($privacyStatement) }}
         </div>
-    </div>
-</x-website::layouts.main>
+    </section>
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+</div>
