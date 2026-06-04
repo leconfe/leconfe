@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
-use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -118,7 +119,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
             StakeholderLevel::query()
                 ->withoutGlobalScopes()
-                ->with(['stakeholders' => fn($query) => $query->withoutGlobalScopes()])
+                ->with(['stakeholders' => fn ($query) => $query->withoutGlobalScopes()])
                 ->where('scheduled_conference_id', $scheduledConference->getKey())
                 ->lazy()
                 ->each
@@ -194,6 +195,12 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class);
+    }
+
+    public function submittedSubmissions(): HasMany
+    {
+        return $this->submissions()
+            ->whereNotIn('status', [SubmissionStatus::Incomplete]);
     }
 
     public function participants(): HasMany
@@ -280,7 +287,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isSubmissionRequirePayment(): bool
     {
-        if (!$this->getMeta('submission_payment')) {
+        if (! $this->getMeta('submission_payment')) {
             return false;
         }
 
@@ -409,7 +416,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('invoice_number');
 
-        $generatedNumber = $this->getMeta('invoice_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('invoice_suffix_number');
+        $generatedNumber = $this->getMeta('invoice_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('invoice_suffix_number');
 
         return $generatedNumber;
     }
@@ -428,7 +435,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     {
         $number ??= $this->getMeta('receipt_number');
 
-        $generatedNumber = $this->getMeta('receipt_prefix_number') . str_pad($number, 3, '0', STR_PAD_LEFT) . $this->getMeta('receipt_suffix_number');
+        $generatedNumber = $this->getMeta('receipt_prefix_number').str_pad($number, 3, '0', STR_PAD_LEFT).$this->getMeta('receipt_suffix_number');
 
         return $generatedNumber;
     }
@@ -451,7 +458,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
     public function getEntityToken(): ?string
     {
         $token = $this->getMeta('entity_token');
-        if (!$token) {
+        if (! $token) {
             $this->registerEntity();
 
             $token = $this->getMeta('entity_token');
@@ -462,8 +469,9 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function registerEntity(): void
     {
-        if (!app()->isProduction())
+        if (! app()->isProduction()) {
             return;
+        }
 
         $response = Http::acceptJson()->post(app()->getApiUrl('leconfe/auth/register'), [
             'name' => $this->title,
@@ -513,7 +521,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function ping()
     {
-        if (!Cache::has('scheduled_conference_ping_' . $this->getKey())) {
+        if (! Cache::has('scheduled_conference_ping_'.$this->getKey())) {
             ScheduledConferencePing::dispatch($this)->onConnection('async');
         }
     }

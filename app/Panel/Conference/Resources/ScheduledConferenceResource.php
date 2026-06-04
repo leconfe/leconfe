@@ -15,7 +15,6 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class ScheduledConferenceResource extends Resource
@@ -46,10 +45,10 @@ class ScheduledConferenceResource extends Resource
                     ->required()
                     ->placeholder(__('general.enter_the_title_of_the_serie')),
                 TextInput::make('path')
-                    ->prefix(fn() => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]) . '/scheduled/')
+                    ->prefix(fn () => route('livewirePageGroup.conference.pages.home', ['conference' => app()->getCurrentConference()->path]).'/scheduled/')
                     ->label(__('general.path'))
                     ->rules(['alpha_dash'])
-                    ->unique(modifyRuleUsing: fn(Unique $rule) => $rule->where('conference_id', app()->getCurrentConferenceId()), ignoreRecord: true)
+                    ->unique(modifyRuleUsing: fn (Unique $rule) => $rule->where('conference_id', app()->getCurrentConferenceId()), ignoreRecord: true)
                     ->required(),
                 Grid::make()
                     ->schema([
@@ -68,7 +67,7 @@ class ScheduledConferenceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn(ScheduledConference $record) => route('filament.scheduledConference.pages.dashboard', ['serie' => $record]))
+            ->recordUrl(fn (ScheduledConference $record) => route('filament.scheduledConference.pages.dashboard', ['serie' => $record]))
             ->defaultSort('date_start', 'desc')
             ->columns([
                 IndexColumn::make('no'),
@@ -79,23 +78,23 @@ class ScheduledConferenceResource extends Resource
                     ->wrap()
                     ->wrapHeader(),
                 TextColumn::make('status')
-                    ->getStateUsing(fn($record) => match ($record->is_published) {
+                    ->getStateUsing(fn ($record) => match ($record->is_published) {
                         true => __('general.published'),
                         false => __('general.draft'),
                     })
-                    ->color(fn($record) => match ($record->is_published) {
+                    ->color(fn ($record) => match ($record->is_published) {
                         true => 'success',
                         false => 'gray',
                     })
                     ->badge(),
                 TextColumn::make('date_start')
-                    ->getStateUsing(fn($record) => $record->full_date)
+                    ->getStateUsing(fn ($record) => $record->full_date)
                     ->sortable()
                     ->label(__('general.date'))
                     ->wrap(),
-                TextColumn::make('submissions_count')
+                TextColumn::make('submitted_submissions_count')
                     ->label(__('general.submissions'))
-                    ->counts('submissions'),
+                    ->counts('submittedSubmissions'),
                 TextColumn::make('participants_count')
                     ->label(__('general.participants'))
                     ->counts('participants'),
@@ -110,7 +109,7 @@ class ScheduledConferenceResource extends Resource
                         ->requiresConfirmation()
                         ->icon('heroicon-o-arrow-up-on-square')
                         ->color('success')
-                        ->hidden(fn(ScheduledConference $record) => $record->is_published)
+                        ->hidden(fn (ScheduledConference $record) => $record->is_published)
                         ->action(function (ScheduledConference $record, array $data, Tables\Actions\Action $action) {
                             ScheduledConferenceUpdateAction::run($record, ['is_published' => true]);
 
@@ -118,27 +117,27 @@ class ScheduledConferenceResource extends Resource
                         }),
                     Tables\Actions\EditAction::make()
                         ->modalWidth(MaxWidth::ExtraLarge)
-                        ->hidden(fn(ScheduledConference $record) => $record->trashed())
+                        ->hidden(fn (ScheduledConference $record) => $record->trashed())
                         ->mutateRecordDataUsing(function (ScheduledConference $record, array $data) {
                             $data['meta'] = $record->getAllMeta()->toArray();
 
                             return $data;
                         })
-                        ->using(fn(ScheduledConference $record, array $data) => ScheduledConferenceUpdateAction::run($record, $data)),
+                        ->using(fn (ScheduledConference $record, array $data) => ScheduledConferenceUpdateAction::run($record, $data)),
                     Tables\Actions\Action::make('set_as_draft')
                         ->label(__('general.set_as_draft'))
                         ->requiresConfirmation()
                         ->icon('heroicon-o-pencil-square')
-                        ->hidden(fn(ScheduledConference $record) => !$record->is_published || $record->trashed())
-                        ->action(fn(ScheduledConference $record, Tables\Actions\Action $action) => $record->update(['is_published' => false]) && $action->success()),
+                        ->hidden(fn (ScheduledConference $record) => ! $record->is_published || $record->trashed())
+                        ->action(fn (ScheduledConference $record, Tables\Actions\Action $action) => $record->update(['is_published' => false]) && $action->success()),
                     Tables\Actions\DeleteAction::make()
                         ->label(__('general.move_to_trash'))
                         ->modalHeading(__('general.move_to_trash'))
-                        ->hidden(fn(ScheduledConference $record) => $record->trashed())
+                        ->hidden(fn (ScheduledConference $record) => $record->trashed())
                         ->successNotificationTitle(__('general.serie_moved_to_trash')),
                     Tables\Actions\ForceDeleteAction::make()
                         ->label(__('general.delete_permanently'))
-                        ->hidden(fn(ScheduledConference $record) => ! $record->trashed())
+                        ->hidden(fn (ScheduledConference $record) => ! $record->trashed())
                         ->successNotificationTitle(__('general.serie_deleted_permanently')),
                 ]),
             ]);
