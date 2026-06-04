@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components\Files;
 
 use App\Actions\SubmissionFiles\UploadSubmissionFileAction;
 use App\Classes\Log;
+use App\Facades\Setting;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
@@ -69,6 +70,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                     return response()->download($record->media->getPath(), $name.'.'.$record->media->extension);
                 })
                 ->description(fn (SubmissionFile $record) => $record->type->name),
+            TextColumn::make('created_at')
+                ->label(__('general.uploaded_at'))
+                ->formatStateUsing(fn ($state) => $state?->format(Setting::get('format_date').' '.Setting::get('format_time')))
+                ->sortable(),
         ];
     }
 
