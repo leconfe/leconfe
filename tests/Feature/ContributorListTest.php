@@ -24,6 +24,10 @@ class ContributorListTest extends TestCase
 
         Livewire::test(ContributorList::class, ['submission' => $context['submission']])
             ->assertFormFieldDoesNotExist('author_id')
+            ->assertFormFieldExists('profile', fn ($field): bool => ! array_key_exists(
+                'x-on:update-profile-image.window',
+                $field->getExtraAlpineAttributes()
+            ))
             ->assertFormFieldExists('given_name')
             ->assertFormFieldExists('email');
     }

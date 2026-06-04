@@ -402,8 +402,6 @@ return [
     'problem_creating_file_type' => 'حدثت مشكلة في إنشاء نوع الملف',
     'file_type_created_successfulyy' => 'تم إنشاء نوع الملف بنجاح',
 
-    'select_existing_author' => 'اختيار مؤلف موجود',
-    'select_author' => 'اختيار مؤلف',
     'create_author_role' => 'إنشاء دور مؤلف',
     'new_contributor' => 'مساهم جديد',
     'add_contributor' => 'إضافة مساهم',

@@ -379,8 +379,6 @@ return [
     'problem_creating_file_type' => 'Возникла проблема при создании типа файла',
     'file_type_created_successfulyy' => 'Тип файла успешно создан',
 
-    'select_existing_author' => 'Выбрать существующего автора',
-    'select_author' => 'Выбрать автора',
     'create_author_role' => 'Создать роль автора',
     'new_contributor' => 'Новый участник',
     'add_contributor' => 'Добавить участника',
@@ -1065,5 +1063,5 @@ return [
     'faculties' => 'Факультеты',
 
     'role_assigned_successfully' => 'Роль успешно назначена',
-    'no_roles_selected' => 'Роли не выбраны'
+    'no_roles_selected' => 'Роли не выбраны',
 ];

@@ -397,8 +397,6 @@ return [
     'nothing_to_download' => 'Tidak ada yang bisa diunduh',
     'problem_creating_file_type' => 'Ada masalah dalam membuat jenis berkas',
     'file_type_created_successfully' => 'Jenis berkas berhasil dibuat',
-    'select_existing_author' => 'Pilih Penulis yang Sudah Ada',
-    'select_author' => 'Pilih Penulis',
     'create_author_role' => 'Buat Peran Penulis',
     'new_contributor' => 'Kontributor Baru',
     'add_contributor' => 'Tambahkan Kontributor',
@@ -1059,5 +1057,5 @@ return [
     'faculties' => 'Fakultas',
 
     'role_assigned_successfully' => 'Peran berhasil ditetapkan',
-    'no_roles_selected' => 'Tidak ada peran yang dipilih'
+    'no_roles_selected' => 'Tidak ada peran yang dipilih',
 ];

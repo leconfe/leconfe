@@ -60,9 +60,6 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->alignCenter()
                         ->columnSpan([
                             'lg' => 2,
-                        ])
-                        ->extraAlpineAttributes([
-                            'x-on:update-profile-image.window' => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
                         ]),
                     TextInput::make('given_name')
                         ->label(__('general.given_name'))

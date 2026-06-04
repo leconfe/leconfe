@@ -379,8 +379,6 @@ return [
     'problem_creating_file_type' => 'Fayl turi yaratishda muammo yuz berdi',
     'file_type_created_successfulyy' => 'Fayl turi muvaffaqiyatli yaratildi',
 
-    'select_existing_author' => 'Mavjud muallifni tanlang',
-    'select_author' => 'Muallifni tanlang',
     'create_author_role' => 'Muallif roli yarating',
     'new_contributor' => 'Yangi hissa qo‘shuvchi',
     'add_contributor' => 'Hissa qo‘shuvchini qo‘shish',

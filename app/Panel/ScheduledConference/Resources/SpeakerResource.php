@@ -106,13 +106,13 @@ class SpeakerResource extends Resource
                         ];
 
                         if ($speaker->getFirstMedia('profile')) {
-                            $livewire->dispatch('update-profile-image', $speaker->getFirstMedia('profile')->getUrl());
+                            $livewire->dispatch('speaker-profile-image-selected', $speaker->getFirstMedia('profile')->getUrl());
                         }
 
                         return $form->fill($formData);
                     })
                     ->columnSpanFull(),
-                ...ContributorForm::generalFormField(app()->getCurrentScheduledConference()),
+                ...ContributorForm::generalFormField(app()->getCurrentScheduledConference(), 'speaker-profile-image-selected'),
                 Forms\Components\Select::make('speaker_role_id')
                     ->label(__('general.role'))
                     ->required()

@@ -16,22 +16,27 @@ use Squire\Models\Country;
 
 class ContributorForm extends Component
 {
-    public static function generalFormField(Model $modelType): array
+    public static function generalFormField(Model $modelType, ?string $profileImageUpdateEvent = null): array
     {
+        $profileField = SpatieMediaLibraryFileUpload::make('profile')
+            ->label(__('general.profile_picture'))
+            ->image()
+            ->key('profile')
+            ->collection('profile')
+            ->conversion('thumb')
+            ->alignCenter()
+            ->columnSpan([
+                'lg' => 2,
+            ]);
+
+        if ($profileImageUpdateEvent) {
+            $profileField->extraAlpineAttributes([
+                "x-on:{$profileImageUpdateEvent}.window" => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
+            ]);
+        }
+
         return [
-            SpatieMediaLibraryFileUpload::make('profile')
-                ->label(__('general.profile_picture'))
-                ->image()
-                ->key('profile')
-                ->collection('profile')
-                ->conversion('thumb')
-                ->alignCenter()
-                ->columnSpan([
-                    'lg' => 2,
-                ])
-                ->extraAlpineAttributes([
-                    'x-on:update-profile-image.window' => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
-                ]),
+            $profileField,
             Forms\Components\TextInput::make('given_name')
                 ->label(__('general.given_name'))
                 ->required(),

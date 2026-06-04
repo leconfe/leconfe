@@ -108,13 +108,13 @@ class CommitteeResource extends Resource
                         ];
 
                         if ($committee->getFirstMedia('profile')) {
-                            $livewire->dispatch('update-profile-image', $committee->getFirstMedia('profile')->getUrl());
+                            $livewire->dispatch('committee-profile-image-selected', $committee->getFirstMedia('profile')->getUrl());
                         }
 
                         return $form->fill($formData);
                     })
                     ->columnSpanFull(),
-                ...ContributorForm::generalFormField(app()->getCurrentScheduledConference()),
+                ...ContributorForm::generalFormField(app()->getCurrentScheduledConference(), 'committee-profile-image-selected'),
                 Forms\Components\Select::make('committee_role_id')
                     ->label(__('general.role'))
                     ->required()

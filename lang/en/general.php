@@ -415,8 +415,6 @@ return [
     'problem_creating_file_type' => 'There was a problem creating the file type',
     'file_type_created_successfulyy' => 'File type created successfully',
 
-    'select_existing_author' => 'Select Existing Author',
-    'select_author' => 'Select Author',
     'create_author_role' => 'Create Author Role',
     'new_contributor' => 'New Contributor',
     'add_contributor' => 'Add Contributor',

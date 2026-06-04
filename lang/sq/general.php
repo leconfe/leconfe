@@ -389,8 +389,6 @@ return [
     'problem_creating_file_type' => 'Kishte një problem në krijimin e llojit të skedarit',
     'file_type_created_successfulyy' => 'Lloji i skedarit u krijua me sukses',
 
-    'select_existing_author' => 'Zgjidh Autorin Eksistues',
-    'select_author' => 'Zgjidh Autorin',
     'create_author_role' => 'Krijo Rol Autor',
     'new_contributor' => 'Kontribues i Ri',
     'add_contributor' => 'Shto Kontribues',
