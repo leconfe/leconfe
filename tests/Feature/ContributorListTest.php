@@ -8,7 +8,10 @@ use App\Models\Submission;
 use App\Models\Track;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ContributorList;
+use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages\ManageCommittee;
+use App\Panel\ScheduledConference\Resources\SpeakerResource\Pages\ManageSpeakers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -30,6 +33,34 @@ class ContributorListTest extends TestCase
             ))
             ->assertFormFieldExists('given_name')
             ->assertFormFieldExists('email');
+    }
+
+    public function test_speaker_and_committee_create_forms_do_not_offer_existing_person_selection(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $this->actingAs($context['user']);
+        Gate::before(fn () => true);
+
+        Livewire::test(ManageSpeakers::class)
+            ->mountTableAction('create')
+            ->assertFormFieldDoesNotExist('speaker_id', 'mountedTableActionForm')
+            ->assertFormFieldExists('profile', 'mountedTableActionForm', fn ($field): bool => ! array_key_exists(
+                'x-on:speaker-profile-image-selected.window',
+                $field->getExtraAlpineAttributes()
+            ))
+            ->assertFormFieldExists('given_name', 'mountedTableActionForm')
+            ->assertFormFieldExists('email', 'mountedTableActionForm');
+
+        Livewire::test(ManageCommittee::class)
+            ->mountTableAction('create')
+            ->assertFormFieldDoesNotExist('committee_id', 'mountedTableActionForm')
+            ->assertFormFieldExists('profile', 'mountedTableActionForm', fn ($field): bool => ! array_key_exists(
+                'x-on:committee-profile-image-selected.window',
+                $field->getExtraAlpineAttributes()
+            ))
+            ->assertFormFieldExists('given_name', 'mountedTableActionForm')
+            ->assertFormFieldExists('email', 'mountedTableActionForm');
     }
 
     protected function makeSubmissionContext(): array
