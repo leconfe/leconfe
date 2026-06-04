@@ -6,7 +6,11 @@ use Tests\TestCase;
 
 class TranslationCompletenessTest extends TestCase
 {
-    public function test_all_general_translations_include_submission_file_upload_date_label(): void
+    private const REQUIRED_GENERAL_TRANSLATION_KEYS = [
+        'uploaded_at',
+    ];
+
+    public function test_all_general_translations_include_required_keys(): void
     {
         $translationFiles = glob(base_path('lang/*/general.php')) ?: [];
 
@@ -15,11 +19,13 @@ class TranslationCompletenessTest extends TestCase
         foreach ($translationFiles as $translationFile) {
             $translations = require $translationFile;
 
-            $this->assertArrayHasKey(
-                'uploaded_at',
-                $translations,
-                sprintf('%s is missing the uploaded_at translation key.', $translationFile)
-            );
+            foreach (self::REQUIRED_GENERAL_TRANSLATION_KEYS as $key) {
+                $this->assertArrayHasKey(
+                    $key,
+                    $translations,
+                    sprintf('%s is missing the %s translation key.', $translationFile, $key)
+                );
+            }
         }
     }
 }
