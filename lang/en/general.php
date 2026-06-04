@@ -404,6 +404,7 @@ return [
     'include_any_necessary_files' => 'Please include any necessary files for our editorial team to evaluate your submission. Along with the primary work, you may also choose to submit supplementary files such as data sets, conflict of interest statements, or other relevant materials that could assist our editors.',
 
     'filename' => 'Filename',
+    'uploaded_at' => 'Uploaded At',
     'rename' => 'Rename',
     'new_filename' => 'New Filename',
     'upload_files' => 'Upload Files',

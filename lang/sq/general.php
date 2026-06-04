@@ -378,6 +378,7 @@ return [
     'no_files_added_to_submission' => 'Asnjë skedar nuk është shtuar në dërgesë',
     'include_any_necessary_files' => 'Ju lutemi përfshini çdo skedar të nevojshëm për ekipin tonë editorial për të vlerësuar dërgesën tuaj. Së bashku me punën kryesore, mund të zgjidhni gjithashtu të dërgoni skedarë shtesë si grupe të dhënash, deklarata të konflikteve të interesit, ose materiale të tjera të rëndësishme që mund të ndihmojnë redaktorët tanë.',
     'filename' => 'Emri i Skedarit',
+    'uploaded_at' => 'Data e ngarkimit',
     'rename' => 'Riemëro',
     'new_filename' => 'Emri i Ri i Skedarit',
     'upload_files' => 'Ngarko Skedarë',

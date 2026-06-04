@@ -387,6 +387,7 @@ return [
     'not_uploaded' => 'Belum diunggah',
     'include_any_necessary_files' => 'Silakan sertakan berkas-berkas yang diperlukan agar tim editorial kami dapat mengevaluasi pengiriman Anda. Selain karya utama, Anda juga dapat memilih untuk mengirimkan berkas tambahan seperti set data, pernyataan konflik kepentingan, atau materi relevan lainnya yang dapat membantu editor kami.',
     'filename' => 'Nama Berkas',
+    'uploaded_at' => 'Tanggal Unggah',
     'rename' => 'Ganti Nama',
     'new_filename' => 'Nama Berkas Baru',
     'upload_files' => 'Unggah Berkas',

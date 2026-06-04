@@ -206,6 +206,43 @@ class SubmissionWizardRequiredFilesTest extends TestCase
             ->assertDispatched('refreshLivewire');
     }
 
+    public function test_submission_file_table_shows_when_the_file_was_uploaded(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $this->actingAs($context['user']);
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $uploadedAt = now()->setDate(2026, 1, 15)->setTime(9, 30);
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $submissionFile->forceFill([
+            'created_at' => $uploadedAt,
+            'updated_at' => $uploadedAt,
+        ])->save();
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission->refresh()])
+            ->assertSee('Uploaded At')
+            ->assertSee('15 January 2026 09:30');
+    }
+
     protected function makeSubmissionContext(): array
     {
         $conference = Conference::query()->create([
