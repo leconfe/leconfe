@@ -213,12 +213,14 @@ class Register extends Page implements HasActions, HasForms
                         TextInput::make('password')
                             ->label(__('general.password'))
                             ->password()
+                            ->revealable()
                             ->rules($rules['password'])
                             ->required(in_array('required', $rules['password']))
                             ->columnSpan(1),
                         TextInput::make('password_confirmation')
                             ->label(__('general.password_confirmation'))
                             ->password()
+                            ->revealable()
                             ->required()
                             ->columnSpan(1),
                         Checkbox::make('privacy_statement_agree')

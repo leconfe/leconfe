@@ -128,6 +128,7 @@ class Login extends Page implements HasActions, HasForms
                         TextInput::make('password')
                             ->label(__('general.password'))
                             ->password()
+                            ->revealable()
                             ->required()
                             ->autocomplete('current-password')
                             ->columnSpanFull(),

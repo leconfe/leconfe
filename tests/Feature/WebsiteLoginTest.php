@@ -19,6 +19,8 @@ class WebsiteLoginTest extends TestCase
             ->assertSee('fi-simple-page', false)
             ->assertSee('class="fi-simple-link"', false)
             ->assertSee('fi-input', false)
+            ->assertSee('Show password', false)
+            ->assertSee('Hide password', false)
             ->assertDontSee('website::layouts.main', false)
             ->assertDontSee('link link-primary', false)
             ->assertDontSee('input input-sm', false)

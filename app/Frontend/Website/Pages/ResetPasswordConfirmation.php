@@ -140,12 +140,14 @@ class ResetPasswordConfirmation extends Page implements HasActions, HasForms
                         TextInput::make('password')
                             ->label(__('general.new_password'))
                             ->password()
+                            ->revealable()
                             ->required()
                             ->autocomplete('new-password')
                             ->columnSpanFull(),
                         TextInput::make('password_confirmation')
                             ->label(__('general.confirm_password'))
                             ->password()
+                            ->revealable()
                             ->required()
                             ->autocomplete('new-password')
                             ->columnSpanFull(),

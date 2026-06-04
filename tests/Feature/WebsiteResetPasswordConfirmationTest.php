@@ -22,6 +22,8 @@ class WebsiteResetPasswordConfirmationTest extends TestCase
             ->assertSee('fi-simple-layout', false)
             ->assertSee('fi-simple-page', false)
             ->assertSee('fi-input', false)
+            ->assertSee('Show password', false)
+            ->assertSee('Hide password', false)
             ->assertDontSee('website::layouts.main', false)
             ->assertDontSee('input input-sm', false)
             ->assertDontSee('btn btn-primary', false);
