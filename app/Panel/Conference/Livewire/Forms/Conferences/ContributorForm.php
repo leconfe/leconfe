@@ -28,9 +28,6 @@ class ContributorForm extends Component
                 ->alignCenter()
                 ->columnSpan([
                     'lg' => 2,
-                ])
-                ->extraAlpineAttributes([
-                    'x-on:update-profile-image.window' => 'setTimeout(() => { pond.removeFiles({ revert: false }); pond.addFile($event.detail);}, 750);',
                 ]),
             Forms\Components\TextInput::make('given_name')
                 ->label(__('general.given_name'))

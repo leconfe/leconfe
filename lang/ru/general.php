@@ -379,8 +379,6 @@ return [
     'problem_creating_file_type' => 'Возникла проблема при создании типа файла',
     'file_type_created_successfulyy' => 'Тип файла успешно создан',
 
-    'select_existing_author' => 'Выбрать существующего автора',
-    'select_author' => 'Выбрать автора',
     'create_author_role' => 'Создать роль автора',
     'new_contributor' => 'Новый участник',
     'add_contributor' => 'Добавить участника',
@@ -605,8 +603,6 @@ return [
     'committee' => 'Комитет',
     'committees' => 'Комитеты',
     'committee_positions' => 'Должности в комитете',
-    'select_committee' => 'Выберите комитет',
-    'select_existing_committee' => 'Выберите существующий комитет',
     'create_committee_role' => 'Создать роль комитета',
     'committee_table' => 'Таблица комитета',
     'profile' => 'Профиль',
@@ -617,8 +613,6 @@ return [
     'subtitle' => 'Подзаголовок',
     'speakers' => 'Докладчики',
     'speaker' => 'Докладчик',
-    'select_existing_speaker' => 'Выберите существующего докладчика',
-    'select_speaker' => 'Выберите докладчика',
     'speakers_table' => 'Таблица докладчиков',
     'create_speaker_position' => 'Создать должность докладчика',
     'cannot_delete_speakers_role' => 'Невозможно удалить :variable, так как с этой ролью связаны докладчики.',
@@ -1065,5 +1059,5 @@ return [
     'faculties' => 'Факультеты',
 
     'role_assigned_successfully' => 'Роль успешно назначена',
-    'no_roles_selected' => 'Роли не выбраны'
+    'no_roles_selected' => 'Роли не выбраны',
 ];
