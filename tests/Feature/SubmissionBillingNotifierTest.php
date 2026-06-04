@@ -8,6 +8,7 @@ use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Participant;
+use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
@@ -15,6 +16,8 @@ use App\Models\Track;
 use App\Models\User;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\SubmissionPayment;
+use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
+use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Services\Billing\SubmissionBillingNotifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -58,6 +61,8 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertNotNull(
             $context['submission']->payment?->getMeta(SubmissionBillingNotifier::PAYMENT_META_AUTO_NOTIFIED_AT)
         );
+        $this->assertTrue($context['submission']->payment->hasInvoiceBeenSent());
+        $this->assertNotNull($context['submission']->payment->getMeta(Payment::INVOICE_SENT_AT_META));
     }
 
     public function test_it_sends_invoice_immediately_for_late_payment_when_threshold_already_passed(): void
@@ -255,6 +260,75 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertSame($newPaymentFee->getKey(), $payment->payment_fee_id);
         $this->assertSame(250.0, (float) $payment->amount);
         $this->assertSame(250.0, (float) $payment->getMeta('base_amount'));
+    }
+
+    public function test_submission_invoice_send_action_remains_available_after_invoice_was_sent(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'submission_payment_auto_notify' => false,
+            'invoice_enable' => true,
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->with('scheduledConference')->firstOrFail();
+
+        $this->assertTrue(SubmissionPaymentTable::canSendInvoiceFor($payment));
+
+        $payment->markInvoiceAsSent();
+
+        $this->assertTrue(SubmissionPaymentTable::canSendInvoiceFor($payment->refresh()->load('scheduledConference')));
+    }
+
+    public function test_participant_invoice_send_action_remains_available_after_invoice_was_sent(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setMeta('invoice_enable', true);
+
+        $participant = Participant::withoutGlobalScopes()->create([
+            'given_name' => 'Participant',
+            'family_name' => 'Tester',
+            'email' => 'participant@example.test',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+        ]);
+
+        $paymentFee = PaymentFee::withoutGlobalScopes()->create([
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Participant Fee',
+            'type' => PaymentManager::TYPE_PARTICIPANT_FEE,
+            'amount' => 150,
+            'currency' => 'usd',
+            'is_active' => true,
+        ]);
+
+        $payment = PaymentManager::get()->queue(
+            $participant,
+            $paymentFee,
+            $context['user'],
+            PaymentManager::TYPE_PARTICIPANT_FEE,
+            $participant->full_name,
+            '/participant/'.$participant->getKey(),
+            'Participant billing',
+        )->load('scheduledConference');
+
+        $this->assertTrue(ParticipantPaymentFeeTable::canSendInvoiceFor($payment));
+
+        $payment->markInvoiceAsSent();
+
+        $this->assertTrue(ParticipantPaymentFeeTable::canSendInvoiceFor($payment->refresh()->load('scheduledConference')));
     }
 
     public function test_manual_submission_invoice_allows_payment_detail_before_billing_stage(): void
