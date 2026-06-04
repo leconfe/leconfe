@@ -9,9 +9,14 @@ use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\User;
 use App\Panel\Conference\Resources\UserResource;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\ParticipantList;
 use App\Panel\ScheduledConference\Pages\Presentations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class UserRoleScopeTest extends TestCase
@@ -81,6 +86,83 @@ class UserRoleScopeTest extends TestCase
 
         $this->assertTrue($scopedRoleIds->contains($allowedRole->getKey()));
         $this->assertFalse($scopedRoleIds->contains($foreignRole->getKey()));
+    }
+
+    public function test_assign_participant_user_query_excludes_editors_assigned_in_other_scheduled_conferences(): void
+    {
+        $currentConference = Conference::query()->create([
+            'name' => 'Current Conference',
+            'path' => 'current-conference',
+        ]);
+        $currentScheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $currentConference->getKey(),
+            'title' => 'Current Scheduled Conference',
+            'path' => 'current-scheduled-conference',
+        ]);
+
+        $foreignConference = Conference::query()->create([
+            'name' => 'Foreign Conference',
+            'path' => 'foreign-conference',
+        ]);
+        $foreignScheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $foreignConference->getKey(),
+            'title' => 'Foreign Scheduled Conference',
+            'path' => 'foreign-scheduled-conference',
+        ]);
+
+        $editorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::ScheduledConferenceEditor->value,
+            'guard_name' => 'web',
+            'conference_id' => $currentConference->getKey(),
+            'scheduled_conference_id' => $currentScheduledConference->getKey(),
+        ]);
+        Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Admin->value,
+            'guard_name' => 'web',
+            'conference_id' => 0,
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $currentEditor = User::factory()->create([
+            'email' => 'current-editor@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+        $foreignEditor = User::factory()->create([
+            'email' => 'foreign-editor@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+        $admin = User::factory()->create([
+            'email' => 'admin-participant-query@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+
+        app()->setCurrentConferenceId($currentConference->getKey());
+        app()->setCurrentScheduledConferenceId($currentScheduledConference->getKey());
+
+        $currentEditor->assignRole($editorRole);
+        $admin->assignRole(UserRole::Admin->value);
+
+        DB::table('model_has_roles')->insert([
+            'role_id' => $editorRole->getKey(),
+            'conference_id' => $foreignConference->getKey(),
+            'scheduled_conference_id' => $foreignScheduledConference->getKey(),
+            'model_type' => User::class,
+            'model_id' => $foreignEditor->getKey(),
+        ]);
+
+        $candidateIds = (new class extends ParticipantList
+        {
+            public function candidateIdsForRole(int $roleId): Collection
+            {
+                return User::query()
+                    ->where(fn (Builder $query) => $this->matchingAssignableRoleQuery($query, $roleId))
+                    ->pluck('id');
+            }
+        })->candidateIdsForRole($editorRole->getKey());
+
+        $this->assertTrue($candidateIds->contains($currentEditor->getKey()));
+        $this->assertFalse($candidateIds->contains($foreignEditor->getKey()));
+        $this->assertFalse($candidateIds->contains($admin->getKey()));
     }
 
     public function test_admin_can_view_draft_scheduled_conference_in_scheduled_context(): void

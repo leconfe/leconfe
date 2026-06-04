@@ -9,6 +9,7 @@ use App\Mail\Templates\ParticipantAssignedMail;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\Role;
 use App\Models\Submission;
 use App\Models\SubmissionParticipant;
 use App\Models\User;
@@ -309,9 +310,62 @@ class ParticipantList extends Component implements HasForms, HasTable
             return $query->whereRaw('0 = 1');
         }
 
+        $role = Role::withoutGlobalScopes()->find($roleId);
+
+        if (! $role) {
+            return $query->whereRaw('0 = 1');
+        }
+
         return $query
-            ->whereHas('roles', fn (Builder $query) => $query->whereId($roleId))
-            ->orWhereHas('roles', fn (Builder $query) => $query->where('name', UserRole::Admin));
+            ->whereHas('roles', fn (Builder $query) => $this->matchingScopedRoleAssignmentQuery($query, $role));
+    }
+
+    protected function matchingScopedRoleAssignmentQuery(Builder $query, Role $role): Builder
+    {
+        $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
+
+        return $query
+            ->whereKey($role->getKey())
+            ->where("{$modelHasRolesTable}.conference_id", $this->getAssignableRoleConferenceScope($role))
+            ->where("{$modelHasRolesTable}.scheduled_conference_id", $this->getAssignableRoleScheduledConferenceScope($role));
+    }
+
+    protected function getAssignableRoleConferenceScope(Role $role): int
+    {
+        if ($role->name === UserRole::Admin->value) {
+            return 0;
+        }
+
+        return $role->conference_id ?: app()->getCurrentConferenceId();
+    }
+
+    protected function getAssignableRoleScheduledConferenceScope(Role $role): int
+    {
+        if ($this->isConferenceRole($role)) {
+            return 0;
+        }
+
+        if ($this->isScheduledConferenceRole($role) && app()->getCurrentScheduledConferenceId()) {
+            return app()->getCurrentScheduledConferenceId();
+        }
+
+        return $role->scheduled_conference_id ?? 0;
+    }
+
+    protected function isConferenceRole(Role $role): bool
+    {
+        return in_array($role->name, array_map(
+            fn (UserRole $userRole): string => $userRole->value,
+            UserRole::conferenceRoles(),
+        ), true);
+    }
+
+    protected function isScheduledConferenceRole(Role $role): bool
+    {
+        return in_array($role->name, array_map(
+            fn (UserRole $userRole): string => $userRole->value,
+            UserRole::scheduledConferenceRoles(),
+        ), true);
     }
 
     public function render()
