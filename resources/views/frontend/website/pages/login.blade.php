@@ -1,61 +1,47 @@
-<x-website::layouts.main class="space-y-2">
-    <div class="mb-6">
-        <x-website::breadcrumbs :breadcrumbs="$this->getBreadcrumbs()" />
-    </div>
-    <div class="relative">
-        <div class="flex mb-5 space-x-4">
-            <h1 class="text-xl font-semibold min-w-fit">{{ __('general.login') }}</h1>
-            <hr class="w-full h-px my-auto bg-gray-200 border-0 dark:bg-gray-700">
-        </div>
-        <form wire:submit='login' class="space-y-4">
-            @error('throttle')
-                <div class="text-sm text-red-600">
-                    {{ $message }}
-                </div>
-            @enderror
-            <div class="gap-2 form-control sm:col-span-6">
-                <label class="label-text">
-                    {{ __('general.email') }} <span class="text-red-500">*</span>
-                </label>
-                <input type="email" name="email" class="input input-sm" wire:model="email" required/>
-                @error('email')
-                    <div class="text-sm text-red-600">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-            <div class="gap-2 form-control sm:col-span-3">
-                <label class="label-text">
-                    {{ __('general.password') }} <span class="text-red-500">*</span>
-                </label>
-                <input type="password" name="password" class="input input-sm" wire:model="password" required />
-                <label class="label-text">
-                    <x-website::link :href="$resetPasswordUrl" class="link link-primary">{{ __('general.forgot_password_question') }}</x-website::link>
-                </label>
-                @error('password')
-                    <div class="text-sm text-red-600">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-            <div class="form-control">
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" wire:model='remember' class="checkbox checkbox-sm" />
-                    <span class="label-text">{{ __('general.remember_me') }}</span>
-                </label>
-            </div>
-            <div class="flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm" wire:loading.attr="disabled">
-                    <span class="loading loading-spinner loading-xs" wire:loading></span>
-                    {{ __('general.login') }}
-                </button>
-                @if($registerUrl)
-                <x-website::link class="btn btn-outline btn-sm" :href="$registerUrl">
-                    {{ __('general.register') }}
-                </x-website::link>
-                @endif
-            </div>
-        </form>
-    </div>
+<div class="fi-simple-page">
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-</x-website::layouts.main>
+    <a
+        href="{{ $this->getAuthLogoHomeUrl() }}"
+        class="mb-6 inline-flex items-center gap-x-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-white/5"
+    >
+        <x-heroicon-m-arrow-left class="h-4 w-4" />
+        Back to home
+    </a>
+
+    <section class="grid auto-cols-fr gap-y-6">
+        <header class="fi-simple-header flex flex-col items-center">
+            <a href="{{ $this->getAuthLogoHomeUrl() }}" class="mb-4">
+                <img
+                    src="{{ $this->getAuthLogoUrl() }}"
+                    alt="{{ $this->getAuthLogoAltText() }}"
+                    class="fi-logo max-h-20 w-auto object-contain"
+                />
+            </a>
+
+            <h1 class="fi-simple-header-heading text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                {{ $this->getHeading() }}
+            </h1>
+        </header>
+
+        @error('throttle')
+            <div class="text-sm text-danger-600 dark:text-danger-400">
+                {{ $message }}
+            </div>
+        @enderror
+
+        <x-filament-panels::form wire:submit="login">
+            {{ $this->form }}
+
+            <a href="{{ $resetPasswordUrl }}" class="fi-simple-link">
+                {{ __('general.forgot_password_question') }}
+            </a>
+
+            <x-filament-panels::form.actions :actions="$this->getFormActions()" :fullWidth="true" />
+        </x-filament-panels::form>
+    </section>
+
+    <x-filament-actions::modals />
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+</div>

@@ -21,7 +21,7 @@ use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Validation\ValidationException;
 
-class Login extends WebsiteLogin implements HasForms, HasActions
+class Login extends WebsiteLogin implements HasActions, HasForms
 {
     use HasScheduledConferenceAuthLogo;
     use InteractsWithActions;
@@ -82,6 +82,7 @@ class Login extends WebsiteLogin implements HasForms, HasActions
                         TextInput::make('password')
                             ->label(__('general.password'))
                             ->password()
+                            ->revealable()
                             ->required()
                             ->autocomplete('current-password')
                             ->columnSpanFull(),
@@ -169,7 +170,7 @@ class Login extends WebsiteLogin implements HasForms, HasActions
         $this->validate();
 
         if (
-            !auth()->attempt([
+            ! auth()->attempt([
                 'email' => $this->email,
                 'password' => $this->password,
             ], $this->remember)
