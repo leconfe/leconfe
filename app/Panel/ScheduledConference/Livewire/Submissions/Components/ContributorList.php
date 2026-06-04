@@ -5,15 +5,13 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 use App\Actions\Authors\AuthorCreateAction;
 use App\Actions\Authors\AuthorDeleteAction;
 use App\Actions\Authors\AuthorUpdateAction;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Author;
 use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
-use App\Panel\Conference\Resources\Conferences\AuthorRoleResource;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -53,58 +51,6 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
         return $form->schema([
             Grid::make()
                 ->schema([
-                    Select::make('author_id')
-                        ->label(__('general.select_existing_author'))
-                        ->placeholder(__('general.select_author'))
-                        ->preload()
-                        ->native(false)
-                        ->searchable()
-                        ->allowHtml()
-                        ->optionsLimit(10)
-                        ->getSearchResultsUsing(
-                            function (string $search) {
-                                $authors = $this->getQuery()->pluck('email')->toArray();
-
-                                return Author::query()
-                                    ->with(['media', 'meta'])
-                                    ->whereNotIn('email', $authors)
-                                    ->where(fn ($query) => $query->where('given_name', 'LIKE', "%{$search}%")
-                                        ->orWhere('family_name', 'LIKE', "%{$search}%")
-                                        ->orWhere('email', 'LIKE', "%{$search}%"))
-                                    ->orderBy('created_at', 'desc')
-                                    ->get()
-                                    ->unique('email')
-                                    ->mapWithKeys(fn (Author $author) => [$author->getKey() => static::renderSelectAuthor($author)])
-                                    ->toArray();
-                            }
-                        )
-                        ->live()
-                        ->afterStateUpdated(function (string $state, Select $component, $livewire) {
-                            if (! $state) {
-                                return;
-                            }
-
-                            $form = $component->getContainer();
-
-                            $author = Author::with(['meta', 'role' => fn ($query) => $query->withoutGlobalScopes()])->findOrFail($state);
-                            $role = AuthorRoleResource::getEloquentQuery()->whereName($author?->role?->name)->first();
-
-                            $formData = [
-                                'author_id' => $state,
-                                'given_name' => $author->given_name,
-                                'family_name' => $author->family_name,
-                                'email' => $author->email,
-                                'author_role_id' => $role->id ?? null,
-                                'meta' => $author->getAllMeta(),
-                            ];
-
-                            if ($author->getFirstMedia('profile')) {
-                                $livewire->dispatch('update-profile-image', $author->getFirstMedia('profile')->getUrl());
-                            }
-
-                            return $form->fill($formData);
-                        })
-                        ->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('profile')
                         ->label(__('general.profile_picture'))
                         ->image()
@@ -220,11 +166,6 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->color('success'),
 
             ]);
-    }
-
-    public static function renderSelectAuthor(Author $author): string
-    {
-        return view('forms.select-contributor', ['contributor' => $author])->render();
     }
 
     public function render()
