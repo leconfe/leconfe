@@ -474,6 +474,10 @@ class SubmissionPolicy
             return false;
         }
 
-        return $user->can('actAsEditor', $submission);
+        if ($user->can('actAsEditor', $submission)) {
+            return true;
+        }
+
+        return $user->can('uploadAbstract', $submission);
     }
 }
