@@ -71,15 +71,24 @@ jobs:
     
     - name: Create tar.gz archive
       run: |
+        set -euo pipefail
+
         mkdir -p ./release
-        tar -czf ./release/leconfe.tar.gz \
+        archive_root="leconfe-${RELEASE_TAG}"
+        staging_dir="./release/${archive_root}"
+        rm -rf "$staging_dir"
+        mkdir -p "$staging_dir"
+
+        tar -cf - \
           --exclude='./.dockerdata' \
           --exclude='./release' \
           --exclude='./.git' \
           --exclude='./node_modules' \
           --exclude='./tests' \
           --exclude='./.github' \
-          -C . .
+          -C . . | tar -xf - -C "$staging_dir"
+
+        tar -czf ./release/leconfe.tar.gz -C ./release "$archive_root"
         ls -l ./release/leconfe.tar.gz
         if [ ! -f ./release/leconfe.tar.gz ]; then
           echo "Error: leconfe.tar.gz was not created"
