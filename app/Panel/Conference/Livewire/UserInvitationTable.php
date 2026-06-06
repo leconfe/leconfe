@@ -6,11 +6,11 @@ use App\Actions\UserInvitation\InviteUserAction;
 use App\Mail\Templates\UserRoleInvitationMail;
 use App\Models\Role;
 use App\Models\UserInvitation;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Get;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
@@ -154,10 +154,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                         ->icon('heroicon-o-link')
                         ->authorize(fn () => $this->canInviteUsers())
                         ->visible(fn (UserInvitation $record) => $record->status === 'pending')
-                        ->alpineClickHandler(fn (UserInvitation $record) => sprintf(
-                            'window.navigator.clipboard.writeText(%s)',
-                            Js::from($record->getAcceptUrl()),
-                        )),
+                        ->alpineClickHandler(fn (UserInvitation $record) => $this->getCopyLinkClickHandler($record)),
                     Action::make('resend')
                         ->label(__('general.resend'))
                         ->icon('heroicon-o-paper-airplane')
@@ -232,5 +229,72 @@ class UserInvitationTable extends Component implements HasForms, HasTable
     protected function canInviteUsers(): bool
     {
         return auth()->user()?->can('User:invite') ?? false;
+    }
+
+    protected function getCopyLinkClickHandler(UserInvitation $record): string
+    {
+        return sprintf(<<<'JS'
+            (() => {
+                const invitationUrl = %s
+                const notify = (title, status) => {
+                    if (! window.FilamentNotification) {
+                        return
+                    }
+
+                    const notification = new window.FilamentNotification()
+                        .title(title)
+
+                    if (status === 'danger') {
+                        notification.danger()
+                    } else {
+                        notification.success()
+                    }
+
+                    notification.send()
+                }
+                const fallbackCopy = () => {
+                    const textarea = document.createElement('textarea')
+
+                    textarea.value = invitationUrl
+                    textarea.setAttribute('readonly', '')
+                    textarea.style.left = '-9999px'
+                    textarea.style.position = 'fixed'
+                    textarea.style.top = '-9999px'
+
+                    document.body.appendChild(textarea)
+                    textarea.focus()
+                    textarea.select()
+
+                    try {
+                        const copied = document.execCommand('copy')
+
+                        document.body.removeChild(textarea)
+
+                        return copied ? Promise.resolve() : Promise.reject()
+                    } catch (error) {
+                        document.body.removeChild(textarea)
+
+                        return Promise.reject(error)
+                    }
+                }
+                const copyPromise = window.navigator.clipboard && window.navigator.clipboard.writeText
+                    ? window.navigator.clipboard.writeText(invitationUrl).catch(() => fallbackCopy())
+                    : fallbackCopy()
+
+                copyPromise
+                    .then(() => {
+                        close()
+                        notify(%s, 'success')
+                    })
+                    .catch(() => {
+                        close()
+                        notify(%s, 'danger')
+                    })
+            })()
+            JS,
+            Js::from($record->getAcceptUrl()),
+            Js::from('Invitation link copied.'),
+            Js::from('Unable to copy invitation link.'),
+        );
     }
 }
