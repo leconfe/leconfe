@@ -342,6 +342,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         Livewire::test(PaperFiles::class, ['submission' => $context['submission']])
             ->callTableAction('rename', $file, data: [
                 'name' => 'renamed-paper',
+                'type' => $type->getKey(),
             ])
             ->assertHasNoTableActionErrors();
 

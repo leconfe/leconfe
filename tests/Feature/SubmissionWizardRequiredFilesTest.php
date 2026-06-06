@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Constants\SubmissionFileCategory;
 use App\Models\Conference;
+use App\Models\Enums\UserRole;
+use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
@@ -206,6 +208,55 @@ class SubmissionWizardRequiredFilesTest extends TestCase
             ->assertDispatched('refreshLivewire');
     }
 
+    public function test_author_can_delete_submission_file_from_upload_wizard(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $authorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+        ]);
+
+        $submission->participants()->create([
+            'user_id' => $context['user']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $this->actingAs($context['user']);
+        $this->assertTrue($submission->isParticipant($context['user']));
+        $this->assertTrue($context['user']->can('uploadAbstract', $submission));
+        $this->assertTrue($context['user']->can('deleteFile', $submission));
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission])
+            ->callTableAction('delete', $submissionFile)
+            ->assertDispatched('refreshLivewire');
+
+        $this->assertDatabaseMissing('submission_files', [
+            'id' => $submissionFile->getKey(),
+        ]);
+    }
+
     public function test_submission_file_table_shows_when_the_file_was_uploaded(): void
     {
         $context = $this->makeSubmissionContext();
@@ -241,6 +292,52 @@ class SubmissionWizardRequiredFilesTest extends TestCase
         Livewire::test(AbstractFiles::class, ['submission' => $submission->refresh()])
             ->assertSee('Uploaded At')
             ->assertSee('15 January 2026 09:30');
+    }
+
+    public function test_submission_file_edit_action_can_change_file_type(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $abstract = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Abstract',
+            'required' => true,
+        ]);
+
+        $poster = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Poster',
+            'required' => true,
+        ]);
+
+        $this->actingAs($context['user']);
+        Gate::before(fn () => true);
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $abstract->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission])
+            ->callTableAction('rename', $submissionFile, data: [
+                'name' => 'renamed-submission-file',
+                'type' => $poster->getKey(),
+            ])
+            ->assertDispatched('refreshLivewire');
+
+        $this->assertDatabaseHas('submission_files', [
+            'id' => $submissionFile->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $poster->getKey(),
+        ]);
     }
 
     protected function makeSubmissionContext(): array

@@ -121,7 +121,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             Select::make('type')
                 ->label(__('general.type'))
                 ->required()
-                ->options(fn () => SubmissionFileType::ordered()->pluck('name', 'id')->toArray())
+                ->options(fn () => $this->submissionFileTypeOptions())
                 ->searchable(),
             SpatieMediaLibraryFileUpload::make('files')
                 ->required()
@@ -149,7 +149,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 $this->submission,
                 $file,
                 $this->category,
-                SubmissionFileType::find($data['type']),
+                $this->resolveSubmissionFileType($data['type']),
                 $this->resolveUploadReviewRoundId(),
             );
 
@@ -204,44 +204,50 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
         return [
             TableAction::make('rename')
                 ->icon('iconpark-edit')
-                ->label(__('general.rename'))
+                ->label(__('general.edit'))
                 ->modalWidth('md')
                 ->modalHeading(__('general.edit_files'))
-                ->modalHeading(__('general.rename'))
                 ->hidden(
                     fn (): bool => $this->isViewOnly() || $this->submission->isDeclined()
                 )
-                ->successNotificationTitle(__('general.file_renamed_successfully'))
+                ->successNotificationTitle(__('general.file_updated_successfully'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
                     $form->fill([
                         'name' => $record->media->name,
+                        'type' => $record->submission_file_type_id,
                     ]);
                 })
                 ->action(function (SubmissionFile $record, array $data, TableAction $action) {
                     try {
                         DB::beginTransaction();
 
+                        $type = $this->resolveSubmissionFileType($data['type']);
+                        $oldTypeName = $record->type->name;
                         $media = $record->media;
                         $oldName = $media->original_file_name;
                         $newName = (string) $data['name'];
 
                         $media->name = $newName;
                         $renamedFileName = $media->original_file_name;
+                        $record->submission_file_type_id = $type->getKey();
 
                         $log = Log::make(
                             name: 'submission',
                             subject: $this->submission,
-                            description: __('general.submission_file_renamed_activity', [
+                            description: __('general.submission_file_updated_activity', [
                                 'id' => $record->getKey(),
                                 'oldName' => $oldName,
                                 'newName' => $renamedFileName,
+                                'oldType' => $oldTypeName,
+                                'newType' => $type->name,
                                 'category' => $this->category,
                             ]),
-                            event: 'submission-file-rename',
+                            event: 'submission-file-update',
                         )
                             ->by(auth()->user());
 
                         $media->save();
+                        $record->save();
                         $log->save();
 
                         DB::commit();
@@ -250,8 +256,9 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         throw $th;
                     }
                     $action->success();
+                    $this->dispatch('refreshLivewire');
                 })
-                ->modalSubmitActionLabel(__('general.rename'))
+                ->modalSubmitActionLabel(__('general.save'))
                 ->form([
                     TextInput::make('name')
                         ->label(__('general.new_filename'))
@@ -261,9 +268,14 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         ->suffix(function (SubmissionFile $record) {
                             return '.'.$record->media->extension;
                         }),
+                    Select::make('type')
+                        ->label(__('general.type'))
+                        ->required()
+                        ->options(fn () => $this->submissionFileTypeOptions())
+                        ->searchable(),
                 ]),
             DeleteAction::make()
-                ->authorize('deleteFile', $this->submission)
+                ->authorize(fn (SubmissionFile $record): bool => auth()->user()->can('deleteFile', $record->submission))
                 ->using(function (SubmissionFile $record) {
                     try {
                         DB::beginTransaction();
@@ -336,6 +348,27 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     public function bulkActions(): array
     {
         return [];
+    }
+
+    protected function submissionFileTypeOptions(): array
+    {
+        return $this->submissionFileTypeQuery()
+            ->ordered()
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    protected function resolveSubmissionFileType(int|string $id): SubmissionFileType
+    {
+        return $this->submissionFileTypeQuery()
+            ->whereKey($id)
+            ->firstOrFail();
+    }
+
+    protected function submissionFileTypeQuery()
+    {
+        return SubmissionFileType::withoutGlobalScopes()
+            ->where('scheduled_conference_id', $this->submission->scheduled_conference_id);
     }
 
     public function render()
