@@ -63,6 +63,15 @@ class StartSubmissionReviewRoundAction
                 'closed_at' => null,
             ]);
 
+            $inheritedFileIds = $nextRoundNumber === 1
+                ? $this->attachExistingUnscopedFilesToInitialRound($submission, $reviewRound)
+                : [];
+
+            $defaultFileIds = collect($defaultFileIds)
+                ->diff($inheritedFileIds)
+                ->values()
+                ->all();
+
             CloneSubmissionFilesToReviewRoundAction::run(
                 $submission,
                 $reviewRound,
@@ -72,6 +81,36 @@ class StartSubmissionReviewRoundAction
 
             return $reviewRound->refresh();
         });
+    }
+
+    protected function attachExistingUnscopedFilesToInitialRound(Submission $submission, SubmissionReviewRound $reviewRound): array
+    {
+        $fileIds = $submission->submissionFiles()
+            ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+            ->whereNull('review_round_id')
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id);
+
+        if ($fileIds->isEmpty()) {
+            return [];
+        }
+
+        $submission->submissionFiles()
+            ->whereIn('id', $fileIds)
+            ->update([
+                'review_round_id' => $reviewRound->getKey(),
+                'updated_at' => now(),
+            ]);
+
+        $reviewRound->update([
+            'default_file_ids' => collect($reviewRound->default_file_ids ?? [])
+                ->merge($fileIds->map(fn ($id) => (int) $id))
+                ->unique()
+                ->values()
+                ->all(),
+        ]);
+
+        return $fileIds->all();
     }
 
     protected function sanitizeDefaultFileIds(array $defaultFileIds): \Illuminate\Support\Collection

@@ -73,7 +73,7 @@ class PaperFiles extends SubmissionFilesTable
 
         return $this->submission->submissionFiles()
             ->with(['media', 'type'])
-            ->where('category', SubmissionFileCategory::PAPER_FILES)
+            ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
             ->where('review_round_id', $this->previousReviewRound->getKey())
             ->orderBy('id')
             ->get();
@@ -207,7 +207,8 @@ class PaperFiles extends SubmissionFilesTable
                 $clonedFileIds = CloneSubmissionFilesToReviewRoundAction::run(
                     $this->submission,
                     $this->selectedRound,
-                    $selectedFileIds
+                    $selectedFileIds,
+                    SubmissionFileCategory::PAPER_FILES,
                 );
 
                 if ($clonedFileIds === []) {

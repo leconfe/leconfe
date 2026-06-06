@@ -767,6 +767,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                             foreach ($selectedFileIds as $submissionFileId) {
                                 $submissionFile = SubmissionFile::query()
                                     ->where('submission_id', $this->record->getKey())
+                                    ->where('review_round_id', $reviewRound->getKey())
                                     ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
                                     ->find($submissionFileId);
 

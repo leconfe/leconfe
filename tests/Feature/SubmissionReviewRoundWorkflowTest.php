@@ -24,12 +24,15 @@ use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use App\Models\Track;
 use App\Models\User;
+use App\Panel\ScheduledConference\Pages\ReviewResult;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -37,6 +40,14 @@ use Tests\TestCase;
 class SubmissionReviewRoundWorkflowTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Route::get('/test/submissions/{record}/review', fn () => null)
+            ->name('filament.conference.resources.submissions.review');
+    }
 
     public function test_it_starts_a_new_review_round_and_closes_the_previous_open_round(): void
     {
@@ -147,6 +158,63 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'round_number' => 1,
             'status' => SubmissionReviewRound::STATUS_OPEN,
         ]);
+    }
+
+    public function test_initial_round_inherits_existing_unscoped_paper_files(): void
+    {
+        $context = $this->makeSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'legacy-paper',
+            'file_name' => 'legacy-paper.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $legacyFile = SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'media_id' => $media->getKey(),
+            'user_id' => $context['submission']->user_id,
+            'category' => SubmissionFileCategory::PAPER_FILES,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        SubmissionUpdateAction::run([
+            'stage' => SubmissionStage::PeerReview,
+            'status' => SubmissionStatus::OnReview,
+        ], $context['submission']);
+
+        $round = SubmissionReviewRound::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('round_number', 1)
+            ->firstOrFail();
+
+        $legacyFile->refresh();
+        $round->refresh();
+
+        $this->assertSame($round->getKey(), $legacyFile->review_round_id);
+        $this->assertContains($legacyFile->getKey(), $round->default_file_ids);
     }
 
     public function test_it_creates_initial_round_when_submission_moves_to_on_payment_in_peer_review_stage(): void
@@ -516,6 +584,169 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertContains($clonedFile->getKey(), $secondRound->default_file_ids);
     }
 
+    public function test_previous_round_revision_files_can_be_taken_into_the_active_round_as_paper_files(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+        $context['editor']->assignRole($this->createAuthorRole());
+
+        $firstRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $revisionMedia = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::REVISION_FILES,
+            'name' => 'revision-round-one',
+            'file_name' => 'revision-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 321,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $revisionMedia,
+            SubmissionFileCategory::REVISION_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        $revisionFile = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $firstRound->getKey())
+            ->where('category', SubmissionFileCategory::REVISION_FILES)
+            ->firstOrFail();
+
+        $secondRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Livewire::test(PaperFiles::class, ['submission' => $context['submission']])
+            ->callTableAction('select-files', data: [
+                'file_ids' => [$revisionFile->getKey()],
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $this->assertDatabaseHas('submission_files', [
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $secondRound->getKey(),
+            'category' => SubmissionFileCategory::PAPER_FILES,
+        ]);
+    }
+
+    public function test_assigning_reviewer_ignores_files_outside_the_selected_round(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+
+        $editorRole = Role::withoutGlobalScopes()
+            ->where('name', UserRole::ScheduledConferenceEditor->value)
+            ->where('conference_id', app()->getCurrentConferenceId())
+            ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
+            ->firstOrFail();
+
+        $context['editor']->assignRole($editorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['editor']->getKey(),
+            'role_id' => $editorRole->getKey(),
+        ]);
+
+        $context['reviewerA']->assignRole($this->createReviewerRole());
+
+        $firstRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $roundOneMedia = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::PAPER_FILES,
+            'name' => 'paper-round-one',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $roundOneMedia,
+            SubmissionFileCategory::PAPER_FILES,
+            $type,
+            $firstRound->getKey(),
+        );
+
+        $roundOneFile = SubmissionFile::query()
+            ->where('review_round_id', $firstRound->getKey())
+            ->firstOrFail();
+
+        $secondRound = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+        $secondRound->update([
+            'default_file_ids' => [$roundOneFile->getKey()],
+        ]);
+
+        Livewire::test(ReviewerList::class, ['record' => $context['submission']])
+            ->callTableAction('add-reviewer', data: [
+                'user_id' => $context['reviewerA']->getKey(),
+                'subject' => 'Review request',
+                'message' => 'Please review.',
+                'no-invitation-notification' => true,
+                'meta' => [
+                    'response_due_date' => now()->addDay()->format('Y-m-d'),
+                    'review_due_date' => now()->addWeek()->format('Y-m-d'),
+                    'review_mode' => Review::MODE_OPEN,
+                    'open_review_for_author' => false,
+                ],
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $review = Review::query()
+            ->where('review_round_id', $secondRound->getKey())
+            ->where('user_id', $context['reviewerA']->getKey())
+            ->firstOrFail();
+
+        $this->assertDatabaseMissing('reviewer_assigned_files', [
+            'review_id' => $review->getKey(),
+            'submission_file_id' => $roundOneFile->getKey(),
+        ]);
+    }
+
     public function test_review_email_message_is_scoped_to_the_given_round(): void
     {
         $context = $this->makeSubmissionContext();
@@ -611,6 +842,166 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertSame(1, $submission->latestReviewRound->latest_round_reviews_count);
         $this->assertSame(1, $submission->latestReviewRound->latest_round_completed_reviews_count);
         $this->assertSame(2.0, (float) $submission->latestReviewRound->latest_round_reviews_avg_score);
+    }
+
+    public function test_review_result_includes_completed_reviews_from_closed_rounds(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 4,
+            'recommendation' => 'Accept',
+            'date_completed' => now(),
+        ]);
+
+        $round->update([
+            'status' => SubmissionReviewRound::STATUS_CLOSED,
+            'closed_at' => now(),
+        ]);
+
+        $submission = ReviewResult::reviewResultsQuery()
+            ->whereKey($context['submission']->getKey())
+            ->first();
+
+        $this->assertNotNull($submission);
+        $this->assertSame(1, $submission->effective_completed_reviews_count);
+        $this->assertSame(4.0, (float) $submission->effective_reviews_avg_score);
+    }
+
+    public function test_review_result_uses_each_reviewers_latest_review_across_rounds(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 5,
+            'recommendation' => 'Accept',
+            'date_completed' => now()->subHours(4),
+        ]);
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerB']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 5,
+            'recommendation' => 'Accept',
+            'date_completed' => now()->subHours(3),
+        ]);
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerC']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 1,
+            'recommendation' => 'Revision',
+            'date_completed' => now()->subHours(2),
+        ]);
+
+        $roundTwo = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundTwo->getKey(),
+            'user_id' => $context['reviewerC']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 4,
+            'recommendation' => 'Accept',
+            'date_completed' => now()->subHour(),
+        ]);
+
+        $submission = ReviewResult::reviewResultsQuery()
+            ->whereKey($context['submission']->getKey())
+            ->first();
+
+        $this->assertNotNull($submission);
+        $this->assertSame(3, $submission->effective_reviews_count);
+        $this->assertSame(3, $submission->effective_completed_reviews_count);
+        $this->assertEqualsWithDelta(4.6667, (float) $submission->effective_reviews_avg_score, 0.001);
+    }
+
+    public function test_review_result_keeps_pending_latest_review_in_total_count(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $roundOne = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 5,
+            'date_completed' => now()->subHours(3),
+        ]);
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerB']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 3,
+            'date_completed' => now()->subHours(2),
+        ]);
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundOne->getKey(),
+            'user_id' => $context['reviewerC']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 1,
+            'date_completed' => now()->subHour(),
+        ]);
+
+        $roundTwo = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $roundTwo->getKey(),
+            'user_id' => $context['reviewerC']->getKey(),
+            'status' => ReviewerStatus::PENDING,
+        ]);
+
+        $submission = ReviewResult::reviewResultsQuery()
+            ->whereKey($context['submission']->getKey())
+            ->first();
+
+        $this->assertNotNull($submission);
+        $this->assertSame(3, $submission->effective_reviews_count);
+        $this->assertSame(2, $submission->effective_completed_reviews_count);
+        $this->assertSame(4.0, (float) $submission->effective_reviews_avg_score);
     }
 
     public function test_stale_review_submission_page_rejects_submit_after_a_new_round_starts(): void

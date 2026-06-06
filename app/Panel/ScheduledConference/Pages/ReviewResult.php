@@ -4,7 +4,6 @@ namespace App\Panel\ScheduledConference\Pages;
 
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
-use App\Models\SubmissionReviewRound;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -13,8 +12,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReviewResult extends Page implements HasForms, HasTable
 {
@@ -36,35 +38,57 @@ class ReviewResult extends Page implements HasForms, HasTable
         return Auth::user()->can('update', App::getCurrentScheduledConference());
     }
 
+    public static function reviewResultsQuery(): Builder
+    {
+        return Submission::query()
+            ->with(['meta'])
+            ->whereIn('status', [
+                SubmissionStatus::OnReview,
+                SubmissionStatus::OnPresentation,
+                SubmissionStatus::Editing,
+                SubmissionStatus::Published,
+            ])
+            ->whereExists(static::effectiveReviewsSubquery()
+                ->selectRaw('1')
+                ->whereNotNull('effective_reviews.date_completed'))
+            ->selectSub(static::effectiveReviewsSubquery()
+                ->selectRaw('count(*)'), 'effective_reviews_count')
+            ->selectSub(static::effectiveReviewsSubquery()
+                ->selectRaw('count(*)')
+                ->whereNotNull('effective_reviews.date_completed'), 'effective_completed_reviews_count')
+            ->selectSub(static::effectiveReviewsSubquery()
+                ->selectRaw('avg(effective_reviews.score)')
+                ->whereNotNull('effective_reviews.date_completed'), 'effective_reviews_avg_score');
+    }
+
+    protected static function effectiveReviewsSubquery(): QueryBuilder
+    {
+        return DB::table('reviews as effective_reviews')
+            ->join('submission_review_rounds as effective_rounds', 'effective_rounds.id', '=', 'effective_reviews.review_round_id')
+            ->whereColumn('effective_reviews.submission_id', 'submissions.id')
+            ->whereNotExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('reviews as newer_reviews')
+                    ->join('submission_review_rounds as newer_rounds', 'newer_rounds.id', '=', 'newer_reviews.review_round_id')
+                    ->whereColumn('newer_reviews.submission_id', 'effective_reviews.submission_id')
+                    ->whereColumn('newer_reviews.user_id', 'effective_reviews.user_id')
+                    ->where(function ($query) {
+                        $query->whereColumn('newer_rounds.round_number', '>', 'effective_rounds.round_number')
+                            ->orWhere(function ($query) {
+                                $query->whereColumn('newer_rounds.round_number', 'effective_rounds.round_number')
+                                    ->whereColumn('newer_reviews.id', '>', 'effective_reviews.id');
+                            });
+                    });
+            });
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                Submission::query()
-                    ->with(['meta'])
-                    ->whereIn('status', [
-                        SubmissionStatus::OnReview,
-                        SubmissionStatus::OnPresentation,
-                        SubmissionStatus::Editing,
-                        SubmissionStatus::Published,
-                    ])
-                    ->whereHas('reviews', fn ($query) => $query
-                        ->whereNotNull('date_completed')
-                        ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)))
-                    ->withCount([
-                        'reviews as active_round_reviews_count' => fn ($query) => $query
-                            ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
-                        'reviews as active_round_completed_reviews_count' => fn ($query) => $query
-                            ->whereNotNull('date_completed')
-                            ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN)),
-                    ])
-                    ->withAvg(['reviews as active_round_reviews_avg_score' => fn ($query) => $query
-                        ->whereNotNull('date_completed')
-                        ->whereHas('reviewRound', fn ($roundQuery) => $roundQuery->where('status', SubmissionReviewRound::STATUS_OPEN))], 'score'),
-            )
-            ->defaultSort('active_round_reviews_avg_score', 'desc')
+            ->query(static::reviewResultsQuery())
+            ->defaultSort('effective_reviews_avg_score', 'desc')
             ->columns([
-                TextColumn::make('active_round_reviews_avg_score')
+                TextColumn::make('effective_reviews_avg_score')
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])
@@ -76,7 +100,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])
-                    ->getStateUsing(fn ($record) => $record->active_round_completed_reviews_count.' / '.$record->active_round_reviews_count),
+                    ->getStateUsing(fn ($record) => $record->effective_completed_reviews_count.' / '.$record->effective_reviews_count),
                 TextColumn::make('id')
                     ->label('ID')
                     ->extraCellAttributes([

@@ -10,6 +10,12 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
+use App\Mail\Templates\RevisionRequestMail;
+use App\Constants\SubmissionFileCategory;
+use App\Models\Media;
+use App\Models\SubmissionFile;
+use App\Models\SubmissionFileType;
+use App\Models\SubmissionReviewRound;
 use App\Models\Track;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\CallforAbstract;
@@ -18,6 +24,7 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -189,6 +196,124 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->assertSame(SubmissionStatus::OnReview, $context['submission']->status);
     }
 
+    public function test_send_for_review_assigns_selected_abstract_file_to_the_initial_review_round(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Abstract',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::ABSTRACT_FILES,
+            'name' => 'abstract',
+            'file_name' => 'abstract.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $abstractFile = SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'media_id' => $media->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
+            ->callAction('accept', data: $this->callForAbstractNotificationData([
+                'papers' => [$abstractFile->getKey()],
+            ]));
+
+        $round = SubmissionReviewRound::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('round_number', 1)
+            ->firstOrFail();
+
+        $this->assertDatabaseHas('submission_files', [
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'category' => SubmissionFileCategory::PAPER_FILES,
+        ]);
+    }
+
+    public function test_send_for_review_creates_round_for_legacy_on_review_submission_without_round(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::PeerReview,
+            'status' => SubmissionStatus::OnReview,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Abstract',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::ABSTRACT_FILES,
+            'name' => 'legacy-abstract',
+            'file_name' => 'legacy-abstract.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $abstractFile = SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'media_id' => $media->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
+            ->callAction('accept', data: $this->callForAbstractNotificationData([
+                'papers' => [$abstractFile->getKey()],
+            ]));
+
+        $round = SubmissionReviewRound::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('round_number', 1)
+            ->firstOrFail();
+
+        $this->assertDatabaseHas('submission_files', [
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'category' => SubmissionFileCategory::PAPER_FILES,
+        ]);
+    }
+
     public function test_call_for_abstract_decision_can_skip_editing_submission_to_presentation(): void
     {
         Mail::fake();
@@ -229,6 +354,27 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->assertSame(SubmissionStage::PeerReview, $context['submission']->stage);
         $this->assertSame(SubmissionStatus::OnReview, $context['submission']->status);
         $this->assertTrue($context['submission']->revision_required);
+    }
+
+    public function test_peer_review_request_revision_defaults_to_notifying_author_when_checkbox_is_omitted(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::Presentation,
+            'status' => SubmissionStatus::OnPresentation,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->callAction('requestRevisionAction', data: [
+                'email' => $context['author']->email,
+                'subject' => 'Need revision',
+                'message' => 'Please revise.',
+            ]);
+
+        Mail::assertQueued(RevisionRequestMail::class);
     }
 
     public function test_peer_review_decision_can_move_editing_submission_back_to_presentation(): void
