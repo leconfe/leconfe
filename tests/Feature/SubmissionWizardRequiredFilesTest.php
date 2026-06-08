@@ -257,6 +257,42 @@ class SubmissionWizardRequiredFilesTest extends TestCase
         ]);
     }
 
+    public function test_submission_file_table_loads_submission_for_delete_authorization(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $this->actingAs($context['user']);
+        Gate::before(fn () => true);
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $record = Livewire::test(AbstractFiles::class, ['submission' => $submission])
+            ->instance()
+            ->tableQuery()
+            ->whereKey($submissionFile->getKey())
+            ->firstOrFail();
+
+        $this->assertTrue($record->relationLoaded('submission'));
+        $this->assertTrue($context['user']->can('deleteFile', $record->submission));
+    }
+
     public function test_submission_file_table_shows_when_the_file_was_uploaded(): void
     {
         $context = $this->makeSubmissionContext();

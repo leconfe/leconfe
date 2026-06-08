@@ -296,7 +296,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     {
         return $this->submission
             ->submissionFiles()
-            ->with(['media'])
+            ->with(['media', 'submission'])
             ->where('category', $this->category)
             ->getQuery();
     }
