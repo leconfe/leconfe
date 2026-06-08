@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use App\Models\Role;
 
-class Upgrade143 extends UpgradeBase
+class Upgrade144 extends UpgradeBase
 {
     public function run(): void
     {
