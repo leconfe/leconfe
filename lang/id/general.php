@@ -790,6 +790,8 @@ return [
     'send' => 'Kirim',
     'cancel_reviewer' => 'Batalkan Reviewer',
     'reviewer_canceled' => 'Reviewer dibatalkan',
+    'unassign_reviewer' => 'Batalkan Penugasan Reviewer',
+    'reviewer_unassigned' => 'Penugasan reviewer dihapus',
     'reinstate_reviewer' => 'Pulihkan Reviewer',
     'reviewer_reinstated' => 'Reviewer dipulihkan',
     'user_not_found' => 'Pengguna tidak ditemukan',

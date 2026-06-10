@@ -93,6 +93,15 @@ class SubmissionPolicy
         return $user->can('actAsEditor', $submission);
     }
 
+    public function unassignReviewer(User $user, Submission $submission)
+    {
+        if (in_array($submission->status, [SubmissionStatus::Declined, SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {
+            return false;
+        }
+
+        return $user->can('actAsEditor', $submission);
+    }
+
     public function emailReviewer(User $user, Submission $submission)
     {
         if (in_array($submission->status, [SubmissionStatus::Declined, SubmissionStatus::Withdrawn, SubmissionStatus::Published, SubmissionStatus::OnPayment, SubmissionStatus::PaymentDeclined, SubmissionStatus::Queued])) {

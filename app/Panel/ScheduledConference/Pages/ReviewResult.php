@@ -47,12 +47,12 @@ class ReviewResult extends Page implements HasForms, HasTable
                         SubmissionStatus::Editing,
                         SubmissionStatus::Published,
                     ])
-                    ->whereHas('reviews', fn ($query) => $query->whereNotNull('date_completed'))
+                    ->whereHas('reviews', fn ($query) => $query->submittedForDecision())
                     ->withCount([
-                        'reviews',
-                        'reviews as completed_reviews_count' => fn ($query) => $query->whereNotNull('date_completed'),
+                        'reviews' => fn ($query) => $query->activeAssignments(),
+                        'reviews as completed_reviews_count' => fn ($query) => $query->submittedForDecision(),
                     ])
-                    ->withAvg(['reviews' => fn ($query) => $query->whereNotNull('date_completed')], 'score'),
+                    ->withAvg(['reviews' => fn ($query) => $query->submittedForDecision()], 'score'),
             )
             ->defaultSort('reviews_avg_score', 'desc')
             ->columns([

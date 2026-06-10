@@ -780,6 +780,8 @@ return [
     'email_sent' => 'E-pochta yuborildi',
     'cancel_reviewer' => 'Retsenzentni bekor qilish',
     'reviewer_canceled' => 'Retsenzent bekor qilindi',
+    'unassign_reviewer' => 'Unassign Reviewer',
+    'reviewer_unassigned' => 'Reviewer assignment removed',
     'reinstate_reviewer' => 'Retsenzentni qayta faollashtirish',
     'reviewer_reinstated' => 'Retsenzent qayta tiklandi',
     'user_not_found' => 'Foydalanuvchi topilmadi',

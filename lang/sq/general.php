@@ -792,6 +792,8 @@ return [
     'send' => 'Dërgo',
     'cancel_reviewer' => 'Anulo Rishikuesin',
     'reviewer_canceled' => 'Rishikuesi është anuluar',
+    'unassign_reviewer' => 'Unassign Reviewer',
+    'reviewer_unassigned' => 'Reviewer assignment removed',
     'reinstate_reviewer' => 'Rivendos Rishikuesin',
     'reviewer_reinstated' => 'Rishikuesi është rivendosur',
     'user_not_found' => 'Përdoruesi nuk u Gjet',

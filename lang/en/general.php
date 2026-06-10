@@ -827,6 +827,8 @@ return [
     'send' => 'Send',
     'cancel_reviewer' => 'Cancel Reviewer',
     'reviewer_canceled' => 'Reviewer canceled',
+    'unassign_reviewer' => 'Unassign Reviewer',
+    'reviewer_unassigned' => 'Reviewer assignment removed',
     'reinstate_reviewer' => 'Reinstate Reviewer',
     'reviewer_reinstated' => 'Reviewer Reinstated',
     'user_not_found' => 'User not Found',
