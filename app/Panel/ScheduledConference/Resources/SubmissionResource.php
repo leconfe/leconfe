@@ -51,8 +51,8 @@ class SubmissionResource extends Resource
         return parent::getEloquentQuery()
             ->withCount([
                 'editors',
-                'reviews',
-                'reviews as completed_reviews_count' => fn($query) => $query->whereNotNull('date_completed'),
+                'reviews' => fn($query) => $query->activeAssignments(),
+                'reviews as completed_reviews_count' => fn($query) => $query->submittedForDecision(),
             ])
             ->with(['meta', 'user', 'reviews', 'participants', 'editors'])
             ->orderBy('updated_at', 'desc');
