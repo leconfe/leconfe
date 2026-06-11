@@ -29,7 +29,7 @@ class ResetPasswordMail extends TemplateMailable
             name: 'email',
             subject: $user,
             description: __('general.email_sent', ['name' => 'Reset user password']),
-        );
+        )->by(auth()->user());
     }
 
     protected function verificationUrl($user)
@@ -51,7 +51,7 @@ class ResetPasswordMail extends TemplateMailable
                 'user' => $user->email,
                 'hash' => sha1($user->email.$user->password.$user->getMeta('last_login')),
             ]
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

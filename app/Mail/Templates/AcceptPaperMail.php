@@ -33,7 +33,7 @@ class AcceptPaperMail extends TemplateMailable
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'Paper Accepted']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

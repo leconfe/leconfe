@@ -38,7 +38,7 @@ class ParticipantAssignedMail extends TemplateMailable
             name: 'email',
             subject: $participant->submission,
             description: __('general.email_sent', ['name' => 'Participant Assigned'])
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

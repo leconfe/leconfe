@@ -28,7 +28,7 @@ class VerifyUserEmail extends TemplateMailable
             name: 'email',
             subject: $user,
             description: __('general.email_sent', ['name' => 'Verify user Email']),
-        );
+        )->by(auth()->user());
     }
 
     protected function verificationUrl($user)
@@ -53,7 +53,7 @@ class VerifyUserEmail extends TemplateMailable
             $routeName,
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             $parameters
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

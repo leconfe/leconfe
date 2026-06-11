@@ -28,7 +28,7 @@ class NewPaperUploadedMail extends TemplateMailable
             name: 'email',
             subject: $submissionFile->submission,
             description: __('general.email_sent', ['name' => 'New Paper Uploaded']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

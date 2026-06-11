@@ -24,7 +24,7 @@ class ThankAuthorMail extends TemplateMailable
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'Thank Author']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

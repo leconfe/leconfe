@@ -27,7 +27,7 @@ class DeclinePaperMail extends TemplateMailable
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'Paper Declined']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string
