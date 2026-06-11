@@ -2,6 +2,7 @@
 
 namespace App\Mail\Templates;
 
+use App\Classes\Log;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\Submission;
@@ -9,6 +10,8 @@ use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class ParticipantRegisteredMail extends TemplateMailable
 {
+    public Log $log;
+
     public function __construct(Participant $participant)
     {
         $this->setAdditionalData([
@@ -19,6 +22,12 @@ class ParticipantRegisteredMail extends TemplateMailable
             'Payment Link' => PaymentDetail::getUrl(['record' => $participant->payment]),
             'Payment Fee Name' => $participant->payment->fee->name,
         ]);
+
+        $this->log = Log::make(
+            name: 'email',
+            subject: $participant,
+            description: __('general.email_sent', ['name' => 'Participant Registered']),
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

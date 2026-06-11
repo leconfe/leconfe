@@ -2,6 +2,7 @@
 
 namespace App\Mail\Templates;
 
+use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Payment;
 use App\Models\Submission;
@@ -9,6 +10,8 @@ use App\Models\Submission;
 class SubmissionPaymentMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
+
+    public Log $log;
 
     public function __construct(Submission $submission)
     {
@@ -20,6 +23,12 @@ class SubmissionPaymentMail extends TemplateMailable
             'Payment Amount' => $submission->payment->getFormattedFee(),
             'Payment Link' => $submission->payment->getPaymentDetailUrl()
         ]);
+
+        $this->log = Log::make(
+            name: 'email',
+            subject: $submission,
+            description: __('general.email_sent', ['name' => 'Submission Payment']),
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string
