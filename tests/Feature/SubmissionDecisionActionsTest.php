@@ -314,6 +314,60 @@ class SubmissionDecisionActionsTest extends TestCase
         ]);
     }
 
+    public function test_call_for_abstract_decision_clears_skipped_review_when_sending_a_skipped_submission_back_to_review(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::Presentation,
+            'status' => SubmissionStatus::OnPresentation,
+            'skipped_review' => true,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
+            ->callAction('accept', data: $this->callForAbstractNotificationData([
+                'papers' => [],
+            ]));
+
+        $context['submission']->refresh();
+
+        $this->assertSame(SubmissionStage::PeerReview, $context['submission']->stage);
+        $this->assertSame(SubmissionStatus::OnReview, $context['submission']->status);
+        $this->assertFalse($context['submission']->skipped_review);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->assertDontSee(__('general.review_skipped'));
+    }
+
+    public function test_call_for_abstract_decision_clears_stale_skipped_review_when_resending_to_review(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::PeerReview,
+            'status' => SubmissionStatus::OnReview,
+            'skipped_review' => true,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
+            ->callAction('accept', data: $this->callForAbstractNotificationData([
+                'papers' => [],
+            ]));
+
+        $context['submission']->refresh();
+
+        $this->assertSame(SubmissionStage::PeerReview, $context['submission']->stage);
+        $this->assertSame(SubmissionStatus::OnReview, $context['submission']->status);
+        $this->assertFalse($context['submission']->skipped_review);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->assertDontSee(__('general.review_skipped'));
+    }
+
     public function test_call_for_abstract_decision_can_skip_editing_submission_to_presentation(): void
     {
         Mail::fake();

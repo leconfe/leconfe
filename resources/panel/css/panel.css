@@ -105,9 +105,9 @@ body {
     @apply !bg-white;
 }
 
-.fi-ta-group-header {
+/* .fi-ta-group-header {
     @apply !bg-white !py-3;
-}
+} */
 
 .fi-ta-group-header .grid h4 {
     @apply !py-2;

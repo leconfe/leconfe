@@ -362,7 +362,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         $this->reviews()
             ->where('review_round_id', $reviewRoundId)
             ->with(['user'])
-            ->whereNotNull('date_completed')
+            ->submittedForDecision()
             ->get()
             ->each(function ($review, $key) use (&$message) {
                 $data = [

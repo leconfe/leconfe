@@ -574,13 +574,104 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                             });
                             $action->success();
                         }),
+                    Action::make('unassign-reviewer')
+                        ->color('danger')
+                        ->authorize(fn () => auth()->user()->can('unassignReviewer', $this->record))
+                        ->icon('iconpark-deletethree-o')
+                        ->label(__('general.unassign_reviewer'))
+                        ->hidden(
+                            fn (Review $record) => ! $record->canBeUnassigned()
+                        )
+                        ->successNotificationTitle(__('general.reviewer_unassigned'))
+                        ->modalWidth('2xl')
+                        ->mountUsing(function (Form $form, Review $record) {
+                            $mailTemplate = DefaultMailTemplate::where('mailable', ReviewerCancelationMail::class)->first();
+                            $form->fill([
+                                'email' => $record->user->email,
+                                'subject' => $mailTemplate ? $mailTemplate->subject : '',
+                                'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            ]);
+                        })
+                        ->form([
+                            Fieldset::make('Notification')
+                                ->label(__('general.notification'))
+                                ->columns(1)
+                                ->schema([
+                                    TextInput::make('email')
+                                        ->label(__('general.email'))
+                                        ->disabled()
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->dehydrated(),
+                                    TextInput::make('subject')
+                                        ->label(__('general.subject'))
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    TinyEditor::make('message')
+                                        ->label(__('general.message'))
+                                        ->minHeight(300)
+                                        ->profile('email')
+                                        ->hidden(fn (Get $get) => $get('do-not-notify-cancelation'))
+                                        ->columnSpanFull(),
+                                    Checkbox::make('do-not-notify-cancelation')
+                                        ->reactive()
+                                        ->label(__('general.dont_send_notification'))
+                                        ->columnSpanFull(),
+                                ]),
+                        ])
+                        ->action(function (Action $action, Review $record, array $data) {
+                            try {
+                                DB::beginTransaction();
+
+                                $record->assignedFiles()->delete();
+
+                                Log::make(
+                                    name: 'submission',
+                                    subject: $this->record,
+                                    description: __('general.submission_review_assign_canceled', [
+                                        'submissionId' => $this->record->getKey(),
+                                        'submissionName' => $this->record->getMeta('title'),
+                                        'name' => $record->user->full_name,
+                                    ]),
+                                )
+                                    ->by(auth()->user())
+                                    ->save();
+
+                                $record->delete();
+
+                                DB::commit();
+                            } catch (\Throwable $th) {
+                                DB::rollBack();
+
+                                $action->failureNotificationTitle($th->getMessage());
+                                $action->failure();
+
+                                return;
+                            }
+
+                            if (! data_get($data, 'do-not-notify-cancelation', false)) {
+                                try {
+                                    Mail::to($record->user->email)
+                                        ->send(
+                                            (new ReviewerCancelationMail($record))
+                                                ->subjectUsing($data['subject'])
+                                                ->contentUsing($data['message'])
+                                        );
+                                } catch (\Exception $e) {
+                                    $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
+                                    $action->failure();
+                                }
+                            }
+
+                            $action->success();
+                        }),
                     Action::make('cancel-reviewer')
                         ->color('danger')
                         ->authorize(fn () => auth()->user()->can('cancelReviewer', $this->record))
                         ->icon('iconpark-deletethree-o')
                         ->label(__('general.cancel_reviewer'))
                         ->hidden(
-                            fn (Review $record) => $record->status == ReviewerStatus::CANCELED || $record->confirmed()
+                            fn (Review $record) => ! $record->canBeCanceled()
                         )
                         ->successNotificationTitle(__('general.reviewer_canceled'))
                         ->modalWidth('2xl')
@@ -674,7 +765,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                         ])
                         ->action(function (Action $action, Review $record) {
                             $record->update([
-                                'status' => ReviewerStatus::PENDING,
+                                'status' => $record->date_confirmed ? ReviewerStatus::ACCEPTED : ReviewerStatus::PENDING,
                             ]);
                             $action->success();
                         }),

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Constants\ReviewerStatus;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
@@ -45,6 +47,31 @@ class Review extends Model implements HasMedia
     public function reviewSubmitted(): bool
     {
         return ! is_null($this->recommendation) && ! is_null($this->date_completed);
+    }
+
+    public function canBeUnassigned(): bool
+    {
+        return $this->status === ReviewerStatus::PENDING && is_null($this->date_confirmed);
+    }
+
+    public function canBeCanceled(): bool
+    {
+        return $this->status === ReviewerStatus::ACCEPTED;
+    }
+
+    public function scopeActiveAssignments(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            ReviewerStatus::PENDING,
+            ReviewerStatus::ACCEPTED,
+        ]);
+    }
+
+    public function scopeSubmittedForDecision(Builder $query): Builder
+    {
+        return $query
+            ->where('status', ReviewerStatus::ACCEPTED)
+            ->whereNotNull('date_completed');
     }
 
     public function assignedFiles()

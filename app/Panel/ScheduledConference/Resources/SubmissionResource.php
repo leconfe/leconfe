@@ -51,6 +51,8 @@ class SubmissionResource extends Resource
         return parent::getEloquentQuery()
             ->withCount([
                 'editors',
+                'reviews' => fn ($query) => $query->activeAssignments(),
+                'reviews as completed_reviews_count' => fn ($query) => $query->submittedForDecision(),
             ])
             ->with([
                 'meta',

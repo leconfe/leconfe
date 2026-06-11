@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
+use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -50,14 +51,17 @@ class ReviewResult extends Page implements HasForms, HasTable
             ])
             ->whereExists(static::effectiveReviewsSubquery()
                 ->selectRaw('1')
+                ->where('effective_reviews.status', ReviewerStatus::ACCEPTED)
                 ->whereNotNull('effective_reviews.date_completed'))
             ->selectSub(static::effectiveReviewsSubquery()
                 ->selectRaw('count(*)'), 'effective_reviews_count')
             ->selectSub(static::effectiveReviewsSubquery()
                 ->selectRaw('count(*)')
+                ->where('effective_reviews.status', ReviewerStatus::ACCEPTED)
                 ->whereNotNull('effective_reviews.date_completed'), 'effective_completed_reviews_count')
             ->selectSub(static::effectiveReviewsSubquery()
                 ->selectRaw('avg(effective_reviews.score)')
+                ->where('effective_reviews.status', ReviewerStatus::ACCEPTED)
                 ->whereNotNull('effective_reviews.date_completed'), 'effective_reviews_avg_score');
     }
 
@@ -66,6 +70,10 @@ class ReviewResult extends Page implements HasForms, HasTable
         return DB::table('reviews as effective_reviews')
             ->join('submission_review_rounds as effective_rounds', 'effective_rounds.id', '=', 'effective_reviews.review_round_id')
             ->whereColumn('effective_reviews.submission_id', 'submissions.id')
+            ->whereIn('effective_reviews.status', [
+                ReviewerStatus::PENDING,
+                ReviewerStatus::ACCEPTED,
+            ])
             ->whereNotExists(function ($query) {
                 $query->selectRaw('1')
                     ->from('reviews as newer_reviews')

@@ -816,6 +816,8 @@ return [
     'send' => 'إرسال',
     'cancel_reviewer' => 'إلغاء المراجع',
     'reviewer_canceled' => 'تم إلغاء المراجع',
+    'unassign_reviewer' => 'Unassign Reviewer',
+    'reviewer_unassigned' => 'Reviewer assignment removed',
     'reinstate_reviewer' => 'إعادة تفعيل المراجع',
     'reviewer_reinstated' => 'تمت إعادة تفعيل المراجع',
     'user_not_found' => 'لم يتم العثور على المستخدم',
