@@ -17,7 +17,17 @@ class OnReviewSubmissionState extends BaseSubmissionState
 
     public function acceptAbstract(): void
     {
-        // Repeating the current decision is allowed so editors can resend its notification.
+        if (! $this->submission->skipped_review) {
+            // Repeating the current decision is allowed so editors can resend its notification.
+            return;
+        }
+
+        SubmissionUpdateAction::run([
+            'skipped_review' => false,
+            'revision_required' => false,
+            'stage' => SubmissionStage::PeerReview,
+            'status' => SubmissionStatus::OnReview,
+        ], $this->submission);
     }
 
     public function acceptAndSkipReview(): void
