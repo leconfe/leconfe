@@ -4,8 +4,6 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\Participant;
-use App\Models\Payment;
-use App\Models\Submission;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class ParticipantRegisteredMail extends TemplateMailable

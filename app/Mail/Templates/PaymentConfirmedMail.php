@@ -3,10 +3,7 @@
 namespace App\Mail\Templates;
 
 use App\Classes\Log;
-use App\Managers\PaymentManager;
-use App\Models\Participant;
 use App\Models\Payment;
-use App\Models\Submission;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class PaymentConfirmedMail extends TemplateMailable

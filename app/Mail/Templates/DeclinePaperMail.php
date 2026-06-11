@@ -22,7 +22,7 @@ class DeclinePaperMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
-        
+
         $this->log = Log::make(
             name: 'email',
             subject: $submission,

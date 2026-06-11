@@ -23,7 +23,7 @@ class NewPaperUploadedMail extends TemplateMailable
             'Submission Title' => $submissionFile->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submissionFile->submission]),
         ]);
-        
+
         $this->log = Log::make(
             name: 'email',
             subject: $submissionFile->submission,

@@ -21,7 +21,7 @@ class NewDiscussionTopicMail extends TemplateMailable
         $this->setAdditionalData([
             'Submission Title' => $discussionTopic->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $discussionTopic->submission]),
-            'Topic Name' =>  $discussionTopic->name,
+            'Topic Name' => $discussionTopic->name,
         ]);
 
         $this->log = Log::make(

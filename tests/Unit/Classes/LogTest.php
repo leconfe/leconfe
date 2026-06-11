@@ -13,9 +13,9 @@ class LogTest extends TestCase
 
     public function test_log_can_set_causer_from_model(): void
     {
-        $user = new User();
+        $user = new User;
         $user->id = 1;
-        $submission = new \App\Models\Submission();
+        $submission = new \App\Models\Submission;
         $submission->id = 1;
 
         $log = Log::make(
@@ -30,9 +30,9 @@ class LogTest extends TestCase
 
     public function test_log_serializes_causer_scalars(): void
     {
-        $user = new User();
+        $user = new User;
         $user->id = 1;
-        $submission = new \App\Models\Submission();
+        $submission = new \App\Models\Submission;
         $submission->id = 1;
 
         $log = Log::make(
@@ -50,7 +50,7 @@ class LogTest extends TestCase
 
     public function test_log_by_anonymous_sets_null_causer(): void
     {
-        $submission = new \App\Models\Submission();
+        $submission = new \App\Models\Submission;
         $submission->id = 1;
 
         $log = Log::make(

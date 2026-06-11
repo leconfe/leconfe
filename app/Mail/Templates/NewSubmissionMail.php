@@ -20,7 +20,6 @@ class NewSubmissionMail extends TemplateMailable
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
 
-
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
