@@ -27,7 +27,7 @@ class AcceptAbstractMail extends TemplateMailable
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'Abstract Accepted']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

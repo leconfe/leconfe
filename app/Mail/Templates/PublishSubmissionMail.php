@@ -32,7 +32,7 @@ class PublishSubmissionMail extends TemplateMailable
             subject: $submission,
             name: 'email',
             description: __('general.email_sent', ['name' => 'Submission Published']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

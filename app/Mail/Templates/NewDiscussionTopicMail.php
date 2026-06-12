@@ -2,6 +2,7 @@
 
 namespace App\Mail\Templates;
 
+use App\Classes\Log;
 use App\Models\DiscussionTopic;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
@@ -13,13 +14,21 @@ class NewDiscussionTopicMail extends TemplateMailable
 
     public string $linkLogin;
 
+    public Log $log;
+
     public function __construct(DiscussionTopic $discussionTopic)
     {
         $this->setAdditionalData([
             'Submission Title' => $discussionTopic->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $discussionTopic->submission]),
-            'Topic Name' =>  $discussionTopic->name,
+            'Topic Name' => $discussionTopic->name,
         ]);
+
+        $this->log = Log::make(
+            name: 'email',
+            subject: $discussionTopic->submission,
+            description: __('general.email_sent', ['name' => 'New Discussion Topic']),
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

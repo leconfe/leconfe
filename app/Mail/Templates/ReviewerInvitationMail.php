@@ -38,12 +38,12 @@ class ReviewerInvitationMail extends TemplateMailable
             'Response Due Date' => Carbon::parse($review->getMeta('response_due_date'))->format('d F Y'),
             'Review Due Date' => Carbon::parse($review->getMeta('review_due_date'))->format('d F Y'),
         ]);
-        
+
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
             description: __('general.email_sent', ['name' => 'Reviewer Invitation']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

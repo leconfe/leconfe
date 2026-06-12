@@ -11,6 +11,10 @@ class Log
 
     public ?Model $causer = null;
 
+    public ?int $causerId = null;
+
+    public ?string $causerType = null;
+
     use Conditionable;
 
     public function __construct(
@@ -44,6 +48,8 @@ class Log
     public function causer(?Model $causer): static
     {
         $this->causer = $causer;
+        $this->causerId = $causer?->getKey();
+        $this->causerType = $causer ? get_class($causer) : null;
 
         return $this;
     }
@@ -74,10 +80,12 @@ class Log
 
     public function save(): void
     {
+        $causer = $this->resolveCauser();
+
         activity($this->name)
             ->when(
-                $this->causer,
-                fn ($log) => $log->by($this->causer),
+                $causer,
+                fn ($log) => $log->by($causer),
                 fn ($log) => $log->byAnonymous()
             )
             ->when(
@@ -86,5 +94,18 @@ class Log
             )
             ->performedOn($this->subject)
             ->log($this->description);
+    }
+
+    protected function resolveCauser(): ?Model
+    {
+        if ($this->causer) {
+            return $this->causer;
+        }
+
+        if ($this->causerId && $this->causerType) {
+            return $this->causerType::find($this->causerId);
+        }
+
+        return null;
     }
 }
