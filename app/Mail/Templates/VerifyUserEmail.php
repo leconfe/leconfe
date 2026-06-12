@@ -53,7 +53,7 @@ class VerifyUserEmail extends TemplateMailable
             $routeName,
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             $parameters
-        )->by(auth()->user());
+        );
     }
 
     public static function getDefaultSubject(): string

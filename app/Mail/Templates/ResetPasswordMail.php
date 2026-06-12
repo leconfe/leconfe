@@ -51,7 +51,7 @@ class ResetPasswordMail extends TemplateMailable
                 'user' => $user->email,
                 'hash' => sha1($user->email.$user->password.$user->getMeta('last_login')),
             ]
-        )->by(auth()->user());
+        );
     }
 
     public static function getDefaultSubject(): string
