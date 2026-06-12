@@ -29,7 +29,7 @@ class ResetPasswordMail extends TemplateMailable
             name: 'email',
             subject: $user,
             description: __('general.email_sent', ['name' => 'Reset user password']),
-        );
+        )->by(auth()->user());
     }
 
     protected function verificationUrl($user)

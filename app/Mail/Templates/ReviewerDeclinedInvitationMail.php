@@ -21,7 +21,7 @@ class ReviewerDeclinedInvitationMail extends TemplateMailable
             name: 'email',
             subject: $review->submission,
             description: __('general.email_sent', ['name' => 'Reviewer Declined Invitation']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

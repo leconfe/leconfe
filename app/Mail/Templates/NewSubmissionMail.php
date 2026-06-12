@@ -20,12 +20,11 @@ class NewSubmissionMail extends TemplateMailable
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
 
-
         $this->log = Log::make(
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'New Submission']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

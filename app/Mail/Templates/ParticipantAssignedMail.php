@@ -32,13 +32,12 @@ class ParticipantAssignedMail extends TemplateMailable
             'Submission Title' => $participant->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $participant->submission]),
         ]);
-        
 
         $this->log = Log::make(
             name: 'email',
             subject: $participant->submission,
             description: __('general.email_sent', ['name' => 'Participant Assigned'])
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

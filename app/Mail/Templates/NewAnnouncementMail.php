@@ -23,7 +23,7 @@ class NewAnnouncementMail extends TemplateMailable
             name: 'email',
             subject: $announcement,
             description: __('general.email_sent', ['name' => 'New Announcement']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

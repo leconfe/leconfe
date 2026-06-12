@@ -2,12 +2,15 @@
 
 namespace App\Mail\Templates;
 
+use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
 use App\Models\Participant;
 
 class ParticipantPaymentMail extends TemplateMailable
 {
     use CanCustomizeTemplate;
+
+    public Log $log;
 
     public function __construct(Participant $participant)
     {
@@ -18,6 +21,12 @@ class ParticipantPaymentMail extends TemplateMailable
             'Payment Link' => $participant->payment->getPaymentDetailUrl(),
             'Payment Fee Name' => $participant->payment->fee->name,
         ]);
+
+        $this->log = Log::make(
+            name: 'email',
+            subject: $participant,
+            description: __('general.email_sent', ['name' => 'Participant Payment']),
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

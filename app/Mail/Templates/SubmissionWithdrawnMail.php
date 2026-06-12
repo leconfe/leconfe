@@ -23,7 +23,7 @@ class SubmissionWithdrawnMail extends TemplateMailable
             name: 'email',
             subject: $submission,
             description: __('general.email_sent', ['name' => 'Submission Withdrawn']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string
