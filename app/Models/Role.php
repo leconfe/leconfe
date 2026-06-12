@@ -267,6 +267,7 @@ class Role extends Model
                     'User:disable',
                     'User:enable',
                     'User:invite',
+                    'User:loginAs',
                     'User:sendEmail',
                     'User:update',
                     'User:view',
