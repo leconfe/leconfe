@@ -12,12 +12,9 @@ class RevisionFiles extends SubmissionFilesTable
 
     protected string $tableHeading;
 
-    protected string $tableDescription;
-
     public function __construct()
     {
         $this->tableHeading = __('general.revisions');
-        $this->tableDescription = __('general.upload_your_reviews_files_here');
     }
 
     public function isViewOnly(): bool
