@@ -8,9 +8,9 @@ use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
-use App\Models\User;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\ParticipantRegistered;
+use App\Services\Notifications\OperationalNotificationRecipients;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -198,8 +198,8 @@ class ParticipantRegistration extends Page implements HasForms
                 $payment->markInvoiceAsSent();
             }
 
-            User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
-                ->lazy()
+            app(OperationalNotificationRecipients::class)
+                ->forRoles([UserRole::ConferenceManager])
                 ->each(fn ($user) => $user->notify(new ParticipantRegistered($participant)));
 
             DB::commit();

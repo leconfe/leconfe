@@ -35,6 +35,7 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\SubmissionBillingNotifier;
+use App\Services\Notifications\OperationalNotificationRecipients;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -308,21 +309,16 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                     );
 
                     try {
-                        // Currently using admin, next is admin removed only managers
-                        User::whereHas(
-                            'roles',
-                            fn ($query) => $query->whereIn('name', [UserRole::Admin->value, UserRole::ConferenceManager->value])
-                        )
-                            ->get()
-                            ->each(
-                                fn ($manager) => $manager->notify(new SubmissionWithdrawRequested($this->record))
-                            );
+                        $recipients = app(OperationalNotificationRecipients::class);
 
-                        $this
-                            ->record
-                            ->getEditors()
-                            ->each(function (User $editor) {
-                                $editor->notify(new SubmissionWithdrawRequested($this->record));
+                        $recipients
+                            ->uniqueUsers(
+                                $recipients
+                                    ->forRoles([UserRole::ConferenceManager])
+                                    ->merge($this->record->getEditors())
+                            )
+                            ->each(function (User $user) {
+                                $user->notify(new SubmissionWithdrawRequested($this->record));
                             });
                     } catch (\Exception $e) {
                         $action->failureNotificationTitle(__('general.failed_send_notification'));
