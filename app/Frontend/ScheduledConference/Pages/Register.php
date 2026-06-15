@@ -65,10 +65,6 @@ class Register extends Page implements HasActions, HasForms
 
     public function mount()
     {
-        if (! $this->isRegistrationAllowed()) {
-            abort(403);
-        }
-
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
 
@@ -320,7 +316,12 @@ class Register extends Page implements HasActions, HasForms
     public function register()
     {
         if (! $this->isRegistrationAllowed()) {
-            abort(403);
+            Notification::make()
+                ->title(__('general.registration_closed'))
+                ->warning()
+                ->send();
+
+            return null;
         }
 
         try {
