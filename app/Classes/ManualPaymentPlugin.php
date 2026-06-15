@@ -3,13 +3,13 @@
 namespace App\Classes;
 
 use App\Facades\Hook;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Mail\Templates\UserPayPaymentMail;
 use App\Models\Enums\UserRole;
 use App\Models\Payment;
-use App\Models\User;
+use App\Services\Notifications\OperationalNotificationRecipients;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -34,11 +34,11 @@ class ManualPaymentPlugin extends Plugin
                         Placeholder::make('manual_payment_instructions')
                             ->hiddenLabel()
                             ->label('Payment Instructions')
-                            ->content(fn() => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
-                            ->visible(fn() => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')))
+                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('manual_payment_instructions')),
                         Placeholder::make('amount')
                             ->label('Amount')
-                            ->content(fn(Payment $record) => $record->getFormattedFee()),
+                            ->content(fn (Payment $record) => $record->getFormattedFee()),
                         SpatieMediaLibraryFileUpload::make('payment_proof')
                             ->label('Payment Proof')
                             ->required()
@@ -48,10 +48,10 @@ class ManualPaymentPlugin extends Plugin
                     ])
                     ->action(function (Action $action, array $data, Payment $record) {
                         $record->touch();
-                        
-                        User::role([UserRole::Admin, UserRole::ConferenceManager, UserRole::ScheduledConferenceEditor])
-                            ->lazy()
-                            ->each(fn($user) => Mail::to($user->email)->send(new UserPayPaymentMail($record)));
+
+                        app(OperationalNotificationRecipients::class)
+                            ->forRoles([UserRole::ConferenceManager, UserRole::ScheduledConferenceEditor])
+                            ->each(fn ($user) => Mail::to($user->email)->send(new UserPayPaymentMail($record)));
 
                         $action->successNotificationTitle('Submit success.');
                         $action->success();
@@ -62,13 +62,13 @@ class ManualPaymentPlugin extends Plugin
 
             Hook::add('PaymentManager::getPaymentMethodInfolist', function ($hookName, &$schemas) {
                 $schemas[] = Section::make(app()->getCurrentScheduledConference()->getMeta('manual_payment_name') ?? 'Manual Payment')
-                    ->visible(fn($record) => $record->hasMedia('manual_payment_proof'))
+                    ->visible(fn ($record) => $record->hasMedia('manual_payment_proof'))
                     ->schema([
                         TextEntry::make('payment_proof')
                             ->state('Download')
                             ->color('primary')
                             ->action(
-                                InfolistAction::make('download')->action(fn($record) => $record->getFirstMedia('manual_payment_proof'))
+                                InfolistAction::make('download')->action(fn ($record) => $record->getFirstMedia('manual_payment_proof'))
                             ),
                     ]);
 
