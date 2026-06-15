@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\NewSubmission;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Services\Notifications\OperationalNotificationRecipients;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -47,7 +48,7 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
             })
             ->modalSubmitActionLabel(__('general.submit'))
             ->successNotificationTitle(__('general.abstract_submitted_wait'))
-            ->successRedirectUrl(fn(): string => SubmissionResource::getUrl('complete', ['record' => $this->record]))
+            ->successRedirectUrl(fn (): string => SubmissionResource::getUrl('complete', ['record' => $this->record]))
             ->action(function (Action $action) {
                 try {
                     DB::beginTransaction();
@@ -65,11 +66,11 @@ class ReviewStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->role(UserRole::TrackEditor)
                             ->whereIn('id', $this->record->track->getMeta('track_editors'))
                             ->lazy()
-                            ->each(fn($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
+                            ->each(fn ($user) => SubmissionAssignParticipant::run($this->record, $user->getKey(), $trackRole->getKey()));
                     } else {
-                        User::role([UserRole::Admin->value, UserRole::ConferenceManager->value])
-                            ->lazy()
-                            ->each(fn($user) => $user->notify(new NewSubmission($this->record)));
+                        app(OperationalNotificationRecipients::class)
+                            ->forRoles([UserRole::ConferenceManager])
+                            ->each(fn ($user) => $user->notify(new NewSubmission($this->record)));
                     }
 
                     $this->record->touch();
