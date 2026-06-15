@@ -134,6 +134,37 @@ class OperationalNotificationRecipientsTest extends TestCase
         Notification::assertNotSentTo($admin, ParticipantRegistered::class);
     }
 
+    public function test_participant_registration_submit_is_ignored_when_registration_is_disabled(): void
+    {
+        $manager = $this->userWithRole(UserRole::ConferenceManager, 'manager-closed@example.test');
+        $participant = $this->userWithRole(UserRole::Participant, 'closed-participant@example.test');
+        $paymentFee = $this->createPaymentFee(PaymentManager::TYPE_PARTICIPANT_FEE);
+
+        $this->scheduledConference->setManyMeta([
+            'allow_registration' => true,
+            'participant_payment' => true,
+        ]);
+        Notification::fake();
+
+        $this->actingAs($participant);
+
+        $component = Livewire::test(ParticipantRegistration::class)
+            ->set('formData.given_name', 'Closed')
+            ->set('formData.family_name', 'Participant')
+            ->set('formData.payment_fee_id', $paymentFee->getKey());
+
+        $this->scheduledConference->setMeta('allow_registration', false);
+
+        $component
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('participants', [
+            'email' => 'closed-participant@example.test',
+        ]);
+        Notification::assertNotSentTo($manager, ParticipantRegistered::class);
+    }
+
     public function test_new_submission_fallback_notifies_manager_but_not_admin(): void
     {
         $admin = $this->userWithRole(UserRole::Admin, 'admin@example.test');
