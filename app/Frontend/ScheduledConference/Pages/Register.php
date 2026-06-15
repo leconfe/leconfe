@@ -315,8 +315,13 @@ class Register extends Page implements HasActions, HasForms
 
     public function register()
     {
-        if (! app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
-            abort(403);
+        if (! $this->isRegistrationAllowed()) {
+            Notification::make()
+                ->title(__('general.registration_closed'))
+                ->warning()
+                ->send();
+
+            return null;
         }
 
         try {
@@ -361,9 +366,14 @@ class Register extends Page implements HasActions, HasForms
 
         return [
             'loginUrl' => app()->getLoginUrl(),
-            'allowRegistration' => $scheduledConference->getMeta('allow_registration'),
+            'allowRegistration' => $this->isRegistrationAllowed(),
             'scheduledConference' => $scheduledConference,
         ];
+    }
+
+    protected function isRegistrationAllowed(): bool
+    {
+        return (bool) app()->getCurrentScheduledConference()->getMeta('allow_registration');
     }
 
     public function getBreadcrumbs(): array

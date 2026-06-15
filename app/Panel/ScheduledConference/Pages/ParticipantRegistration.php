@@ -145,6 +145,17 @@ class ParticipantRegistration extends Page implements HasForms
 
     public function submit()
     {
+        $scheduledConference = app()->getCurrentScheduledConference()?->fresh();
+
+        if (! $scheduledConference?->isParticipantRegistrationEnabled()) {
+            Notification::make()
+                ->warning()
+                ->title(__('general.registration_closed'))
+                ->send();
+
+            return null;
+        }
+
         $data = $this->form->getState();
         $paymentFormResponses = PaymentFormItem::filterOutUploadResponses(data_get($data, 'form_responses'));
 
