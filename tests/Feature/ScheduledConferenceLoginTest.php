@@ -27,6 +27,20 @@ class ScheduledConferenceLoginTest extends TestCase
             ->assertSee('Hide password', false);
     }
 
+    public function test_scheduled_conference_login_hides_register_action_when_registration_is_disabled(): void
+    {
+        $scheduledConference = $this->makeScheduledConference();
+        $scheduledConference->setMeta('allow_registration', false);
+
+        $this->withoutVite()
+            ->get(route(Login::getRouteName('scheduledConference'), [
+                'conference' => $scheduledConference->conference->path,
+                'serie' => $scheduledConference->path,
+            ]))
+            ->assertOk()
+            ->assertDontSee(__('general.register'));
+    }
+
     protected function makeScheduledConference(): ScheduledConference
     {
         $conference = Conference::query()->create([

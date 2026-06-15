@@ -65,6 +65,10 @@ class Register extends Page implements HasActions, HasForms
 
     public function mount()
     {
+        if (! $this->isRegistrationAllowed()) {
+            abort(403);
+        }
+
         if (Filament::auth()->check()) {
             $this->redirect($this->getRedirectUrl(), navigate: false);
 
@@ -315,7 +319,7 @@ class Register extends Page implements HasActions, HasForms
 
     public function register()
     {
-        if (! app()->getCurrentScheduledConference()->getMeta('allow_registration')) {
+        if (! $this->isRegistrationAllowed()) {
             abort(403);
         }
 
@@ -361,9 +365,14 @@ class Register extends Page implements HasActions, HasForms
 
         return [
             'loginUrl' => app()->getLoginUrl(),
-            'allowRegistration' => $scheduledConference->getMeta('allow_registration'),
+            'allowRegistration' => $this->isRegistrationAllowed(),
             'scheduledConference' => $scheduledConference,
         ];
+    }
+
+    protected function isRegistrationAllowed(): bool
+    {
+        return (bool) app()->getCurrentScheduledConference()->getMeta('allow_registration');
     }
 
     public function getBreadcrumbs(): array

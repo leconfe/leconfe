@@ -49,7 +49,9 @@ class Login extends WebsiteLogin implements HasActions, HasForms
     {
         return [
             'resetPasswordUrl' => route('livewirePageGroup.scheduledConference.pages.reset-password'),
-            'registerUrl' => route('livewirePageGroup.scheduledConference.pages.register'),
+            'registerUrl' => $this->isRegistrationAllowed()
+                ? route('livewirePageGroup.scheduledConference.pages.register')
+                : null,
         ];
     }
 
@@ -140,7 +142,13 @@ class Login extends WebsiteLogin implements HasActions, HasForms
         return Action::make('register')
             ->link()
             ->label(__('general.register'))
+            ->visible(fn (): bool => $this->isRegistrationAllowed())
             ->url(route('livewirePageGroup.scheduledConference.pages.register'));
+    }
+
+    protected function isRegistrationAllowed(): bool
+    {
+        return (bool) app()->getCurrentScheduledConference()?->getMeta('allow_registration');
     }
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification

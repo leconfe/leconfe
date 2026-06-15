@@ -28,6 +28,19 @@ class ScheduledConferenceRegisterTest extends TestCase
             ->assertDontSee('link link-primary', false);
     }
 
+    public function test_registration_page_is_forbidden_when_registration_is_disabled(): void
+    {
+        $scheduledConference = $this->makeScheduledConference();
+        $scheduledConference->setMeta('allow_registration', false);
+
+        $this->withoutVite()
+            ->get(route(Register::getRouteName('scheduledConference'), [
+                'conference' => $scheduledConference->conference->path,
+                'serie' => $scheduledConference->path,
+            ]))
+            ->assertForbidden();
+    }
+
     protected function makeScheduledConference(): ScheduledConference
     {
         $conference = Conference::query()->create([
