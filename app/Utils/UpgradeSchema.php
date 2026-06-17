@@ -21,6 +21,7 @@ use App\Utils\UpgradeSchemas\Upgrade134;
 use App\Utils\UpgradeSchemas\Upgrade140;
 use App\Utils\UpgradeSchemas\Upgrade141;
 use App\Utils\UpgradeSchemas\Upgrade144;
+use App\Utils\UpgradeSchemas\Upgrade150Beta1;
 use App\Utils\UpgradeSchemas\UpgradeBeta3;
 use App\Utils\UpgradeSchemas\UpgradeBeta4;
 use App\Utils\UpgradeSchemas\UpgradeBeta5;
@@ -50,6 +51,7 @@ class UpgradeSchema
         '1.4.0' => Upgrade140::class,
         '1.4.1' => Upgrade141::class,
         '1.4.4' => Upgrade144::class,
+        '1.5.0-beta.1' => Upgrade150Beta1::class,
     ];
 
     public static function getSchemasByVersion(string $installedVersion, string $applicationVersion)
