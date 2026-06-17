@@ -27,7 +27,7 @@ final class SelectFiles extends SubmissionFilesTable
     {
         return [
             TextColumn::make('media.original_file_name')
-                ->label('Filename')
+                ->label(__('general.filename'))
                 ->color('primary')
                 ->wrap()
                 ->action(fn (Model $record) => $record->media)

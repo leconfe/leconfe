@@ -94,4 +94,22 @@ class OnPresentationSubmissionState extends BaseSubmissionState
             ->by(auth()->user())
             ->save();
     }
+
+    public function requestRevision(): void
+    {
+        SubmissionUpdateAction::run([
+            'revision_required' => true,
+            'status' => SubmissionStatus::OnReview,
+            'stage' => SubmissionStage::PeerReview,
+        ], $this->submission);
+
+        Log::make(
+            name: 'submission',
+            subject: $this->submission,
+            description: __('general.submission_revision_required'),
+            event: 'submission-revision-required',
+        )
+            ->by(auth()->user())
+            ->save();
+    }
 }

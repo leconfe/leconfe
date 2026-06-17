@@ -14,6 +14,7 @@ class SubmissionFile extends Model
 
     protected $fillable = [
         'submission_id',
+        'review_round_id',
         'submission_file_type_id',
         'media_id',
         'user_id',
@@ -78,6 +79,11 @@ class SubmissionFile extends Model
     public function submission()
     {
         return $this->belongsTo(Submission::class);
+    }
+
+    public function reviewRound()
+    {
+        return $this->belongsTo(SubmissionReviewRound::class, 'review_round_id');
     }
 
     public function type()

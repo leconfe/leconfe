@@ -12,6 +12,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Response;
 
 class ReviewerAssignedFiles extends \Livewire\Component implements HasForms, HasTable
 {
@@ -37,7 +38,10 @@ class ReviewerAssignedFiles extends \Livewire\Component implements HasForms, Has
                 TextColumn::make('submissionFile.media.original_file_name')
                     ->color('primary')
                     ->action(function (ReviewerAssignedFile $record) {
-                        return $record->submissionFile->media;
+                        return Response::download(
+                            $record->submissionFile->media->getPath(),
+                            $record->submissionFile->media->originalFileName
+                        );
                     })
                     ->description(function (ReviewerAssignedFile $record) {
                         return $record->submissionFile->type->name;

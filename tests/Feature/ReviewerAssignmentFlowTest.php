@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
 use App\Constants\SubmissionStatusRecommendation;
@@ -66,6 +67,7 @@ class ReviewerAssignmentFlowTest extends TestCase
         ]);
 
         $context['submission']->reviews()->create([
+            'review_round_id' => $context['reviewRound']->getKey(),
             'user_id' => $context['reviewer']->getKey(),
             'date_assigned' => now(),
         ]);
@@ -226,6 +228,8 @@ class ReviewerAssignmentFlowTest extends TestCase
             'user_id' => $editor->getKey(),
             'role_id' => $editorRole->getKey(),
         ]);
+        $reviewRound = StartSubmissionReviewRoundAction::run($submission, [], $editor);
+        $submission->refresh();
 
         return [
             'conference' => $conference,
@@ -235,6 +239,7 @@ class ReviewerAssignmentFlowTest extends TestCase
             'editor' => $editor,
             'reviewer' => $reviewer,
             'reviewerRole' => $reviewerRole,
+            'reviewRound' => $reviewRound,
             'submission' => $submission,
         ];
     }
@@ -246,6 +251,7 @@ class ReviewerAssignmentFlowTest extends TestCase
 
         $review = Review::query()->create(array_merge([
             'submission_id' => $submission->getKey(),
+            'review_round_id' => $submission->activeReviewRound()->value('id'),
             'user_id' => $reviewer->getKey(),
             'status' => ReviewerStatus::PENDING,
             'date_assigned' => now(),
@@ -284,6 +290,7 @@ class ReviewerAssignmentFlowTest extends TestCase
 
         $submissionFile = SubmissionFile::query()->create([
             'submission_id' => $submission->getKey(),
+            'review_round_id' => $review->review_round_id,
             'submission_file_type_id' => $submissionFileType->getKey(),
             'media_id' => $mediaId,
             'user_id' => $submission->user_id,

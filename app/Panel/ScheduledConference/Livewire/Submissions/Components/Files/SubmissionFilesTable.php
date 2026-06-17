@@ -33,6 +33,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
     public bool $viewOnly = false;
 
+    public ?int $reviewRoundId = null;
+
     protected ?string $category = null;
 
     protected string $tableHeading = 'Files';
@@ -49,6 +51,16 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     public function getCategory(): string
     {
         return $this->category;
+    }
+
+    protected function shouldFilterByReviewRound(): bool
+    {
+        return false;
+    }
+
+    protected function resolveUploadReviewRoundId(): ?int
+    {
+        return null;
     }
 
     public function tableColumns(): array
@@ -86,7 +98,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             ->hidden(fn (Table $table): bool => ! $table->getQuery()->exists() || $this->isViewOnly())
             ->color('gray')
             ->action(function (TableAction $action) {
-                $files = $this->submission->media()->where('collection_name', $this->category)->get();
+                $mediaIds = $this->tableQuery()->pluck('media_id');
+                $files = $this->submission->media()
+                    ->whereIn('id', $mediaIds)
+                    ->get();
                 if ($files->count()) {
                     $name = implode('-', [
                         $this->submission->getKey(),
@@ -134,7 +149,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 $this->submission,
                 $file,
                 $this->category,
-                $this->resolveSubmissionFileType($data['type'])
+                $this->resolveSubmissionFileType($data['type']),
+                $this->resolveUploadReviewRoundId(),
             );
 
             Log::make(
@@ -197,7 +213,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->successNotificationTitle(__('general.file_updated_successfully'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
                     $form->fill([
-                        'file_name' => $record->media->name,
+                        'name' => $record->media->name,
                         'type' => $record->submission_file_type_id,
                     ]);
                 })
@@ -208,9 +224,11 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         $type = $this->resolveSubmissionFileType($data['type']);
                         $oldTypeName = $record->type->name;
                         $media = $record->media;
+                        $oldName = $media->original_file_name;
+                        $newName = (string) $data['name'];
 
-                        $media->file_name = $data['file_name'];
-                        $media->name = $data['file_name'];
+                        $media->name = $newName;
+                        $renamedFileName = $media->original_file_name;
                         $record->submission_file_type_id = $type->getKey();
 
                         $log = Log::make(
@@ -218,8 +236,8 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                             subject: $this->submission,
                             description: __('general.submission_file_updated_activity', [
                                 'id' => $record->getKey(),
-                                'oldName' => $media->getOriginal('name'),
-                                'newName' => $media->name,
+                                'oldName' => $oldName,
+                                'newName' => $renamedFileName,
                                 'oldType' => $oldTypeName,
                                 'newType' => $type->name,
                                 'category' => $this->category,
@@ -242,13 +260,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 })
                 ->modalSubmitActionLabel(__('general.save'))
                 ->form([
-                    TextInput::make('file_name')
+                    TextInput::make('name')
                         ->label(__('general.new_filename'))
                         ->formatStateUsing(function (SubmissionFile $record) {
                             return $record->media->name;
-                        })
-                        ->dehydrateStateUsing(function (SubmissionFile $record, $state) {
-                            return str($state)->append('.'.$record->media->extension);
                         })
                         ->suffix(function (SubmissionFile $record) {
                             return '.'.$record->media->extension;
@@ -294,11 +309,17 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
     public function tableQuery(): Builder
     {
-        return $this->submission
+        $query = $this->submission
             ->submissionFiles()
             ->with(['media', 'submission'])
             ->where('category', $this->category)
             ->getQuery();
+
+        if ($this->shouldFilterByReviewRound()) {
+            $query->where('review_round_id', $this->reviewRoundId ?: 0);
+        }
+
+        return $query;
     }
 
     public function tableDescription(): string

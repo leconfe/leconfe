@@ -364,7 +364,7 @@ class SubmissionWizardRequiredFilesTest extends TestCase
 
         Livewire::test(AbstractFiles::class, ['submission' => $submission])
             ->callTableAction('rename', $submissionFile, data: [
-                'file_name' => 'renamed-submission-file',
+                'name' => 'renamed-submission-file',
                 'type' => $poster->getKey(),
             ])
             ->assertDispatched('refreshLivewire');

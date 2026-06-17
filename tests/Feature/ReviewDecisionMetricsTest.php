@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionStatusRecommendation;
 use App\Models\Conference;
@@ -145,12 +146,14 @@ class ReviewDecisionMetricsTest extends TestCase
         $submission->setManyMeta([
             'title' => 'Review metrics submission',
         ]);
+        $reviewRound = StartSubmissionReviewRoundAction::run($submission);
 
         return [
             'conference' => $conference,
             'scheduledConference' => $scheduledConference,
             'track' => $track,
             'author' => $author,
+            'reviewRound' => $reviewRound,
             'submission' => $submission,
             ...$reviewers->all(),
         ];
@@ -163,6 +166,7 @@ class ReviewDecisionMetricsTest extends TestCase
 
         $review = Review::query()->create(array_merge([
             'submission_id' => $submission->getKey(),
+            'review_round_id' => $submission->activeReviewRound()->value('id'),
             'user_id' => $reviewer->getKey(),
             'status' => ReviewerStatus::PENDING,
             'date_assigned' => now(),

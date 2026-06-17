@@ -32,6 +32,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 
 class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms, HasTable
 {
@@ -41,7 +42,34 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
 
     public SubmissionStage $stage;
 
-    public function mount(Submission $submission, SubmissionStage $stage) {}
+    public ?int $reviewRoundId = null;
+
+    public function mount(Submission $submission, SubmissionStage $stage): void
+    {
+        $this->submission = $submission;
+        $this->stage = $stage;
+        $this->reviewRoundId = $submission->activeReviewRound?->getKey()
+            ?? $submission->latestReviewRound?->getKey();
+    }
+
+    #[On('peer-review-round-selected')]
+    public function onReviewRoundSelected(int $roundId): void
+    {
+        $this->reviewRoundId = $roundId;
+        $this->resetTable();
+    }
+
+    protected function isSelectedRoundOpen(): bool
+    {
+        if (! $this->reviewRoundId) {
+            return false;
+        }
+
+        return (bool) $this->submission->reviewRounds()
+            ->whereKey($this->reviewRoundId)
+            ->open()
+            ->exists();
+    }
 
     protected function form(Form $form): Form
     {
@@ -57,7 +85,9 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ->rules('required|array|min:2')
                     ->rules([
                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) {
-                            $reviewUserIds = $this->submission->reviews->pluck('user_id');
+                            $reviewUserIds = $this->submission->reviews()
+                                ->where('review_round_id', $this->reviewRoundId ?: 0)
+                                ->pluck('user_id');
                             $participantUserIds = $this->submission->participants->pluck('user_id');
                             $users = User::query()
                                 ->with(['roles'])
@@ -79,7 +109,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
 
                                 $blindReviewer = false;
                                 // is participant a blind reviewer
-                                $review = $this->submission->reviews->where('user_id', $user->getKey())->first();
+                                $review = $this->submission->getReviewForUserInActiveRound($user);
                                 if ($review && $review->getMeta('review_mode') !== Review::MODE_OPEN) {
                                     $blindReviewer = true;
                                     $blindReviewerCount++;
@@ -101,7 +131,9 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     ->options(function () {
 
                         $this->submission->load([
-                            'reviews' => ['meta','user.meta'],
+                            'reviews' => fn ($query) => $query
+                                ->with(['meta', 'user.meta'])
+                                ->where('review_round_id', $this->reviewRoundId ?: 0),
                             'participants' => ['user.meta', 'role'],
                         ]);
 
@@ -109,7 +141,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                         $participantUsers = $this->submission->participants
                             ->filter(function (SubmissionParticipant $participant) {
 
-                                $review = $this->submission->reviews->where('user_id', Auth::id())->first();
+                                $review = $this->submission->getReviewForUserInActiveRound(Auth::user());
 
                                 if ($review && $review->getMeta('review_mode') != Review::MODE_OPEN && $this->submission->isAuthor($participant->user)) {
                                     return false;
@@ -122,7 +154,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                         $users = $users->union($participantUsers);
 
                         $reviewUsers = $this->submission->reviews
-                            ->when($this->submission->isAuthor(Auth::user()) || $this->submission->isReviewer(Auth::user()), fn ($reviews) => $reviews->filter(fn ($review) => $review->user->is(Auth::user()) ?: $review->getMeta('review_mode') == Review::MODE_OPEN))
+                            ->when($this->submission->isAuthor(Auth::user()) || $this->submission->getReviewForUserInActiveRound(Auth::user()), fn ($reviews) => $reviews->filter(fn ($review) => $review->user->is(Auth::user()) ?: $review->getMeta('review_mode') == Review::MODE_OPEN))
                             ->mapWithKeys(fn (Review $review) => [$review->user->getKey() => $review->user->fullName.' ('.$review->reviewMode.')']);
 
                         $users = $users->union($reviewUsers);
@@ -142,6 +174,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
             ->with(['discussions.user'])
             ->where('submission_id', $this->submission->getKey())
             ->where('stage', $this->stage)
+            ->where('review_round_id', $this->reviewRoundId ?: 0)
             ->when(
                 ! auth()->user()->can('actAsEditor', $this->submission),
                 fn ($query) => $query->whereHas('participants', fn ($query) => $query->where('user_id', auth()->user()->getKey()))
@@ -171,7 +204,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                                 Fieldset::make('form-discussion-detail')
                                     ->label(__('general.add_message'))
                                     ->columns(1)
-                                    ->visible(fn ($record): bool => $record->open)
+                                    ->visible(fn ($record): bool => $record->open && $this->isSelectedRoundOpen())
                                     ->schema([
                                         Livewire::make(
                                             DiscussionDetailForm::class,
@@ -183,6 +216,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                     Action::make('update-topic')
                         ->label(__('general.edit'))
                         ->icon('lineawesome-edit-solid')
+                        ->hidden(fn (): bool => ! $this->isSelectedRoundOpen())
                         ->mountUsing(function ($record, Form $form) {
                             $form->fill([
                                 'name' => $record->name,
@@ -202,6 +236,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                         }),
                     Action::make('close')
                         ->authorize(fn ($record) => auth()->user()->can('close', $record))
+                        ->hidden(fn (): bool => ! $this->isSelectedRoundOpen())
                         ->label(fn ($record): string => $record->open ? __('general.close') : __('general.open'))
                         ->color(fn ($record): string => $record->open ? 'warning' : 'success')
                         ->icon(fn ($record): string => $record->open ? 'lineawesome-lock-solid' : 'lineawesome-unlock-solid')
@@ -212,12 +247,14 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                             $action->success();
                         }),
                     DeleteAction::make()
+                        ->hidden(fn (): bool => ! $this->isSelectedRoundOpen())
                         ->authorize('DiscussionTopic:delete'),
                 ]),
             ])
             ->headerActions([
                 Action::make('create-topic')
                     ->authorize('create', DiscussionTopic::class)
+                    ->hidden(fn (): bool => ! $this->isSelectedRoundOpen())
                     ->icon('lineawesome-plus-solid')
                     ->outlined()
                     ->label(__('general.topic'))
@@ -233,6 +270,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                             [
                                 'name' => $data['name'],
                                 'stage' => $this->stage,
+                                'review_round_id' => $this->reviewRoundId,
                             ],
                             $data['user_id']
                         );

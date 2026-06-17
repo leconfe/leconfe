@@ -15,6 +15,7 @@ class DiscussionTopic extends Model
         'stage',
         'name',
         'user_id',
+        'review_round_id',
         'open',
     ];
 
@@ -75,5 +76,10 @@ class DiscussionTopic extends Model
     public function submission()
     {
         return $this->belongsTo(Submission::class);
+    }
+
+    public function reviewRound()
+    {
+        return $this->belongsTo(SubmissionReviewRound::class, 'review_round_id');
     }
 }

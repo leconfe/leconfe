@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Review\ReviewUpdateAction;
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Classes\Log;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
@@ -11,6 +12,8 @@ use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ReviewerCancelationMail;
 use App\Mail\Templates\ReviewerInvitationMail;
 use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\Review;
 use App\Models\ReviewerAssignedFile;
@@ -18,9 +21,17 @@ use App\Models\ReviewFormItem;
 use App\Models\Role;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
+use App\Models\SubmissionReviewRound;
 use App\Models\User;
+use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\Shout;
+use Filament\Actions\Action as FilamentAction;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
@@ -48,14 +59,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
-class ReviewerList extends Component implements HasForms, HasTable
+class ReviewerList extends Component implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -63,9 +77,137 @@ class ReviewerList extends Component implements HasForms, HasTable
 
     public Role $reviewerRole;
 
+    public ?int $selectedRoundId = null;
+
     public function mount(Submission $record)
     {
+        $this->record = $record;
         $this->reviewerRole = Role::where('name', UserRole::Reviewer->value)->first();
+
+        if (
+            $this->record->stage === SubmissionStage::PeerReview &&
+            in_array($this->record->status, [SubmissionStatus::OnReview, SubmissionStatus::OnPayment], true) &&
+            ! $this->record->reviewRounds()->exists() &&
+            auth()->user()?->can('assignReviewer', $this->record)
+        ) {
+            StartSubmissionReviewRoundAction::run($this->record, [], auth()->user());
+            $this->record->refresh();
+        }
+
+        $this->selectedRoundId = $this->record->activeReviewRound?->getKey()
+            ?? $this->record->latestReviewRound?->getKey();
+
+        $this->dispatchSelectedRound();
+    }
+
+    #[On('peer-review-round-selected')]
+    public function onReviewRoundSelected(int $roundId): void
+    {
+        $this->selectedRoundId = $roundId;
+        $this->resetTable();
+    }
+
+    public function selectRound(int $roundId): void
+    {
+        if (! $this->reviewRounds->pluck('id')->contains($roundId)) {
+            return;
+        }
+
+        $this->selectedRoundId = $roundId;
+        $this->resetTable();
+        $this->dispatchSelectedRound();
+    }
+
+    public function getReviewRoundsProperty(): Collection
+    {
+        return $this->record->reviewRounds()
+            ->orderBy('round_number')
+            ->get();
+    }
+
+    public function getSelectedRoundProperty(): ?SubmissionReviewRound
+    {
+        if (! $this->selectedRoundId) {
+            return null;
+        }
+
+        return $this->reviewRounds->firstWhere('id', $this->selectedRoundId);
+    }
+
+    public function isSelectedRoundActive(): bool
+    {
+        return $this->selectedRound?->isOpen() ?? false;
+    }
+
+    public function getReviewableFilesProperty(): Collection
+    {
+        $query = $this->record
+            ->submissionFiles()
+            ->with(['media', 'type'])
+            ->where(function ($query) {
+                if ($this->selectedRoundId) {
+                    $query->where(function ($paperQuery) {
+                        $paperQuery->where('category', SubmissionFileCategory::PAPER_FILES)
+                            ->where('review_round_id', $this->selectedRoundId);
+                    })->orWhere(function ($revisionQuery) {
+                        $revisionQuery->where('category', SubmissionFileCategory::REVISION_FILES)
+                            ->where('review_round_id', $this->selectedRoundId);
+                    });
+                } else {
+                    $query->where('category', SubmissionFileCategory::PAPER_FILES);
+                }
+            });
+
+        return $query->get();
+    }
+
+    protected function selectedRoundReviewerIds(): array
+    {
+        if (! $this->selectedRoundId) {
+            return [];
+        }
+
+        return Review::query()
+            ->where('review_round_id', $this->selectedRoundId)
+            ->pluck('user_id')
+            ->all();
+    }
+
+    protected function ensureSelectedOpenRound(array $defaultFileIds = []): SubmissionReviewRound
+    {
+        if ($this->selectedRound && $this->selectedRound->isOpen()) {
+            return $this->selectedRound;
+        }
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $this->record,
+            $defaultFileIds,
+            auth()->user(),
+        );
+
+        $this->selectedRoundId = $round->getKey();
+        $this->dispatchSelectedRound();
+
+        return $round;
+    }
+
+    protected function dispatchSelectedRound(): void
+    {
+        if (! $this->selectedRoundId) {
+            return;
+        }
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PeerReview::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PaperFiles::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(RevisionFiles::class);
+
+        $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
+            ->to(PeerReviewDiscussionTopic::class);
     }
 
     public function form(Form $form): Form
@@ -87,7 +229,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 'roles',
                                 fn (Builder $query) => $query->where('name', UserRole::Reviewer->value)
                             )
-                            ->whereNotIn('id', $this->record->reviews->pluck('user_id'))
+                            ->whereNotIn('id', $this->selectedRoundReviewerIds())
                             ->limit(10)
                             ->lazy()
                             ->mapWithKeys(
@@ -101,7 +243,7 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 'roles',
                                 fn (Builder $query) => $query->whereName(UserRole::Reviewer->value)
                             )
-                            ->whereNotIn('id', $this->record->reviews->pluck('user_id'))
+                            ->whereNotIn('id', $this->selectedRoundReviewerIds())
                             ->where(function (Builder $query) use ($search) {
                                 $query->where('given_name', 'like', "%{$search}%")
                                     ->orWhere('family_name', 'like', "%{$search}%")
@@ -116,19 +258,13 @@ class ReviewerList extends Component implements HasForms, HasTable
                     }),
                 CheckboxList::make('papers')
                     ->label(__('general.files_be_to_reviewer'))
-                    ->hidden(
-                        ! $this->record->getMedia(SubmissionFileCategory::PAPER_FILES)->count()
-                    )
+                    ->hidden(fn () => $this->reviewableFiles->isEmpty())
                     ->options(function () {
-                        return $this->record
-                            ->submissionFiles()
-                            ->with(['media'])
-                            ->where('category', SubmissionFileCategory::PAPER_FILES)
-                            ->get()
+                        return $this->reviewableFiles
                             ->mapWithKeys(function (SubmissionFile $paper) {
                                 return [
                                     $paper->getKey() => new HtmlString(
-                                        Action::make($paper->media->original_file_name)
+                                        Action::make('paper-'.$paper->getKey())
                                             ->label($paper->media->original_file_name)
                                             ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                             ->link()
@@ -138,12 +274,9 @@ class ReviewerList extends Component implements HasForms, HasTable
                             });
                     })
                     ->descriptions(function () {
-                        return $this->record
-                            ->submissionFiles()
-                            ->where('category', SubmissionFileCategory::PAPER_FILES)
-                            ->get()
+                        return $this->reviewableFiles
                             ->mapWithKeys(function (SubmissionFile $paper) {
-                                return [$paper->getKey() => $paper->type->name];
+                                return [$paper->getKey() => $paper->type->name.' ('.$paper->category.')'];
                             });
                     }),
                 Fieldset::make('Notification')
@@ -189,6 +322,7 @@ class ReviewerList extends Component implements HasForms, HasTable
         return $table
             ->query(
                 fn (): Builder => $this->record->reviews()->getQuery()
+                    ->where('review_round_id', $this->selectedRoundId ?: 0)
                     ->when(
                         $this->record->isParticipantAuthor(auth()->user()),
                         fn ($query) => $query
@@ -656,17 +790,24 @@ class ReviewerList extends Component implements HasForms, HasTable
                                 $action->failure();
                             }
                         }),
-                ]),
+                ])
+                    ->hidden(fn () => ! $this->isSelectedRoundActive()),
             ])
             ->heading(__('general.reviewers'))
             ->headerActions([
                 Action::make('add-reviewer')
                     ->mountUsing(function (Form $form): void {
                         $mailTemplate = DefaultMailTemplate::where('mailable', ReviewerInvitationMail::class)->first();
+                        $defaultFileIds = collect($this->selectedRound?->default_file_ids ?? [])
+                            ->filter(fn ($id) => is_numeric($id))
+                            ->map(fn ($id) => (int) $id)
+                            ->values()
+                            ->all();
 
                         $form->fill([
                             'subject' => $mailTemplate ? $mailTemplate->subject : '',
                             'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            'papers' => $defaultFileIds,
                             'meta' => [
                                 'response_due_date' => now()->addDays(app()->getCurrentScheduledConference()->getMeta('review_invitation_response_deadline') ?? 28)->format('d F Y'),
                                 'review_due_date' => now()->addDays(app()->getCurrentScheduledConference()->getMeta('review_completion_deadline') ?? 28)->format('d F Y'),
@@ -681,9 +822,15 @@ class ReviewerList extends Component implements HasForms, HasTable
                     ->modalHeading(__('general.assign_reviewer'))
                     ->modalWidth('2xl')
                     ->authorize(fn () => auth()->user()->can('assignReviewer', $this->record))
+                    ->hidden(fn (): bool => $this->selectedRound && ! $this->selectedRound->isOpen())
                     ->form(fn ($form) => $this->form($form))
                     ->action(function (Action $action, array $data) {
-                        if ($this->record->reviews()->where('user_id', $data['user_id'])->exists()) {
+                        $reviewRound = $this->ensureSelectedOpenRound();
+
+                        if (Review::query()
+                            ->where('review_round_id', $reviewRound->getKey())
+                            ->where('user_id', $data['user_id'])
+                            ->exists()) {
                             $action->failureNotificationTitle(__('general.reviewer_already_assigned'));
                             $action->failure();
 
@@ -692,6 +839,7 @@ class ReviewerList extends Component implements HasForms, HasTable
 
                         $reviewAssignment = $this->record->reviews()
                             ->create([
+                                'review_round_id' => $reviewRound->getKey(),
                                 'user_id' => $data['user_id'],
                                 'date_assigned' => now(),
                             ]);
@@ -700,9 +848,24 @@ class ReviewerList extends Component implements HasForms, HasTable
                             $reviewAssignment->setManyMeta($data['meta']);
                         }
 
-                        if (isset($data['papers'])) {
-                            foreach ($data['papers'] as $submissionFileId) {
-                                $submissionFile = SubmissionFile::find($submissionFileId);
+                        $selectedFileIds = collect($data['papers'] ?? ($reviewRound->default_file_ids ?? []))
+                            ->filter(fn ($id) => is_numeric($id))
+                            ->map(fn ($id) => (int) $id)
+                            ->unique()
+                            ->values();
+
+                        if ($selectedFileIds->isNotEmpty()) {
+                            foreach ($selectedFileIds as $submissionFileId) {
+                                $submissionFile = SubmissionFile::query()
+                                    ->where('submission_id', $this->record->getKey())
+                                    ->where('review_round_id', $reviewRound->getKey())
+                                    ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+                                    ->find($submissionFileId);
+
+                                if (! $submissionFile) {
+                                    continue;
+                                }
+
                                 $reviewAssignment->assignedFiles()
                                     ->create([
                                         'submission_file_id' => $submissionFile->getKey(),

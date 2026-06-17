@@ -150,6 +150,24 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         return $this->hasMany(Review::class);
     }
 
+    public function reviewRounds(): HasMany
+    {
+        return $this->hasMany(SubmissionReviewRound::class);
+    }
+
+    public function activeReviewRound(): HasOne
+    {
+        return $this->hasOne(SubmissionReviewRound::class)
+            ->open()
+            ->latestOfMany('round_number');
+    }
+
+    public function latestReviewRound(): HasOne
+    {
+        return $this->hasOne(SubmissionReviewRound::class)
+            ->latestOfMany('round_number');
+    }
+
     public function conference()
     {
         return $this->belongsTo(Conference::class);
@@ -331,12 +349,18 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         $this->setMeta('primary_contact_id', $author->getKey());
     }
 
-    public function getReviewsEmailMessage(): string
+    public function getReviewsEmailMessage(?int $reviewRoundId = null): string
     {
+        $reviewRoundId ??= $this->activeReviewRound?->getKey();
+
+        if (! $reviewRoundId) {
+            return '';
+        }
+
         $message = '';
 
         $this->reviews()
-            ->getQuery()
+            ->where('review_round_id', $reviewRoundId)
             ->with(['user'])
             ->submittedForDecision()
             ->get()
@@ -388,7 +412,22 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
 
     public function isReviewer(User $user) : bool
     {
-        return $this->reviews->where('user_id', $user->getKey())->isNotEmpty();
+        return (bool) $this->getReviewForUserInActiveRound($user);
+    }
+
+    public function getReviewForUserInActiveRound(User $user): ?Review
+    {
+        $activeRoundId = $this->activeReviewRound?->getKey();
+
+        if (! $activeRoundId) {
+            return null;
+        }
+
+        return $this->reviews()
+            ->where('review_round_id', $activeRoundId)
+            ->where('user_id', $user->getKey())
+            ->latest('id')
+            ->first();
     }
 
     public function isAuthor(User $user) : bool

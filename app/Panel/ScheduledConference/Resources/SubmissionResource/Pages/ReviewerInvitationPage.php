@@ -45,11 +45,24 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
 
     public function mount(Submission $record)
     {
-        $this->review = $this->record->reviews()->where('user_id', auth()->id())->first() ?? null;
-        
+        $this->record = $record;
+        $this->review = $this->record->getReviewForUserInActiveRound(auth()->user());
+
         if (! $this->review) {
             abort(403);
         }
+    }
+
+    protected function resolveCurrentReview(): ?Review
+    {
+        $submission = $this->record->refresh();
+        $review = $submission->getReviewForUserInActiveRound(auth()->user());
+
+        if (! $review || ! $this->review || $review->getKey() !== $this->review->getKey()) {
+            return null;
+        }
+
+        return $this->review = $review;
     }
 
     public function getHeading(): string|Htmlable
@@ -84,10 +97,19 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->successNotificationTitle(__('general.request_accepted'))
             ->failureNotificationTitle(__('general.failed_to_accept_request'))
             ->action(function (Action $action) {
+                $review = $this->resolveCurrentReview();
+
+                if (! $review) {
+                    $action->failureNotificationTitle(__('general.review_request_canceled'));
+                    $action->failure();
+
+                    return;
+                }
+
                 try {
                     DB::beginTransaction();
 
-                    ReviewUpdateAction::run($this->review, [
+                    ReviewUpdateAction::run($review, [
                         'date_confirmed' => now(),
                         'status' => ReviewerStatus::ACCEPTED,
                     ]);
@@ -98,7 +120,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                         description: __('general.submission_review_assign_accepted', [
                             'submissionId' => $this->record->getKey(),
                             'submissionName' => $this->record->getMeta('title'),
-                            'name' => $this->review->user->full_name,
+                            'name' => $review->user->full_name,
                         ]),
                     )
                         ->by(auth()->user())
@@ -114,7 +136,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                         try {
                             Mail::to($editors)
                                 ->send(
-                                    new ReviewerAcceptedInvitationMail($this->review)
+                                    new ReviewerAcceptedInvitationMail($review)
                                 );
                         } catch (\Exception $e) {
                             $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
@@ -151,8 +173,16 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->requiresConfirmation()
             ->successNotificationTitle(__('general.request_declined'))
             ->action(function (Action $action) {
+                $review = $this->resolveCurrentReview();
 
-                ReviewUpdateAction::run($this->review, [
+                if (! $review) {
+                    $action->failureNotificationTitle(__('general.review_request_canceled'));
+                    $action->failure();
+
+                    return;
+                }
+
+                ReviewUpdateAction::run($review, [
                     'date_confirmed' => now(),
                     'status' => ReviewerStatus::DECLINED,
                 ]);
@@ -163,16 +193,16 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     description: __('general.submission_review_assign_declined', [
                         'submissionId' => $this->record->getKey(),
                         'submissionName' => $this->record->getMeta('title'),
-                        'name' => $this->review->user->full_name,
+                        'name' => $review->user->full_name,
                     ]),
                 )
                     ->by(auth()->user())
                     ->save();
 
                 try {
-                    Mail::to($this->review->user->email)
+                    Mail::to($review->user->email)
                         ->send(
-                            new ReviewerDeclinedInvitationMail($this->review)
+                            new ReviewerDeclinedInvitationMail($review)
                         );
                 } catch (\Exception $e) {
                     $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
@@ -189,7 +219,6 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
             ->record($this->record)
             ->schema([
                 Section::make()
-                    ->aside()
                     ->heading(__('general.request_for_review'))
                     ->description(__('general.request_for_review_description'))
                     ->schema([

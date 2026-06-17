@@ -51,9 +51,9 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     {
         abort_unless(auth()->user()->can('review', $this->record), 403);
 
-        $this->review = $this->record->reviews
-            ->where('user_id', auth()->user()->getKey())
-            ->first() ?? null;
+        $this->review = $this->record->getReviewForUserInActiveRound(auth()->user());
+
+        abort_if(! $this->review, 403);
 
         abort_if($this->review->status == ReviewerStatus::DECLINED, 403, __('general.review_request_declined'));
         abort_if($this->review->status == ReviewerStatus::CANCELED, 403, __('general.review_request_canceled'));
@@ -70,6 +70,18 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
         Hook::call('ReviewSubmissionPage::Form::fill', [&$formData, $this]);
 
         $this->form->fill($formData);
+    }
+
+    protected function resolveCurrentReview(): ?Review
+    {
+        $submission = $this->record->refresh();
+        $review = $submission->getReviewForUserInActiveRound(auth()->user());
+
+        if (! $review || ! $this->review || $review->getKey() !== $this->review->getKey()) {
+            return null;
+        }
+
+        return $this->review = $review;
     }
 
     public function getHeading(): string|Htmlable
@@ -186,6 +198,15 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
             ->hidden(fn () => $this->review->reviewSubmitted())
             ->successNotificationTitle(__('general.review_submitted_successfully'))
             ->action(function (Action $action) {
+                $review = $this->resolveCurrentReview();
+
+                if (! $review) {
+                    $action->failureNotificationTitle(__('general.review_request_canceled'));
+                    $action->failure();
+
+                    return;
+                }
+
                 $data = $this->form->getState();
                 $data['date_completed'] = now();
 
@@ -194,20 +215,20 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 }
 
                 if (isset($data['meta']['review_responses'])) {
-                    $data['score'] = $this->review->calculateReviewScore($data['meta']['review_responses'] ?? []);
+                    $data['score'] = $review->calculateReviewScore($data['meta']['review_responses'] ?? []);
                 }
 
                 try {
                     DB::beginTransaction();
 
-                    ReviewUpdateAction::run($this->review, $data);
-                    $this->form->model($this->review)->saveRelationships();
+                    ReviewUpdateAction::run($review, $data);
+                    $this->form->model($review)->saveRelationships();
 
                     Log::make(
                         name: 'submission',
                         subject: $this->record,
                         description: __('general.submission_review_completed', [
-                            'name' => $this->review->user->full_name,
+                            'name' => $review->user->full_name,
                         ]),
                     )
                         ->by(auth()->user())
@@ -221,7 +242,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
                     if ($editors->count()) {
                         Mail::to($editors)->send(
-                            new ReviewCompleteMail($this->review)
+                            new ReviewCompleteMail($review)
                         );
                     }
 

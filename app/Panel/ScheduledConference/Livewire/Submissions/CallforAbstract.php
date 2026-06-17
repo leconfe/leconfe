@@ -4,11 +4,13 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
 use App\Constants\SubmissionFileCategory;
 use App\Forms\Components\TinyEditor;
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Mail\Templates\AcceptAbstractMail;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
@@ -308,12 +310,28 @@ class CallforAbstract extends Component implements HasActions, HasForms
                 function (Action $action, array $data) {
                     try {
                         $this->submission->state()->acceptAbstract();
+                        $this->submission->refresh();
+
+                        $reviewRound = $this->submission->activeReviewRound
+                            ?? $this->submission->latestReviewRound;
+
+                        if (
+                            ! $reviewRound &&
+                            $this->submission->stage === SubmissionStage::PeerReview &&
+                            in_array($this->submission->status, [SubmissionStatus::OnReview, SubmissionStatus::OnPayment], true)
+                        ) {
+                            $reviewRound = StartSubmissionReviewRoundAction::run($this->submission, [], auth()->user());
+                            $this->submission->refresh();
+                        }
 
                         $submissionFiles = $this->submission
                             ->submissionFiles()
                             ->with(['media'])
-                            ->whereIn('id', $data['papers'])
+                            ->whereIn('id', data_get($data, 'papers', []))
+                            ->where('category', SubmissionFileCategory::ABSTRACT_FILES)
                             ->get();
+
+                        $clonedFileIds = [];
 
                         foreach ($submissionFiles as $record) {
                             $clonedMedia = $record->media->copy(
@@ -321,13 +339,26 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                 SubmissionFileCategory::PAPER_FILES,
                                 'private-files'
                             );
-                            $this->submission
+                            $clonedFile = $this->submission
                                 ->submissionFiles()
                                 ->create([
+                                    'review_round_id' => $reviewRound?->getKey(),
                                     'submission_file_type_id' => $record->type->getKey(),
                                     'category' => SubmissionFileCategory::PAPER_FILES,
                                     'media_id' => $clonedMedia->getKey(),
                                 ]);
+
+                            $clonedFileIds[] = $clonedFile->getKey();
+                        }
+
+                        if ($reviewRound && $clonedFileIds !== []) {
+                            $reviewRound->update([
+                                'default_file_ids' => collect($reviewRound->default_file_ids ?? [])
+                                    ->merge($clonedFileIds)
+                                    ->unique()
+                                    ->values()
+                                    ->all(),
+                            ]);
                         }
 
                         if (! $this->submission->payment && app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled()) {

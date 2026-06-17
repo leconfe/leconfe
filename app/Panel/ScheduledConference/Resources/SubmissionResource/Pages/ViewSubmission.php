@@ -6,8 +6,8 @@ use App\Actions\Submissions\AcceptWithdrawalAction;
 use App\Actions\Submissions\CancelWithdrawalAction;
 use App\Actions\Submissions\RequestWithdrawalAction;
 use App\Forms\Components\TinyEditor;
-use App\Infolists\Components\VerticalTabs\Tab as Tab;
-use App\Infolists\Components\VerticalTabs\Tabs as Tabs;
+use App\Infolists\Components\VerticalTabs\Tab as PublicationTab;
+use App\Infolists\Components\VerticalTabs\Tabs as PublicationTabs;
 use App\Mail\Templates\PublishSubmissionMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
@@ -50,6 +50,8 @@ use Filament\Forms\Get;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
 use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
+use Filament\Infolists\Components\Tabs as StageTabs;
+use Filament\Infolists\Components\Tabs\Tab as StageTab;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -464,7 +466,8 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         HorizontalTab::make('Workflow')
                             ->label(__('general.workflow'))
                             ->schema([
-                                Tabs::make()
+                                StageTabs::make()
+                                    ->contained(true)
                                     ->activeTab(function () {
                                         return match ($this->record->stage) {
                                             SubmissionStage::CallforAbstract => 1,
@@ -474,16 +477,15 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                             default => null,
                                         };
                                     })
-                                    ->sticky()
                                     ->tabs([
-                                        Tab::make('Submission')
+                                        StageTab::make('Submission')
                                             ->label(__('general.submission'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
                                                 Livewire::make(CallforAbstract::class, ['submission' => $this->record])
                                                     ->key('call-for-abstract'),
                                             ]),
-                                        Tab::make('Peer Review')
+                                        StageTab::make('Peer Review')
                                             ->label(__('general.peer_review'))
                                             ->icon('iconpark-checklist-o')
                                             ->schema([
@@ -492,7 +494,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('peer-review'),
                                             ]),
-                                        Tab::make('Presentation')
+                                        StageTab::make('Presentation')
                                             ->label(__('general.presentation'))
                                             ->icon('heroicon-o-presentation-chart-bar')
                                             ->schema([
@@ -501,7 +503,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('presentation'),
                                             ]),
-                                        Tab::make('Editing')
+                                        StageTab::make('Editing')
                                             ->label(__('general.editing'))
                                             ->icon('heroicon-o-pencil')
                                             ->schema([
@@ -526,10 +528,10 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                         fn (): bool => $this->record->isPublished()
                                     )
                                     ->content(__('general.cant_edit_submission_because_already_published')),
-                                Tabs::make()
+                                PublicationTabs::make()
                                     // ->persistTabInQueryString('ptab') // ptab shorten of publication-tab
                                     ->tabs([
-                                        Tab::make('Detail')
+                                        PublicationTab::make('Detail')
                                             ->label(__('general.details'))
                                             ->icon('heroicon-o-information-circle')
                                             ->schema([
@@ -538,7 +540,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('detail-form'),
                                             ]),
-                                        Tab::make('Contributors')
+                                        PublicationTab::make('Contributors')
                                             ->label(__('general.contributors'))
                                             ->icon('heroicon-o-user-group')
                                             ->schema([
@@ -548,7 +550,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('contributors'),
                                             ]),
-                                        Tab::make('Galleys')
+                                        PublicationTab::make('Galleys')
                                             ->label(__('general.galleys'))
                                             ->icon('heroicon-o-document-text')
                                             ->schema([
@@ -558,7 +560,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('galleys'),
                                             ]),
-                                        Tab::make('Proceeding')
+                                        PublicationTab::make('Proceeding')
                                             ->label(__('general.proceeding'))
                                             ->icon('heroicon-o-book-open')
                                             ->schema([
@@ -567,7 +569,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('proceeding'),
                                             ]),
-                                        Tab::make('Permissions and Disclosure')
+                                        PublicationTab::make('Permissions and Disclosure')
                                             ->label(__('general.permissions_and_disclosure'))
                                             ->icon('heroicon-o-shield-exclamation')
                                             ->schema([
@@ -576,7 +578,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('permissions-and-disclosure'),
                                             ]),
-                                        Tab::make('References')
+                                        PublicationTab::make('References')
                                             ->label(__('general.references'))
                                             ->icon('iconpark-list')
                                             ->schema([
@@ -585,7 +587,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                                 ])
                                                     ->key('references'),
                                             ]),
-                                        Tab::make('Additional Data')
+                                        PublicationTab::make('Additional Data')
                                             ->visible(SubmissionFormItem::exists())
                                             ->label(__('general.additional_data'))
                                             ->icon('heroicon-o-numbered-list')

@@ -3,6 +3,8 @@
 namespace App\Actions\Submissions;
 
 use App\Classes\Log;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
 use App\Services\Billing\SubmissionBillingNotifier;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +45,14 @@ class SubmissionUpdateAction
                         Logger::error($th->getMessage());
                     }
                 });
+            }
+
+            if (
+                $submission->stage === SubmissionStage::PeerReview &&
+                in_array($submission->status, [SubmissionStatus::OnReview, SubmissionStatus::OnPayment], true) &&
+                ! $submission->reviewRounds()->exists()
+            ) {
+                StartSubmissionReviewRoundAction::run($submission, [], auth()->user());
             }
 
             Log::make(

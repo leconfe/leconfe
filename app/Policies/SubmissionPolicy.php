@@ -274,7 +274,7 @@ class SubmissionPolicy
             return false;
         }
 
-        if (! $submission->reviews->where('user_id', $user->getKey())->first()) {
+        if (! $submission->getReviewForUserInActiveRound($user)) {
             return false;
         }
 
