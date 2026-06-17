@@ -67,7 +67,7 @@ class Application extends LaravelApplication
 
     public function getCodeVersion(): string
     {
-        return File::get(base_path('version'));
+        return trim(File::get(base_path('version')));
     }
 
     public function getVersion()
@@ -300,7 +300,7 @@ class Application extends LaravelApplication
 
     public function getApiUrl(?string $path = null): string
     {
-        return config('app.api_url') . $path;
+        return config('app.api_url').$path;
     }
 
     public function isOnScheduledConference(): bool
@@ -310,15 +310,18 @@ class Application extends LaravelApplication
 
     public function isOnConference(): bool
     {
-        if ($this->isOnScheduledConference()) return false;
-
+        if ($this->isOnScheduledConference()) {
+            return false;
+        }
 
         return (bool) $this->getCurrentConferenceId();
     }
 
     public function isOnSite(): bool
     {
-        if ($this->isOnConference() || $this->isOnScheduledConference()) return false;
+        if ($this->isOnConference() || $this->isOnScheduledConference()) {
+            return false;
+        }
 
         return true;
     }
