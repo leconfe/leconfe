@@ -43,6 +43,7 @@ class ReviewResult extends Page implements HasForms, HasTable
     {
         return Submission::query()
             ->with(['meta'])
+            ->select('submissions.*')
             ->whereIn('status', [
                 SubmissionStatus::OnReview,
                 SubmissionStatus::OnPresentation,
