@@ -7,7 +7,6 @@ use App\Facades\MetaTag;
 use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
-use App\Models\Enums\UserRole;
 
 class Upgrade extends Page
 {
@@ -22,8 +21,6 @@ class Upgrade extends Page
     public function mount()
     {
         MetaTag::add('robots', 'noindex, nofollow');
-
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Admin), 403);
 
         if (version_compare(app()->getInstalledVersion(), app()->getCodeVersion(), '>=')) {
             return redirect('/');
@@ -45,8 +42,6 @@ class Upgrade extends Page
 
     public function upgrade()
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Admin), 403);
-
         try {
             UpgradeAction::run();
 
