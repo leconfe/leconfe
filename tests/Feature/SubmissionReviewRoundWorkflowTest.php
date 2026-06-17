@@ -14,22 +14,22 @@ use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\Media;
-use App\Models\Role;
-use App\Models\Review;
 use App\Models\Permission;
+use App\Models\Review;
+use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
-use App\Models\SubmissionReviewRound;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
+use App\Models\SubmissionReviewRound;
 use App\Models\Track;
 use App\Models\User;
-use App\Panel\ScheduledConference\Pages\ReviewResult;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
-use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
-use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
+use App\Panel\ScheduledConference\Pages\ReviewResult;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
+use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -879,6 +879,34 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertSame(4.0, (float) $submission->effective_reviews_avg_score);
     }
 
+    public function test_review_result_query_keeps_submission_primary_key_for_table_records(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'score' => 4,
+            'recommendation' => 'Accept',
+            'date_completed' => now(),
+        ]);
+
+        $submission = ReviewResult::reviewResultsQuery()
+            ->whereKey($context['submission']->getKey())
+            ->first();
+
+        $this->assertNotNull($submission);
+        $this->assertSame($context['submission']->getKey(), $submission->getKey());
+    }
+
     public function test_review_result_uses_each_reviewers_latest_review_across_rounds(): void
     {
         $context = $this->makeSubmissionContext();
@@ -1029,7 +1057,8 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
 
         $this->actingAs($context['reviewerA']);
 
-        $page = new class extends ReviewSubmissionPage {
+        $page = new class extends ReviewSubmissionPage
+        {
             public function probeResolveCurrentReview(): ?Review
             {
                 return $this->resolveCurrentReview();
@@ -1079,7 +1108,8 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
 
         $this->actingAs($context['reviewerA']);
 
-        $page = new class extends ReviewerInvitationPage {
+        $page = new class extends ReviewerInvitationPage
+        {
             public function probeResolveCurrentReview(): ?Review
             {
                 return $this->resolveCurrentReview();
