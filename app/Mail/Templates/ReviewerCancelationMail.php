@@ -25,7 +25,7 @@ class ReviewerCancelationMail extends TemplateMailable
             name: 'email',
             subject: $review->submission,
             description: __('general.email_sent', ['name' => 'Reviewer Canceled']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

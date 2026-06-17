@@ -2,14 +2,14 @@
 
 namespace App\Mail\Templates;
 
-use App\Managers\PaymentManager;
-use App\Models\Participant;
+use App\Classes\Log;
 use App\Models\Payment;
-use App\Models\Submission;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 
 class PaymentConfirmedMail extends TemplateMailable
 {
+    public Log $log;
+
     public function __construct(Payment $payment)
     {
         $this->setAdditionalData([
@@ -21,6 +21,12 @@ class PaymentConfirmedMail extends TemplateMailable
             'Payment Fee Name' => $payment->fee->name,
             'Payment ID' => $payment->getKey(),
         ]);
+
+        $this->log = Log::make(
+            name: 'email',
+            subject: $payment,
+            description: __('general.email_sent', ['name' => 'Payment Confirmed']),
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

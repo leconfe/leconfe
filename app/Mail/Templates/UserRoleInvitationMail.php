@@ -35,7 +35,7 @@ class UserRoleInvitationMail extends TemplateMailable
             name: 'email',
             subject: $invitation,
             description: __('general.email_sent', ['name' => 'User Role Invitation']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string

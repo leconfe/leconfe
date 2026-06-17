@@ -10,6 +10,7 @@ use App\Models\ScheduledConference;
 use App\Models\User;
 use App\Panel\Conference\Resources\UserResource;
 use App\Panel\ScheduledConference\Pages\Dashboard;
+use App\Panel\ScheduledConference\Pages\ParticipantRegistration;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -80,6 +81,37 @@ class ScheduledConferenceAccessFlowTest extends TestCase
         app()->setCurrentScheduledConferenceId($enabledScheduledConference->getKey());
 
         $this->assertContains(UserRole::Participant->name, UserRole::getAllowedSelfAssignRoleNames());
+    }
+
+    public function test_participant_registration_page_requires_registration_to_be_allowed(): void
+    {
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        $scheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Test Scheduled Conference',
+            'path' => 'test',
+        ]);
+        $scheduledConference->setManyMeta([
+            'allow_registration' => false,
+            'participant_payment' => true,
+        ]);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
+
+        $participant = User::factory()->create([
+            'email' => 'participant-access@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+        $participant->assignRole($this->createScheduledConferenceRole(UserRole::Participant, $conference, $scheduledConference));
+
+        $this->actingAs($participant);
+
+        $this->assertFalse(ParticipantRegistration::canAccess());
     }
 
     public function test_scheduled_conference_registration_redirect_url_points_to_panel_dashboard(): void
@@ -183,6 +215,19 @@ class ScheduledConferenceAccessFlowTest extends TestCase
             'guard_name' => 'web',
             'conference_id' => 0,
             'scheduled_conference_id' => 0,
+        ]);
+    }
+
+    protected function createScheduledConferenceRole(
+        UserRole $role,
+        Conference $conference,
+        ScheduledConference $scheduledConference
+    ): Role {
+        return Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => $role->value,
+            'guard_name' => 'web',
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => $scheduledConference->getKey(),
         ]);
     }
 }

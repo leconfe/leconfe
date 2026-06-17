@@ -780,6 +780,8 @@ return [
     'email_sent' => 'Письмо отправлено',
     'cancel_reviewer' => 'Отменить рецензента',
     'reviewer_canceled' => 'Рецензент отменён',
+    'unassign_reviewer' => 'Unassign Reviewer',
+    'reviewer_unassigned' => 'Reviewer assignment removed',
     'reinstate_reviewer' => 'Восстановить рецензента',
     'reviewer_reinstated' => 'Рецензент восстановлен',
     'user_not_found' => 'Пользователь не найден',

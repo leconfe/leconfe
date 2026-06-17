@@ -376,7 +376,7 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 
     public function isParticipantRegistrationEnabled(): bool
     {
-        return $this->isParticipantPaymentEnabled();
+        return $this->getMeta('allow_registration') && $this->isParticipantPaymentEnabled();
     }
 
     public function getPaymentOpenedAt(): ?Carbon

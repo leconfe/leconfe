@@ -20,7 +20,7 @@ class NewRevisionUploadedMail extends TemplateMailable
             name: 'email',
             subject: $submissionFile->submission,
             description: __('general.email_sent', ['name' => 'New Revision Uploaded']),
-        );
+        )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string
