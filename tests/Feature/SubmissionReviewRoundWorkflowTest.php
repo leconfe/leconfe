@@ -659,7 +659,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             $context['editor'],
         );
 
-        $context['editor']->assignRole($this->createAuthorRole());
+        $this->assignEditorRole($context['editor'], $context['submission']);
 
         $media = Media::query()->create([
             'model_type' => Submission::class,
@@ -709,6 +709,71 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertSame('renamed-paper', $media->name);
         $this->assertSame('paper-round-one.pdf', $media->file_name);
         $this->assertSame('renamed-paper.pdf', $media->original_file_name);
+    }
+
+    public function test_author_cannot_manage_review_files_after_submission_enters_peer_review(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $authorRole = $this->createAuthorRole();
+        $context['author']->assignRole($authorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['author']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $media = Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $context['submission']->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => SubmissionFileCategory::REVIEW_FILES,
+            'name' => 'paper-round-one',
+            'file_name' => 'paper-round-one.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        UploadSubmissionFileAction::run(
+            $context['submission'],
+            $media,
+            SubmissionFileCategory::REVIEW_FILES,
+            $type,
+            $round->getKey(),
+        );
+
+        $file = SubmissionFile::query()
+            ->where('submission_id', $context['submission']->getKey())
+            ->where('review_round_id', $round->getKey())
+            ->firstOrFail();
+
+        $this->actingAs($context['author']);
+        $this->assertFalse($context['author']->can('uploadPaper', $context['submission']));
+        $this->assertFalse($context['author']->can('deleteFile', $context['submission']));
+
+        Livewire::test(ReviewFiles::class, ['submission' => $context['submission']])
+            ->assertTableActionHidden('upload')
+            ->assertTableActionHidden('select-files')
+            ->assertTableActionHidden('rename', $file)
+            ->assertTableActionHidden('delete', $file);
     }
 
     public function test_selected_files_are_cloned_into_the_next_review_round(): void
@@ -947,7 +1012,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
     {
         $context = $this->makeSubmissionContext();
         $this->actingAs($context['editor']);
-        $context['editor']->assignRole($this->createAuthorRole());
+        $this->assignEditorRole($context['editor'], $context['submission']);
 
         $firstRound = StartSubmissionReviewRoundAction::run(
             $context['submission'],
@@ -1691,6 +1756,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
 
         return [
             'submission' => $submission,
+            'author' => $author,
             'editor' => $editor,
             'reviewerA' => User::query()->create([
                 'given_name' => 'Reviewer',
@@ -1740,5 +1806,22 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $role->syncPermissions(['Submission:uploadPaper']);
 
         return $role;
+    }
+
+    protected function assignEditorRole(User $user, Submission $submission): Role
+    {
+        $editorRole = Role::withoutGlobalScopes()
+            ->where('name', UserRole::ScheduledConferenceEditor->value)
+            ->where('conference_id', app()->getCurrentConferenceId())
+            ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
+            ->firstOrFail();
+
+        $user->assignRole($editorRole);
+        $submission->participants()->firstOrCreate([
+            'user_id' => $user->getKey(),
+            'role_id' => $editorRole->getKey(),
+        ]);
+
+        return $editorRole;
     }
 }

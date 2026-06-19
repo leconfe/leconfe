@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Constants\SubmissionFileCategory;
 use App\Models\Conference;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\ScheduledConference;
@@ -255,6 +257,57 @@ class SubmissionWizardRequiredFilesTest extends TestCase
         $this->assertDatabaseMissing('submission_files', [
             'id' => $submissionFile->getKey(),
         ]);
+    }
+
+    public function test_author_cannot_manage_submission_files_after_wizard_is_completed(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $submission = $context['submission'];
+
+        $manuscript = SubmissionFileType::withoutGlobalScopes()->create([
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Manuscript',
+            'required' => true,
+        ]);
+
+        $authorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::Author->value,
+            'guard_name' => 'web',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+        ]);
+
+        $submission->participants()->create([
+            'user_id' => $context['user']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $submission->forceFill([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ])->save();
+
+        $media = $submission->addMedia(resource_path('assets/sample.pdf'))
+            ->preservingOriginal()
+            ->toMediaCollection(SubmissionFileCategory::ABSTRACT_FILES, 'private-files');
+
+        $submissionFile = SubmissionFile::query()->create([
+            'submission_id' => $submission->getKey(),
+            'media_id' => $media->getKey(),
+            'submission_file_type_id' => $manuscript->getKey(),
+            'user_id' => $context['user']->getKey(),
+            'category' => SubmissionFileCategory::ABSTRACT_FILES,
+        ]);
+
+        $this->actingAs($context['user']);
+        $this->assertTrue($submission->isParticipant($context['user']));
+        $this->assertFalse($context['user']->can('uploadAbstract', $submission));
+        $this->assertFalse($context['user']->can('deleteFile', $submission));
+
+        Livewire::test(AbstractFiles::class, ['submission' => $submission->refresh()])
+            ->assertTableActionHidden('upload')
+            ->assertTableActionHidden('rename', $submissionFile)
+            ->assertTableActionHidden('delete', $submissionFile);
     }
 
     public function test_submission_file_table_loads_submission_for_delete_authorization(): void
