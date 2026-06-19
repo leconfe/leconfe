@@ -9,6 +9,7 @@ use App\Constants\SubmissionFileCategory;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclinePaperMail;
+use App\Mail\Templates\ReviewRoundStartedMail;
 use App\Mail\Templates\RevisionRequestMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
@@ -18,6 +19,7 @@ use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionReviewRound;
+use App\Notifications\SubmissionReviewRoundStarted;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
@@ -214,6 +216,15 @@ class PeerReview extends Component implements HasActions, HasForms
             ->closeModalByClickingAway()
             ->extraAttributes(['class' => 'w-full'], true)
             ->hidden(fn (): bool => ! $this->isSelectedRoundActionable())
+            ->mountUsing(function (Form $form): void {
+                $mailTemplate = DefaultMailTemplate::where('mailable', ReviewRoundStartedMail::class)->first();
+                $form->fill([
+                    'email' => $this->submission->user->email,
+                    'subject' => $mailTemplate ? $mailTemplate->subject : ReviewRoundStartedMail::getDefaultSubject(),
+                    'message' => $mailTemplate ? $mailTemplate->html_template : ReviewRoundStartedMail::getDefaultHtmlTemplate(),
+                    'do-not-notify-author' => false,
+                ]);
+            })
             ->form([
                 TextInput::make('name')
                     ->label(__('general.review_round_name'))
@@ -230,6 +241,26 @@ class PeerReview extends Component implements HasActions, HasForms
                             ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->name.' ('.$file->category.')'])
                             ->toArray()
                     ),
+                Fieldset::make('Notification')
+                    ->label(__('general.notification'))
+                    ->columns(1)
+                    ->schema([
+                        TextInput::make('email')
+                            ->label(__('general.email'))
+                            ->readOnly()
+                            ->dehydrated(),
+                        TextInput::make('subject')
+                            ->label(__('general.subject'))
+                            ->required(fn (Get $get): bool => ! $get('do-not-notify-author')),
+                        TinyEditor::make('message')
+                            ->label(__('general.message'))
+                            ->minHeight(300)
+                            ->profile('email')
+                            ->columnSpanFull(),
+                        Checkbox::make('do-not-notify-author')
+                            ->label(__('general.dont_send_notification_to_author'))
+                            ->columnSpanFull(),
+                    ]),
             ])
             ->successNotificationTitle(__('general.review_round_started'))
             ->action(function (Action $action, array $data) {
@@ -255,6 +286,24 @@ class PeerReview extends Component implements HasActions, HasForms
                 )
                     ->by(auth()->user())
                     ->save();
+
+                if (! data_get($data, 'do-not-notify-author', false)) {
+                    try {
+                        $this->submission->user->notify(
+                            new SubmissionReviewRoundStarted(
+                                submission: $this->submission,
+                                reviewRound: $reviewRound,
+                                message: $data['message'] ?? '',
+                                subject: $data['subject'] ?? '',
+                            )
+                        );
+                    } catch (\Exception $e) {
+                        $action->failureNotificationTitle(__('general.email_notification_was_not_delivered'));
+                        $action->failure();
+
+                        return;
+                    }
+                }
 
                 $this->selectedRoundId = $reviewRound->getKey();
                 $this->dispatchSelectedRound();

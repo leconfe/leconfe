@@ -7,7 +7,6 @@ use App\Constants\SubmissionFileCategory;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionReviewRound;
-use Awcodes\Shout\Components\Shout;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
@@ -99,7 +98,7 @@ class ReviewFiles extends SubmissionFilesTable
             ->icon('heroicon-o-arrow-down-tray')
             ->label(__('general.download_all_files'))
             ->color('primary')
-            ->hidden(fn (): bool => $this->isViewOnly() || ! $this->tableQuery()->exists())
+            ->hidden(fn (): bool => ! $this->canManageReviewFiles() || ! $this->tableQuery()->exists())
             ->action(function (TableAction $action) {
                 $mediaIds = $this->tableQuery()->pluck('media_id');
                 $files = $this->submission->media()
@@ -162,11 +161,46 @@ class ReviewFiles extends SubmissionFilesTable
 
     public function isViewOnly(): bool
     {
+        return ! $this->canUploadReviewFiles();
+    }
+
+    protected function canUploadReviewFiles(): bool
+    {
         if (! $this->isSelectedRoundOpen()) {
-            return true;
+            return false;
         }
 
-        return $this->viewOnly || ! auth()->user()->can('uploadPaper', $this->submission);
+        if ($this->viewOnly) {
+            return false;
+        }
+
+        $user = auth()->user();
+
+        return $user?->can('actAsEditor', $this->submission)
+            || $user?->is($this->submission->user);
+    }
+
+    protected function canManageReviewFiles(): bool
+    {
+        if (! $this->isSelectedRoundOpen()) {
+            return false;
+        }
+
+        if ($this->viewOnly) {
+            return false;
+        }
+
+        return auth()->user()?->can('actAsEditor', $this->submission) ?? false;
+    }
+
+    protected function canEditSubmissionFile(SubmissionFile $record): bool
+    {
+        return $this->canManageReviewFiles() && ! $this->submission->isDeclined();
+    }
+
+    protected function canDeleteSubmissionFile(SubmissionFile $record): bool
+    {
+        return $this->canManageReviewFiles() && auth()->user()->can('deleteFile', $record->submission);
     }
 
     public function selectFilesAction(): TableAction
@@ -230,15 +264,6 @@ class ReviewFiles extends SubmissionFilesTable
         return $this->isSelectedRoundOpen()
             && $this->previousReviewRound !== null
             && $this->previousRoundFiles->isNotEmpty()
-            && auth()->user()?->can('uploadPaper', $this->submission);
-    }
-
-    public function uploadFormSchema(): array
-    {
-        return [
-            Shout::make('information')
-                ->content(__('general.after_uploading_review_file_system_will_send_notification')),
-            ...parent::uploadFormSchema(),
-        ];
+            && $this->canManageReviewFiles();
     }
 }

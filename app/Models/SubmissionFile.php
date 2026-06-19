@@ -30,16 +30,15 @@ class SubmissionFile extends Model
         });
 
         static::created(function (SubmissionFile $createdModel) {
-            // Send notification when a review file or revision is uploaded.
+            // Send notification when a revision is uploaded, or when an author uploads a review file.
             // Should we created an event for this ?
             // for example SubmissionFilesUploaded, then we can listen to this event and send notification
             $shouldSendNotification = in_array(
                 $createdModel->category,
                 [
-                    SubmissionFileCategory::REVIEW_FILES,
                     SubmissionFileCategory::REVISION_FILES,
                 ]
-            );
+            ) || $createdModel->isAuthorUploadedReviewFile();
 
             if ($shouldSendNotification) {
                 $editors = $createdModel->submission->participants()
@@ -99,6 +98,26 @@ class SubmissionFile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isAuthorUploadedReviewFile(): bool
+    {
+        if ($this->category !== SubmissionFileCategory::REVIEW_FILES) {
+            return false;
+        }
+
+        if (! $this->user_id) {
+            return false;
+        }
+
+        $user = $this->user;
+
+        if (! $user) {
+            return false;
+        }
+
+        return $this->submission->isAuthor($user)
+            || $this->submission->isParticipantAuthor($user);
     }
 
     public function reviewerAssginedFiles(): HasMany

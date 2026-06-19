@@ -9,7 +9,12 @@ use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
+use App\Mail\Templates\NewPaperUploadedMail;
+use App\Mail\Templates\NewReviewFileUploadedMail;
+use App\Mail\Templates\NewRevisionUploadedMail;
+use App\Mail\Templates\ReviewRoundStartedMail;
 use App\Models\Conference;
+use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
@@ -24,6 +29,8 @@ use App\Models\SubmissionFileType;
 use App\Models\SubmissionReviewRound;
 use App\Models\Track;
 use App\Models\User;
+use App\Notifications\SubmissionFileUploaded;
+use App\Notifications\SubmissionReviewRoundStarted;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
 use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
@@ -36,6 +43,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -52,6 +60,9 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
 
         Route::get('/test/submissions/{record}/review', fn () => null)
             ->name('filament.conference.resources.submissions.review');
+
+        Route::get('/test/submissions/{record}', fn () => null)
+            ->name('filament.conference.resources.submissions.view');
     }
 
     public function test_it_starts_a_new_review_round_and_closes_the_previous_open_round(): void
@@ -290,6 +301,94 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             'round_number' => 2,
             'name' => 'Abstract Screening',
         ]);
+    }
+
+    public function test_start_next_review_round_modal_offers_author_notification_toggle(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->mountAction('startNextReviewRoundAction')
+            ->assertSee(__('general.notification'))
+            ->assertSee(__('general.dont_send_notification_to_author'));
+    }
+
+    public function test_start_next_review_round_notifies_author_by_default(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Notification::fake();
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->mountAction('startNextReviewRoundAction')
+            ->setActionData([
+                'name' => 'Full Paper Review',
+                'default_file_ids' => [],
+                'subject' => 'New review round',
+                'message' => 'Your submission has been sent for another review round.',
+            ])
+            ->callMountedAction();
+
+        Notification::assertSentTo(
+            $context['author'],
+            SubmissionReviewRoundStarted::class,
+            function (SubmissionReviewRoundStarted $notification) use ($context): bool {
+                $databaseMessage = $notification->toDatabase($context['author']);
+
+                return $notification->submission->is($context['submission'])
+                    && $notification->reviewRound->round_number === 2
+                    && $notification->via($context['author']) === ['database', 'mail']
+                    && $notification->toMail($context['author']) instanceof ReviewRoundStartedMail
+                    && data_get($databaseMessage->toArray(), 'title') === __('general.sent_for_a_new_round_of_reviews');
+            }
+        );
+    }
+
+    public function test_start_next_review_round_can_skip_author_notification(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Notification::fake();
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->mountAction('startNextReviewRoundAction')
+            ->setActionData([
+                'name' => 'Full Paper Review',
+                'default_file_ids' => [],
+                'subject' => 'New review round',
+                'message' => 'Your submission has been sent for another review round.',
+                'do-not-notify-author' => true,
+            ])
+            ->callMountedAction();
+
+        Notification::assertNotSentTo($context['author'], SubmissionReviewRoundStarted::class);
     }
 
     public function test_historical_review_round_hides_peer_review_workflow_actions(): void
@@ -648,6 +747,140 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_review_files_upload_modal_does_not_show_editor_notification_notice(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $this->actingAs($context['editor']);
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        Livewire::test(ReviewFiles::class, ['submission' => $context['submission']])
+            ->mountTableAction('upload')
+            ->assertDontSee('After uploading review files, the system will send a notification to the editor.');
+    }
+
+    public function test_review_file_upload_notifies_editors_only_when_uploaded_by_author(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $legacyEditorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => 'editor',
+            'guard_name' => 'web',
+            'conference_id' => app()->getCurrentConferenceId(),
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $context['submission']->participants()->create([
+            'user_id' => $context['editor']->getKey(),
+            'role_id' => $legacyEditorRole->getKey(),
+        ]);
+
+        $authorRole = $this->createAuthorRole();
+        $context['submission']->participants()->create([
+            'user_id' => $context['author']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        Notification::fake();
+
+        SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $this->createSubmissionMedia($context['submission'], SubmissionFileCategory::REVIEW_FILES, 'review-file')->getKey(),
+            'review_round_id' => $round->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'user_id' => $context['editor']->getKey(),
+            'category' => SubmissionFileCategory::REVIEW_FILES,
+        ]);
+
+        Notification::assertNotSentTo(
+            $context['editor'],
+            SubmissionFileUploaded::class,
+            fn (SubmissionFileUploaded $notification): bool => $notification->submissionFile->category === SubmissionFileCategory::REVIEW_FILES
+        );
+
+        SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $this->createSubmissionMedia($context['submission'], SubmissionFileCategory::REVIEW_FILES, 'author-review-file')->getKey(),
+            'review_round_id' => $round->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::REVIEW_FILES,
+        ]);
+
+        Notification::assertSentTo(
+            $context['editor'],
+            SubmissionFileUploaded::class,
+            fn (SubmissionFileUploaded $notification): bool => $notification->submissionFile->category === SubmissionFileCategory::REVIEW_FILES
+                && $notification->via($context['editor']) === ['mail', 'database']
+        );
+
+        SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $this->createSubmissionMedia($context['submission'], SubmissionFileCategory::REVISION_FILES, 'revision-file')->getKey(),
+            'review_round_id' => $round->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::REVISION_FILES,
+        ]);
+
+        Notification::assertSentTo(
+            $context['editor'],
+            SubmissionFileUploaded::class,
+            fn (SubmissionFileUploaded $notification): bool => $notification->submissionFile->category === SubmissionFileCategory::REVISION_FILES
+        );
+    }
+
+    public function test_review_file_upload_email_template_uses_review_file_context(): void
+    {
+        $this->makeSubmissionContext();
+
+        $mailables = collect((new DefaultMailTemplate)->getDefaultData(app()->getCurrentConference()))
+            ->pluck('mailable');
+
+        $this->assertTrue($mailables->contains(NewReviewFileUploadedMail::class));
+        $this->assertFalse($mailables->contains(NewPaperUploadedMail::class));
+        $this->assertTrue($mailables->contains(NewRevisionUploadedMail::class));
+    }
+
+    public function test_legacy_new_paper_uploaded_mail_template_migrates_to_review_file_upload_mail(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $mailTemplateId = DB::table('mail_templates')->insertGetId([
+            'conference_id' => app()->getCurrentConferenceId(),
+            'mailable' => NewPaperUploadedMail::class,
+            'description' => 'Legacy review file template',
+            'subject' => 'Legacy subject',
+            'html_template' => '<p>Legacy template</p>',
+            'text_template' => 'Legacy template',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $migration = require database_path('migrations/2026_06_19_000001_rename_new_paper_uploaded_to_new_review_file_uploaded.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('mail_templates', [
+            'id' => $mailTemplateId,
+            'mailable' => NewReviewFileUploadedMail::class,
+        ]);
+    }
+
     public function test_renaming_a_submission_file_updates_the_displayed_name(): void
     {
         $context = $this->makeSubmissionContext();
@@ -711,7 +944,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertSame('renamed-paper.pdf', $media->original_file_name);
     }
 
-    public function test_author_cannot_manage_review_files_after_submission_enters_peer_review(): void
+    public function test_author_can_upload_review_files_but_cannot_edit_delete_or_select_previous_files(): void
     {
         $context = $this->makeSubmissionContext();
         $round = StartSubmissionReviewRoundAction::run(
@@ -766,11 +999,11 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             ->firstOrFail();
 
         $this->actingAs($context['author']);
-        $this->assertFalse($context['author']->can('uploadPaper', $context['submission']));
         $this->assertFalse($context['author']->can('deleteFile', $context['submission']));
 
         Livewire::test(ReviewFiles::class, ['submission' => $context['submission']])
-            ->assertTableActionHidden('upload')
+            ->assertTableActionVisible('upload')
+            ->assertTableActionHidden('download_all')
             ->assertTableActionHidden('select-files')
             ->assertTableActionHidden('rename', $file)
             ->assertTableActionHidden('delete', $file);
@@ -1823,5 +2056,26 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         ]);
 
         return $editorRole;
+    }
+
+    protected function createSubmissionMedia(Submission $submission, string $collection, string $name): Media
+    {
+        return Media::query()->create([
+            'model_type' => Submission::class,
+            'model_id' => $submission->getKey(),
+            'uuid' => (string) Str::uuid(),
+            'collection_name' => $collection,
+            'name' => $name,
+            'file_name' => $name.'.pdf',
+            'mime_type' => 'application/pdf',
+            'disk' => 'private-files',
+            'conversions_disk' => null,
+            'size' => 123,
+            'manipulations' => [],
+            'custom_properties' => [],
+            'generated_conversions' => [],
+            'responsive_images' => [],
+            'order_column' => 1,
+        ]);
     }
 }

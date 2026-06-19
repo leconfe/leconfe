@@ -865,7 +865,6 @@ return [
     'no_files' => 'No Files',
     'revisions' => 'Revisions',
     'upload_your_reviews_files_here' => 'Upload your revision files here.',
-    'after_uploading_review_file_system_will_send_notification' => 'After uploading review files, the system will send a notification to the editor.',
     'after_uploading_files_system_will_send_notification_to_editor' => 'After uploading files, system will send notification to the editor.',
 
     'presentation_files' => 'Presentation Files',

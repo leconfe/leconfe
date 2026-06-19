@@ -828,7 +828,6 @@ return [
     'no_files' => 'Tidak Ada Berkas',
     'revisions' => 'Revisi',
     'upload_your_reviews_files_here' => 'Unggah berkas revisi Anda di sini.',
-    'after_uploading_review_file_system_will_send_notification' => 'Setelah mengunggah berkas review, sistem akan mengirim notifikasi kepada editor.',
     'after_uploading_files_system_will_send_notification_to_editor' => 'Setelah mengunggah berkas, sistem akan mengirim notifikasi kepada editor.',
     'presentation_files' => 'File Presentasi',
     'payment_processing' => 'Pemrosesan Pembayaran',

@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Constants\SubmissionFileCategory;
-use App\Mail\Templates\NewPaperUploadedMail;
+use App\Mail\Templates\NewReviewFileUploadedMail;
 use App\Mail\Templates\NewRevisionUploadedMail;
 use App\Models\SubmissionFile;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -32,13 +32,17 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return match ($this->submissionFile->category) {
+            SubmissionFileCategory::REVIEW_FILES => ['mail', 'database'],
+            SubmissionFileCategory::REVISION_FILES => ['mail', 'database'],
+            default => [],
+        };
     }
 
     public function toMail(object $notifiable)
     {
         $mailTempalte = match ($this->submissionFile->category) {
-            SubmissionFileCategory::REVIEW_FILES => NewPaperUploadedMail::class,
+            SubmissionFileCategory::REVIEW_FILES => NewReviewFileUploadedMail::class,
             SubmissionFileCategory::REVISION_FILES => NewRevisionUploadedMail::class,
             default => null
         };
