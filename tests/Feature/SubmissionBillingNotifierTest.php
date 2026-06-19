@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Managers\PaymentManager;
 use App\Models\Conference;
@@ -19,14 +20,26 @@ use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
+use App\Panel\ScheduledConference\Widgets\Overview;
 use App\Services\Billing\SubmissionBillingNotifier;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class SubmissionBillingNotifierTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Route::get('/test/payments/{record}', fn () => null)
+            ->name('filament.conference.pages.payment-detail');
+    }
 
     public function test_it_sends_submission_invoice_once_when_stage_threshold_is_reached(): void
     {
@@ -260,6 +273,191 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertSame($newPaymentFee->getKey(), $payment->payment_fee_id);
         $this->assertSame(250.0, (float) $payment->amount);
         $this->assertSame(250.0, (float) $payment->getMeta('base_amount'));
+    }
+
+    public function test_submission_payment_table_shows_latest_review_round_badge_in_submission_status_column(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            null,
+            'Abstract Review',
+        );
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            null,
+            'Poster Review',
+        );
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+
+        Livewire::test(SubmissionPaymentTable::class)
+            ->assertTableColumnExists('submission_status')
+            ->assertTableColumnStateSet(
+                'submission_status',
+                [SubmissionStatus::OnReview->value, 'Poster Review'],
+                $payment,
+            );
+    }
+
+    public function test_submission_payment_table_can_filter_by_submission_status(): void
+    {
+        $onReview = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+            userEmail: 'on-review@example.test',
+        );
+
+        $onPresentation = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::Presentation,
+            submissionStatus: SubmissionStatus::OnPresentation,
+            conference: $onReview['conference'],
+            scheduledConference: $onReview['scheduledConference'],
+            userEmail: 'on-presentation@example.test',
+        );
+
+        $this->queueSubmissionPayment($onReview['submission'], $onReview['paymentFee']);
+        $this->queueSubmissionPayment($onPresentation['submission'], $onPresentation['paymentFee']);
+
+        $onReviewPayment = $onReview['submission']->payment()->firstOrFail();
+        $onPresentationPayment = $onPresentation['submission']->payment()->firstOrFail();
+
+        Livewire::test(SubmissionPaymentTable::class)
+            ->assertTableFilterExists('submission_status')
+            ->assertCanSeeTableRecords([$onReviewPayment, $onPresentationPayment])
+            ->filterTable('submission_status', SubmissionStatus::OnReview->value)
+            ->assertCanSeeTableRecords([$onReviewPayment])
+            ->assertCanNotSeeTableRecords([$onPresentationPayment])
+            ->assertCountTableRecords(1);
+    }
+
+    public function test_submission_payment_table_only_shows_payments_for_valid_submission_statuses(): void
+    {
+        $valid = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+            userEmail: 'valid@example.test',
+        );
+
+        $declined = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Declined,
+            conference: $valid['conference'],
+            scheduledConference: $valid['scheduledConference'],
+            userEmail: 'declined-payment-list@example.test',
+        );
+
+        $withdrawn = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Withdrawn,
+            conference: $valid['conference'],
+            scheduledConference: $valid['scheduledConference'],
+            userEmail: 'withdrawn-payment-list@example.test',
+        );
+
+        $paymentDeclined = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::Payment,
+            submissionStatus: SubmissionStatus::PaymentDeclined,
+            conference: $valid['conference'],
+            scheduledConference: $valid['scheduledConference'],
+            userEmail: 'payment-declined-payment-list@example.test',
+        );
+
+        $this->queueSubmissionPayment($valid['submission'], $valid['paymentFee']);
+        $this->queueSubmissionPayment($declined['submission'], $declined['paymentFee']);
+        $this->queueSubmissionPayment($withdrawn['submission'], $withdrawn['paymentFee']);
+        $this->queueSubmissionPayment($paymentDeclined['submission'], $paymentDeclined['paymentFee']);
+
+        $validPayment = $valid['submission']->payment()->firstOrFail();
+        $declinedPayment = $declined['submission']->payment()->firstOrFail();
+        $withdrawnPayment = $withdrawn['submission']->payment()->firstOrFail();
+        $paymentDeclinedPayment = $paymentDeclined['submission']->payment()->firstOrFail();
+
+        Livewire::test(SubmissionPaymentTable::class)
+            ->assertCanSeeTableRecords([$validPayment])
+            ->assertCanNotSeeTableRecords([$declinedPayment, $withdrawnPayment, $paymentDeclinedPayment])
+            ->assertCountTableRecords(1)
+            ->assertTableFilterExists('submission_status', function (SelectFilter $filter): bool {
+                $options = $filter->getOptions();
+
+                return ! array_key_exists(SubmissionStatus::Declined->value, $options)
+                    && ! array_key_exists(SubmissionStatus::Withdrawn->value, $options)
+                    && ! array_key_exists(SubmissionStatus::PaymentDeclined->value, $options);
+            });
+    }
+
+    public function test_dashboard_overview_submission_payment_count_only_includes_valid_submission_statuses(): void
+    {
+        $paidValid = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+            userEmail: 'paid-valid-overview@example.test',
+        );
+
+        $unpaidValid = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::Presentation,
+            submissionStatus: SubmissionStatus::OnPresentation,
+            conference: $paidValid['conference'],
+            scheduledConference: $paidValid['scheduledConference'],
+            userEmail: 'unpaid-valid-overview@example.test',
+        );
+
+        $paidDeclined = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Declined,
+            conference: $paidValid['conference'],
+            scheduledConference: $paidValid['scheduledConference'],
+            userEmail: 'paid-declined-overview@example.test',
+        );
+
+        $unpaidWithdrawn = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::Withdrawn,
+            conference: $paidValid['conference'],
+            scheduledConference: $paidValid['scheduledConference'],
+            userEmail: 'unpaid-withdrawn-overview@example.test',
+        );
+
+        $paidPaymentDeclined = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::Payment,
+            submissionStatus: SubmissionStatus::PaymentDeclined,
+            conference: $paidValid['conference'],
+            scheduledConference: $paidValid['scheduledConference'],
+            userEmail: 'paid-payment-declined-overview@example.test',
+        );
+
+        $this->queueSubmissionPayment($paidValid['submission'], $paidValid['paymentFee']);
+        $this->queueSubmissionPayment($unpaidValid['submission'], $unpaidValid['paymentFee']);
+        $this->queueSubmissionPayment($paidDeclined['submission'], $paidDeclined['paymentFee']);
+        $this->queueSubmissionPayment($unpaidWithdrawn['submission'], $unpaidWithdrawn['paymentFee']);
+        $this->queueSubmissionPayment($paidPaymentDeclined['submission'], $paidPaymentDeclined['paymentFee']);
+
+        $paidValid['submission']->payment()->firstOrFail()->update(['paid_at' => now()]);
+        $paidDeclined['submission']->payment()->firstOrFail()->update(['paid_at' => now()]);
+        $paidPaymentDeclined['submission']->payment()->firstOrFail()->update(['paid_at' => now()]);
+
+        $this->assertSame('1 / 2', Overview::getSubmissionPaymentOverviewState());
     }
 
     public function test_submission_invoice_send_action_remains_available_after_invoice_was_sent(): void

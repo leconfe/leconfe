@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
+use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
 use App\Panel\ScheduledConference\Pages\Payments;
 use App\Panel\ScheduledConference\Pages\ScheduledConferenceSetting;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -22,6 +23,7 @@ use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Squire\Models\Currency;
 
 class Overview extends Widget implements HasForms, HasInfolists
@@ -38,6 +40,28 @@ class Overview extends Widget implements HasForms, HasInfolists
         $user = auth()->user();
 
         return $user->can('viewDashboardOverview', app()->getCurrentScheduledConference());
+    }
+
+    public static function getSubmissionPaymentOverviewState(): string
+    {
+        $submissionPaymentCount = static::getValidSubmissionPaymentQuery()->count();
+
+        $paidSubmissionPaymentCount = static::getValidSubmissionPaymentQuery()
+            ->whereNotNull('paid_at')
+            ->count();
+
+        return $paidSubmissionPaymentCount.' / '.$submissionPaymentCount;
+    }
+
+    protected static function getValidSubmissionPaymentQuery(): Builder
+    {
+        return Payment::query()
+            ->type(PaymentManager::TYPE_SUBMISSION_FEE)
+            ->whereHasMorph(
+                'model',
+                [Submission::class],
+                fn (Builder $query) => $query->whereIn('status', SubmissionPaymentTable::getValidSubmissionStatusValues()),
+            );
     }
 
     public function scheduledConferenceInfolist(Infolist $infolist): Infolist
@@ -157,18 +181,7 @@ class Overview extends Widget implements HasForms, HasInfolists
                         TextEntry::make('submission_payment')
                             ->label('Submission Payment')
                             ->size(TextEntrySize::Large)
-                            ->getStateUsing(function () {
-                                $submissionPaymentCount = Payment::query()
-                                    ->type(PaymentManager::TYPE_SUBMISSION_FEE)
-                                    ->count();
-
-                                $paidSubmissionPaymentCount = Payment::query()
-                                    ->type(PaymentManager::TYPE_SUBMISSION_FEE)
-                                    ->whereNotNull('paid_at')
-                                    ->count();
-
-                                return $paidSubmissionPaymentCount.' / '.$submissionPaymentCount;
-                            }),
+                            ->getStateUsing(fn () => static::getSubmissionPaymentOverviewState()),
                         TextEntry::make('participant_payment')
                             ->label('Participant Payment')
                             ->size(TextEntrySize::Large)

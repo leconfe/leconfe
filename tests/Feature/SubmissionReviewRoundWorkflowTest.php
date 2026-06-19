@@ -346,6 +346,55 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             ->assertActionVisible('declineSubmissionAction');
     }
 
+    public function test_peer_review_round_switch_has_section_loading_feedback(): void
+    {
+        $context = $this->makeSubmissionContext();
+
+        $editorRole = Role::withoutGlobalScopes()
+            ->where('name', UserRole::ScheduledConferenceEditor->value)
+            ->where('conference_id', app()->getCurrentConferenceId())
+            ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
+            ->firstOrFail();
+
+        $context['editor']->assignRole($editorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['editor']->getKey(),
+            'role_id' => $editorRole->getKey(),
+        ]);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $this->actingAs($context['editor']);
+
+        $html = Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->assertSee('Round 1')
+            ->assertSee('Round 2')
+            ->html();
+
+        $this->assertStringContainsString('peer-review-round-switch-loading', $html);
+        $this->assertStringContainsString('wire:loading.delay.flex', $html);
+        $this->assertStringContainsString('wire:target="selectRound"', $html);
+        $this->assertStringContainsString(__('general.loading'), $html);
+
+        $this->assertStringContainsString('peer-review-round-switch-content', $html);
+        $this->assertStringContainsString('wire:loading.class.delay="opacity-50 pointer-events-none"', $html);
+
+        $this->assertMatchesRegularExpression(
+            '/<button[^>]*wire:click="selectRound\(\d+\)"[^>]*wire:loading\.attr="disabled"[^>]*wire:target="selectRound"/s',
+            $html,
+        );
+    }
+
     public function test_editor_can_rename_a_review_round_from_the_tab_icon(): void
     {
         $context = $this->makeSubmissionContext();
