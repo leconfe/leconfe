@@ -85,7 +85,7 @@ class SubmissionFactory extends Factory
                     'category' => 'abstract-files',
                 ]);
 
-                $submission->state()->acceptAbstract();
+                $submission->state()->sendForReview();
             }
         });
     }

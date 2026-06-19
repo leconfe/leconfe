@@ -34,7 +34,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
         return $table
             ->query(SubmissionFileType::withCount(['files']))
             ->defaultPaginationPageOption(10)
-            ->heading(__('general.paper_components'))
+            ->heading(__('general.file_types'))
             ->reorderable('order_column')
             ->defaultSort('order_column')
             ->columns([

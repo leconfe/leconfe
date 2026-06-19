@@ -30,13 +30,13 @@ class SubmissionFile extends Model
         });
 
         static::created(function (SubmissionFile $createdModel) {
-            // Send notification when there is new papers or revision uploaded
+            // Send notification when a review file or revision is uploaded.
             // Should we created an event for this ?
             // for example SubmissionFilesUploaded, then we can listen to this event and send notification
             $shouldSendNotification = in_array(
                 $createdModel->category,
                 [
-                    SubmissionFileCategory::PAPER_FILES,
+                    SubmissionFileCategory::REVIEW_FILES,
                     SubmissionFileCategory::REVISION_FILES,
                 ]
             );
@@ -60,7 +60,7 @@ class SubmissionFile extends Model
         });
 
         static::deleting(function (SubmissionFile $record) {
-            if ($record->category == SubmissionFileCategory::PAPER_FILES) {
+            if ($record->category == SubmissionFileCategory::REVIEW_FILES) {
                 $record->reviewerAssginedFiles()->delete();
             }
 

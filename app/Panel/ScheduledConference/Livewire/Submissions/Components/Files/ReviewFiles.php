@@ -15,15 +15,15 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Spatie\MediaLibrary\Support\MediaStream;
 
-class PaperFiles extends SubmissionFilesTable
+class ReviewFiles extends SubmissionFilesTable
 {
-    protected ?string $category = SubmissionFileCategory::PAPER_FILES;
+    protected ?string $category = SubmissionFileCategory::REVIEW_FILES;
 
     protected string $tableHeading;
 
     public function __construct()
     {
-        $this->tableHeading = __('general.papers');
+        $this->tableHeading = __('general.review_files');
     }
 
     public function mount(Submission $submission): void
@@ -73,7 +73,7 @@ class PaperFiles extends SubmissionFilesTable
 
         return $this->submission->submissionFiles()
             ->with(['media', 'type'])
-            ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+            ->whereIn('category', [SubmissionFileCategory::REVIEW_FILES, SubmissionFileCategory::REVISION_FILES])
             ->where('review_round_id', $this->previousReviewRound->getKey())
             ->orderBy('id')
             ->get();
@@ -152,10 +152,12 @@ class PaperFiles extends SubmissionFilesTable
             return false;
         }
 
-        return (bool) $this->submission->reviewRounds()
-            ->whereKey($this->reviewRoundId)
+        $activeRoundId = $this->submission->reviewRounds()
             ->open()
-            ->exists();
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        return $activeRoundId && (int) $activeRoundId === $this->reviewRoundId;
     }
 
     public function isViewOnly(): bool
@@ -208,7 +210,7 @@ class PaperFiles extends SubmissionFilesTable
                     $this->submission,
                     $this->selectedRound,
                     $selectedFileIds,
-                    SubmissionFileCategory::PAPER_FILES,
+                    SubmissionFileCategory::REVIEW_FILES,
                 );
 
                 if ($clonedFileIds === []) {
@@ -235,7 +237,7 @@ class PaperFiles extends SubmissionFilesTable
     {
         return [
             Shout::make('information')
-                ->content(__('general.after_uploading_files_system_will_send_notification_to_editor')),
+                ->content(__('general.after_uploading_review_file_system_will_send_notification')),
             ...parent::uploadFormSchema(),
         ];
     }

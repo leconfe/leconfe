@@ -35,7 +35,7 @@
                     @if($submissionDecision)
                         <div class="px-6 py-5 space-y-3 overflow-hidden bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10">
                             <div class="text-base">
-                                {{ $submission->status == SubmissionStatus::Declined ? __('general.submission_declined') : __('general.submission_accepted_for_review') }}
+                                {{ $submission->status == SubmissionStatus::Declined ? __('general.submission_declined') : __('general.submission_sent_for_review') }}
                             </div>
                             <button class="text-sm underline text-primary-500"
                                 @@click="decision = !decision" x-text="decision ? 'Change Decision' : 'Cancel'"
@@ -46,7 +46,7 @@
                     <div @class([
                         'space-y-4',
                     ]) x-show="!decision">
-                        {{ $this->acceptAction() }}
+                        {{ $this->sendForReviewAction() }}
                         {{ $this->acceptAndSkipReview() }}
                         {{ $this->declineAction() }}
                     </div>

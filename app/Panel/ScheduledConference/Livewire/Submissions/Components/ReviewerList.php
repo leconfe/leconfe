@@ -23,13 +23,12 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionReviewRound;
 use App\Models\User;
-use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Awcodes\Shout\Components\Shout;
-use Filament\Actions\Action as FilamentAction;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
@@ -63,8 +62,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class ReviewerList extends Component implements HasActions, HasForms, HasTable
@@ -136,7 +135,16 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
 
     public function isSelectedRoundActive(): bool
     {
-        return $this->selectedRound?->isOpen() ?? false;
+        if (! $this->selectedRoundId) {
+            return false;
+        }
+
+        $activeRoundId = $this->record->reviewRounds()
+            ->open()
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        return $activeRoundId && (int) $activeRoundId === $this->selectedRoundId;
     }
 
     public function getReviewableFilesProperty(): Collection
@@ -147,14 +155,14 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
             ->where(function ($query) {
                 if ($this->selectedRoundId) {
                     $query->where(function ($paperQuery) {
-                        $paperQuery->where('category', SubmissionFileCategory::PAPER_FILES)
+                        $paperQuery->where('category', SubmissionFileCategory::REVIEW_FILES)
                             ->where('review_round_id', $this->selectedRoundId);
                     })->orWhere(function ($revisionQuery) {
                         $revisionQuery->where('category', SubmissionFileCategory::REVISION_FILES)
                             ->where('review_round_id', $this->selectedRoundId);
                     });
                 } else {
-                    $query->where('category', SubmissionFileCategory::PAPER_FILES);
+                    $query->where('category', SubmissionFileCategory::REVIEW_FILES);
                 }
             });
 
@@ -175,7 +183,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
 
     protected function ensureSelectedOpenRound(array $defaultFileIds = []): SubmissionReviewRound
     {
-        if ($this->selectedRound && $this->selectedRound->isOpen()) {
+        if ($this->selectedRound && $this->isSelectedRoundActive()) {
             return $this->selectedRound;
         }
 
@@ -201,7 +209,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
             ->to(PeerReview::class);
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
-            ->to(PaperFiles::class);
+            ->to(ReviewFiles::class);
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
             ->to(RevisionFiles::class);
@@ -822,7 +830,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                     ->modalHeading(__('general.assign_reviewer'))
                     ->modalWidth('2xl')
                     ->authorize(fn () => auth()->user()->can('assignReviewer', $this->record))
-                    ->hidden(fn (): bool => $this->selectedRound && ! $this->selectedRound->isOpen())
+                    ->hidden(fn (): bool => ! $this->isSelectedRoundActive())
                     ->form(fn ($form) => $this->form($form))
                     ->action(function (Action $action, array $data) {
                         $reviewRound = $this->ensureSelectedOpenRound();
@@ -859,7 +867,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 $submissionFile = SubmissionFile::query()
                                     ->where('submission_id', $this->record->getKey())
                                     ->where('review_round_id', $reviewRound->getKey())
-                                    ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+                                    ->whereIn('category', [SubmissionFileCategory::REVIEW_FILES, SubmissionFileCategory::REVISION_FILES])
                                     ->find($submissionFileId);
 
                                 if (! $submissionFile) {

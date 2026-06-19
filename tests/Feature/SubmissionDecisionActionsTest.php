@@ -2,26 +2,31 @@
 
 namespace Tests\Feature;
 
+use App\Constants\SubmissionFileCategory;
+use App\Mail\Templates\AcceptAbstractMail;
+use App\Mail\Templates\RevisionRequestMail;
+use App\Mail\Templates\SendForReviewMail;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\Media;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
-use App\Mail\Templates\RevisionRequestMail;
-use App\Constants\SubmissionFileCategory;
-use App\Models\Media;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionFileType;
 use App\Models\SubmissionReviewRound;
 use App\Models\Track;
 use App\Models\User;
+use App\Notifications\AbstractAccepted;
+use App\Notifications\SubmissionSentForReview;
 use App\Panel\ScheduledConference\Livewire\Submissions\CallforAbstract;
 use App\Panel\ScheduledConference\Livewire\Submissions\PeerReview;
 use App\Panel\ScheduledConference\Livewire\Submissions\Presentation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -41,6 +46,8 @@ class SubmissionDecisionActionsTest extends TestCase
 
         Route::get('/test/submissions/{record}/review', fn () => null)
             ->name('filament.conference.resources.submissions.review');
+
+        Route::getRoutes()->refreshNameLookups();
     }
 
     public function test_call_for_abstract_change_decision_shows_the_current_review_decision(): void
@@ -186,7 +193,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->actingAs($context['editor']);
 
         Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
-            ->callAction('accept', data: $this->callForAbstractNotificationData([
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
                 'papers' => [],
             ]));
 
@@ -239,7 +246,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->actingAs($context['editor']);
 
         Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
-            ->callAction('accept', data: $this->callForAbstractNotificationData([
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
                 'papers' => [$abstractFile->getKey()],
             ]));
 
@@ -248,10 +255,38 @@ class SubmissionDecisionActionsTest extends TestCase
             ->where('round_number', 1)
             ->firstOrFail();
 
+        $this->assertNull($round->name);
+
         $this->assertDatabaseHas('submission_files', [
             'submission_id' => $context['submission']->getKey(),
             'review_round_id' => $round->getKey(),
-            'category' => SubmissionFileCategory::PAPER_FILES,
+            'category' => SubmissionFileCategory::REVIEW_FILES,
+        ]);
+    }
+
+    public function test_send_for_review_can_name_the_initial_review_round(): void
+    {
+        Mail::fake();
+
+        $this->assertSame('Example: Full Paper', __('general.review_round_name_placeholder'));
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
+                'review_round_name' => 'Abstract Screening',
+                'papers' => [],
+            ]));
+
+        $this->assertDatabaseHas('submission_review_rounds', [
+            'submission_id' => $context['submission']->getKey(),
+            'round_number' => 1,
+            'name' => 'Abstract Screening',
         ]);
     }
 
@@ -298,7 +333,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->actingAs($context['editor']);
 
         Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
-            ->callAction('accept', data: $this->callForAbstractNotificationData([
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
                 'papers' => [$abstractFile->getKey()],
             ]));
 
@@ -310,7 +345,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->assertDatabaseHas('submission_files', [
             'submission_id' => $context['submission']->getKey(),
             'review_round_id' => $round->getKey(),
-            'category' => SubmissionFileCategory::PAPER_FILES,
+            'category' => SubmissionFileCategory::REVIEW_FILES,
         ]);
     }
 
@@ -327,7 +362,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->actingAs($context['editor']);
 
         Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
-            ->callAction('accept', data: $this->callForAbstractNotificationData([
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
                 'papers' => [],
             ]));
 
@@ -354,7 +389,7 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->actingAs($context['editor']);
 
         Livewire::test(CallforAbstract::class, ['submission' => $context['submission']])
-            ->callAction('accept', data: $this->callForAbstractNotificationData([
+            ->callAction('sendForReview', data: $this->sendForReviewNotificationData([
                 'papers' => [],
             ]));
 
@@ -469,7 +504,105 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->assertSame(SubmissionStatus::Editing, $context['submission']->status);
     }
 
-    protected function callForAbstractNotificationData(array $overrides = []): array
+    public function test_submission_state_uses_send_for_review_naming(): void
+    {
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        $state = $context['submission']->state();
+
+        $this->assertTrue(method_exists($state, 'sendForReview'));
+        $this->assertFalse(method_exists($state, 'acceptAbstract'));
+
+        $state->sendForReview();
+        $context['submission']->refresh();
+
+        $this->assertSame(SubmissionStage::PeerReview, $context['submission']->stage);
+        $this->assertSame(SubmissionStatus::OnReview, $context['submission']->status);
+    }
+
+    public function test_send_for_review_notification_and_mail_use_send_for_review_wording(): void
+    {
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        $notification = new SubmissionSentForReview($context['submission']);
+        $databaseMessage = $notification->toDatabase($context['author']);
+
+        $this->assertSame(__('general.submission_sent_for_review'), data_get($databaseMessage->toArray(), 'title'));
+        $this->assertInstanceOf(SendForReviewMail::class, $notification->toMail($context['author']));
+        $this->assertSame('Submission Sent for Review', SendForReviewMail::getDefaultDescription());
+        $this->assertStringNotContainsString('accepted', strtolower(SendForReviewMail::getDefaultDescription()));
+        $this->assertStringNotContainsString('accept abstract', strtolower(SendForReviewMail::getDefaultHtmlTemplate()));
+    }
+
+    public function test_legacy_send_for_review_classes_remain_compatible(): void
+    {
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $this->actingAs($context['editor']);
+
+        $this->assertInstanceOf(SendForReviewMail::class, new AcceptAbstractMail($context['submission']));
+        $this->assertInstanceOf(
+            SubmissionSentForReview::class,
+            new AbstractAccepted($context['submission'])
+        );
+    }
+
+    public function test_send_for_review_class_reference_migration_updates_legacy_records(): void
+    {
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::CallforAbstract,
+            'status' => SubmissionStatus::Queued,
+        ]);
+
+        $mailTemplateId = DB::table('mail_templates')->insertGetId([
+            'conference_id' => $context['conference']->getKey(),
+            'mailable' => AcceptAbstractMail::class,
+            'description' => 'Legacy template',
+            'subject' => 'Legacy subject',
+            'html_template' => '<p>Legacy template</p>',
+            'text_template' => 'Legacy template',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $notificationId = (string) Str::uuid();
+        DB::table('notifications')->insert([
+            'id' => $notificationId,
+            'type' => AbstractAccepted::class,
+            'notifiable_type' => User::class,
+            'notifiable_id' => $context['author']->getKey(),
+            'data' => json_encode([]),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $migration = require database_path('migrations/2026_06_18_000002_rename_accept_abstract_to_send_for_review.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('mail_templates', [
+            'id' => $mailTemplateId,
+            'mailable' => SendForReviewMail::class,
+        ]);
+        $this->assertDatabaseHas('notifications', [
+            'id' => $notificationId,
+            'type' => SubmissionSentForReview::class,
+        ]);
+    }
+
+    protected function sendForReviewNotificationData(array $overrides = []): array
     {
         return [
             'subject' => 'Decision update',

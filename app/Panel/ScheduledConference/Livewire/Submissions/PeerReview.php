@@ -2,33 +2,34 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
-use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\NotifySubmissionRevisionRequestAction;
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Classes\Log;
-use App\Models\Enums\SubmissionStage;
-use App\Models\Enums\SubmissionStatus;
+use App\Constants\SubmissionFileCategory;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclinePaperMail;
 use App\Mail\Templates\RevisionRequestMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStage;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionReviewRound;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Discussions\PeerReviewDiscussionTopic;
-use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\PaperFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
-use App\Constants\SubmissionFileCategory;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
@@ -41,13 +42,12 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use Squire\Models\Currency;
 
 class PeerReview extends Component implements HasActions, HasForms
@@ -97,6 +97,46 @@ class PeerReview extends Component implements HasActions, HasForms
         return $this->reviewRounds->firstWhere('id', $this->selectedRoundId);
     }
 
+    public function isSelectedRoundActionable(): bool
+    {
+        if (! $this->selectedRoundId) {
+            return false;
+        }
+
+        $activeRoundId = $this->submission->reviewRounds()
+            ->open()
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        return $activeRoundId && (int) $activeRoundId === $this->selectedRoundId;
+    }
+
+    public function isSelectedRoundDecisionContext(): bool
+    {
+        $latestRoundId = $this->submission->reviewRounds()
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        if (! $latestRoundId) {
+            return true;
+        }
+
+        if (! $this->selectedRoundId) {
+            return false;
+        }
+
+        $activeRoundId = $this->submission->reviewRounds()
+            ->open()
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        if ($activeRoundId) {
+            return (int) $activeRoundId === $this->selectedRoundId;
+        }
+
+        return (int) $latestRoundId === $this->selectedRoundId;
+    }
+
     public function selectRound(int $roundId): void
     {
         if (! $this->reviewRounds->pluck('id')->contains($roundId)) {
@@ -120,7 +160,7 @@ class PeerReview extends Component implements HasActions, HasForms
         }
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
-            ->to(PaperFiles::class);
+            ->to(ReviewFiles::class);
 
         $this->dispatch('peer-review-round-selected', roundId: $this->selectedRoundId)
             ->to(RevisionFiles::class);
@@ -145,30 +185,39 @@ class PeerReview extends Component implements HasActions, HasForms
             ->where(function ($query) {
                 if ($this->selectedRoundId) {
                     $query->where(function ($paperQuery) {
-                        $paperQuery->where('category', SubmissionFileCategory::PAPER_FILES)
+                        $paperQuery->where('category', SubmissionFileCategory::REVIEW_FILES)
                             ->where('review_round_id', $this->selectedRoundId);
                     })->orWhere(function ($revisionQuery) {
                         $revisionQuery->where('category', SubmissionFileCategory::REVISION_FILES)
                             ->where('review_round_id', $this->selectedRoundId);
                     });
                 } else {
-                    $query->where('category', SubmissionFileCategory::PAPER_FILES);
+                    $query->where('category', SubmissionFileCategory::REVIEW_FILES);
                 }
             });
 
         return $query->get();
     }
 
-    public function newReviewRoundAction(): Action
+    public function startNextReviewRoundAction(): Action
     {
-        return Action::make('newReviewRoundAction')
+        return Action::make('startNextReviewRoundAction')
             ->authorize('assignReviewer', $this->submission)
             ->icon('heroicon-o-arrow-path')
-            ->color('gray')
-            ->label(__('general.new_review_round'))
+            ->color('primary')
+            ->outlined()
+            ->label(__('general.start_next_review_round'))
+            ->modalHeading(__('general.start_next_review_round'))
+            ->modalDescription(__('general.start_next_review_round_modal_description'))
+            ->modalSubmitActionLabel(__('general.start_next_review_round_modal_submit'))
             ->modalWidth(MaxWidth::ExtraLarge)
             ->closeModalByClickingAway()
+            ->extraAttributes(['class' => 'w-full'], true)
+            ->hidden(fn (): bool => ! $this->isSelectedRoundActionable())
             ->form([
+                TextInput::make('name')
+                    ->label(__('general.review_round_name'))
+                    ->maxLength(255),
                 CheckboxList::make('default_file_ids')
                     ->label(__('general.files_to_include_in_this_round'))
                     ->options(
@@ -184,10 +233,18 @@ class PeerReview extends Component implements HasActions, HasForms
             ])
             ->successNotificationTitle(__('general.review_round_started'))
             ->action(function (Action $action, array $data) {
+                if (! $this->isSelectedRoundActionable()) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
                 $reviewRound = StartSubmissionReviewRoundAction::run(
                     $this->submission,
                     $data['default_file_ids'] ?? [],
                     auth()->user(),
+                    $data['name'] ?? null,
                 );
 
                 Log::make(
@@ -206,6 +263,68 @@ class PeerReview extends Component implements HasActions, HasForms
             });
     }
 
+    public function renameReviewRoundAction(): Action
+    {
+        return Action::make('renameReviewRoundAction')
+            ->authorize('assignReviewer', $this->submission)
+            ->icon('heroicon-o-pencil-square')
+            ->label(__('general.rename_review_round'))
+            ->modalHeading(__('general.rename_review_round'))
+            ->modalSubmitActionLabel(__('general.save'))
+            ->modalWidth(MaxWidth::Medium)
+            ->successNotificationTitle(__('general.review_round_renamed'))
+            ->fillForm(function (array $arguments): array {
+                $roundId = (int) ($arguments['round'] ?? 0);
+
+                if (! $this->selectedRoundId || $roundId !== $this->selectedRoundId) {
+                    return [
+                        'name' => '',
+                    ];
+                }
+
+                $reviewRound = $this->submission
+                    ->reviewRounds()
+                    ->whereKey($roundId)
+                    ->first();
+
+                return [
+                    'name' => $reviewRound?->name ?? '',
+                ];
+            })
+            ->form([
+                TextInput::make('name')
+                    ->label(__('general.review_round_name'))
+                    ->placeholder(__('general.review_round_name_placeholder'))
+                    ->helperText(__('general.review_round_name_helper'))
+                    ->maxLength(255),
+            ])
+            ->action(function (Action $action, array $data, array $arguments) {
+                $roundId = (int) ($arguments['round'] ?? 0);
+                $reviewRound = $this->submission
+                    ->reviewRounds()
+                    ->whereKey($roundId)
+                    ->first();
+
+                if (! $reviewRound || ! $this->selectedRoundId || $roundId !== $this->selectedRoundId) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
+                $name = trim((string) data_get($data, 'name', ''));
+
+                $reviewRound->update([
+                    'name' => filled($name) ? $name : null,
+                ]);
+
+                $this->selectedRoundId = $reviewRound->getKey();
+                $this->submission->refresh();
+
+                $action->success();
+            });
+    }
+
     public function declineSubmissionAction()
     {
         return Action::make('declineSubmissionAction')
@@ -214,6 +333,7 @@ class PeerReview extends Component implements HasActions, HasForms
             ->label(__('general.decline_submission'))
             ->color('danger')
             ->outlined()
+            ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form) {
                 $mailTemplate = DefaultMailTemplate::where('mailable', DeclinePaperMail::class)->first();
                 $form->fill([
@@ -249,6 +369,13 @@ class PeerReview extends Component implements HasActions, HasForms
                     ]),
             ])
             ->action(function (Action $action, array $data) {
+                if (! $this->isSelectedRoundDecisionContext()) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
                 $this->submission->state()->decline();
 
                 if (! $data['do-not-notify-author']) {
@@ -283,6 +410,7 @@ class PeerReview extends Component implements HasActions, HasForms
             ->color('primary')
             ->label(__('general.accept_submission'))
             ->modalSubmitActionLabel(__('general.accept'))
+            ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form) {
                 $mailTemplate = DefaultMailTemplate::where('mailable', AcceptPaperMail::class)->first();
                 $form->fill([
@@ -375,6 +503,13 @@ class PeerReview extends Component implements HasActions, HasForms
                     ]),
             ])
             ->action(function (Action $action, array $data) {
+                if (! $this->isSelectedRoundDecisionContext()) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
                 $this->submission->state()->sendToPresentation();
 
                 if (! $data['do-not-notify-author']) {
@@ -408,6 +543,7 @@ class PeerReview extends Component implements HasActions, HasForms
             ->outlined()
             ->color(Color::Orange)
             ->label(__('general.request_revision'))
+            ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form): void {
                 $mailTemplate = DefaultMailTemplate::where('mailable', RevisionRequestMail::class)->first();
                 $form->fill([
@@ -445,6 +581,13 @@ class PeerReview extends Component implements HasActions, HasForms
             ])
             ->successNotificationTitle(__('general.revision_requested'))
             ->action(function (Action $action, array $data) {
+                if (! $this->isSelectedRoundDecisionContext()) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
                 $this->submission->state()->requestRevision();
                 $this->submission->refresh();
 

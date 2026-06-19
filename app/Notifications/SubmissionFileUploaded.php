@@ -35,13 +35,10 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
         return ['mail', 'database'];
     }
 
-    /**
-     * Currently, only the new paper and revision file will send a notification to the editor.
-     */
     public function toMail(object $notifiable)
     {
         $mailTempalte = match ($this->submissionFile->category) {
-            SubmissionFileCategory::PAPER_FILES => NewPaperUploadedMail::class,
+            SubmissionFileCategory::REVIEW_FILES => NewPaperUploadedMail::class,
             SubmissionFileCategory::REVISION_FILES => NewRevisionUploadedMail::class,
             default => null
         };
@@ -61,7 +58,7 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
             ->iconColor('primary')
             ->title(function () {
                 return match ($this->submissionFile->category) {
-                    SubmissionFileCategory::PAPER_FILES => 'New Paper Uploaded',
+                    SubmissionFileCategory::REVIEW_FILES => __('general.review_file_uploaded'),
                     SubmissionFileCategory::REVISION_FILES => 'New Revision Uploaded',
                     default => 'New File Uploaded'
                 };

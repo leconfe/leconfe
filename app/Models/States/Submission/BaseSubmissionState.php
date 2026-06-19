@@ -14,9 +14,9 @@ class BaseSubmissionState implements SubmissionStateInterface
         throw new \Exception('Cannot fulfill submission');
     }
 
-    public function acceptAbstract(): void
+    public function sendForReview(): void
     {
-        throw new \Exception('Cannot accept abstract');
+        throw new \Exception('Cannot send submission for review');
     }
 
     public function approvePayment(): void

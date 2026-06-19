@@ -34,7 +34,7 @@ class DraftFiles extends SubmissionFilesTable
     public function getSelectableCategories(): array
     {
         return [
-            SubmissionFileCategory::PAPER_FILES,
+            SubmissionFileCategory::REVIEW_FILES,
             SubmissionFileCategory::PRESENTATION_FILES,
             SubmissionFileCategory::REVIEWER_FILES,
             SubmissionFileCategory::REVISION_FILES,

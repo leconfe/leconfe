@@ -12,7 +12,7 @@ class QueuedSubmissionState extends BaseSubmissionState
 {
     use CanWithdraw;
 
-    public function acceptAbstract(): void
+    public function sendForReview(): void
     {
         SubmissionUpdateAction::run([
             'stage' => SubmissionStage::PeerReview,
@@ -23,7 +23,7 @@ class QueuedSubmissionState extends BaseSubmissionState
             name: 'submission',
             subject: $this->submission,
             description: __('general.submission_send_to_review'),
-            event : 'submission-send-to-review',
+            event: 'submission-send-to-review',
         )
             ->by(auth()->user())
             ->save();

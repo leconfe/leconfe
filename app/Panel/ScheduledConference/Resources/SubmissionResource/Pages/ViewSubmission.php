@@ -49,8 +49,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Tabs as HorizontalTabs;
-use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
 use Filament\Infolists\Components\Tabs as StageTabs;
+use Filament\Infolists\Components\Tabs\Tab as HorizontalTab;
 use Filament\Infolists\Components\Tabs\Tab as StageTab;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -443,11 +443,24 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             default => null,
         };
 
+        $badgeHtml .= $this->getLatestReviewRoundBadgeHtml();
+
         $badgeHtml .= '</div>';
 
         return new HtmlString(
             BladeCompiler::render($badgeHtml)
         );
+    }
+
+    public function getLatestReviewRoundBadgeHtml(): string
+    {
+        $latestReviewRound = SubmissionResource::getLatestReviewRoundBadgeState($this->record);
+
+        if (! $latestReviewRound) {
+            return '';
+        }
+
+        return '<x-filament::badge color="info" class="w-fit">'.e($latestReviewRound).'</x-filament::badge>';
     }
 
     public function getHeading(): string|Htmlable

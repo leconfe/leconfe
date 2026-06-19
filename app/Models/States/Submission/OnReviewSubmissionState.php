@@ -15,7 +15,7 @@ class OnReviewSubmissionState extends BaseSubmissionState
     use CanDeclinePayment;
     use CanWithdraw;
 
-    public function acceptAbstract(): void
+    public function sendForReview(): void
     {
         if (! $this->submission->skipped_review) {
             // Repeating the current decision is allowed so editors can resend its notification.

@@ -93,7 +93,7 @@ return new class extends Migration
         $this->createFirstRounds(
             DB::table('submission_files')
                 ->select('submission_id')
-                ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+                ->whereIn('category', $this->reviewStageFileCategories())
                 ->distinct(),
             $now,
             'submission_files.submission_id'
@@ -162,14 +162,14 @@ return new class extends Migration
 
                 $fileIds = DB::table('submission_files')
                     ->where('submission_id', $item->submission_id)
-                    ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+                    ->whereIn('category', $this->reviewStageFileCategories())
                     ->whereNull('review_round_id')
                     ->pluck('id')
                     ->map(fn ($id) => (int) $id);
 
                 DB::table('submission_files')
                     ->where('submission_id', $item->submission_id)
-                    ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+                    ->whereIn('category', $this->reviewStageFileCategories())
                     ->whereNull('review_round_id')
                     ->update([
                         'review_round_id' => $item->first_round_id,
@@ -211,6 +211,15 @@ return new class extends Migration
                 'default_file_ids' => json_encode($defaultFileIds),
                 'updated_at' => $now,
             ]);
+    }
+
+    protected function reviewStageFileCategories(): array
+    {
+        return array_values(array_unique([
+            SubmissionFileCategory::REVIEW_FILES,
+            'paper-files',
+            SubmissionFileCategory::REVISION_FILES,
+        ]));
     }
 
     /**

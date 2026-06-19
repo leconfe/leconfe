@@ -15,10 +15,10 @@ class StartSubmissionReviewRoundAction
 {
     use AsAction;
 
-    public function handle(Submission $submission, array $defaultFileIds = [], ?User $triggeredBy = null): SubmissionReviewRound
+    public function handle(Submission $submission, array $defaultFileIds = [], ?User $triggeredBy = null, ?string $name = null): SubmissionReviewRound
     {
         $allowedFileIds = $submission->submissionFiles()
-            ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+            ->whereIn('category', [SubmissionFileCategory::REVIEW_FILES, SubmissionFileCategory::REVISION_FILES])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -28,7 +28,7 @@ class StartSubmissionReviewRoundAction
             ->values()
             ->all();
 
-        return DB::transaction(function () use ($submission, $defaultFileIds, $triggeredBy) {
+        return DB::transaction(function () use ($submission, $defaultFileIds, $triggeredBy, $name) {
             $openRoundIds = $submission->reviewRounds()
                 ->open()
                 ->pluck('id');
@@ -56,6 +56,7 @@ class StartSubmissionReviewRoundAction
 
             $reviewRound = $submission->reviewRounds()->create([
                 'round_number' => $nextRoundNumber,
+                'name' => filled($name) ? trim($name) : null,
                 'status' => SubmissionReviewRound::STATUS_OPEN,
                 'triggered_by' => $triggeredBy?->getKey() ?? auth()->id(),
                 'default_file_ids' => [],
@@ -76,7 +77,7 @@ class StartSubmissionReviewRoundAction
                 $submission,
                 $reviewRound,
                 $defaultFileIds,
-                SubmissionFileCategory::PAPER_FILES
+                SubmissionFileCategory::REVIEW_FILES
             );
 
             return $reviewRound->refresh();
@@ -86,7 +87,7 @@ class StartSubmissionReviewRoundAction
     protected function attachExistingUnscopedFilesToInitialRound(Submission $submission, SubmissionReviewRound $reviewRound): array
     {
         $fileIds = $submission->submissionFiles()
-            ->whereIn('category', [SubmissionFileCategory::PAPER_FILES, SubmissionFileCategory::REVISION_FILES])
+            ->whereIn('category', [SubmissionFileCategory::REVIEW_FILES, SubmissionFileCategory::REVISION_FILES])
             ->whereNull('review_round_id')
             ->pluck('id')
             ->map(fn ($id) => (int) $id);

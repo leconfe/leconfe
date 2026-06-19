@@ -74,6 +74,23 @@ class SubmissionResource extends Resource
             ->orderBy('updated_at', 'desc');
     }
 
+    public static function getLatestReviewRoundBadgeState(Submission $record): ?string
+    {
+        if ($record->status !== SubmissionStatus::OnReview) {
+            return null;
+        }
+
+        $reviewRound = $record->latestReviewRound;
+
+        if (! $reviewRound) {
+            return null;
+        }
+
+        return filled($reviewRound->name)
+            ? $reviewRound->name
+            : __('general.round').' '.$reviewRound->round_number;
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -106,7 +123,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn(Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->getReviewForUserInActiveRound(auth()->user());
                                 if ($review) {
@@ -118,14 +135,22 @@ class SubmissionResource extends Resource
                             ->searchable(query: function (Builder $query, string $search): Builder {
                                 return $query
                                     ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
                             }),
-                        Tables\Columns\TextColumn::make('status')
+                        Split::make([
+                            Tables\Columns\TextColumn::make('status')
+                                ->grow(false)
+                                ->badge()
+                                ->getStateUsing(fn (Submission $record) => $record->status?->value),
+                            Tables\Columns\TextColumn::make('latest-review-round')
+                                ->grow(false)
+                                ->badge()
+                                ->color('info')
+                                ->getStateUsing(fn (Submission $record) => static::getLatestReviewRoundBadgeState($record)),
+                        ])
                             ->extraAttributes([
                                 'class' => 'mt-2',
-                            ])
-                            ->badge()
-                            ->getStateUsing(fn(Submission $record) => $record->status?->value),
+                            ]),
                         // Tables\Columns\TextColumn::make('editorial_also_as_reviewer')
                         //     ->extraAttributes([
                         //         'class' => 'mt-2',
@@ -147,7 +172,7 @@ class SubmissionResource extends Resource
                             ->getStateUsing(function (Submission $record) {
                                 $isEditorAssigned = $record->editors_count;
 
-                                if (!$isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
+                                if (! $isEditorAssigned && $record->stage != SubmissionStage::Wizard) {
                                     return __('general.no_editor_assigned');
                                 }
                             }),
@@ -218,8 +243,8 @@ class SubmissionResource extends Resource
                     ->label(__('general.view_as_editor'))
                     ->icon('lineawesome-eye-solid')
                     ->color('warning')
-                    ->visible(fn(Submission $record) => $record->isParticipantEditor(auth()->user()) && $record->isReviewer(auth()->user()))
-                    ->url(fn(Submission $record) => static::getUrl('view', [
+                    ->visible(fn (Submission $record) => $record->isParticipantEditor(auth()->user()) && $record->isReviewer(auth()->user()))
+                    ->url(fn (Submission $record) => static::getUrl('view', [
                         'record' => $record->id,
                     ])),
                 Tables\Actions\DeleteAction::make(),
