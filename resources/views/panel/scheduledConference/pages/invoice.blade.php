@@ -90,6 +90,9 @@
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
                             <p>{{ $record->fee->name }}</p>
+                            @if($submissionTitle)
+                            <p class="text-xs text-gray-600">Submission Title: {{ $submissionTitle }}</p>
+                            @endif
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
                             {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}

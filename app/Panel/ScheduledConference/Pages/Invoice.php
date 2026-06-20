@@ -31,19 +31,24 @@ class Invoice extends Page
             'scheduledConference' => app()->getCurrentScheduledConference(),
             'record' => $this->record,
             'baseAmount' => (float) $this->record->getMeta('base_amount', $this->record->fee?->amount ?? 0),
+            'submissionTitle' => null,
             'additionalItems' => collect($this->record->getMeta('additional_items', []))
                 ->filter(fn ($item) => is_array($item) && data_get($item, 'name'))
                 ->values(),
         ];
 
         if ($this->record->model instanceof Submission) {
-            $user = $this->record->model->user;
+            $submission = $this->record->model;
+            $user = $submission->user;
             $data['user_fullname'] = $user->full_name;
             $data['user_affiliation'] = $user->getMeta('affiliation');
             $data['user_address_line'] = $user->getMeta('address_line');
             $data['user_city'] = $user->getMeta('city');
             $data['user_post_code'] = $user->getMeta('post_code');
             $data['user_country_name'] = Country::find($user->getMeta('country'))?->name;
+            $data['submissionTitle'] = $data['scheduledConference']->shouldShowSubmissionTitleOnInvoice()
+                ? $submission->getMeta('title')
+                : null;
         } elseif ($this->record->model instanceof Participant) {
             $participant = $this->record->model;
             $data['user_fullname'] = $participant->full_name;

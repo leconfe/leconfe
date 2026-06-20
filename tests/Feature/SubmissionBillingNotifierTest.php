@@ -7,21 +7,26 @@ use App\Managers\PaymentManager;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Enums\UserRole;
 use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\Submission;
 use App\Models\Track;
 use App\Models\User;
 use App\Notifications\ParticipantPayment;
 use App\Notifications\SubmissionPayment;
+use App\Panel\ScheduledConference\Livewire\InvoiceSetting;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
 use App\Panel\ScheduledConference\Livewire\SubmissionPaymentTable;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Services\Billing\SubmissionBillingNotifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class SubmissionBillingNotifierTest extends TestCase
@@ -228,6 +233,190 @@ class SubmissionBillingNotifierTest extends TestCase
         $this->assertSame(8, $context['scheduledConference']->refresh()->getLatestInvoiceNumber());
     }
 
+    public function test_submission_invoice_does_not_show_submission_title_by_default(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->update(['is_published' => true]);
+        $context['scheduledConference']->setMeta('invoice_enable', true);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->ensureInvoice();
+
+        $this->actingAs($context['user']);
+
+        $this->withoutVite()
+            ->get($this->getInvoiceUrl($context, $payment))
+            ->assertOk()
+            ->assertSee('Submission Fee')
+            ->assertDontSee($context['submission']->getMeta('title'));
+    }
+
+    public function test_submission_invoice_shows_submission_title_when_enabled(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->update(['is_published' => true]);
+        $context['scheduledConference']->setManyMeta([
+            'invoice_enable' => true,
+            'invoice_show_submission_title' => true,
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->ensureInvoice();
+
+        $this->actingAs($context['user']);
+
+        $this->withoutVite()
+            ->get($this->getInvoiceUrl($context, $payment))
+            ->assertOk()
+            ->assertSee('Submission Fee')
+            ->assertSee($context['submission']->getMeta('title'));
+    }
+
+    public function test_receipt_can_be_generated_when_invoice_is_disabled(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'invoice_enable' => false,
+            'receipt_enable' => true,
+            'receipt_prefix_number' => 'RCP-',
+            'receipt_number' => 7,
+            'receipt_suffix_number' => '-SC',
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+
+        $this->assertNull($payment->invoice);
+        $this->assertSame('RCP-007-SC', $payment->receipt);
+        $this->assertSame(8, $context['scheduledConference']->refresh()->getLatestReceiptNumber());
+    }
+
+    public function test_receipt_page_shows_receipt_notes(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->update(['is_published' => true]);
+        $context['scheduledConference']->setManyMeta([
+            'receipt_enable' => true,
+            'receipt_notes' => '<p>Bring this receipt to check-in.</p>',
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->update([
+            'paid_at' => now(),
+            'receipt' => 'RCP-001',
+        ]);
+
+        $this->actingAs($context['user']);
+
+        $this->withoutVite()
+            ->get($this->getReceiptUrl($context, $payment))
+            ->assertOk()
+            ->assertSee('Bring this receipt to check-in.');
+    }
+
+    public function test_submission_receipt_does_not_show_submission_title_by_default(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->update(['is_published' => true]);
+        $context['scheduledConference']->setMeta('receipt_enable', true);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->update([
+            'paid_at' => now(),
+            'receipt' => 'RCP-001',
+        ]);
+
+        $this->actingAs($context['user']);
+
+        $this->withoutVite()
+            ->get($this->getReceiptUrl($context, $payment))
+            ->assertOk()
+            ->assertDontSee($context['submission']->getMeta('title'));
+    }
+
+    public function test_submission_receipt_shows_submission_title_when_enabled(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->update(['is_published' => true]);
+        $context['scheduledConference']->setManyMeta([
+            'receipt_enable' => true,
+            'receipt_show_submission_title' => true,
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->firstOrFail();
+        $payment->update([
+            'paid_at' => now(),
+            'receipt' => 'RCP-001',
+        ]);
+
+        $this->actingAs($context['user']);
+
+        $this->withoutVite()
+            ->get($this->getReceiptUrl($context, $payment))
+            ->assertOk()
+            ->assertSee($context['submission']->getMeta('title'));
+    }
+
+    public function test_receipt_setting_fields_are_visible_when_invoice_is_disabled(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'invoice_enable' => false,
+            'receipt_enable' => true,
+        ]);
+
+        Livewire::test(InvoiceSetting::class)
+            ->assertSee('Enable Receipt')
+            ->assertSee('Show Submission Title on Receipt')
+            ->assertSee('Receipt Notes');
+    }
+
     public function test_submission_payment_fee_can_be_changed_without_participant_notification_field(): void
     {
         $context = $this->makeSubmissionContext(
@@ -329,6 +518,147 @@ class SubmissionBillingNotifierTest extends TestCase
         $payment->markInvoiceAsSent();
 
         $this->assertTrue(ParticipantPaymentFeeTable::canSendInvoiceFor($payment->refresh()->load('scheduledConference')));
+    }
+
+    public function test_payment_detail_can_send_submission_invoice(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'submission_payment_auto_notify' => false,
+            'invoice_enable' => true,
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->with('scheduledConference')->firstOrFail();
+        $editor = $this->makeConferenceManager($context, 'billing-editor@example.test');
+
+        Notification::fake();
+
+        $this->actingAs($editor);
+
+        $this->assertTrue(PaymentDetail::canSendInvoiceFor($payment));
+        $this->assertTrue($editor->can('update', $payment));
+
+        $action = $this->getPaymentDetailAction($payment, 'send_invoice');
+
+        $this->assertSame(__('general.send_invoice'), $action->getLabel());
+        $this->assertTrue($action->isVisible());
+
+        $action->call([
+            'action' => $action,
+            'record' => $payment,
+        ]);
+
+        Notification::assertSentTo($context['user'], SubmissionPayment::class);
+        $this->assertNotNull($payment->refresh()->invoice);
+        $this->assertTrue($payment->hasInvoiceBeenSent());
+    }
+
+    public function test_payment_detail_can_create_invoice_without_sending_notification(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setManyMeta([
+            'submission_payment_auto_notify' => false,
+            'invoice_enable' => true,
+        ]);
+
+        $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
+
+        $payment = $context['submission']->payment()->with('scheduledConference')->firstOrFail();
+        $editor = $this->makeConferenceManager($context, 'invoice-creator@example.test');
+
+        Notification::fake();
+
+        $this->actingAs($editor);
+
+        $action = $this->getPaymentDetailAction($payment, 'create_invoice');
+
+        $this->assertSame(__('general.create_invoice'), $action->getLabel());
+        $this->assertTrue($action->isVisible());
+
+        $action->call([
+            'action' => $action,
+            'record' => $payment,
+        ]);
+
+        Notification::assertNothingSent();
+        $this->assertNotNull($payment->refresh()->invoice);
+        $this->assertFalse($payment->hasInvoiceBeenSent());
+        $this->assertFalse(
+            $this->getPaymentDetailAction($payment->load('scheduledConference'), 'create_invoice')->isVisible()
+        );
+    }
+
+    public function test_payment_detail_can_send_participant_invoice(): void
+    {
+        $context = $this->makeSubmissionContext(
+            billingStage: SubmissionStage::PeerReview,
+            submissionStage: SubmissionStage::PeerReview,
+            submissionStatus: SubmissionStatus::OnReview,
+        );
+
+        $context['scheduledConference']->setMeta('invoice_enable', true);
+
+        $participant = Participant::withoutGlobalScopes()->create([
+            'given_name' => 'Participant',
+            'family_name' => 'Tester',
+            'email' => 'participant-detail@example.test',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+        ]);
+
+        $paymentFee = PaymentFee::withoutGlobalScopes()->create([
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => $context['scheduledConference']->getKey(),
+            'name' => 'Participant Fee',
+            'type' => PaymentManager::TYPE_PARTICIPANT_FEE,
+            'amount' => 150,
+            'currency' => 'usd',
+            'is_active' => true,
+        ]);
+
+        $payment = PaymentManager::get()->queue(
+            $participant,
+            $paymentFee,
+            $context['user'],
+            PaymentManager::TYPE_PARTICIPANT_FEE,
+            $participant->full_name,
+            '/participant/'.$participant->getKey(),
+            'Participant billing',
+        )->load('scheduledConference');
+        $editor = $this->makeConferenceManager($context, 'participant-billing-editor@example.test');
+
+        Notification::fake();
+
+        $this->actingAs($editor);
+
+        $this->assertTrue(PaymentDetail::canSendInvoiceFor($payment));
+        $this->assertTrue($editor->can('update', $payment));
+
+        $action = $this->getPaymentDetailAction($payment, 'send_invoice');
+
+        $this->assertSame(__('general.send_invoice'), $action->getLabel());
+        $this->assertTrue($action->isVisible());
+
+        $action->call([
+            'action' => $action,
+            'record' => $payment,
+        ]);
+
+        Notification::assertSentTo($participant, ParticipantPayment::class);
+        $this->assertNotNull($payment->refresh()->invoice);
+        $this->assertTrue($payment->hasInvoiceBeenSent());
     }
 
     public function test_manual_submission_invoice_allows_payment_detail_before_billing_stage(): void
@@ -572,5 +902,82 @@ class SubmissionBillingNotifierTest extends TestCase
             '/submission/'.$submission->getKey(),
             'Submission billing',
         );
+    }
+
+    protected function makeConferenceManager(array $context, string $email): User
+    {
+        foreach (['Payment:view', 'Payment:update'] as $permission) {
+            Permission::query()->firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web',
+            ]);
+        }
+
+        $role = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::ConferenceManager->value,
+            'guard_name' => 'web',
+            'conference_id' => $context['conference']->getKey(),
+            'scheduled_conference_id' => 0,
+        ]);
+
+        $user = User::query()->create([
+            'given_name' => 'Billing',
+            'family_name' => 'Editor',
+            'email' => $email,
+            'password' => 'password123456',
+        ]);
+
+        $user->assignRole($role);
+
+        return $user->refresh();
+    }
+
+    protected function getPaymentDetailAction(Payment $payment, string $name): \Filament\Actions\Action
+    {
+        $page = new class extends PaymentDetail
+        {
+            public function headerActions(): array
+            {
+                return $this->getHeaderActions();
+            }
+        };
+
+        $page->record = $payment;
+
+        foreach ($page->headerActions() as $headerAction) {
+            if ($headerAction instanceof \Filament\Actions\Action && $headerAction->getName() === $name) {
+                return $headerAction;
+            }
+
+            if (! $headerAction instanceof \Filament\Actions\ActionGroup) {
+                continue;
+            }
+
+            $flatActions = $headerAction->getFlatActions();
+
+            if (isset($flatActions[$name])) {
+                return $flatActions[$name];
+            }
+        }
+
+        $this->fail("Payment detail action [{$name}] was not found.");
+    }
+
+    protected function getInvoiceUrl(array $context, Payment $payment): string
+    {
+        return route('filament.scheduledConference.pages.invoice', [
+            'conference' => $context['conference']->path,
+            'serie' => $context['scheduledConference']->path,
+            'record' => $payment,
+        ]);
+    }
+
+    protected function getReceiptUrl(array $context, Payment $payment): string
+    {
+        return route('filament.scheduledConference.pages.receipt', [
+            'conference' => $context['conference']->path,
+            'serie' => $context['scheduledConference']->path,
+            'record' => $payment,
+        ]);
     }
 }

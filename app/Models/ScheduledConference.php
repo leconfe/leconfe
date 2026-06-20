@@ -159,10 +159,14 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'default_open_review_for_author' => true,
             'invoice_number' => 1,
             'invoice_enable' => false,
+            'invoice_show_submission_title' => false,
             'receipt_enable' => false,
+            'receipt_show_submission_title' => false,
             'receipt_number' => 1,
             'receipt_prefix_number' => '',
             'receipt_suffix_number' => '',
+            'receipt_sender_information' => '',
+            'receipt_notes' => '',
             'submission_payment' => false,
             'participant_payment' => false,
             'submission_billing_stage' => SubmissionStage::PeerReview->value,
@@ -321,9 +325,19 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         return $this->getMeta('invoice_enable');
     }
 
+    public function shouldShowSubmissionTitleOnInvoice(): bool
+    {
+        return (bool) $this->getMeta('invoice_show_submission_title', false);
+    }
+
     public function isReceiptEnabled(): bool
     {
-        return $this->isInvoiceEnabled() && $this->getMeta('receipt_enable');
+        return (bool) $this->getMeta('receipt_enable');
+    }
+
+    public function shouldShowSubmissionTitleOnReceipt(): bool
+    {
+        return (bool) $this->getMeta('receipt_show_submission_title', false);
     }
 
     public function isSubmissionPaymentEnabled(): bool
