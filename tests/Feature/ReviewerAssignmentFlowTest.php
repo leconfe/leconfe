@@ -273,7 +273,7 @@ class ReviewerAssignmentFlowTest extends TestCase
         $mediaId = DB::table('media')->insertGetId([
             'model_type' => Submission::class,
             'model_id' => $submission->getKey(),
-            'collection_name' => 'paper-files',
+            'collection_name' => SubmissionFileCategory::REVIEW_FILES,
             'name' => 'paper',
             'file_name' => 'paper.pdf',
             'mime_type' => 'application/pdf',
@@ -294,7 +294,7 @@ class ReviewerAssignmentFlowTest extends TestCase
             'submission_file_type_id' => $submissionFileType->getKey(),
             'media_id' => $mediaId,
             'user_id' => $submission->user_id,
-            'category' => SubmissionFileCategory::PAPER_FILES,
+            'category' => SubmissionFileCategory::REVIEW_FILES,
         ]);
 
         return $review->assignedFiles()->create([

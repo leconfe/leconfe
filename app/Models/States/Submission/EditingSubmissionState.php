@@ -21,7 +21,7 @@ class EditingSubmissionState extends BaseSubmissionState
         // Repeating the current decision is allowed so editors can resend its notification.
     }
 
-    public function acceptAbstract(): void
+    public function sendForReview(): void
     {
         SubmissionUpdateAction::run([
             'revision_required' => false,
@@ -34,7 +34,7 @@ class EditingSubmissionState extends BaseSubmissionState
             name: 'submission',
             subject: $this->submission,
             description: __('general.submission_send_to_review'),
-            event: 'submission-abstract-accepted',
+            event: 'submission-send-to-review',
         )
             ->by(auth()->user())
             ->save();

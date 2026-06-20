@@ -2,12 +2,12 @@
 
 namespace App\Panel\ScheduledConference\Livewire\Submissions;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Constants\SubmissionFileCategory;
 use App\Forms\Components\TinyEditor;
-use App\Actions\Submissions\StartSubmissionReviewRoundAction;
-use App\Mail\Templates\AcceptAbstractMail;
 use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
+use App\Mail\Templates\SendForReviewMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
@@ -15,8 +15,8 @@ use App\Models\Enums\SubmissionStatus;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
-use App\Notifications\AbstractAccepted;
 use App\Notifications\AbstractDeclined;
+use App\Notifications\SubmissionSentForReview;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -72,7 +72,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->disabled()
-                            ->formatStateUsing(fn(Submission $record): string => $record->user->email),
+                            ->formatStateUsing(fn (Submission $record): string => $record->user->email),
                         TextInput::make('subject')
                             ->label(__('general.subject'))
                             ->required(),
@@ -86,7 +86,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                     ]),
             ])
             ->successNotificationTitle(__('general.submission_declined'))
-            ->successRedirectUrl(fn(): string => SubmissionResource::getUrl('view', ['record' => $this->submission]))
+            ->successRedirectUrl(fn (): string => SubmissionResource::getUrl('view', ['record' => $this->submission]))
             ->action(function (Action $action, array $data) {
                 $this->submission->state()->decline();
 
@@ -185,9 +185,9 @@ class CallforAbstract extends Component implements HasActions, HasForms
             });
     }
 
-    public function acceptAction()
+    public function sendForReviewAction()
     {
-        return Action::make('accept')
+        return Action::make('sendForReview')
             ->label(__('general.send_for_review'))
             ->authorize('actAsEditor', $this->submission)
             ->modalWidth('2xl')
@@ -196,13 +196,18 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->extraAttributes(['class' => 'w-full'])
             ->icon('lineawesome-check-circle-solid')
             ->mountUsing(function (Form $form): void {
-                $mailTemplate = DefaultMailTemplate::where('mailable', AcceptAbstractMail::class)->first();
+                $mailTemplate = DefaultMailTemplate::where('mailable', SendForReviewMail::class)->first();
                 $form->fill([
                     'subject' => $mailTemplate ? $mailTemplate->subject : '',
                     'message' => $mailTemplate ? $mailTemplate->html_template : '',
                 ]);
             })
             ->form([
+                TextInput::make('review_round_name')
+                    ->label(__('general.review_round_name'))
+                    ->placeholder(__('general.review_round_name_placeholder'))
+                    ->helperText(__('general.review_round_name_helper'))
+                    ->maxLength(255),
                 CheckboxList::make('papers')
                     ->label('Select files below to send them to the review stage')
                     ->hidden(
@@ -219,7 +224,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                     $paper->getKey() => new HtmlString(
                                         Action::make($paper->media->original_file_name)
                                             ->label($paper->media->original_file_name)
-                                            ->url(fn() => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
+                                            ->url(fn () => $paper->media->getTemporaryUrl(now()->addMinutes(5)))
                                             ->link()
                                             ->toHtml()
                                     ),
@@ -292,7 +297,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         TextInput::make('email')
                             ->label(__('general.email'))
                             ->disabled()
-                            ->formatStateUsing(fn(Submission $record): string => $record->user->email),
+                            ->formatStateUsing(fn (Submission $record): string => $record->user->email),
                         TextInput::make('subject')
                             ->label(__('general.subject'))
                             ->required(),
@@ -309,7 +314,9 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->action(
                 function (Action $action, array $data) {
                     try {
-                        $this->submission->state()->acceptAbstract();
+                        $reviewRoundName = data_get($data, 'review_round_name');
+
+                        $this->submission->state()->sendForReview();
                         $this->submission->refresh();
 
                         $reviewRound = $this->submission->activeReviewRound
@@ -320,8 +327,19 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             $this->submission->stage === SubmissionStage::PeerReview &&
                             in_array($this->submission->status, [SubmissionStatus::OnReview, SubmissionStatus::OnPayment], true)
                         ) {
-                            $reviewRound = StartSubmissionReviewRoundAction::run($this->submission, [], auth()->user());
+                            $reviewRound = StartSubmissionReviewRoundAction::run(
+                                $this->submission,
+                                [],
+                                auth()->user(),
+                                $reviewRoundName
+                            );
                             $this->submission->refresh();
+                        }
+
+                        if ($reviewRound && filled($reviewRoundName) && blank($reviewRound->name)) {
+                            $reviewRound->update([
+                                'name' => trim($reviewRoundName),
+                            ]);
                         }
 
                         $submissionFiles = $this->submission
@@ -336,7 +354,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         foreach ($submissionFiles as $record) {
                             $clonedMedia = $record->media->copy(
                                 $this->submission,
-                                SubmissionFileCategory::PAPER_FILES,
+                                SubmissionFileCategory::REVIEW_FILES,
                                 'private-files'
                             );
                             $clonedFile = $this->submission
@@ -344,7 +362,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                 ->create([
                                     'review_round_id' => $reviewRound?->getKey(),
                                     'submission_file_type_id' => $record->type->getKey(),
-                                    'category' => SubmissionFileCategory::PAPER_FILES,
+                                    'category' => SubmissionFileCategory::REVIEW_FILES,
                                     'media_id' => $clonedMedia->getKey(),
                                 ]);
 
@@ -392,7 +410,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             try {
                                 $this->submission->user
                                     ->notify(
-                                        new AbstractAccepted(
+                                        new SubmissionSentForReview(
                                             submission: $this->submission,
                                             message: $data['message'],
                                             subject: $data['subject'],
@@ -407,7 +425,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
                         $this->submission->user
                             ->notify(
-                                new AbstractAccepted(
+                                new SubmissionSentForReview(
                                     submission: $this->submission,
                                     message: $data['message'],
                                     subject: $data['subject'],
@@ -424,7 +442,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                         $action->success();
                     } catch (\Throwable $th) {
                         Log::error($th->getMessage());
-                        $action->failureNotificationTitle(__('general.failed_to_accept_abstract'));
+                        $action->failureNotificationTitle(__('general.failed_to_send_for_review'));
                         $action->failure();
                     }
                 }

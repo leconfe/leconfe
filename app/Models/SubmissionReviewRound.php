@@ -19,6 +19,7 @@ class SubmissionReviewRound extends Model
     protected $fillable = [
         'submission_id',
         'round_number',
+        'name',
         'status',
         'triggered_by',
         'default_file_ids',

@@ -149,6 +149,10 @@ class SubmissionPolicy
             return false;
         }
 
+        if (! $this->isWizardStage($submission)) {
+            return $user->can('actAsEditor', $submission);
+        }
+
         if ($user->can('submitAs', Submission::class)) {
             return true;
         }
@@ -191,6 +195,10 @@ class SubmissionPolicy
 
         if (filled($submission->withdrawn_reason)) {
             return false;
+        }
+
+        if (! $this->isWizardStage($submission)) {
+            return $user->can('actAsEditor', $submission);
         }
 
         if ($user->can('Submission:uploadPaper')) {
@@ -488,5 +496,16 @@ class SubmissionPolicy
         }
 
         return $user->can('uploadAbstract', $submission);
+    }
+
+    protected function isWizardStage(Submission $submission): bool
+    {
+        $stage = $submission->stage;
+
+        if ($stage instanceof SubmissionStage) {
+            return $stage === SubmissionStage::Wizard;
+        }
+
+        return $stage === null || $stage === SubmissionStage::Wizard->value;
     }
 }

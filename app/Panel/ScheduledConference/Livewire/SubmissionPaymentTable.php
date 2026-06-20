@@ -5,10 +5,13 @@ namespace App\Panel\ScheduledConference\Livewire;
 use App\Mail\Templates\SubmissionPaymentMail;
 use App\Managers\PaymentManager;
 use App\Models\DefaultMailTemplate;
+use App\Models\Enums\SubmissionStatus;
 use App\Models\Payment;
 use App\Models\PaymentFee;
+use App\Models\Submission;
 use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
+use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -47,11 +50,51 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
             && (bool) $record->scheduledConference?->isInvoiceEnabled();
     }
 
+    public static function getSubmissionStatusBadgeStates(Payment $record): array
+    {
+        $submission = $record->model;
+
+        if (! $submission instanceof Submission) {
+            return [];
+        }
+
+        return collect([
+            $submission->status?->value,
+            SubmissionResource::getLatestReviewRoundBadgeState($submission),
+        ])
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    public static function getSubmissionStatusBadgeColor(string $state): string
+    {
+        return SubmissionStatus::tryFrom($state)?->getColor() ?? 'info';
+    }
+
+    public static function getValidSubmissionStatusValues(): array
+    {
+        return collect(SubmissionStatus::cases())
+            ->reject(fn (SubmissionStatus $status) => in_array($status, [
+                SubmissionStatus::Declined,
+                SubmissionStatus::PaymentDeclined,
+                SubmissionStatus::Withdrawn,
+            ], true))
+            ->map(fn (SubmissionStatus $status) => $status->value)
+            ->values()
+            ->all();
+    }
+
     public function getTableQuery(): Builder
     {
         return Payment::query()
             ->type(PaymentManager::TYPE_SUBMISSION_FEE)
-            ->with(['model.conference', 'user', 'scheduledConference']);
+            ->whereHasMorph(
+                'model',
+                [Submission::class],
+                fn (Builder $query) => $query->whereIn('status', static::getValidSubmissionStatusValues()),
+            )
+            ->with(['model.conference', 'model.latestReviewRound', 'user', 'scheduledConference']);
     }
 
     public function table(Table $table): Table
@@ -77,11 +120,12 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
                     ->description(fn (Payment $record) => $record->user->full_name)
                     ->wrap(),
-                TextColumn::make('status')
+                TextColumn::make('submission_status')
                     ->label('Submission Status')
                     ->badge()
                     ->toggleable()
-                    ->state(fn (Payment $record) => $record->model?->status?->value)
+                    ->state(fn (Payment $record) => static::getSubmissionStatusBadgeStates($record))
+                    ->color(fn (string $state): string => static::getSubmissionStatusBadgeColor($state))
                     ->wrap(),
                 TextColumn::make('fee.name')
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
@@ -102,6 +146,25 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->options(fn () => PaymentFee::query()
                         ->type(PaymentManager::TYPE_SUBMISSION_FEE)
                         ->pluck('name', 'id')),
+                SelectFilter::make('submission_status')
+                    ->label('Submission Status')
+                    ->options(array_combine(
+                        static::getValidSubmissionStatusValues(),
+                        static::getValidSubmissionStatusValues(),
+                    ))
+                    ->query(function (Builder $query, array $data): Builder {
+                        $status = $data['value'] ?? null;
+
+                        if (blank($status)) {
+                            return $query;
+                        }
+
+                        return $query->whereHasMorph(
+                            'model',
+                            [Submission::class],
+                            fn (Builder $query) => $query->where('status', $status),
+                        );
+                    }),
                 TernaryFilter::make('paid_at')
                     ->label('Paid')
                     ->nullable(),

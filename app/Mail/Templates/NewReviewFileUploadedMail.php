@@ -8,8 +8,12 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use Illuminate\Routing\Exceptions\UrlGenerationException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
-class NewRevisionUploadedMail extends TemplateMailable
+class NewReviewFileUploadedMail extends TemplateMailable
 {
+    public string $submissionTitle;
+
+    public string $uploader;
+
     public Log $log;
 
     public function __construct(SubmissionFile $submissionFile)
@@ -25,28 +29,29 @@ class NewRevisionUploadedMail extends TemplateMailable
             'Review Round Name' => $this->resolveReviewRoundName($submissionFile),
             'Submission URL' => $this->resolveSubmissionUrl($submissionFile),
         ]);
+
         $this->log = Log::make(
             name: 'email',
             subject: $submissionFile->submission,
-            description: __('general.email_sent', ['name' => 'New Revision Uploaded']),
+            description: __('general.email_sent', ['name' => __('general.review_file_uploaded')]),
         )->by(auth()->user());
     }
 
     public static function getDefaultSubject(): string
     {
-        return 'New revision uploaded for {{ Submission Title }}';
+        return 'New review file uploaded for {{ Submission Title }}';
     }
 
     public static function getDefaultDescription(): string
     {
-        return 'This email is sent to editors when a new revision is uploaded';
+        return 'This email is sent to editors when a new review file is uploaded';
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
         return <<<'HTML'
             <p>Dear Editors,</p>
-            <p>A revision file has been uploaded for the submission "{{ Submission Title }}" in {{ Conference Title }}.</p>
+            <p>A review file has been uploaded for the submission "{{ Submission Title }}" in {{ Conference Title }}.</p>
             <table>
                 <tr>
                     <td style="width:140px;">Submission ID</td>
@@ -73,7 +78,7 @@ class NewRevisionUploadedMail extends TemplateMailable
                     <td>: {{ Review Round Name }}</td>
                 </tr>
             </table>
-            <p>Please review the revision and continue the editorial workflow from the submission page.</p>
+            <p>Please review the uploaded file and continue the editorial workflow from the submission page.</p>
             <p>Click here to <a href="{{ Submission URL }}">View Submission</a>.</p>
         HTML;
     }

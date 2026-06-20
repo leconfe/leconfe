@@ -78,6 +78,10 @@ class DefaultMailTemplate extends BaseMailTemplate
                 continue;
             }
 
+            if (property_exists($class, 'deprecatedTemplateAlias') && $class::$deprecatedTemplateAlias) {
+                continue;
+            }
+
             if (! is_subclass_of($class, TemplateMailable::class)) {
                 continue;
             }

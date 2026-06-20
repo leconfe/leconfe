@@ -65,10 +65,12 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
             return false;
         }
 
-        return (bool) $this->submission->reviewRounds()
-            ->whereKey($this->reviewRoundId)
+        $activeRoundId = $this->submission->reviewRounds()
             ->open()
-            ->exists();
+            ->orderByDesc('round_number')
+            ->value('id');
+
+        return $activeRoundId && (int) $activeRoundId === $this->reviewRoundId;
     }
 
     protected function form(Form $form): Form

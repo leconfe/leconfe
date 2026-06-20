@@ -207,9 +207,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->label(__('general.edit'))
                 ->modalWidth('md')
                 ->modalHeading(__('general.edit_files'))
-                ->hidden(
-                    fn (): bool => $this->isViewOnly() || $this->submission->isDeclined()
-                )
+                ->hidden(fn (SubmissionFile $record): bool => ! $this->canEditSubmissionFile($record))
                 ->successNotificationTitle(__('general.file_updated_successfully'))
                 ->mountUsing(function (SubmissionFile $record, Form $form) {
                     $form->fill([
@@ -275,7 +273,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                         ->searchable(),
                 ]),
             DeleteAction::make()
-                ->authorize(fn (SubmissionFile $record): bool => auth()->user()->can('deleteFile', $record->submission))
+                ->authorize(fn (SubmissionFile $record): bool => $this->canDeleteSubmissionFile($record))
                 ->using(function (SubmissionFile $record) {
                     try {
                         DB::beginTransaction();
@@ -303,8 +301,18 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                     $this->dispatch('refreshLivewire');
                 })
-                ->hidden(fn () => $this->isViewOnly()),
+                ->hidden(fn (SubmissionFile $record): bool => ! $this->canDeleteSubmissionFile($record)),
         ];
+    }
+
+    protected function canEditSubmissionFile(SubmissionFile $record): bool
+    {
+        return ! $this->isViewOnly() && ! $this->submission->isDeclined();
+    }
+
+    protected function canDeleteSubmissionFile(SubmissionFile $record): bool
+    {
+        return ! $this->isViewOnly() && auth()->user()->can('deleteFile', $record->submission);
     }
 
     public function tableQuery(): Builder

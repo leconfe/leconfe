@@ -6,7 +6,7 @@ interface SubmissionStateInterface
 {
     public function fulfill(): void;
 
-    public function acceptAbstract(): void;
+    public function sendForReview(): void;
 
     public function approvePayment(): void;
 

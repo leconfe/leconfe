@@ -8,7 +8,12 @@ final class SubmissionFileCategory
 
     public const SUPPLEMENTARY_FILES = 'supplementary-files';
 
-    public const PAPER_FILES = 'paper-files';
+    public const REVIEW_FILES = 'review-files';
+
+    /**
+     * @deprecated Use REVIEW_FILES for files uploaded to the peer-review stage.
+     */
+    public const PAPER_FILES = self::REVIEW_FILES;
 
     public const REVIEWER_FILES = 'reviewer-files';
 
