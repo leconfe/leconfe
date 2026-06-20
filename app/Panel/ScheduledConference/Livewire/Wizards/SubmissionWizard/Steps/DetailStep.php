@@ -8,6 +8,7 @@ use App\Models\Submission;
 use App\Models\Topic;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard\Contracts\HasWizardStep;
 use App\Utils\TinyMceWordCounter;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -18,7 +19,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Closure;
 use Livewire\Component;
 use Stevebauman\Purify\Facades\Purify;
 
@@ -71,9 +71,11 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                     ->schema([
                         Hidden::make('nextStep'),
                         Select::make('topic')
-                            ->visible(fn() => Topic::query()->count())
+                            ->visible(fn () => Topic::query()->count())
                             ->preload()
                             ->multiple()
+                            ->maxItems(fn (): ?int => $this->topicSelectionLimit())
+                            ->helperText(fn (): ?string => $this->topicSelectionLimitHelperText())
                             ->label(__('general.topic'))
                             ->searchable()
                             ->relationship('topics', 'name'),
@@ -113,5 +115,22 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                 $this->dispatch('next-wizard-step');
                 $action->success();
             });
+    }
+
+    private function topicSelectionLimit(): ?int
+    {
+        return $this->record
+            ->scheduledConference()
+            ->first()
+            ?->getSubmissionTopicSelectionLimit();
+    }
+
+    private function topicSelectionLimitHelperText(): ?string
+    {
+        $limit = $this->topicSelectionLimit();
+
+        return $limit === null
+            ? null
+            : __('general.select_up_to_topics', ['count' => $limit]);
     }
 }
