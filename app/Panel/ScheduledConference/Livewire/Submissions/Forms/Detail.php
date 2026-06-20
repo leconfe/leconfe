@@ -62,6 +62,8 @@ class Detail extends \Livewire\Component implements HasForms
                 Select::make('topics')
                     ->preload()
                     ->multiple()
+                    ->maxItems(fn (): ?int => $this->topicSelectionLimit())
+                    ->helperText(fn (): ?string => $this->topicSelectionLimitHelperText())
                     ->relationship('topics', 'name')
                     ->label(__('general.topic'))
                     ->searchable(),
@@ -103,5 +105,22 @@ class Detail extends \Livewire\Component implements HasForms
     public function render()
     {
         return view('panel.scheduledConference.livewire.submissions.forms.detail');
+    }
+
+    private function topicSelectionLimit(): ?int
+    {
+        return $this->submission
+            ->scheduledConference()
+            ->first()
+            ?->getSubmissionTopicSelectionLimit();
+    }
+
+    private function topicSelectionLimitHelperText(): ?string
+    {
+        $limit = $this->topicSelectionLimit();
+
+        return $limit === null
+            ? null
+            : __('general.select_up_to_topics', ['count' => $limit]);
     }
 }

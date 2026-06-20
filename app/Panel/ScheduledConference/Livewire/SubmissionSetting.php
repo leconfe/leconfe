@@ -7,6 +7,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -27,6 +28,7 @@ class SubmissionSetting extends Component implements HasForms
             'open_date' => Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->value('date'),
             'close_date' => Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->value('date'),
             'hide_from_timeline' => Timeline::type(Timeline::TYPE_SUBMISSION_OPEN)->value('hide') || Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->value('hide'),
+            'meta' => app()->getCurrentScheduledConference()->getAllMeta(),
         ]);
     }
 
@@ -51,6 +53,11 @@ class SubmissionSetting extends Component implements HasForms
                         Toggle::make('hide_from_timeline')
                             ->label(__('general.submission_setting.hide_from_timeline'))
                             ->label('Hide from timeline'),
+                        TextInput::make('meta.submission_topic_selection_limit')
+                            ->label(__('general.maximum_topics_per_submission'))
+                            ->helperText(__('general.maximum_topics_per_submission_helper'))
+                            ->numeric()
+                            ->minValue(1),
                     ]),
                 Actions::make([
                     Action::make('save')
@@ -84,6 +91,10 @@ class SubmissionSetting extends Component implements HasForms
                                     ]);
                                 } else {
                                     Timeline::type(Timeline::TYPE_SUBMISSION_CLOSE)->delete();
+                                }
+
+                                if (array_key_exists('meta', $formData)) {
+                                    app()->getCurrentScheduledConference()->setManyMeta($formData['meta']);
                                 }
 
                                 DB::commit();

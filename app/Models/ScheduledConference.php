@@ -30,6 +30,8 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
     use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
 
+    public const META_SUBMISSION_TOPIC_SELECTION_LIMIT = 'submission_topic_selection_limit';
+
     protected $fillable = [
         'conference_id',
         'path',
@@ -174,7 +176,21 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
             'required_affiliation' => false,
             'required_country' => false,
             'required_phone' => false,
+            self::META_SUBMISSION_TOPIC_SELECTION_LIMIT => null,
         ];
+    }
+
+    public function getSubmissionTopicSelectionLimit(): ?int
+    {
+        $limit = $this->getMeta(self::META_SUBMISSION_TOPIC_SELECTION_LIMIT);
+
+        if ($limit === null || $limit === '') {
+            return null;
+        }
+
+        $limit = (int) $limit;
+
+        return $limit > 0 ? $limit : null;
     }
 
     public function conference(): BelongsTo
