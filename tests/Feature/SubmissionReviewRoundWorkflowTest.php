@@ -865,6 +865,49 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertStringContainsString('{{ Review Round Name }}', $revisionFileTemplate['html_template']);
     }
 
+    public function test_review_upload_mail_templates_use_custom_review_round_name_without_prefix(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+            'Full Paper Review',
+        );
+
+        $type = SubmissionFileType::query()->create([
+            'name' => 'Paper',
+            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
+        ]);
+
+        $reviewFile = SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $this->createSubmissionMedia($context['submission'], SubmissionFileCategory::REVIEW_FILES, 'review-file')->getKey(),
+            'review_round_id' => $round->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::REVIEW_FILES,
+        ]);
+
+        $revisionFile = SubmissionFile::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'media_id' => $this->createSubmissionMedia($context['submission'], SubmissionFileCategory::REVISION_FILES, 'revision-file')->getKey(),
+            'review_round_id' => $round->getKey(),
+            'submission_file_type_id' => $type->getKey(),
+            'user_id' => $context['author']->getKey(),
+            'category' => SubmissionFileCategory::REVISION_FILES,
+        ]);
+
+        $this->assertSame(
+            'Full Paper Review',
+            data_get((new NewReviewFileUploadedMail($reviewFile))->buildViewData(), 'Review Round Name'),
+        );
+        $this->assertSame(
+            'Full Paper Review',
+            data_get((new NewRevisionUploadedMail($revisionFile))->buildViewData(), 'Review Round Name'),
+        );
+    }
+
     public function test_legacy_new_paper_uploaded_mail_template_migrates_to_review_file_upload_mail(): void
     {
         $context = $this->makeSubmissionContext();

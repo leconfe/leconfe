@@ -93,13 +93,9 @@ class NewRevisionUploadedMail extends TemplateMailable
             return 'Not assigned';
         }
 
-        $reviewRoundName = 'Round '.$reviewRound->round_number;
-
-        if (filled($reviewRound->name)) {
-            $reviewRoundName .= ' - '.$reviewRound->name;
-        }
-
-        return $reviewRoundName;
+        return filled($reviewRound->name)
+            ? $reviewRound->name
+            : 'Round '.$reviewRound->round_number;
     }
 
     protected function resolveSubmissionUrl(SubmissionFile $submissionFile): string
