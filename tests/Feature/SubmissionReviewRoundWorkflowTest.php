@@ -773,17 +773,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             $context['editor'],
         );
 
-        $legacyEditorRole = Role::withoutGlobalScopes()->firstOrCreate([
-            'name' => 'editor',
-            'guard_name' => 'web',
-            'conference_id' => app()->getCurrentConferenceId(),
-            'scheduled_conference_id' => app()->getCurrentScheduledConferenceId(),
-        ]);
-
-        $context['submission']->participants()->create([
-            'user_id' => $context['editor']->getKey(),
-            'role_id' => $legacyEditorRole->getKey(),
-        ]);
+        $this->assignEditorRole($context['editor'], $context['submission']);
 
         $authorRole = $this->createAuthorRole();
         $context['submission']->participants()->create([
@@ -849,12 +839,27 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
     {
         $this->makeSubmissionContext();
 
-        $mailables = collect((new DefaultMailTemplate)->getDefaultData(app()->getCurrentConference()))
-            ->pluck('mailable');
+        $mailTemplates = collect((new DefaultMailTemplate)->getDefaultData(app()->getCurrentConference()));
+        $mailables = $mailTemplates->pluck('mailable');
 
         $this->assertTrue($mailables->contains(NewReviewFileUploadedMail::class));
         $this->assertFalse($mailables->contains(NewPaperUploadedMail::class));
         $this->assertTrue($mailables->contains(NewRevisionUploadedMail::class));
+
+        $reviewFileTemplate = $mailTemplates->firstWhere('mailable', NewReviewFileUploadedMail::class);
+        $revisionFileTemplate = $mailTemplates->firstWhere('mailable', NewRevisionUploadedMail::class);
+
+        $this->assertSame('New review file uploaded for {{ Submission Title }}', $reviewFileTemplate['subject']);
+        $this->assertStringContainsString('A review file has been uploaded', $reviewFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ Uploaded By }}', $reviewFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ File Name }}', $reviewFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ Review Round Name }}', $reviewFileTemplate['html_template']);
+
+        $this->assertSame('New revision uploaded for {{ Submission Title }}', $revisionFileTemplate['subject']);
+        $this->assertStringContainsString('A revision file has been uploaded', $revisionFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ Uploaded By }}', $revisionFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ File Name }}', $revisionFileTemplate['html_template']);
+        $this->assertStringContainsString('{{ Review Round Name }}', $revisionFileTemplate['html_template']);
     }
 
     public function test_legacy_new_paper_uploaded_mail_template_migrates_to_review_file_upload_mail(): void

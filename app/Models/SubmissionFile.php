@@ -41,14 +41,7 @@ class SubmissionFile extends Model
             ) || $createdModel->isAuthorUploadedReviewFile();
 
             if ($shouldSendNotification) {
-                $editors = $createdModel->submission->participants()
-                    ->whereHas('role', function ($query) {
-                        $query->where('name', 'editor');
-                    })
-                    ->get()
-                    ->pluck('user_id');
-
-                $editors = User::whereIn('id', $editors)->get();
+                $editors = $createdModel->submission->getEditors();
 
                 if ($editors->count()) {
                     $editors->each(function (User $editor) use ($createdModel) {

@@ -12,6 +12,8 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Routing\Exceptions\UrlGenerationException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SubmissionFileUploaded extends Notification implements ShouldQueue
 {
@@ -70,7 +72,7 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
             ->body("Title: {$this->submissionFile->submission->getMeta('title')}")
             ->actions([
                 Action::make('new-submission')
-                    ->url(SubmissionResource::getUrl('view', ['record' => $this->submissionFile->submission, 'tenant' => $this->submissionFile->submission->conference]))
+                    ->url($this->resolveSubmissionUrl())
                     ->label(__('general.view'))
                     ->markAsRead(),
             ])
@@ -87,5 +89,17 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
         return [
             //
         ];
+    }
+
+    protected function resolveSubmissionUrl(): string
+    {
+        try {
+            return SubmissionResource::getUrl('view', [
+                'record' => $this->submissionFile->submission,
+                'tenant' => $this->submissionFile->submission->conference,
+            ]);
+        } catch (RouteNotFoundException|UrlGenerationException) {
+            return url('/');
+        }
     }
 }
