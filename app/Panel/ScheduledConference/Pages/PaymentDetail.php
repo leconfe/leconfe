@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Pages;
 use App\Facades\Setting;
 use App\Managers\PaymentManager;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\Participant;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\PaymentFormItem;
@@ -203,29 +204,27 @@ class PaymentDetail extends Page
                         $action->successNotificationTitle('Payment Fee Updated');
                         $action->success();
                     }),
-                Action::make('resend_submission_invoice_email')
-                    ->label(__('general.send_submission_invoice_email'))
+                Action::make('create_invoice')
+                    ->label(__('general.create_invoice'))
+                    ->icon('heroicon-o-document-plus')
                     ->color('gray')
                     ->authorize(fn (?Payment $record) => $record ? auth()->user()->can('update', $record) : false)
-                    ->visible(fn (?Payment $record) => $record?->type == PaymentManager::TYPE_SUBMISSION_FEE)
+                    ->record($this->record)
+                    ->visible(fn (Payment $record) => static::canCreateInvoiceFor($record))
                     ->requiresConfirmation()
                     ->action(function (Action $action, Payment $record) {
-                        $submission = $record->model;
-
-                        if (! $submission || ! $record->user) {
-                            $action->failureNotificationTitle(__('general.failed_send_notification'));
-                            $action->failure();
-
-                            return;
-                        }
-
-                        $record->ensureInvoice();
-                        $submission->setRelation('payment', $record->refresh());
-                        $record->user->notify(new SubmissionPayment($submission));
-                        $record->markInvoiceAsSent();
-
-                        $action->successNotificationTitle(__('general.invoice_sent_successfully'));
-                        $action->success();
+                        static::createInvoiceFor($action, $record);
+                    }),
+                Action::make('send_invoice')
+                    ->label(__('general.send_invoice'))
+                    ->icon('heroicon-o-envelope')
+                    ->color('gray')
+                    ->authorize(fn (?Payment $record) => $record ? auth()->user()->can('update', $record) : false)
+                    ->record($this->record)
+                    ->visible(fn (Payment $record) => static::canSendInvoiceFor($record))
+                    ->requiresConfirmation()
+                    ->action(function (Action $action, Payment $record) {
+                        static::sendInvoiceFor($action, $record);
                     }),
                 Action::make('mark_as_paid')
                     ->label('Mark as Paid')
@@ -334,6 +333,99 @@ class PaymentDetail extends Page
             SubmissionStatus::Declined,
             SubmissionStatus::Withdrawn,
         ], true);
+    }
+
+    public static function canSendInvoiceFor(Payment $record): bool
+    {
+        return ! $record->isPaid()
+            && (bool) $record->scheduledConference?->isInvoiceEnabled();
+    }
+
+    public static function canCreateInvoiceFor(Payment $record): bool
+    {
+        return ! $record->isPaid()
+            && blank($record->invoice)
+            && (bool) $record->scheduledConference?->isInvoiceEnabled();
+    }
+
+    public static function createInvoiceFor(Action $action, Payment $record): void
+    {
+        if (! static::canCreateInvoiceFor($record) || ! $record->ensureInvoice()) {
+            $action->failureNotificationTitle(__('general.failed_create_invoice'));
+            $action->failure();
+
+            return;
+        }
+
+        $action->successNotificationTitle(__('general.invoice_created_successfully'));
+        $action->success();
+    }
+
+    public static function sendInvoiceFor(Action $action, Payment $record): void
+    {
+        $record->ensureInvoice();
+
+        if ($record->type == PaymentManager::TYPE_SUBMISSION_FEE) {
+            static::sendSubmissionInvoiceFor($action, $record);
+
+            return;
+        }
+
+        if ($record->type == PaymentManager::TYPE_PARTICIPANT_FEE) {
+            static::sendParticipantInvoiceFor($action, $record);
+
+            return;
+        }
+
+        static::failSendInvoice($action);
+    }
+
+    protected static function sendSubmissionInvoiceFor(Action $action, Payment $record): void
+    {
+        $record = $record->refresh();
+        $submission = $record->model;
+
+        if (! $submission instanceof Submission || ! $submission->user) {
+            static::failSendInvoice($action);
+
+            return;
+        }
+
+        $submission->setRelation('payment', $record);
+        $submission->user->notify(new SubmissionPayment($submission));
+        $record->markInvoiceAsSent();
+
+        static::successSendInvoice($action);
+    }
+
+    protected static function sendParticipantInvoiceFor(Action $action, Payment $record): void
+    {
+        $record = $record->refresh();
+        $participant = $record->model;
+
+        if (! $participant instanceof Participant || ! $participant->email) {
+            static::failSendInvoice($action);
+
+            return;
+        }
+
+        $participant->setRelation('payment', $record);
+        $participant->notify(new ParticipantPayment($participant));
+        $record->markInvoiceAsSent();
+
+        static::successSendInvoice($action);
+    }
+
+    protected static function failSendInvoice(Action $action): void
+    {
+        $action->failureNotificationTitle(__('general.failed_send_notification'));
+        $action->failure();
+    }
+
+    protected static function successSendInvoice(Action $action): void
+    {
+        $action->successNotificationTitle(__('general.invoice_sent_successfully'));
+        $action->success();
     }
 
     protected function shouldSendParticipantPaymentNotification(Payment $record, array $data): bool

@@ -63,7 +63,7 @@
         @endif
         <div class="text-right">
             <p class="text-base font-bold">{{ $scheduledConference->title }}</p>
-            {!! $scheduledConference->getMeta('invoice_sender_information') !!}
+            {!! $scheduledConference->getMeta('receipt_sender_information') ?: $scheduledConference->getMeta('invoice_sender_information') !!}
         </div>
         <div class="bg-gray-200 p-2 mt-4">
             <p class="text-xl font-bold">Receipt No: {{ $record->receipt }}</p>
@@ -74,6 +74,9 @@
             <p>
                 We have successfully received your registration fee of {{ $record->getFormattedFee() }}.
             </p>
+            @if($submissionTitle)
+            <p>Submission Title: <b>{{ $submissionTitle }}</b></p>
+            @endif
             @if(count($additionalItems))
             <p class="mt-2">Payment breakdown:</p>
             <ul class="list-disc ml-6">
@@ -91,6 +94,11 @@
             @endif
             <p>Thank you for your payment. We look forward to your participation and wish you a successful and enjoyable conference experience.</p>
         </div>
+        @if($scheduledConference->getMeta('receipt_notes'))
+        <div class="mt-4 max-w-none prose prose-sm prose-p:my-0 prose-p:leading-5 prose-li:leading-5 prose-ol:mt-0" style="--tw-prose-body: #000;--tw-prose-counters: #000;">
+            {!! $scheduledConference->getMeta('receipt_notes') !!}
+        </div>
+        @endif
         <div class="mt-8 font-bold">
             <p>With best regards,</p>
             <p>{{ $scheduledConference->getMeta('organizer') }}</p>
