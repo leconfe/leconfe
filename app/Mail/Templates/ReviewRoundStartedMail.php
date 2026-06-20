@@ -16,11 +16,9 @@ class ReviewRoundStartedMail extends TemplateMailable
 
     public function __construct(protected Submission $submission, protected SubmissionReviewRound $reviewRound)
     {
-        $reviewRoundName = 'Round '.$reviewRound->round_number;
-
-        if (filled($reviewRound->name)) {
-            $reviewRoundName .= ' - '.$reviewRound->name;
-        }
+        $reviewRoundName = filled($reviewRound->name)
+            ? $reviewRound->name
+            : 'Round '.$reviewRound->round_number;
 
         $this->setAdditionalData([
             'Conference Title' => $submission->scheduledConference->title,

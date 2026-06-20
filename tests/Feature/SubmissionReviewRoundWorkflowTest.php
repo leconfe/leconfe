@@ -352,11 +352,14 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             SubmissionReviewRoundStarted::class,
             function (SubmissionReviewRoundStarted $notification) use ($context): bool {
                 $databaseMessage = $notification->toDatabase($context['author']);
+                $mail = $notification->toMail($context['author']);
+                $mailViewData = $mail->buildViewData();
 
                 return $notification->submission->is($context['submission'])
                     && $notification->reviewRound->round_number === 2
                     && $notification->via($context['author']) === ['database', 'mail']
-                    && $notification->toMail($context['author']) instanceof ReviewRoundStartedMail
+                    && $mail instanceof ReviewRoundStartedMail
+                    && data_get($mailViewData, 'Review Round Name') === 'Full Paper Review'
                     && data_get($databaseMessage->toArray(), 'title') === __('general.sent_for_a_new_round_of_reviews');
             }
         );
