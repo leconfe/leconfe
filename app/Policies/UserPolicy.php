@@ -50,7 +50,7 @@ class UserPolicy
     public function update(User $user, User $model)
     {
         if ($user->is($model)) {
-            return false;
+            return true;
         }
 
         if ($model->hasRole(UserRole::Admin)) {

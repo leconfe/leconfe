@@ -255,7 +255,7 @@ class UserRoleScopeTest extends TestCase
 
         $this->assertTrue($listedUserIds->contains($admin->getKey()));
         $this->assertFalse($listedUserIds->contains($foreignUser->getKey()));
-        $this->assertFalse(Gate::forUser($admin)->allows('update', $admin));
+        $this->assertTrue(Gate::forUser($admin)->allows('update', $admin));
         $this->assertFalse(Gate::forUser($admin)->allows('delete', $admin));
     }
 
