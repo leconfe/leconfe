@@ -31,4 +31,7 @@ return [
     'welcome_overview_description' => 'Konferenca zhvillohet nga :start_date deri më :end_date.',
     'no_self_assignable_roles_available' => 'Nuk ka role që mund të caktohen vetë për këtë konferencë.',
     'submit_paper' => 'Dërgo Punimin',
+    'unpublished_status' => 'Ende nuk është publikuar',
+    'unpublished_title' => 'Konferenca e planifikuar ende nuk është publikuar',
+    'unpublished_description' => 'Faqja e kësaj konference të planifikuar nuk është ende e disponueshme për publikun. Ju lutemi kontrolloni përsëri më vonë.',
 ];

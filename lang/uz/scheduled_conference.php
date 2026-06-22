@@ -31,4 +31,7 @@ return [
     'welcome_overview_description' => 'Konferensiya :start_date dan :end_date gacha davom etadi.',
     'no_self_assignable_roles_available' => 'Ushbu konferensiya uchun o‘zini-o‘zi tanlash mumkin bo‘lgan rollar mavjud emas.',
     'submit_paper' => 'Maqola yuborish',
+    'unpublished_status' => 'Hali e’lon qilinmagan',
+    'unpublished_title' => 'Rejalashtirilgan konferensiya hali e’lon qilinmagan',
+    'unpublished_description' => 'Ushbu rejalashtirilgan konferensiya sahifasi hozircha ommaga ochiq emas. Iltimos, keyinroq qayta tekshiring.',
 ];

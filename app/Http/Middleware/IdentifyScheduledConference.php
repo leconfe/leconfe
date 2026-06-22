@@ -20,9 +20,17 @@ class IdentifyScheduledConference
         if (! $scheduledConference) {
             return abort(404);
         }
-        
-        if(Gate::allows('view', $scheduledConference)){
+
+        if (Gate::allows('view', $scheduledConference)) {
             return $next($request);
+        }
+
+        if (! $scheduledConference->is_published) {
+            return response()
+                ->view('frontend.scheduledConference.pages.unpublished', [
+                    'scheduledConference' => $scheduledConference,
+                ])
+                ->header('X-Robots-Tag', 'noindex, nofollow');
         }
 
         return abort(404);

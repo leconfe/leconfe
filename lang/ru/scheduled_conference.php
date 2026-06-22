@@ -31,4 +31,7 @@ return [
     'welcome_overview_description' => 'Конференция проходит с :start_date по :end_date.',
     'no_self_assignable_roles_available' => 'Для этой конференции нет доступных для самостоятельного выбора ролей.',
     'submit_paper' => 'Отправить материал',
+    'unpublished_status' => 'Еще не опубликовано',
+    'unpublished_title' => 'Запланированная конференция еще не опубликована',
+    'unpublished_description' => 'Страница этой запланированной конференции пока недоступна для публики. Пожалуйста, проверьте позже.',
 ];

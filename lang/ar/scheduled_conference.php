@@ -31,4 +31,7 @@ return [
     'welcome_overview_description' => 'يُقام المؤتمر من :start_date إلى :end_date.',
     'no_self_assignable_roles_available' => 'لا توجد أدوار قابلة للتعيين الذاتي متاحة لهذا المؤتمر.',
     'submit_paper' => 'إرسال البحث',
+    'unpublished_status' => 'لم يتم النشر بعد',
+    'unpublished_title' => 'لم يتم نشر المؤتمر المجدول بعد',
+    'unpublished_description' => 'صفحة هذا المؤتمر المجدول غير متاحة للعامة بعد. يرجى التحقق مرة أخرى لاحقًا.',
 ];

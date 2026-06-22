@@ -34,4 +34,7 @@ return [
     'welcome_overview_description' => 'The conference runs from :start_date to :end_date.',
     'no_self_assignable_roles_available' => 'No self-assignable roles are available for this conference.',
     'submit_paper' => 'Submit Paper',
+    'unpublished_status' => 'Not published yet',
+    'unpublished_title' => 'Scheduled conference is not published yet',
+    'unpublished_description' => 'This scheduled conference page is not publicly available yet. Please check back later.',
 ];
