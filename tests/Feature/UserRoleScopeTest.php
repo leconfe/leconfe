@@ -61,6 +61,73 @@ class UserRoleScopeTest extends TestCase
         ]);
     }
 
+    public function test_scheduled_context_role_sync_preserves_conference_scoped_roles(): void
+    {
+        $conference = Conference::query()->create([
+            'name' => 'Scoped Conference',
+            'path' => 'scoped-conference',
+        ]);
+        $scheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Scoped Schedule',
+            'path' => 'scoped-schedule',
+        ]);
+
+        $conferenceManagerRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::ConferenceManager->value,
+            'guard_name' => 'web',
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => 0,
+        ]);
+        $scheduledEditorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::ScheduledConferenceEditor->value,
+            'guard_name' => 'web',
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => $scheduledConference->getKey(),
+        ]);
+        $trackEditorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::TrackEditor->value,
+            'guard_name' => 'web',
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => $scheduledConference->getKey(),
+        ]);
+
+        $user = User::factory()->create([
+            'email' => 'scoped-sync@example.test',
+            'password' => Hash::make('password12345'),
+        ]);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
+
+        $user->assignRole($conferenceManagerRole);
+        $user->assignRole($scheduledEditorRole);
+
+        $user->syncRoles([$trackEditorRole->name]);
+
+        $this->assertDatabaseHas('model_has_roles', [
+            'role_id' => $conferenceManagerRole->getKey(),
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => 0,
+            'model_type' => User::class,
+            'model_id' => $user->getKey(),
+        ]);
+        $this->assertDatabaseMissing('model_has_roles', [
+            'role_id' => $scheduledEditorRole->getKey(),
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => $scheduledConference->getKey(),
+            'model_type' => User::class,
+            'model_id' => $user->getKey(),
+        ]);
+        $this->assertDatabaseHas('model_has_roles', [
+            'role_id' => $trackEditorRole->getKey(),
+            'conference_id' => $conference->getKey(),
+            'scheduled_conference_id' => $scheduledConference->getKey(),
+            'model_type' => User::class,
+            'model_id' => $user->getKey(),
+        ]);
+    }
+
     public function test_role_scope_does_not_leak_from_other_conferences(): void
     {
         app()->setCurrentConferenceId(103);

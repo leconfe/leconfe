@@ -288,7 +288,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     public function syncRoles(...$roles)
     {
         if ($this->getModel()->exists) {
-            $this->roles()->detach($this->roles->filter(fn ($role) => $role->name != UserRole::Admin->value)->pluck('id')->toArray());
+            $rolesToDetach = $this->roles->filter(fn ($role) => $role->name != UserRole::Admin->value);
+
+            if (app()->getCurrentConferenceId() || app()->getCurrentScheduledConferenceId()) {
+                $contextRoleIds = Role::withoutGlobalScopes()
+                    ->availableRolesByContext()
+                    ->where('name', '!=', UserRole::Admin->value)
+                    ->pluck('id')
+                    ->all();
+
+                $rolesToDetach = $rolesToDetach->whereIn('id', $contextRoleIds);
+            }
+
+            $this->roles()->detach($rolesToDetach->pluck('id')->toArray());
             $this->setRelation('roles', collect());
         }
 
