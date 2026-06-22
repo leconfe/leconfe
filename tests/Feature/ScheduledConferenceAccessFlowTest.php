@@ -20,7 +20,7 @@ class ScheduledConferenceAccessFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_current_admin_is_visible_in_conference_user_search_without_reopening_self_edit(): void
+    public function test_current_admin_is_visible_in_conference_user_search_and_can_self_edit(): void
     {
         $conference = Conference::query()->create([
             'name' => 'Test Conference',
@@ -48,7 +48,7 @@ class ScheduledConferenceAccessFlowTest extends TestCase
 
         $this->assertTrue($visibleUserIds->contains($admin->getKey()));
         $this->assertFalse($visibleUserIds->contains($otherAdmin->getKey()));
-        $this->assertFalse(app(UserPolicy::class)->update($admin, $admin));
+        $this->assertTrue(app(UserPolicy::class)->update($admin, $admin));
         $this->assertFalse(app(UserPolicy::class)->delete($admin, $admin));
     }
 
