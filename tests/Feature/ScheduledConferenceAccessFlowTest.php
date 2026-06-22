@@ -163,7 +163,8 @@ class ScheduledConferenceAccessFlowTest extends TestCase
             ]))
             ->assertOk()
             ->assertSee($scheduledConference->title)
-            ->assertSee(__('scheduled_conference.unpublished_title'));
+            ->assertSee(__('scheduled_conference.unpublished_title'))
+            ->assertSee(__('scheduled_conference.unpublished_description'));
     }
 
     public function test_conference_sitemap_excludes_unpublished_scheduled_conferences(): void
