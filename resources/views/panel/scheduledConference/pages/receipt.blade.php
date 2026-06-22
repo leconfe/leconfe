@@ -94,15 +94,12 @@
             @endif
             <p>Thank you for your payment. We look forward to your participation and wish you a successful and enjoyable conference experience.</p>
         </div>
-        @if($scheduledConference->getMeta('receipt_notes'))
+        @php($receiptNotes = $scheduledConference->getMeta('receipt_notes'))
+        @if($receiptNotes)
         <div class="mt-4 max-w-none prose prose-sm prose-p:my-0 prose-p:leading-5 prose-li:leading-5 prose-ol:mt-0" style="--tw-prose-body: #000;--tw-prose-counters: #000;">
-            {!! $scheduledConference->getMeta('receipt_notes') !!}
+            {!! $receiptNotes !!}
         </div>
         @endif
-        <div class="mt-8 font-bold">
-            <p>With best regards,</p>
-            <p>{{ $scheduledConference->getMeta('organizer') }}</p>
-        </div>
     </div>
 </body>
 
