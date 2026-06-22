@@ -332,10 +332,12 @@ class SubmissionBillingNotifierTest extends TestCase
         );
 
         $context['scheduledConference']->update(['is_published' => true]);
-        $context['scheduledConference']->setManyMeta([
+        $receiptMeta = [
             'receipt_enable' => true,
             'receipt_notes' => '<p>Bring this receipt to check-in.</p>',
-        ]);
+        ];
+        $context['scheduledConference']->setManyMeta($receiptMeta);
+        app()->getCurrentScheduledConference()?->setManyMeta($receiptMeta);
 
         $this->queueSubmissionPayment($context['submission'], $context['paymentFee']);
 
@@ -347,10 +349,21 @@ class SubmissionBillingNotifierTest extends TestCase
 
         $this->actingAs($context['user']);
 
-        $this->withoutVite()
+        $response = $this->withoutVite()
             ->get($this->getReceiptUrl($context, $payment))
             ->assertOk()
             ->assertSee('Bring this receipt to check-in.');
+
+        $visibleText = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($response->getContent()))));
+        $thankYou = 'Thank you for your payment. We look forward to your participation and wish you a successful and enjoyable conference experience.';
+
+        $this->assertStringContainsString($thankYou, $visibleText);
+        $this->assertLessThan(
+            strpos($visibleText, 'Bring this receipt to check-in.'),
+            strpos($visibleText, $thankYou),
+        );
+        $this->assertStringNotContainsString('With best regards', $visibleText);
+        $this->assertStringEndsWith('Bring this receipt to check-in.', $visibleText);
     }
 
     public function test_submission_receipt_does_not_show_submission_title_by_default(): void
