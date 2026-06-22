@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Frontend\Conference\Pages\Sitemap as ConferenceSitemap;
+use App\Frontend\ScheduledConference\Pages\Home as ScheduledConferenceHome;
 use App\Frontend\ScheduledConference\Pages\Register;
 use App\Models\Conference;
 use App\Models\Enums\UserRole;
@@ -13,6 +15,7 @@ use App\Panel\ScheduledConference\Pages\Dashboard;
 use App\Panel\ScheduledConference\Pages\ParticipantRegistration;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -134,6 +137,69 @@ class ScheduledConferenceAccessFlowTest extends TestCase
             route(Dashboard::getRouteName('scheduledConference')),
             (new Register)->getRedirectUrl()
         );
+    }
+
+    public function test_unpublished_scheduled_conference_public_page_shows_unpublished_information(): void
+    {
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        $scheduledConference = ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft-scheduled-conference',
+            'is_published' => false,
+        ]);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
+
+        $this->withoutVite()
+            ->get(route(ScheduledConferenceHome::getRouteName('scheduledConference'), [
+                'conference' => $conference->path,
+                'serie' => $scheduledConference->path,
+            ]))
+            ->assertOk()
+            ->assertSee($scheduledConference->title)
+            ->assertSee(__('scheduled_conference.unpublished_title'))
+            ->assertSee(__('scheduled_conference.unpublished_description'));
+    }
+
+    public function test_conference_sitemap_excludes_unpublished_scheduled_conferences(): void
+    {
+        $conference = Conference::query()->create([
+            'name' => 'Test Conference',
+            'path' => 'test-conference',
+        ]);
+
+        ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Published Scheduled Conference',
+            'path' => 'published-scheduled-conference',
+            'is_published' => true,
+        ]);
+
+        ScheduledConference::query()->create([
+            'conference_id' => $conference->getKey(),
+            'title' => 'Draft Scheduled Conference',
+            'path' => 'draft-scheduled-conference',
+            'is_published' => false,
+        ]);
+
+        app()->setCurrentConferenceId($conference->getKey());
+        Cache::forget('sitemap_'.$conference->getKey());
+
+        $content = $this
+            ->get(route(ConferenceSitemap::getRouteName('conference'), [
+                'conference' => $conference->path,
+            ]))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('/test-conference/scheduled/published-scheduled-conference', $content);
+        $this->assertStringNotContainsString('/test-conference/scheduled/draft-scheduled-conference', $content);
     }
 
     public function test_previous_scheduled_author_is_not_listed_in_new_conference_or_schedule_context(): void

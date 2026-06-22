@@ -31,4 +31,6 @@ return [
     'welcome_overview_description' => 'Konferensi berlangsung dari :start_date hingga :end_date.',
     'no_self_assignable_roles_available' => 'Tidak ada peran yang dapat dipilih sendiri untuk konferensi ini.',
     'submit_paper' => 'Kirim Makalah',
+    'unpublished_title' => 'Scheduled conference belum dipublikasikan',
+    'unpublished_description' => 'Halaman scheduled conference ini belum tersedia untuk publik. Silakan cek kembali nanti. Terima kasih atas antisipasinya.',
 ];
