@@ -1937,6 +1937,58 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->assertNull($review->recommendation);
     }
 
+    public function test_review_submission_page_shows_submission_keywords_from_author_metadata(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $reviewerRole = $this->createReviewerRole();
+
+        foreach (['Submission:review', 'Submission:viewAny'] as $permissionName) {
+            Permission::query()->firstOrCreate([
+                'name' => $permissionName,
+                'guard_name' => 'web',
+            ]);
+        }
+
+        $reviewerRole->syncPermissions(['Submission:review', 'Submission:viewAny']);
+        $context['reviewerA']->assignRole($reviewerRole);
+
+        $context['submission']->scheduledConference->update(['is_published' => true]);
+        $context['submission']->setManyMeta([
+            'abstract' => '<p>Reviewable submission abstract.</p>',
+            'keywords' => [
+                'deep learning',
+                'decision support',
+            ],
+        ]);
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $review = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'date_confirmed' => now(),
+        ]);
+        $review->setMeta('review_mode', Review::MODE_OPEN);
+        $review->save();
+
+        $this->actingAs($context['reviewerA']);
+
+        $this->get(route('filament.scheduledConference.resources.submissions.review', [
+            'conference' => $context['submission']->conference->path,
+            'serie' => $context['submission']->scheduledConference->path,
+            'record' => $context['submission']->getKey(),
+        ]))
+            ->assertOk()
+            ->assertSee('deep learning')
+            ->assertSee('decision support');
+    }
+
     public function test_stale_reviewer_invitation_page_rejects_accept_after_a_new_round_starts(): void
     {
         $context = $this->makeSubmissionContext();
