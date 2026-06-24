@@ -36,7 +36,7 @@ class InviteUserAction
         $conferenceId = app()->getCurrentConferenceId() ?: null;
         $scheduledConferenceId = app()->getCurrentScheduledConferenceId() ?: null;
 
-        if ($role->conference_id !== $conferenceId || $role->scheduled_conference_id !== $scheduledConferenceId) {
+        if ($role->conference_id !== $conferenceId || ($role->scheduled_conference_id ?: null) !== $scheduledConferenceId) {
             throw ValidationException::withMessages([
                 'role_id' => 'Selected role is not available in the current context.',
             ]);
