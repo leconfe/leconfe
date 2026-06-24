@@ -15,7 +15,8 @@ class UserRoleInvitationMail extends TemplateMailable
 
     public function __construct(UserInvitation $invitation)
     {
-        $conferenceTitle = $invitation->scheduledConference?->conference?->name
+        $conferenceTitle = $invitation->scheduledConference?->title
+            ?? $invitation->scheduledConference?->conference?->name
             ?? $invitation->conference?->name
             ?? app()->getCurrentConference()?->name
             ?? app()->getSite()->getMeta('name');
