@@ -32,8 +32,16 @@ class InviteUserAction
             ]);
         }
 
-        $conferenceId = $role->conference_id ?: null;
-        $scheduledConferenceId = $role->scheduled_conference_id ?: null;
+        // Verify the role belongs to the current context
+        $conferenceId = app()->getCurrentConferenceId() ?: null;
+        $scheduledConferenceId = app()->getCurrentScheduledConferenceId() ?: null;
+
+        if ($role->conference_id !== $conferenceId || ($role->scheduled_conference_id ?: null) !== $scheduledConferenceId) {
+            throw ValidationException::withMessages([
+                'role_id' => 'Selected role is not available in the current context.',
+            ]);
+        }
+
         $roleName = $role->name;
 
         $existsPendingInvitation = UserInvitation::query()
