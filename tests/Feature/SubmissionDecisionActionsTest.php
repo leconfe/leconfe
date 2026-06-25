@@ -445,6 +445,29 @@ class SubmissionDecisionActionsTest extends TestCase
         $this->assertTrue($context['submission']->revision_required);
     }
 
+    public function test_peer_review_request_revision_can_set_revision_deadline(): void
+    {
+        Mail::fake();
+
+        $context = $this->makeEditorSubmissionContext([
+            'stage' => SubmissionStage::Presentation,
+            'status' => SubmissionStatus::OnPresentation,
+        ]);
+        $deadline = now()->addDays(7)->setSeconds(0);
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']])
+            ->callAction('requestRevisionAction', data: $this->paperNotificationData([
+                'revision_due_at' => $deadline->toDateTimeString(),
+            ]));
+
+        $context['submission']->refresh();
+
+        $this->assertTrue($context['submission']->revision_required);
+        $this->assertSame($deadline->toDateTimeString(), $context['submission']->revision_due_at?->toDateTimeString());
+    }
+
     public function test_peer_review_request_revision_defaults_to_notifying_author_when_checkbox_is_omitted(): void
     {
         Mail::fake();

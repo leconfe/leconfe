@@ -32,6 +32,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
@@ -613,6 +614,12 @@ class PeerReview extends Component implements HasActions, HasForms
                         TextInput::make('subject')
                             ->label(__('general.subject'))
                             ->required(),
+                        DateTimePicker::make('revision_due_at')
+                            ->label(__('general.revision_due_at'))
+                            ->helperText(__('general.revision_due_at_helper'))
+                            ->native(false)
+                            ->seconds(false)
+                            ->minDate(now()),
                         TinyEditor::make('message')
                             ->label(__('general.message'))
                             ->minHeight(300)
@@ -639,6 +646,10 @@ class PeerReview extends Component implements HasActions, HasForms
 
                 $this->submission->state()->requestRevision();
                 $this->submission->refresh();
+                $this->submission->update([
+                    'revision_due_at' => data_get($data, 'revision_due_at'),
+                ]);
+                $this->submission->refresh();
 
                 try {
                     NotifySubmissionRevisionRequestAction::run(
@@ -661,6 +672,60 @@ class PeerReview extends Component implements HasActions, HasForms
                     ])
                 );
 
+                $action->success();
+            });
+    }
+
+    public function extendRevisionDeadlineAction()
+    {
+        return Action::make('extendRevisionDeadlineAction')
+            ->authorize('requestRevision', $this->submission)
+            ->icon('heroicon-o-clock')
+            ->outlined()
+            ->color('warning')
+            ->label(__('general.extend_revision_deadline'))
+            ->modalHeading(__('general.extend_revision_deadline'))
+            ->modalDescription(__('general.extend_revision_deadline_modal_description'))
+            ->visible(fn (): bool => $this->submission->revision_required && $this->isSelectedRoundDecisionContext())
+            ->mountUsing(function (Form $form): void {
+                $form->fill([
+                    'revision_due_at' => $this->submission->revision_due_at,
+                ]);
+            })
+            ->form([
+                DateTimePicker::make('revision_due_at')
+                    ->label(__('general.revision_due_at'))
+                    ->helperText(__('general.revision_due_at_helper'))
+                    ->native(false)
+                    ->seconds(false)
+                    ->required()
+                    ->minDate(now()),
+            ])
+            ->successNotificationTitle(__('general.revision_deadline_extended'))
+            ->action(function (Action $action, array $data): void {
+                if (! $this->submission->revision_required) {
+                    $action->failureNotificationTitle(__('general.error'));
+                    $action->failure();
+
+                    return;
+                }
+
+                $this->submission->update([
+                    'revision_due_at' => data_get($data, 'revision_due_at'),
+                ]);
+
+                Log::make(
+                    name: 'submission',
+                    subject: $this->submission,
+                    description: __('general.revision_deadline_extended_activity', [
+                        'date' => $this->submission->revision_due_at?->format('Y-m-d H:i'),
+                    ]),
+                    event: 'submission-revision-deadline-extended',
+                )
+                    ->by(auth()->user())
+                    ->save();
+
+                $this->submission->refresh();
                 $action->success();
             });
     }
