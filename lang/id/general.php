@@ -407,6 +407,7 @@ return [
     'file_type_created_successfully' => 'Jenis berkas berhasil dibuat',
     'create_author_role' => 'Buat Peran Penulis',
     'new_contributor' => 'Kontributor Baru',
+    'add_myself_as_contributor' => 'Tambahkan Saya',
     'add_contributor' => 'Tambahkan Kontributor',
     'contributor_added' => 'Kontributor berhasil ditambahkan',
     'abstract_files' => 'Berkas Abstrak',

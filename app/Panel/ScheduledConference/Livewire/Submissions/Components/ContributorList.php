@@ -7,6 +7,8 @@ use App\Actions\Authors\AuthorDeleteAction;
 use App\Actions\Authors\AuthorUpdateAction;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Author;
+use App\Models\AuthorRole;
+use App\Models\Enums\SubmissionStage;
 use App\Models\Submission;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use Filament\Forms\Components\Checkbox;
@@ -16,6 +18,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -27,6 +31,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class ContributorList extends \Livewire\Component implements HasForms, HasTable
 {
@@ -126,6 +131,12 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->hidden($this->viewOnly),
             ])
             ->headerActions([
+                Action::make('addMyselfAsContributor')
+                    ->label(__('general.add_myself_as_contributor'))
+                    ->icon('heroicon-o-user')
+                    ->requiresConfirmation()
+                    ->action(fn () => $this->addMyselfAsContributor())
+                    ->hidden(fn (): bool => ! $this->canAddMyselfAsContributor()),
                 CreateAction::make()
                     ->label(__('general.new_contributor'))
                     ->modalWidth('2xl')
@@ -163,6 +174,84 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->color('success'),
 
             ]);
+    }
+
+    public function addMyselfAsContributor(): void
+    {
+        if (! $this->canAddMyselfAsContributor()) {
+            return;
+        }
+
+        $user = auth()->user();
+        $authorRole = $this->getDefaultAuthorRole();
+
+        if (! $user || ! $authorRole) {
+            return;
+        }
+
+        $meta = collect([
+            'public_name' => $user->getMeta('public_name'),
+            'affiliation' => $user->getMeta('affiliation'),
+            'country' => $user->getMeta('country'),
+            'phone' => $user->getMeta('phone'),
+        ])
+            ->filter(fn ($value): bool => filled($value))
+            ->all();
+
+        try {
+            $author = AuthorCreateAction::run($this->submission, [
+                'author_role_id' => $authorRole->getKey(),
+                'given_name' => $user->given_name,
+                'family_name' => $user->family_name,
+                'email' => $user->email,
+                'meta' => $meta,
+            ]);
+        } catch (UniqueConstraintViolationException) {
+            return;
+        }
+
+        if ($this->submission->authors()->count() === 1) {
+            $this->submission->setPrimaryContact($author);
+        }
+
+        Notification::make()
+            ->title(__('general.contributor_added'))
+            ->success()
+            ->send();
+    }
+
+    public function canAddMyselfAsContributor(): bool
+    {
+        $user = auth()->user();
+
+        if ($this->viewOnly || ! $user) {
+            return false;
+        }
+
+        if ($this->submission->user_id !== $user->getKey()) {
+            return false;
+        }
+
+        if (! in_array($this->submission->stage, [null, SubmissionStage::Wizard], true)) {
+            return false;
+        }
+
+        if (! $this->getDefaultAuthorRole()) {
+            return false;
+        }
+
+        return ! $this->submission
+            ->authors()
+            ->where('email', $user->email)
+            ->exists();
+    }
+
+    protected function getDefaultAuthorRole(): ?AuthorRole
+    {
+        return AuthorRole::withoutGlobalScopes()
+            ->where('conference_id', $this->submission->conference_id)
+            ->where('name', 'Author')
+            ->first();
     }
 
     public function render()

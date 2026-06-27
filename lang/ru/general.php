@@ -384,6 +384,7 @@ return [
 
     'create_author_role' => 'Создать роль автора',
     'new_contributor' => 'Новый участник',
+    'add_myself_as_contributor' => 'Добавить себя',
     'add_contributor' => 'Добавить участника',
     'contributor_added' => 'Участник добавлен',
     'abstract_files' => 'Файлы аннотаций',

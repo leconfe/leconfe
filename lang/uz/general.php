@@ -384,6 +384,7 @@ return [
 
     'create_author_role' => 'Muallif roli yarating',
     'new_contributor' => 'Yangi hissa qo‘shuvchi',
+    'add_myself_as_contributor' => 'O‘zimni qo‘shish',
     'add_contributor' => 'Hissa qo‘shuvchini qo‘shish',
     'contributor_added' => 'Hissa qo‘shuvchi qo‘shildi',
     'abstract_files' => 'Annotatsiya fayllari',

@@ -393,6 +393,7 @@ return [
 
     'create_author_role' => 'Krijo Rol Autor',
     'new_contributor' => 'Kontribues i Ri',
+    'add_myself_as_contributor' => 'Shto veten',
     'add_contributor' => 'Shto Kontribues',
     'contributor_added' => 'Kontribuesi u shtua',
     'abstract_files' => 'Skedarët e Abstraktit',
