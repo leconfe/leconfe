@@ -134,6 +134,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                 Action::make('addMyselfAsContributor')
                     ->label(__('general.add_myself_as_contributor'))
                     ->icon('heroicon-o-user')
+                    ->requiresConfirmation()
                     ->action(fn () => $this->addMyselfAsContributor())
                     ->hidden(fn (): bool => ! $this->canAddMyselfAsContributor()),
                 CreateAction::make()

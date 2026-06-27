@@ -81,6 +81,10 @@ class ContributorListTest extends TestCase
         $this->actingAs($context['user']);
 
         Livewire::test(ContributorList::class, ['submission' => $context['submission']])
+            ->assertTableActionExists(
+                'addMyselfAsContributor',
+                fn ($action): bool => $action->getModalDescription() === __('filament-actions::modal.confirmation')
+            )
             ->assertTableActionVisible('addMyselfAsContributor')
             ->callTableAction('addMyselfAsContributor')
             ->assertHasNoTableActionErrors();
