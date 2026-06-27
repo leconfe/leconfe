@@ -425,6 +425,7 @@ return [
 
     'create_author_role' => 'Create Author Role',
     'new_contributor' => 'New Contributor',
+    'add_myself_as_contributor' => 'Add Myself',
     'add_contributor' => 'Add Contributor',
     'contributor_added' => 'Contributor added',
     'abstract_files' => 'Abstract Files',

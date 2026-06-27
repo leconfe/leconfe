@@ -406,6 +406,7 @@ return [
 
     'create_author_role' => 'إنشاء دور مؤلف',
     'new_contributor' => 'مساهم جديد',
+    'add_myself_as_contributor' => 'إضافة نفسي',
     'add_contributor' => 'إضافة مساهم',
     'contributor_added' => 'تمت إضافة المساهم',
     'abstract_files' => 'ملفات الملخص',
