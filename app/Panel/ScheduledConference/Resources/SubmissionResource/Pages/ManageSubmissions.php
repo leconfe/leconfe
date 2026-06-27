@@ -69,8 +69,10 @@ class ManageSubmissions extends ManageRecords
                 SubmissionStatus::Published,
                 SubmissionStatus::Withdrawn,
             ])
-            ->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
-            ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()));
+            ->where(function (Builder $query) {
+                $query->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
+                    ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()));
+            });
 
         return Tab::make(__('general.my_queue'))
             ->modifyQueryUsing($modifyQuery)
@@ -114,8 +116,10 @@ class ManageSubmissions extends ManageRecords
             SubmissionStatus::PaymentDeclined,
         ])->when(
             ! auth()->user()->can('submitAs', Submission::class),
-            fn (Builder $query) => $query->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
-                ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()))
+            fn (Builder $query) => $query->where(function (Builder $query) {
+                $query->whereHas('participants', fn (Builder $query) => $query->where('user_id', auth()->id()))
+                    ->orWhereHas('reviews', fn (Builder $query) => $query->where('user_id', auth()->id()));
+            })
         );
 
         return Tab::make(__('general.archived'))
