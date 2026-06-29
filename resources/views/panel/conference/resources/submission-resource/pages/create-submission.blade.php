@@ -12,7 +12,7 @@
                 </svg>
                 <span class="sr-only">Info</span>
                 <div>
-                    This conference is not accepting submissions at this time.
+                    {{ $closedMessage ?? 'This conference is not accepting submissions at this time.' }}
                 </div>
             </div>
         @else

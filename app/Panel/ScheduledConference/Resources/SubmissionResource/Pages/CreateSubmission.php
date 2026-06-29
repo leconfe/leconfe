@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Submissions\SubmissionCreateAction;
+use App\Facades\Hook;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
@@ -54,16 +55,22 @@ class CreateSubmission extends Page implements HasForms
 
     protected function getViewData(): array
     {
+        $isOpen = Timeline::isSubmissionOpen() && Track::query()
+            ->active()
+            ->when(! auth()->user()->hasAnyRole([
+                UserRole::Admin,
+                UserRole::ConferenceManager,
+                UserRole::ScheduledConferenceEditor,
+                UserRole::TrackEditor,
+            ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
+            ->count();
+        $closedMessage = 'This conference is not accepting submissions at this time.';
+
+        Hook::call('Panel::ScheduledConference::SubmissionCreate::availability', [&$isOpen, &$closedMessage, $this]);
+
         return [
-            'isOpen' => Timeline::isSubmissionOpen() && Track::query()
-                ->active()
-                ->when(! auth()->user()->hasAnyRole([
-                    UserRole::Admin,
-                    UserRole::ConferenceManager,
-                    UserRole::ScheduledConferenceEditor,
-                    UserRole::TrackEditor,
-                ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
-                ->count(),
+            'isOpen' => (bool) $isOpen,
+            'closedMessage' => $closedMessage,
         ];
     }
 

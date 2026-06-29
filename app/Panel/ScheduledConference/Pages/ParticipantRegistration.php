@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Pages;
 
+use App\Facades\Hook;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\Participant;
@@ -59,9 +60,16 @@ class ParticipantRegistration extends Page implements HasForms
      */
     protected function getViewData(): array
     {
+        $isOpen = true;
+        $closedMessage = __('general.registration_closed');
+
+        Hook::call('Panel::ScheduledConference::ParticipantRegistration::availability', [&$isOpen, &$closedMessage, $this]);
+
         return [
             'coverImageUrl' => app()->getCurrentScheduledConference()->getFirstMediaUrl('registration_cover'),
             'registrationFormHeader' => app()->getCurrentScheduledConference()->getMeta('registration_form_header') ? new HtmlString(app()->getCurrentScheduledConference()->getMeta('registration_form_header')) : null,
+            'isOpen' => (bool) $isOpen,
+            'closedMessage' => $closedMessage,
         ];
     }
 
