@@ -39,6 +39,8 @@
                     {{ __('general.current') }}
                 </x-filament::badge>
                 @endif
+
+                @hook('Panel::ScheduledConference::TenantMenuAfterCurrentTitle')
             </span>
 
              <x-filament::icon
