@@ -838,6 +838,108 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         );
     }
 
+    public function test_revision_deadline_blocks_author_revision_uploads_after_expiry_but_not_editors(): void
+    {
+        $context = $this->makeSubmissionContext([
+            'revision_required' => true,
+            'revision_due_at' => now()->subMinute(),
+        ]);
+
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        $authorRole = $this->createAuthorRole();
+        Permission::query()->firstOrCreate([
+            'name' => 'Submission:uploadRevisionFiles',
+            'guard_name' => 'web',
+        ]);
+        $authorRole->givePermissionTo('Submission:uploadRevisionFiles');
+        $context['author']->assignRole($authorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['author']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $this->assertFalse($context['author']->can('uploadRevisionFiles', $context['submission']));
+        $this->assertTrue($context['editor']->can('uploadRevisionFiles', $context['submission']));
+
+        $context['submission']->update([
+            'revision_due_at' => now()->addDay(),
+        ]);
+
+        $this->assertTrue($context['author']->can('uploadRevisionFiles', $context['submission']->refresh()));
+    }
+
+    public function test_author_dashboard_shows_revision_deadline_notice(): void
+    {
+        $deadline = now()->addDays(3)->setSeconds(0);
+        $context = $this->makeSubmissionContext([
+            'revision_required' => true,
+            'revision_due_at' => $deadline,
+        ]);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $authorRole = $this->createAuthorRole();
+        $context['author']->assignRole($authorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['author']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $this->actingAs($context['author']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']->refresh()])
+            ->assertSee(__('general.revision_deadline_author_notice_title'))
+            ->assertSee($deadline->format('Y-m-d H:i'));
+    }
+
+    public function test_editor_can_extend_revision_deadline_after_it_passes(): void
+    {
+        $newDeadline = now()->addDays(2)->setSeconds(0);
+        $context = $this->makeSubmissionContext([
+            'revision_required' => true,
+            'revision_due_at' => now()->subDay(),
+        ]);
+
+        StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+        $this->assignEditorRole($context['editor'], $context['submission']);
+
+        $authorRole = $this->createAuthorRole();
+        Permission::query()->firstOrCreate([
+            'name' => 'Submission:uploadRevisionFiles',
+            'guard_name' => 'web',
+        ]);
+        $authorRole->givePermissionTo('Submission:uploadRevisionFiles');
+        $context['author']->assignRole($authorRole);
+        $context['submission']->participants()->create([
+            'user_id' => $context['author']->getKey(),
+            'role_id' => $authorRole->getKey(),
+        ]);
+
+        $this->assertFalse($context['author']->can('uploadRevisionFiles', $context['submission']));
+
+        $this->actingAs($context['editor']);
+
+        Livewire::test(PeerReview::class, ['submission' => $context['submission']->refresh()])
+            ->assertActionVisible('extendRevisionDeadlineAction')
+            ->callAction('extendRevisionDeadlineAction', data: [
+                'revision_due_at' => $newDeadline->toDateTimeString(),
+            ]);
+
+        $context['submission']->refresh();
+
+        $this->assertSame($newDeadline->toDateTimeString(), $context['submission']->revision_due_at?->toDateTimeString());
+        $this->assertTrue($context['author']->can('uploadRevisionFiles', $context['submission']));
+    }
+
     public function test_review_file_upload_email_template_uses_review_file_context(): void
     {
         $this->makeSubmissionContext();

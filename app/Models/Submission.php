@@ -58,6 +58,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         'stage',
         'status',
         'revision_required',
+        'revision_due_at',
         'withdrawn_reason',
         'withdrawn_at',
         'published_at',
@@ -73,6 +74,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         'stage' => SubmissionStage::class,
         'status' => SubmissionStatus::class,
         'published_at' => 'datetime',
+        'revision_due_at' => 'datetime',
         'skipped_review' => 'boolean',
         'revision_required' => 'boolean',
     ];
@@ -249,6 +251,11 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             ->where('user_id', $user->getKey())
             ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::Author]))
             ->count() > 0;
+    }
+
+    public function isRevisionDeadlinePassed(): bool
+    {
+        return $this->revision_due_at !== null && now()->greaterThan($this->revision_due_at);
     }
 
     public function scopePublished(Builder $query)
