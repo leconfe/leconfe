@@ -67,7 +67,7 @@ class Application extends LaravelApplication
 
     public function getCodeVersion(): string
     {
-        return File::get(base_path('version'));
+        return trim(File::get(base_path('version')));
     }
 
     public function getVersion()
