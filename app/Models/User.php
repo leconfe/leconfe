@@ -100,6 +100,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         );
     }
 
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value !== null ? Str::lower(trim($value)) : null,
+        );
+    }
+
     public function getFilamentName(): string
     {
         return $this->full_name;

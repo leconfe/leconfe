@@ -332,6 +332,10 @@ class Register extends Page implements HasActions, HasForms
             return null;
         }
 
+        if (is_string($this->email)) {
+            $this->email = \Illuminate\Support\Str::lower(trim($this->email));
+        }
+
         $data = $this->validate($this->rules());
 
         try {
