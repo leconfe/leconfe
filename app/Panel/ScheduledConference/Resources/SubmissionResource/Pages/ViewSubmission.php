@@ -80,6 +80,12 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
         $review = $this->record->getReviewForUserInActiveRound(auth()->user());
 
+        if ($review?->status === ReviewerStatus::PENDING) {
+            $this->redirect(SubmissionResource::getUrl('reviewer-invitation', ['record' => $this->record]));
+
+            return;
+        }
+
         if ($review?->status === ReviewerStatus::ACCEPTED) {
             $this->redirect(SubmissionResource::getUrl('review', ['record' => $this->record]));
 
