@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use App\Actions\Submissions\AcceptWithdrawalAction;
 use App\Actions\Submissions\CancelWithdrawalAction;
 use App\Actions\Submissions\RequestWithdrawalAction;
+use App\Constants\ReviewerStatus;
 use App\Forms\Components\TinyEditor;
 use App\Infolists\Components\VerticalTabs\Tab as PublicationTab;
 use App\Infolists\Components\VerticalTabs\Tabs as PublicationTabs;
@@ -76,6 +77,14 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
         static::authorizeResourceAccess();
 
         $this->record = $this->resolveRecord($record);
+
+        $review = $this->record->getReviewForUserInActiveRound(auth()->user());
+
+        if ($review?->status === ReviewerStatus::ACCEPTED) {
+            $this->redirect(SubmissionResource::getUrl('review', ['record' => $this->record]));
+
+            return;
+        }
 
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
