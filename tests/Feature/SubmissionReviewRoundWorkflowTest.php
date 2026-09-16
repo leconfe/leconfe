@@ -9,6 +9,7 @@ use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Constants\ReviewerStatus;
 use App\Constants\SubmissionFileCategory;
+use App\Mail\Templates\NewDiscussionTopicMail;
 use App\Mail\Templates\NewPaperUploadedMail;
 use App\Mail\Templates\NewReviewFileUploadedMail;
 use App\Mail\Templates\NewRevisionUploadedMail;
@@ -29,6 +30,7 @@ use App\Models\SubmissionFileType;
 use App\Models\SubmissionReviewRound;
 use App\Models\Track;
 use App\Models\User;
+use App\Notifications\NewDiscussionTopic;
 use App\Notifications\SubmissionFileUploaded;
 use App\Notifications\SubmissionReviewRoundStarted;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFiles;
@@ -39,6 +41,7 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewerInvitationPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ReviewSubmissionPage;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ViewSubmission;
+use Filament\Facades\Filament;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -1987,6 +1990,67 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             ->assertOk()
             ->assertSee('deep learning')
             ->assertSee('decision support');
+    }
+
+    public function test_new_discussion_topic_links_active_reviewer_to_review_page(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $reviewerRole = $this->createReviewerRole();
+
+        foreach (['Submission:review', 'Submission:viewAny'] as $permissionName) {
+            Permission::query()->firstOrCreate([
+                'name' => $permissionName,
+                'guard_name' => 'web',
+            ]);
+        }
+
+        $reviewerRole->syncPermissions(['Submission:review', 'Submission:viewAny']);
+        $context['reviewerA']->assignRole($reviewerRole);
+        $context['submission']->scheduledConference->update(['is_published' => true]);
+        $context['submission']->setMeta('abstract', '<p>Reviewable submission abstract.</p>');
+
+        $round = StartSubmissionReviewRoundAction::run(
+            $context['submission'],
+            [],
+            $context['editor'],
+        );
+
+        $review = Review::query()->create([
+            'submission_id' => $context['submission']->getKey(),
+            'review_round_id' => $round->getKey(),
+            'user_id' => $context['reviewerA']->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'date_confirmed' => now(),
+        ]);
+        $review->setMeta('review_mode', Review::MODE_OPEN);
+        $review->save();
+
+        $this->actingAs($context['editor']);
+        $topic = $context['submission']->discussionTopics()->create([
+            'name' => 'Question for reviewer',
+            'stage' => SubmissionStage::PeerReview,
+            'review_round_id' => $round->getKey(),
+        ]);
+        $topic->participants()->create([
+            'user_id' => $context['reviewerA']->getKey(),
+        ]);
+
+        Filament::setCurrentPanel(Filament::getPanel('scheduledConference'));
+
+        $notification = new NewDiscussionTopic($topic);
+        $mail = $notification->toMail($context['reviewerA']);
+        $databaseMessage = $notification->toDatabase($context['reviewerA']);
+        $expectedUrl = SubmissionResource::getUrl('review', [
+            'record' => $context['submission'],
+        ]);
+
+        $this->assertInstanceOf(NewDiscussionTopicMail::class, $mail);
+        $this->assertSame($expectedUrl, data_get($mail->buildViewData(), 'Submission URL'));
+        $this->assertSame($expectedUrl, data_get($databaseMessage->toArray(), 'actions.0.url'));
+
+        $this->actingAs($context['reviewerA'])
+            ->get($expectedUrl)
+            ->assertOk();
     }
 
     public function test_stale_reviewer_invitation_page_rejects_accept_after_a_new_round_starts(): void
