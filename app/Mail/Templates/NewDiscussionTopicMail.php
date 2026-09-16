@@ -4,7 +4,6 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Models\DiscussionTopic;
-use App\Panel\ScheduledConference\Resources\SubmissionResource;
 
 class NewDiscussionTopicMail extends TemplateMailable
 {
@@ -16,11 +15,11 @@ class NewDiscussionTopicMail extends TemplateMailable
 
     public Log $log;
 
-    public function __construct(DiscussionTopic $discussionTopic)
+    public function __construct(DiscussionTopic $discussionTopic, string $submissionUrl)
     {
         $this->setAdditionalData([
             'Submission Title' => $discussionTopic->submission->getMeta('title'),
-            'Submission URL' => SubmissionResource::getUrl('view', ['record' => $discussionTopic->submission]),
+            'Submission URL' => $submissionUrl,
             'Topic Name' => $discussionTopic->name,
         ]);
 

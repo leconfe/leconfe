@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Constants\ReviewerStatus;
 use App\Mail\Templates\NewDiscussionTopicMail;
 use App\Models\DiscussionTopic;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
@@ -28,7 +29,8 @@ class NewDiscussionTopic extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        return (new NewDiscussionTopicMail($this->topic))->to($notifiable);
+        return (new NewDiscussionTopicMail($this->topic, $this->getSubmissionUrl($notifiable)))
+            ->to($notifiable);
     }
 
     public function toDatabase($notifiable)
@@ -40,10 +42,26 @@ class NewDiscussionTopic extends Notification implements ShouldQueue
             ->body("Topic: {$this->topic->name}")
             ->actions([
                 Action::make('view-submission')
-                    ->url(SubmissionResource::getUrl('view', ['record' => $this->topic->submission->getKey(), 'tenant' => $this->topic->submission->conference]))
+                    ->url($this->getSubmissionUrl($notifiable))
                     ->label(__('general.view'))
                     ->markAsRead(),
             ])
             ->toDatabase();
+    }
+
+    private function getSubmissionUrl($notifiable): string
+    {
+        $submission = $this->topic->submission;
+        $review = $submission->getReviewForUserInActiveRound($notifiable);
+
+        if (! $review) {
+            return SubmissionResource::getUrl('view', ['record' => $submission]);
+        }
+
+        $page = $review->needConfirmation() || $review->status === ReviewerStatus::DECLINED
+            ? 'reviewer-invitation'
+            : 'review';
+
+        return SubmissionResource::getUrl($page, ['record' => $submission]);
     }
 }
