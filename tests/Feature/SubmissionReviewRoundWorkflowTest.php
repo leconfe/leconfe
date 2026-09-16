@@ -1992,7 +1992,7 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
             ->assertSee('decision support');
     }
 
-    public function test_submission_links_route_active_reviewer_to_review_page(): void
+    public function test_submission_links_route_reviewers_to_their_allowed_page(): void
     {
         $context = $this->makeSubmissionContext();
         $reviewerRole = $this->createReviewerRole();
@@ -2046,6 +2046,9 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $viewUrl = SubmissionResource::getUrl('view', [
             'record' => $context['submission'],
         ]);
+        $invitationUrl = SubmissionResource::getUrl('reviewer-invitation', [
+            'record' => $context['submission'],
+        ]);
 
         $this->assertInstanceOf(NewDiscussionTopicMail::class, $mail);
         $this->assertSame($expectedUrl, data_get($mail->buildViewData(), 'Submission URL'));
@@ -2057,6 +2060,18 @@ class SubmissionReviewRoundWorkflowTest extends TestCase
         $this->actingAs($context['reviewerA'])
             ->get($viewUrl)
             ->assertRedirect($expectedUrl);
+
+        $review->update([
+            'status' => ReviewerStatus::PENDING,
+            'date_confirmed' => null,
+        ]);
+
+        $this->actingAs($context['reviewerA'])
+            ->get($viewUrl)
+            ->assertRedirect($invitationUrl);
+        $this->actingAs($context['reviewerA'])
+            ->get($invitationUrl)
+            ->assertOk();
     }
 
     public function test_stale_reviewer_invitation_page_rejects_accept_after_a_new_round_starts(): void
