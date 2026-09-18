@@ -67,7 +67,7 @@ class RevisionFiles extends SubmissionFilesTable
             return true;
         }
 
-        return ! auth()->user()->can('uploadRevisionFiles', $this->submission) && ! $this->submission->revision_required;
+        return ! $this->canUploadRevisionFiles();
     }
 
     public function uploadFormSchema(): array
@@ -75,7 +75,44 @@ class RevisionFiles extends SubmissionFilesTable
         return [
             Shout::make('information')
                 ->content(__('general.after_uploading_files_system_will_send_notification_to_editor')),
+            Shout::make('revision_deadline')
+                ->type('warning')
+                ->content(fn () => __('general.revision_due_at_notice', [
+                    'date' => $this->submission->revision_due_at?->format('Y-m-d H:i'),
+                ]))
+                ->visible(fn (): bool => $this->submission->revision_due_at !== null),
             ...parent::uploadFormSchema(),
         ];
+    }
+
+    public function handleUploadAction(array $data, $action)
+    {
+        if (! $this->canUploadRevisionFiles()) {
+            $action->failureNotificationTitle(__('general.revision_deadline_passed'));
+            $action->failure();
+
+            return;
+        }
+
+        parent::handleUploadAction($data, $action);
+    }
+
+    protected function canUploadRevisionFiles(): bool
+    {
+        if ($this->viewOnly || $this->submission->stage !== SubmissionStage::PeerReview || ! $this->isSelectedRoundOpen()) {
+            return false;
+        }
+
+        $user = auth()->user();
+
+        if (! $user?->can('uploadRevisionFiles', $this->submission)) {
+            return false;
+        }
+
+        if ($user->can('actAsEditor', $this->submission)) {
+            return true;
+        }
+
+        return $this->submission->revision_required;
     }
 }

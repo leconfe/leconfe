@@ -27,6 +27,10 @@ class SubmissionUpdateAction
             $topicField = $this->getTopicField($data);
             $topicIds = [];
 
+            if (($data['revision_required'] ?? null) === false && ! array_key_exists('revision_due_at', $data)) {
+                $data['revision_due_at'] = null;
+            }
+
             if ($topicField !== null) {
                 $topicIds = collect(Arr::wrap($data[$topicField]))
                     ->filter(fn ($topicId) => filled($topicId))
