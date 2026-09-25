@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'review_form_item' => [
+        'select_options_input_label' => 'Sélectionner des options',
+        'select_options_input_helper' => 'Saisissez une valeur comprise entre 1 et 10',
+        'select_options_input_helper_full' => 'Saisissez une valeur comprise entre 1 et 10, où 10 représente la note la plus élevée et 1 la plus basse. Ces valeurs définissent le score utilisé pour la sélection des évaluateurs.',
+        'weight_input_label' => 'Pondération',
+        'weight_input_helper_full' => 'Saisissez la pondération en pourcentage. Cela détermine la contribution de ce critère au score final.',
+        'checkbox_options_input_label' => 'Options de case à cocher',
+        'radio_options_input_label' => 'Options de bouton radio',
+        'reviewer_required_input_label' => 'Évaluateurs devant remplir cet élément'
+    ],
+    'label' => 'Libellé',
+    'value' => 'Valeur',
+    'copy' => 'Copier',
+    'description' => 'Description',
+    'type' => 'Type',
+    'weight' => 'Pondération',
+    'option' => 'Option',
+    'option_unavailable' => 'Option indisponible',
+    'review_form' => 'Formulaire d\'évaluation',
+    'form_preview' => 'Aperçu du formulaire',
+    'how_to_publish_presentation' => 'Comment publier la présentation ?',
+    'presentation_other_no_preview_title' => 'L\'aperçu n\'est pas disponible.',
+    'presentation_other_no_preview_description' => 'Veuillez télécharger le fichier de la présentation pour en voir le contenu.',
+    'presentation_other_download_button' => 'Télécharger le fichier de la présentation',
+    'presentation_other_file_not_available' => 'Le fichier n\'est pas encore disponible.',
+    'welcome_message_title' => 'Bienvenue à <br /> <span class="text-primary-200">:conference !</span>',
+    'welcome_message_submit_paper' => 'Pour soumettre votre communication, veuillez plutôt <span class="text-primary-600">cliquer ici</span>.',
+    'welcome_message_non_presenter' => 'L\'inscription sans présentation est disponible <span class="text-primary-600">ici</span>.',
+    'welcome_message_registered_non_presenter' => 'Vous êtes inscrit en qualité de participant qui ne présente pas ; vous pouvez consulter les <span class="text-primary-600">informations ici</span>.',
+    'role_selection_description' => 'Pour commencer, veuillez sélectionner votre rôle. Votre choix personnalisera votre tableau de bord et les fonctionnalités.',
+    'welcome_overview_description' => 'La conférence se déroule du :start_date au :end_date.',
+    'no_self_assignable_roles_available' => 'Aucun rôle automatiquement attribué n\'est disponible pour cette conférence.',
+    'submit_paper' => 'Soumettre une communication',
+
+    'unpublished_title' => 'La conférence programmée n\'est pas encore publiée',
+    'unpublished_description' => 'Cette page de conférence programmée n\'est pas encore accessible au public. Veuillez revenir plus tard.',
+];

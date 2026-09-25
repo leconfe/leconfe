@@ -33,4 +33,8 @@ return [
     'submit_paper' => 'Dërgo Punimin',
     'unpublished_title' => 'Konferenca e planifikuar ende nuk është publikuar',
     'unpublished_description' => 'Faqja e kësaj konference të planifikuar nuk është ende e disponueshme për publikun. Ju lutemi kontrolloni përsëri më vonë. Faleminderit për pritjen tuaj.',
+
+    'welcome_message_submit_paper' => 'Për të dorëzuar punimin tuaj, <span class="text-primary-600">klikoni këtu</span>.',
+    'welcome_message_non_presenter' => 'Regjistrimi pa prezantim është i disponueshëm <span class="text-primary-600">këtu</span>.',
+    'welcome_message_registered_non_presenter' => 'Jeni regjistruar pa prezantim. Shikoni <span class="text-primary-600">informacionin këtu</span>.',
 ];

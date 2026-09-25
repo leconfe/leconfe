@@ -180,4 +180,9 @@ return [
 
     'attributes' => [],
 
+
+    'phone' => 'Fusha :attribute duhet të jetë një numër i vlefshëm.',
+    'uppercase' => 'Fusha :attribute duhet të jetë e madhe.',
+    'ulid' => 'Fusha :attribute duhet të jetë një ULID e vlefshme.',
+    'weight_over' => 'Ju lutemi sigurohuni që pesha totale të mos kalojë 100%. Aktualisht, është :attribute%.',
 ];

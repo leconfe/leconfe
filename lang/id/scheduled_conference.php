@@ -33,4 +33,8 @@ return [
     'submit_paper' => 'Kirim Makalah',
     'unpublished_title' => 'Scheduled conference belum dipublikasikan',
     'unpublished_description' => 'Halaman scheduled conference ini belum tersedia untuk publik. Silakan cek kembali nanti. Terima kasih atas antisipasinya.',
+
+    'welcome_message_submit_paper' => 'Untuk mengirimkan makalah, silakan <span class="text-primary-600">klik di sini</span>.',
+    'welcome_message_non_presenter' => 'Pendaftaran peserta tanpa presentasi tersedia <span class="text-primary-600">di sini</span>.',
+    'welcome_message_registered_non_presenter' => 'Anda terdaftar sebagai peserta tanpa presentasi. Lihat <span class="text-primary-600">informasinya di sini</span>.',
 ];
