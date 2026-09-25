@@ -33,4 +33,8 @@ return [
     'submit_paper' => 'Отправить материал',
     'unpublished_title' => 'Запланированная конференция еще не опубликована',
     'unpublished_description' => 'Страница этой запланированной конференции пока недоступна для публики. Пожалуйста, проверьте позже. Спасибо за ваше ожидание.',
+
+    'welcome_message_submit_paper' => 'Чтобы отправить статью, <span class="text-primary-600">нажмите здесь</span>.',
+    'welcome_message_non_presenter' => 'Регистрация без выступления доступна <span class="text-primary-600">здесь</span>.',
+    'welcome_message_registered_non_presenter' => 'Вы зарегистрированы без выступления. Посмотрите <span class="text-primary-600">информацию здесь</span>.',
 ];

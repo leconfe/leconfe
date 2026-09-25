@@ -182,4 +182,6 @@ return [
     */
 
     'attributes' => [],
+
+    'weight_over' => 'Pastikan jumlah bobot tidak melebihi 100%. Saat ini jumlahnya :attribute%.',
 ];
