@@ -21,7 +21,7 @@ class ManageScheduledConferences extends ManageRecords
             Actions\CreateAction::make()
                 ->modalWidth(MaxWidth::ExtraLarge)
                 ->using(fn (array $data) => ScheduledConferenceCreateAction::run($data))
-                ->successRedirectUrl(fn (ScheduledConference $record): ?string => config('app.cloud', false) ? $record->getPanelUrl() : null),
+                ->successRedirectUrl(fn (ScheduledConference $record): string => $record->getPanelUrl()),
         ];
     }
 
