@@ -181,4 +181,8 @@ return [
 
     'attributes' => [],
 
+
+    'phone' => 'يجب أن يكون الحقل :attribute رقمًا صالحًا.',
+    'uppercase' => 'يجب أن يكون الحقل :attribute بأحرف كبيرة.',
+    'ulid' => 'يجب أن يكون الحقل :attribute معرف ULID صالحًا.',
 ];

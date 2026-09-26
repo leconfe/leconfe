@@ -33,4 +33,8 @@ return [
     'submit_paper' => 'إرسال البحث',
     'unpublished_title' => 'لم يتم نشر المؤتمر المجدول بعد',
     'unpublished_description' => 'صفحة هذا المؤتمر المجدول غير متاحة للعامة بعد. يرجى التحقق مرة أخرى لاحقًا. شكرًا لترقبكم.',
+
+    'welcome_message_submit_paper' => 'لتقديم بحثك، يرجى <span class="text-primary-600">النقر هنا</span>.',
+    'welcome_message_non_presenter' => 'التسجيل لغير مقدمي العروض متاح <span class="text-primary-600">هنا</span>.',
+    'welcome_message_registered_non_presenter' => 'أنت مسجل من دون عرض تقديمي. يمكنك الاطلاع على <span class="text-primary-600">المعلومات هنا</span>.',
 ];

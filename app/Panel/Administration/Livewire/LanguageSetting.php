@@ -6,8 +6,8 @@ use App\Facades\Setting;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -39,9 +39,12 @@ class LanguageSetting extends Component implements HasForms
                         CheckboxList::make('languages')
                             ->label(__('general.languages'))
                             ->options(config('app.locales'))
+                            ->searchable()
+                            ->bulkToggleable()
                             ->required(),
-                        Radio::make('default_language')
+                        Select::make('default_language')
                             ->options(config('app.locales'))
+                            ->searchable()
                             ->label(__('general.default_language'))
                             ->required(),
                     ]),
