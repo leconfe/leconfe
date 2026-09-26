@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Resources\ScheduledConferenceResource\Pages;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceCreateAction;
+use App\Models\ScheduledConference;
 use App\Panel\Conference\Resources\ScheduledConferenceResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
@@ -19,7 +20,9 @@ class ManageScheduledConferences extends ManageRecords
         return [
             Actions\CreateAction::make()
                 ->modalWidth(MaxWidth::ExtraLarge)
-                ->using(fn (array $data) => ScheduledConferenceCreateAction::run($data)),
+                ->createAnother(false)
+                ->using(fn (array $data) => ScheduledConferenceCreateAction::run($data))
+                ->successRedirectUrl(fn (ScheduledConference $record): string => $record->getPanelUrl()),
         ];
     }
 
@@ -27,7 +30,7 @@ class ManageScheduledConferences extends ManageRecords
     {
         return [
             'all' => Tab::make()
-                ->label("All")
+                ->label('All')
                 ->badge(fn () => ScheduledConferenceResource::getEloquentQuery()->count()),
             'trash' => Tab::make()
                 ->label(__('general.trash'))
