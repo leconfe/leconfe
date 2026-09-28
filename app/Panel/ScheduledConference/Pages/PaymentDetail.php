@@ -21,6 +21,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Grid;
@@ -29,8 +30,11 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Squire\Models\Country;
 
 class PaymentDetail extends Page
 {
@@ -202,6 +206,78 @@ class PaymentDetail extends Page
                         static::updatePaymentFeeRecord($record, $data);
 
                         $action->successNotificationTitle('Payment Fee Updated');
+                        $action->success();
+                    }),
+                Action::make('edit_participant_information')
+                    ->label(__('general.edit_participant_information'))
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('gray')
+                    ->record($this->record)
+                    ->visible(fn (Payment $record) => static::canManageParticipantInformation($record))
+                    ->authorize(fn (Payment $record) => static::canManageParticipantInformation($record))
+                    ->disabled(fn (Payment $record) => static::participantInformationIsLocked($record))
+                    ->tooltip(fn (Payment $record) => static::participantInformationIsLocked($record)
+                        ? __('general.participant_information_locked')
+                        : null)
+                    ->modalWidth('2xl')
+                    ->fillForm(function (Payment $record) {
+                        $participant = $record->model;
+
+                        return $participant instanceof Participant
+                            ? ['meta' => Arr::only($participant->getAllMeta()->toArray(), static::participantMetaKeys())]
+                            : [];
+                    })
+                    ->form([
+                        TextInput::make('meta.affiliation')
+                            ->label(__('general.affiliation')),
+                        TextInput::make('meta.address_line')
+                            ->label(__('general.address_line'))
+                            ->columnSpanFull(),
+                        TextInput::make('meta.post_code')
+                            ->label(__('general.post_code')),
+                        TextInput::make('meta.city')
+                            ->label(__('general.city')),
+                        Select::make('meta.country')
+                            ->label(__('general.country'))
+                            ->placeholder(__('general.select_a_country'))
+                            ->searchable()
+                            ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
+                            ->optionsLimit(250),
+                    ])
+                    ->action(function (Action $action, Payment $record, array $data) {
+                        abort_unless(static::canManageParticipantInformation($record), 403);
+
+                        $updated = DB::transaction(function () use ($record, $data) {
+                            $lockedPayment = Payment::query()
+                                ->lockForUpdate()
+                                ->findOrFail($record->getKey());
+
+                            abort_unless(static::canManageParticipantInformation($lockedPayment), 403);
+
+                            if (static::participantInformationIsLocked($lockedPayment)) {
+                                return false;
+                            }
+
+                            $participant = $lockedPayment->model;
+                            abort_unless($participant instanceof Participant, 404);
+
+                            $participant->setManyMeta(Arr::only(
+                                data_get($data, 'meta', []),
+                                static::participantMetaKeys(),
+                            ));
+
+                            return true;
+                        });
+
+                        if (! $updated) {
+                            $action->failureNotificationTitle(__('general.participant_information_locked'));
+                            $action->failure();
+
+                            return;
+                        }
+
+                        $this->record->refresh()->load('model');
+                        $action->successNotificationTitle(__('general.participant_information_updated'));
                         $action->success();
                     }),
                 Action::make('create_invoice')
@@ -515,6 +591,34 @@ class PaymentDetail extends Page
                                     ->state(fn ($record) => $record->getFormattedFee()),
                                 ...PaymentFormItem::buildInfolistSchema($this->record->type),
                             ]),
+                        Section::make(__('general.participant_information'))
+                            ->visible(fn (Payment $record) => $record->type == PaymentManager::TYPE_PARTICIPANT_FEE && $record->model instanceof Participant)
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        TextEntry::make('participant_affiliation')
+                                            ->label(__('general.affiliation'))
+                                            ->state(fn (Payment $record) => $record->model->getMeta('affiliation'))
+                                            ->placeholder('-'),
+                                        TextEntry::make('participant_country')
+                                            ->label(__('general.country'))
+                                            ->state(fn (Payment $record) => Country::find($record->model->getMeta('country'))?->name)
+                                            ->placeholder('-'),
+                                        TextEntry::make('participant_address_line')
+                                            ->label(__('general.address_line'))
+                                            ->state(fn (Payment $record) => $record->model->getMeta('address_line'))
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
+                                        TextEntry::make('participant_post_code')
+                                            ->label(__('general.post_code'))
+                                            ->state(fn (Payment $record) => $record->model->getMeta('post_code'))
+                                            ->placeholder('-'),
+                                        TextEntry::make('participant_city')
+                                            ->label(__('general.city'))
+                                            ->state(fn (Payment $record) => $record->model->getMeta('city'))
+                                            ->placeholder('-'),
+                                    ]),
+                            ]),
                     ]),
                 Grid::make()
                     ->columnSpan([
@@ -667,5 +771,32 @@ class PaymentDetail extends Page
         }
 
         return '';
+    }
+
+    protected static function participantMetaKeys(): array
+    {
+        return ['affiliation', 'address_line', 'post_code', 'city', 'country'];
+    }
+
+    protected static function canManageParticipantInformation(Payment $record): bool
+    {
+        if ($record->type != PaymentManager::TYPE_PARTICIPANT_FEE) {
+            return false;
+        }
+
+        $participant = $record->model;
+        $scheduledConference = $record->scheduledConference;
+
+        return $participant instanceof Participant
+            && $participant->scheduled_conference_id == $record->scheduled_conference_id
+            && $scheduledConference
+            && auth()->user()?->can('update', $scheduledConference);
+    }
+
+    protected static function participantInformationIsLocked(Payment $record): bool
+    {
+        return filled($record->invoice)
+            || $record->hasInvoiceBeenSent()
+            || $record->isPaid();
     }
 }

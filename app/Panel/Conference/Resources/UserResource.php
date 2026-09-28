@@ -124,6 +124,7 @@ class UserResource extends Resource
                                     ->minLength(12)
                                     ->dehydrated(false),
                                 ...ContributorForm::additionalFormField(),
+                                ...ContributorForm::addressFormFields(),
                             ])
                             ->columns(2),
 

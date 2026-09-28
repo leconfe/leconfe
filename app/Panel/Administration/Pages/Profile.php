@@ -106,6 +106,7 @@ class Profile extends Page implements HasForms
                             ->password()
                             ->dehydrated(false),
                         ...ContributorForm::additionalFormField(),
+                        ...ContributorForm::addressFormFields(),
                     ])
                     ->columns(2),
             ])

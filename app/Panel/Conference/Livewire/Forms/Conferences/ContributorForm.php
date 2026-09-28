@@ -89,6 +89,20 @@ class ContributorForm extends Component
         ];
     }
 
+    public static function addressFormFields(): array
+    {
+        return [
+            Forms\Components\Textarea::make('meta.address_line')
+                ->label(__('general.address_line'))
+                ->rows(2)
+                ->columnSpan(['lg' => 2]),
+            Forms\Components\TextInput::make('meta.post_code')
+                ->label(__('general.post_code')),
+            Forms\Components\TextInput::make('meta.city')
+                ->label(__('general.city')),
+        ];
+    }
+
     public static function generalTableColumns(): array
     {
         return [

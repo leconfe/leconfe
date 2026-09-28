@@ -42,11 +42,19 @@ class ParticipantRegistration extends Page implements HasForms
 
     public function mount(): void
     {
+        $user = auth()->user();
+
         $this->form->fill([
-            'given_name' => auth()->user()?->given_name,
-            'family_name' => auth()->user()?->family_name,
-            'email' => auth()->user()?->email,
-            'affiliation' => auth()->user()?->getMeta('affiliation'),
+            'given_name' => $user?->given_name,
+            'family_name' => $user?->family_name,
+            'email' => $user?->email,
+            'meta' => Arr::only($user?->getAllMeta()->toArray() ?? [], [
+                'affiliation',
+                'address_line',
+                'post_code',
+                'city',
+                'country',
+            ]),
         ]);
     }
 
@@ -94,15 +102,16 @@ class ParticipantRegistration extends Page implements HasForms
                             ->label(__('general.email'))
                             ->disabled(),
                         TextInput::make('meta.affiliation')
-                            ->label('Affiliation'),
+                            ->label(__('general.affiliation')),
                         TextInput::make('meta.address_line')
-                            ->label('Address Line'),
+                            ->label(__('general.address_line')),
                         TextInput::make('meta.post_code')
-                            ->label('Postcode / ZIP Code'),
+                            ->label(__('general.post_code')),
                         TextInput::make('meta.city')
-                            ->label('City'),
+                            ->label(__('general.city')),
                         Select::make('meta.country')
-                            ->label('Country')
+                            ->label(__('general.country'))
+                            ->placeholder(__('general.select_a_country'))
                             ->searchable()
                             ->options(fn () => Country::all()->mapWithKeys(fn ($country) => [$country->id => $country->flag.' '.$country->name]))
                             ->optionsLimit(250),
