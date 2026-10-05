@@ -15,9 +15,17 @@ class SetLocale
         }
 
         $sessionLocale = session('locale');
-        $supportedLocales = Setting::get('languages', ['en']);
+        $enabledLocales = array_values(array_intersect(
+            Setting::get('languages', ['en']),
+            array_keys(config('app.locales'))
+        ));
+        $defaultLocale = Setting::get('default_language', 'en');
 
-        $locale = $sessionLocale && in_array($sessionLocale, $supportedLocales) ? $sessionLocale : Setting::get('default_language', 'en');
+        if (! in_array($defaultLocale, $enabledLocales, true)) {
+            $defaultLocale = $enabledLocales[0] ?? 'en';
+        }
+
+        $locale = in_array($sessionLocale, $enabledLocales, true) ? $sessionLocale : $defaultLocale;
 
         App::setLocale($locale);
 
