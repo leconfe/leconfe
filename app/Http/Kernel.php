@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             InstallationMiddleware::class,
             SetLocale::class,
+            \App\Http\Middleware\EnforceUserBan::class,
         ],
 
         'api' => [
