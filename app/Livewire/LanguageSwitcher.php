@@ -9,6 +9,11 @@ class LanguageSwitcher extends Component
 {
     public function switchLanguage($lang)
     {
+        if (! array_key_exists($lang, config('app.locales')) ||
+            ! in_array($lang, Setting::get('languages', ['en']), true)) {
+            abort(404);
+        }
+
         session()->put('locale', $lang);
 
         return redirect(request()->header('Referer'));

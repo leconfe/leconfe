@@ -8,7 +8,7 @@ class TranslationCompletenessTest extends TestCase
 {
     public function test_supported_locale_catalog_is_available(): void
     {
-        $expectedLocales = explode(' ', 'an ar az be bg bs bs_Latn ca ckb cnr cs da de dsb el en eo es es_MX et eu fa fa_AF fi fr fr_CA gd gl he hi hr hsb hu hy id is it ja ka kab kk ko ky lo lt lv mk mn mr ms nb_NO nl nn pl ps pt pt_BR ro ru rue se sid sk sl sq sr_Cyrl sr_Latn sv th tr uk ur uz uz_Latn vi zh_Hans zh_Hant');
+        $expectedLocales = explode(' ', 'ar az be bg bs bs_Latn ca ckb cs da de el en eo es es_MX et eu fa fa_AF fi fr fr_CA gd gl he hi hr hu hy id is it ja ka kk ko ky lo lt lv mk mn mr ms nb_NO nl nn pl ps pt pt_BR ro ru sk sl sq sr_Cyrl sr_Latn sv th tr uk ur uz uz_Latn vi zh_Hans zh_Hant');
         $configured = array_keys(config('app.locales'));
         sort($configured);
 
@@ -114,9 +114,7 @@ class TranslationCompletenessTest extends TestCase
     public function test_new_locales_have_translated_text_and_preserve_markup(): void
     {
         $existing = ['ar', 'en', 'fr', 'id', 'ru', 'sq', 'uz'];
-        $incomplete = ['an', 'cnr', 'dsb', 'hsb', 'kab', 'rue', 'se', 'sid'];
-
-        foreach (config('app.locales') as $locale => $label) {
+        foreach (array_keys(config('app.locales')) as $locale) {
             if (in_array($locale, $existing, true)) {
                 continue;
             }
@@ -143,11 +141,7 @@ class TranslationCompletenessTest extends TestCase
                 $this->assertSame([], $markupMismatch, "{$locale}/{$group} changed HTML markup in: ".implode(', ', $markupMismatch));
             }
 
-            if (in_array($locale, $incomplete, true)) {
-                $this->assertStringContainsString('draft: incomplete', $label);
-            } else {
-                $this->assertGreaterThan(200, $translatedCount, "{$locale} has too few translated application strings.");
-            }
+            $this->assertGreaterThan(200, $translatedCount, "{$locale} has too few translated application strings.");
         }
     }
 

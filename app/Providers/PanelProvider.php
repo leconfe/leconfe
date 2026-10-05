@@ -182,7 +182,10 @@ class PanelProvider extends ServiceProvider
             ->renderHook(
                 PanelsRenderHook::USER_MENU_PROFILE_AFTER,
                 function () {
-                    $languages = Setting::get('languages', ['en']);
+                    $languages = array_intersect(
+                        Setting::get('languages', ['en']),
+                        array_keys(config('app.locales'))
+                    );
                     if (count($languages) < 2) {
                         return;
                     }

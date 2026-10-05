@@ -21,7 +21,7 @@ class LanguageSetting extends Component implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill(Setting::all());
+        $this->form->fill($this->supportedLanguageSettings(Setting::all()));
     }
 
     public function render()
@@ -54,7 +54,7 @@ class LanguageSetting extends Component implements HasForms
                         ->successNotificationTitle(__('general.saved'))
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
-                            $formData = $this->form->getState();
+                            $formData = $this->supportedLanguageSettings($this->form->getState());
                             try {
                                 Setting::update($formData);
 
@@ -67,5 +67,21 @@ class LanguageSetting extends Component implements HasForms
 
             ])
             ->statePath('formData');
+    }
+
+    private function supportedLanguageSettings(array $settings): array
+    {
+        $languages = array_values(array_intersect(
+            $settings['languages'] ?? ['en'],
+            array_keys(config('app.locales'))
+        ));
+
+        $settings['languages'] = $languages ?: ['en'];
+
+        if (! in_array($settings['default_language'] ?? null, $settings['languages'], true)) {
+            $settings['default_language'] = $settings['languages'][0];
+        }
+
+        return $settings;
     }
 }
