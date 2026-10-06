@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Media\RasterImageNormalizer;
 use Filament\Models\Contracts\HasAvatar;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,6 +43,12 @@ class Author extends Model implements HasAvatar, HasMedia, Sortable
                 return Str::squish($this->given_name.' '.$this->family_name);
             },
         );
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile')
+            ->acceptsMimeTypes(RasterImageNormalizer::allowedMimeTypes());
     }
 
     public function registerMediaConversions(?Media $media = null): void

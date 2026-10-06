@@ -19,6 +19,16 @@ return [
     'accepted_file_types' => explode(',', env('ACCEPTED_FILE_TYPES', 'pdf,doc,docx,xls,xlsx,odt,txt,xml,jpg,jpeg,csv,png,webp,text/xml,ppt,pptx')),
 
     /*
+     * Image fields are limited to decodable raster formats. Vector and other
+     * non-raster formats are not accepted.
+     */
+    'raster_image_mime_types' => [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+    ],
+
+    /*
      * This queue connection will be used to generate derived and responsive images.
      * Leave empty to use the default queue connection.
      */

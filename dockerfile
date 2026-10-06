@@ -11,6 +11,9 @@ USER root
 
 COPY ./.dockerdata/entrypoint.d /etc/entrypoint.d
 
+# Response headers for uploaded media under /storage.
+COPY ./.dockerdata/nginx/ /etc/nginx/server-opts.d/
+
 # Install the intl extension with root permissions
 RUN install-php-extensions intl bcmath gd exif
 
