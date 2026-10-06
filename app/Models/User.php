@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Mail\Templates\VerifyUserEmail;
 use App\Models\Enums\RegistrationPaymentState;
 use App\Models\Enums\UserRole;
+use App\Support\Media\RasterImageNormalizer;
 use Exception;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -187,6 +188,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             ->join(' ');
 
         return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=111827&font-size=0.33';
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile')
+            ->acceptsMimeTypes(RasterImageNormalizer::allowedMimeTypes());
     }
 
     public function registerMediaConversions(?Media $media = null): void

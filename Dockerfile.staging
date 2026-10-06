@@ -2,4 +2,6 @@ FROM serversideup/php:8.1-fpm-nginx
 
 USER root
 RUN install-php-extensions intl bcmath gd exif pdo_mysql
+# Response headers for uploaded media under /storage.
+COPY ./.dockerdata/nginx/ /etc/nginx/server-opts.d/
 USER www-data
