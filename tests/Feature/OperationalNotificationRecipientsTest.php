@@ -229,7 +229,8 @@ class OperationalNotificationRecipientsTest extends TestCase
         Notification::assertNotSentTo($admin, NewSubmission::class);
     }
 
-    public function test_withdrawal_request_notifies_unique_operational_recipients_but_not_admin(): void
+    #[\PHPUnit\Framework\Attributes\DataProvider('withdrawalReasons')]
+    public function test_withdrawal_request_notifies_unique_operational_recipients_but_not_admin(string $reason): void
     {
         $admin = $this->userWithRole(UserRole::Admin, 'admin@example.test');
         $manager = $this->userWithRole(UserRole::ConferenceManager, 'manager@example.test');
@@ -248,11 +249,26 @@ class OperationalNotificationRecipientsTest extends TestCase
         $this->actingAs($author);
 
         $this->callViewSubmissionHeaderAction($submission, 'request_withdraw', [
-            'reason' => 'Author requested withdrawal.',
+            'reason' => $reason,
         ]);
 
+        $this->assertSame($reason, $submission->fresh()->withdrawn_reason);
+        $this->assertSame(SubmissionStatus::OnReview, $submission->fresh()->status);
         $this->assertCount(1, Notification::sent($manager, SubmissionWithdrawRequested::class));
         Notification::assertNotSentTo($admin, SubmissionWithdrawRequested::class);
+    }
+
+    public static function withdrawalReasons(): array
+    {
+        return [
+            'short reason' => ['Author requested withdrawal.'],
+            '191 characters' => [str_repeat('a', 191)],
+            '192 characters' => [str_repeat('a', 192)],
+            '255 characters' => [str_repeat('a', 255)],
+            '256 characters' => [str_repeat('a', 256)],
+            'long multiline unicode reason' => [str_repeat("Alasan penarikan revisi penelitian 日本語.\n", 200)],
+            'reason exceeding text column capacity' => [str_repeat('a', 70000)],
+        ];
     }
 
     public function test_announcement_broadcast_excludes_admin_accounts_with_subscribed_roles(): void
