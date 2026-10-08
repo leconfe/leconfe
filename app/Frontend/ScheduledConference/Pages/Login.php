@@ -177,9 +177,13 @@ class Login extends WebsiteLogin implements HasActions, HasForms
 
         $this->validate();
 
+        $email = \Illuminate\Support\Str::lower(trim((string) $this->email));
+        $user = \App\Models\User::whereRaw('TRIM(LOWER(email)) = ?', [$email])->first();
+
         if (
+            ! $user ||
             ! auth()->attempt([
-                'email' => $this->email,
+                'email' => $user->email,
                 'password' => $this->password,
             ], $this->remember)
         ) {

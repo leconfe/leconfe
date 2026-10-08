@@ -107,6 +107,8 @@ class UserResource extends Resource
                                     ->columnSpan(['lg' => 2]),
                                 Forms\Components\TextInput::make('email')
                                     ->required()
+                                    ->email()
+                                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? \Illuminate\Support\Str::lower(trim($state)) : $state)
                                     ->label(__('general.email'))
                                     ->columnSpan(['lg' => 2])
                                     ->unique(ignoreRecord: true),
