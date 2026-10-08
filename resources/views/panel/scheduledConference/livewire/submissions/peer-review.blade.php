@@ -81,6 +81,31 @@
                 wire:target="selectRound"
                 class="peer-review-round-switch-content transition duration-150"
             >
+                @if($submission->revision_required && $submission->revision_due_at && ! $user->can('actAsEditor', $submission))
+                    @php
+                        $revisionDeadlinePassed = $submission->isRevisionDeadlinePassed();
+                        $revisionDeadlineDate = $submission->revision_due_at->format('Y-m-d H:i');
+                    @endphp
+
+                    <div @class([
+                        'm-4 rounded-lg border px-4 py-3 text-sm',
+                        'border-danger-300 bg-danger-50 text-danger-700' => $revisionDeadlinePassed,
+                        'border-warning-300 bg-warning-50 text-warning-700' => ! $revisionDeadlinePassed,
+                    ]) role="alert">
+                        <div class="flex items-start gap-3">
+                            <x-heroicon-o-clock class="mt-0.5 h-5 w-5 flex-none" />
+                            <div class="space-y-1">
+                                <div class="font-medium">{{ __('general.revision_deadline_author_notice_title') }}</div>
+                                <div>
+                                    {{ $revisionDeadlinePassed
+                                        ? __('general.revision_deadline_author_notice_expired', ['date' => $revisionDeadlineDate])
+                                        : __('general.revision_deadline_author_notice_active', ['date' => $revisionDeadlineDate]) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="grid gap-0 lg:grid-cols-12">
                     <div @class([
                         'space-y-0',
@@ -131,10 +156,18 @@
 
                                     @if($showDecisionPanel)
                                         @if ($submission->revision_required)
-                                            <div class="flex items-center p-4 text-sm border rounded-lg border-warning-400 bg-warning-200 text-warning-600" x-show="!decision" role="alert">
-                                                <span class="text-base text-center">
+                                            <div class="space-y-3 p-4 text-sm border rounded-lg border-warning-400 bg-warning-200 text-warning-600" x-show="!decision" role="alert">
+                                                <div class="text-base">
                                                     {{ __('general.revisions_have_been_requested') }}
-                                                </span>
+                                                </div>
+
+                                                @if($submission->revision_due_at)
+                                                    <div>
+                                                        {{ __('general.revision_due_at_notice', ['date' => $submission->revision_due_at->format('Y-m-d H:i')]) }}
+                                                    </div>
+                                                @endif
+
+                                                {{ $this->extendRevisionDeadlineAction() }}
                                             </div>
                                         @endif
 
