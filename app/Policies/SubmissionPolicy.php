@@ -216,6 +216,14 @@ class SubmissionPolicy
             return false;
         }
 
+        if ($user->can('actAsEditor', $submission)) {
+            return true;
+        }
+
+        if ($submission->isRevisionDeadlinePassed()) {
+            return false;
+        }
+
         if ($user->can('Submission:uploadRevisionFiles')) {
             return true;
         }
