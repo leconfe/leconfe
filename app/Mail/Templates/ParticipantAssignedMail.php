@@ -23,11 +23,11 @@ class ParticipantAssignedMail extends TemplateMailable
     {
         $this->submissionTitle = $participant->submission->getMeta('title');
         $this->name = $participant->user->fullName;
-        $this->position = $participant->role->name;
+        $this->position = $participant->role->display_name;
 
         $this->setAdditionalData([
             'Participant Name' => $participant->user->fullName,
-            'Participant Role' => $participant->role->name,
+            'Participant Role' => $participant->role->display_name,
             'Conference Title' => $participant->submission->scheduledConference->title,
             'Submission Title' => $participant->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $participant->submission]),

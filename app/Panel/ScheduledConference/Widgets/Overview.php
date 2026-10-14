@@ -75,7 +75,7 @@ class Overview extends Widget implements HasForms, HasInfolists
             ->record(app()->getCurrentScheduledConference())
             ->columns(2)
             ->schema([
-                Section::make('Overview')
+                Section::make(__('general.overview'))
                     ->columnSpanFull()
                     ->headerActions([
                         Action::make('setting')
@@ -104,11 +104,14 @@ class Overview extends Widget implements HasForms, HasInfolists
                     ->columns(2)
                     ->schema([
                         TextEntry::make('title')
+                            ->label(__('general.title'))
                             ->icon('heroicon-m-building-library'),
                         TextEntry::make('full_date')
+                            ->label(__('general.full_date'))
                             ->visible(fn (ScheduledConference $record) => filled($record->date_start))
                             ->icon('heroicon-m-calendar-days'),
                         TextEntry::make('status')
+                            ->label(__('general.status'))
                             ->getStateUsing(fn ($record) => match ($record->is_published) {
                                 true => __('general.published'),
                                 false => __('general.draft'),
@@ -119,24 +122,28 @@ class Overview extends Widget implements HasForms, HasInfolists
                             })
                             ->badge(),
                         TextEntry::make('coordinator')
+                            ->label(__('general.coordinator'))
                             ->icon('heroicon-m-user-group')
                             ->visible(fn (ScheduledConference $record) => filled($record->getMeta('coordinator')))
                             ->getStateUsing(fn (ScheduledConference $record) => $record->getMeta('coordinator')),
                         TextEntry::make('location')
+                            ->label(__('general.location'))
                             ->icon('heroicon-m-map-pin')
                             ->visible(fn (ScheduledConference $record) => filled($record->getMeta('location')))
                             ->getStateUsing(fn (ScheduledConference $record) => $record->getMeta('location')),
                     ]),
-                Section::make('Submissions')
+                Section::make(__('general.submissions'))
                     ->columnSpan(1)
                     ->columns(2)
                     ->headerActions([
                         Action::make('open_submissions')
+                            ->label(__('general.open_submissions'))
                             ->color('gray')
                             ->url(SubmissionResource::getUrl('index', ['activeTab' => 1])),
                     ])
                     ->schema([
                         TextEntry::make('submitted')
+                            ->label(__('general.submitted'))
                             ->getStateUsing(
                                 fn (ScheduledConference $record) => $record->submittedSubmissions()->count()
                             )
@@ -144,6 +151,7 @@ class Overview extends Widget implements HasForms, HasInfolists
                             ->color('primary')
                             ->url(SubmissionResource::getUrl('index')),
                         TextEntry::make('unassigned')
+                            ->label(__('general.unassigned'))
                             ->getStateUsing(
                                 fn () => Submission::query()->doesntHave('editors')->whereNotIn('status', [
                                     SubmissionStatus::Incomplete,
@@ -155,6 +163,7 @@ class Overview extends Widget implements HasForms, HasInfolists
                             ->color('primary')
                             ->url(SubmissionResource::getUrl('index', ['activeTab' => 1])),
                         TextEntry::make('reviews')
+                            ->label(__('general.submissions_under_review'))
                             ->getStateUsing(
                                 fn () => Submission::query()->where('status', SubmissionStatus::OnReview)->count()
                             )
@@ -162,6 +171,7 @@ class Overview extends Widget implements HasForms, HasInfolists
                             ->color('primary')
                             ->url(SubmissionResource::getUrl('index', ['activeTab' => 2, 'tableFilters[status][value]' => SubmissionStatus::OnReview->value])),
                         TextEntry::make('published')
+                            ->label(__('general.published'))
                             ->getStateUsing(
                                 fn () => Submission::query()->where('status', SubmissionStatus::Published)->count()
                             )
@@ -169,21 +179,22 @@ class Overview extends Widget implements HasForms, HasInfolists
                             ->color('primary')
                             ->url(SubmissionResource::getUrl('index', ['activeTab' => 3, 'tableFilters[status][value]' => SubmissionStatus::Published->value])),
                     ]),
-                Section::make('Payments')
+                Section::make(__('general.payments'))
                     ->columnSpan(1)
                     ->columns(2)
                     ->headerActions([
                         Action::make('open_payments')
+                            ->label(__('general.open_payments'))
                             ->color('gray')
                             ->url(Payments::getUrl()),
                     ])
                     ->schema([
                         TextEntry::make('submission_payment')
-                            ->label('Submission Payment')
+                            ->label(__('general.submission_payment'))
                             ->size(TextEntrySize::Large)
                             ->getStateUsing(fn () => static::getSubmissionPaymentOverviewState()),
                         TextEntry::make('participant_payment')
-                            ->label('Participant Payment')
+                            ->label(__('general.participant_payment'))
                             ->size(TextEntrySize::Large)
                             ->getStateUsing(function () {
                                 $submissionPaymentCount = Payment::query()

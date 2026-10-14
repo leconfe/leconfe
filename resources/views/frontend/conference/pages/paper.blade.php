@@ -42,7 +42,7 @@
                             @if($contributor->getMeta('affiliation'))
                                 <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->getMeta('affiliation') }}</div>
                             @endif
-                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role->name }}</div>
+                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role->display_name }}</div>
                         </div>
                     @endforeach
                 </div>
@@ -107,7 +107,7 @@
                         {{ __('general.track') }}
                     </h2>
                     <div class="content text-slate-800">
-                        <p class="text-sm">{{ $paper->track->title }}</p>
+                        <p class="text-sm">{{ $paper->track->display_name }}</p>
                     </div>
                 </section>
             @endif

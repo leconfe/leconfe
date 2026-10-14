@@ -87,6 +87,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             name: 'role',
                             titleAttribute: 'name',
                         )
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                         ->required()
                         ->columnSpanFull(),
                     ...ContributorForm::additionalFormField(),
@@ -163,7 +164,8 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->size('xs')
                     ->color('gray')
                     ->alignStart(),
-                TextColumn::make('role.name')
+                TextColumn::make('role.display_name')
+                    ->label(__('general.role'))
                     ->badge(),
                 IconColumn::make('primary_contact')
                     ->getStateUsing(fn ($record) => $record->isPrimaryContact($this->submission))
@@ -250,7 +252,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
     {
         return AuthorRole::withoutGlobalScopes()
             ->where('conference_id', $this->submission->conference_id)
-            ->where('name', 'Author')
+            ->where(fn ($query) => $query->where('builtin_code', 'author')
+                ->orWhere(fn ($query) => $query->whereNull('builtin_code')->where('name', 'Author')))
+            ->orderByRaw('builtin_code IS NULL')
             ->first();
     }
 

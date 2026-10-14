@@ -40,7 +40,7 @@ class InvoiceSetting extends Component implements HasForms
         return $form
             ->model(app()->getCurrentScheduledConference())
             ->schema([
-                Section::make('Invoice')
+                Section::make(__('general.invoice'))
                     ->columns(1)
                     ->schema([
                         Checkbox::make('meta.invoice_enable')

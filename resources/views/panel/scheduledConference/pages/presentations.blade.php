@@ -23,7 +23,7 @@
 
                         <div class="p-6 flex flex-col gap-4 flex-1">
                             <div class="inline-flex w-fit items-center border text-xs font-medium px-1.5 py-0.5 rounded-sm">
-                                {{ $presentation->submission->track->title }}
+                                {{ $presentation->submission->track->display_name }}
                             </div>
 
                             <h3

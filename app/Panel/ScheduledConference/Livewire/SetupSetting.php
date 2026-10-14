@@ -51,7 +51,7 @@ class SetupSetting extends Component implements HasForms
                             ->helperText(__('general.allow_registration_helper')),
                         CheckboxList::make('meta.allowed_self_assign_roles')
                             ->label('Allow User to self register as role')
-                            ->options(UserRole::selfAssignedRoleSetupNames()),
+                            ->options(collect(UserRole::selfAssignedRoleSetupNames())->map(fn ($role) => UserRole::displayLabel($role))->all()),
                         Select::make('meta.default_register_country')
                             ->label(__('general.default_register_country'))
                             ->placeholder(__('general.select_a_country'))

@@ -45,6 +45,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('role_name')
+                    ->formatStateUsing(fn (string $state) => \App\Models\Enums\UserRole::displayLabel($state))
                     ->label(__('general.role'))
                     ->badge(),
                 TextColumn::make('status')
@@ -212,7 +213,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->withoutGlobalScopes()
             ->availableRolesByContext()
             ->orderBy('name')
-            ->pluck('name', 'id')
+            ->get()->pluck('display_name', 'id')
             ->toArray();
     }
 
@@ -222,7 +223,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->withoutGlobalScopes()
             ->availableRolesByContext()
             ->orderBy('name')
-            ->pluck('name', 'name')
+            ->get()->pluck('display_name', 'name')
             ->toArray();
     }
 

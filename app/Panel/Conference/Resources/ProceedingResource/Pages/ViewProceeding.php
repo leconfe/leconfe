@@ -113,7 +113,8 @@ class ViewProceeding extends Page implements HasForms, HasTable
             ->defaultGroup('track.title')
             ->groupingSettingsHidden()
             ->groups([
-                'track.title',
+                \Filament\Tables\Grouping\Group::make('track.title')
+                    ->getTitleFromRecordUsing(fn ($record) => $record->track?->display_name ?? ''),
             ])
             ->reorderable('proceeding_order_column')
             ->columns([

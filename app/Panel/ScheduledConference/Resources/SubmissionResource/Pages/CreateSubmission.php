@@ -35,13 +35,16 @@ class CreateSubmission extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $title = 'Make a Submission';
-
     protected static string $resource = SubmissionResource::class;
 
     protected static string $view = 'panel.conference.resources.submission-resource.pages.create-submission';
 
     public $data;
+
+    public function getTitle(): string
+    {
+        return __('general.make_a_submission');
+    }
 
     public function mount(): void
     {
@@ -64,7 +67,7 @@ class CreateSubmission extends Page implements HasForms
                 UserRole::TrackEditor,
             ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
             ->count();
-        $closedMessage = 'This conference is not accepting submissions at this time.';
+        $closedMessage = __('general.submissions_closed');
 
         Hook::call('Panel::ScheduledConference::SubmissionCreate::availability', [&$isOpen, &$closedMessage, $this]);
 
@@ -94,7 +97,7 @@ class CreateSubmission extends Page implements HasForms
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
                         Radio::make('payment_fee_id')
-                            ->label('Payment Fee')
+                            ->label(__('general.payment_fee'))
                             ->required()
                             ->live()
                             ->options(
@@ -109,7 +112,7 @@ class CreateSubmission extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
-                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                        \Filament\Forms\Components\Fieldset::make(__('general.add_on_items'))
                             ->schema(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
                                 if (! $paymentFee) {
@@ -148,7 +151,7 @@ class CreateSubmission extends Page implements HasForms
                                 UserRole::TrackEditor,
                             ]))
                             ->get()
-                            ->pluck('title', 'id')
+                            ->pluck('display_name', 'id')
                     )
                     ->reactive(),
                 Placeholder::make('track_policy')
@@ -170,7 +173,7 @@ class CreateSubmission extends Page implements HasForms
                             return '';
                         }
 
-                        return Track::find($get('track_id'))->title;
+                        return Track::find($get('track_id'))->display_name;
                     })
                     ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))->getMeta('policy')) : ''),
                 Fieldset::make(__('general.submission_checklist'))
@@ -199,7 +202,7 @@ class CreateSubmission extends Page implements HasForms
                         $managerUserGroupAssignments = Role::query()->get()->filter(fn ($role) => auth()->user()->hasRole($role) && $role->hasDefaultPermission('Submission:submitAs'));
                         $authorUserGroupAssignments = Role::query()->where('name', UserRole::Author)->get();
 
-                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('name', 'id');
+                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('display_name', 'id');
                     }),
             ])
             ->model(Submission::class)

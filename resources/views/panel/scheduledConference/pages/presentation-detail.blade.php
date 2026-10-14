@@ -126,7 +126,7 @@
                                     @if($author->getMeta('affiliation'))
                                         <div class="ml-[20px] text-xs text-slate-500">{{ $author->getMeta('affiliation') }}</div>
                                     @endif
-                                    <div class="ml-[20px] text-xs text-slate-500">{{ $author->role->name }}</div>
+                                    <div class="ml-[20px] text-xs text-slate-500">{{ $author->role->display_name }}</div>
                                 </div>
                             @endforeach
                         </div>

@@ -257,6 +257,7 @@ class SubmissionResource extends Resource
                     ->searchable(),
                 SelectFilter::make('track')
                     ->relationship('track', 'title')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                     ->multiple()
                     ->searchable()
                     ->preload(),

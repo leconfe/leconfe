@@ -120,6 +120,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                 Select::make('track_id')
                     ->required()
                     ->relationship('track', 'title')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                     ->label(__('general.track')),
                 TextInput::make('meta.isbn')
                     ->label("ISBN"),

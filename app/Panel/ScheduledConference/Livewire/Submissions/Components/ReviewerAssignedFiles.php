@@ -46,7 +46,7 @@ class ReviewerAssignedFiles extends \Livewire\Component implements HasForms, Has
                         );
                     })
                     ->description(function (ReviewerAssignedFile $record) {
-                        return $record->submissionFile->type->name;
+                        return $record->submissionFile->type->display_name;
                     }),
             ]);
     }

@@ -39,6 +39,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
             ->defaultSort('order_column')
             ->columns([
                 TextColumn::make('name')
+                    ->formatStateUsing(fn ($record) => $record->display_name)
                     ->label(__('general.name'))
                     ->searchable(),
                 IconColumn::make('required')

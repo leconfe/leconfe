@@ -77,7 +77,7 @@ class ListUsers extends ListRecords implements HasForms
                     ->label(__('general.roles'))
                     ->options(
                         Role::where('name', '!=', UserRole::Admin)
-                            ->pluck('name', 'id')
+                            ->get()->pluck('display_name', 'id')
                     )
                     ->multiple()
                     ->required()

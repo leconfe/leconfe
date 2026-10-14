@@ -1,0 +1,24 @@
+name: Translation catalogs
+
+on:
+  pull_request:
+    paths:
+      - 'lang/**'
+      - 'scripts/translations.php'
+      - '.github/workflows/translations.yml'
+  push:
+    branches: ['1.5.x', 'development']
+    paths:
+      - 'lang/**'
+      - 'scripts/translations.php'
+      - '.github/workflows/translations.yml'
+
+jobs:
+  catalog-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - run: php scripts/translations.php check

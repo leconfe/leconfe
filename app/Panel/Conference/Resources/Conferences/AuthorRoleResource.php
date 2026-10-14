@@ -25,7 +25,7 @@ class AuthorRoleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Author';
+        return __('general.author');
     }
 
     public static string $roleType = 'author';
@@ -57,6 +57,7 @@ class AuthorRoleResource extends Resource
             ->columns([
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
+                    ->formatStateUsing(fn ($record) => $record->display_name)
                     ->label(__('general.name'))
                     ->searchable()
                     ->sortable(),

@@ -284,7 +284,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                     ->descriptions(function () {
                         return $this->reviewableFiles
                             ->mapWithKeys(function (SubmissionFile $paper) {
-                                return [$paper->getKey() => $paper->type->name.' ('.$paper->category.')'];
+                                return [$paper->getKey() => $paper->type->display_name.' ('.$paper->category.')'];
                             });
                     }),
                 Fieldset::make('Notification')

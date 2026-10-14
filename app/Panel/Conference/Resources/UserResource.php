@@ -164,6 +164,7 @@ class UserResource extends Resource
                                         titleAttribute: 'name',
                                         modifyQueryUsing: fn($query) => $query->withoutGlobalScopes()->availableRolesByContext()
                                     )
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                                     ->saveRelationshipsUsing(function (Forms\Components\CheckboxList $component, ?array $state, User $record) {
 
                                         $roles = $state ? Role::whereIn('id', $state)->pluck('name')->toArray() : [];
@@ -246,7 +247,7 @@ class UserResource extends Resource
                             ->badge(),
                     ]),
                     Stack::make([
-                        TextColumn::make('roles.name')
+                        TextColumn::make('roles.display_name')
                             ->badge(),
                     ]),
                 ])->from('md'),
@@ -255,6 +256,7 @@ class UserResource extends Resource
                 SelectFilter::make('roles')
                     ->label(__('general.roles'))
                     ->relationship('roles', 'name', modifyQueryUsing: fn($query) => $query->withoutGlobalScopes()->availableRolesByContext())
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                     ->multiple()
                     ->preload(),
             ])

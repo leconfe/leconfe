@@ -119,6 +119,7 @@ class ContributorForm extends Component
                 )
                 ->toggleable(),
             TextColumn::make('role.name')
+                ->formatStateUsing(fn ($record) => $record->role?->display_name ?? $record->role?->name)
                 ->label(__('general.role'))
                 ->badge()
                 ->limitList(3)

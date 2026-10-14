@@ -25,7 +25,7 @@ class UserRoleInvitationMail extends TemplateMailable
 
         $this->setAdditionalData([
             'Invitation Email' => $invitation->email,
-            'Role Name' => $invitation->role_name,
+            'Role Name' => \App\Models\Enums\UserRole::displayLabel($invitation->role_name),
             'Conference Title' => $conferenceTitle,
             'Scheduled Conference Title' => $scheduledConferenceTitle ?: '-',
             'Invitation URL' => $invitation->getAcceptUrl(),

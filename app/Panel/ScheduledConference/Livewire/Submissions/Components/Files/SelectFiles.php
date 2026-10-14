@@ -31,7 +31,7 @@ final class SelectFiles extends SubmissionFilesTable
                 ->color('primary')
                 ->wrap()
                 ->action(fn (Model $record) => $record->media)
-                ->description(fn (Model $record) => $record->type->name),
+                ->description(fn (Model $record) => $record->type->display_name),
             TextColumn::make('category'),
         ];
     }

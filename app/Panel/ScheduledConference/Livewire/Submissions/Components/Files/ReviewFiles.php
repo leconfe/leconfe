@@ -227,7 +227,7 @@ class ReviewFiles extends SubmissionFilesTable
                     ->descriptions(function () {
                         return $this->previousRoundFiles
                             ->mapWithKeys(fn (SubmissionFile $file) => [
-                                $file->getKey() => $file->type->name.' ('.$file->category.')',
+                                $file->getKey() => $file->type->display_name.' ('.$file->category.')',
                             ])
                             ->toArray();
                     }),
