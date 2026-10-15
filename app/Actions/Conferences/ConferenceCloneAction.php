@@ -4,6 +4,7 @@ namespace App\Actions\Conferences;
 
 use App\Models\Conference;
 use App\Models\Scopes\ConferenceScope;
+use App\Support\Multilingual\ContentLocales;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -51,15 +52,33 @@ class ConferenceCloneAction
         $clonedDataConference->path = $this->generateUniquePath($clonedDataConference->path);
         $clonedDataConference->save();
 
-        // Translations of a column given a new value (such as the name) describe the old value.
-        $renamedColumns = array_values(array_filter(
-            $sourceConference->getTranslatableColumns(),
-            fn (string $column) => $clonedDataConference->getAttribute($column) !== $sourceConference->getAttribute($column),
-        ));
+        $sourceConference->copyTranslationsTo($clonedDataConference);
 
-        $sourceConference->copyTranslationsTo($clonedDataConference, $renamedColumns);
+        $this->syncDefaultTranslationsOfChangedColumns($sourceConference, $clonedDataConference);
 
         return $clonedDataConference;
+    }
+
+    /**
+     * A column given a new value for the clone (such as the name) replaces a copied
+     * default-language translation, so the default language shows the new value
+     * while the other languages keep the copied translations.
+     */
+    private function syncDefaultTranslationsOfChangedColumns(Conference $sourceConference, Conference $clonedDataConference): void
+    {
+        $default = app(ContentLocales::class)->default();
+
+        foreach ($clonedDataConference->getTranslatableColumns() as $column) {
+            $value = $clonedDataConference->getAttribute($column);
+
+            if ($value === $sourceConference->getAttribute($column)) {
+                continue;
+            }
+
+            if ($clonedDataConference->getStoredTranslation($column, $default) !== null) {
+                $clonedDataConference->setTranslation($column, $default, $value);
+            }
+        }
     }
 
     private function cloneRelations(Conference $clonedDataConference): void

@@ -86,8 +86,10 @@ class CloneTranslationsTest extends TestCase
         $this->assertSame(10, Translate::query()->count());
     }
 
-    public function test_a_new_name_given_to_the_clone_drops_the_name_translations_of_the_source(): void
+    public function test_a_clone_with_a_new_name_keeps_the_other_language_names_of_the_source(): void
     {
+        $sourceRows = $this->translationRows();
+
         $clone = ConferenceCloneAction::run([
             'conference_id' => $this->source->getKey(),
             'name' => 'Regional Workshop',
@@ -96,9 +98,69 @@ class CloneTranslationsTest extends TestCase
 
         $clone = Conference::query()->findOrFail($clone->getKey());
 
-        $this->assertSame('Regional Workshop', $clone->translated('name', 'id'));
+        $this->assertSame('Regional Workshop', $clone->name);
+        $this->assertSame('Regional Workshop', $clone->translated('name', 'en'));
+        $this->assertSame('Konferensi Tahunan', $clone->translated('name', 'id'));
         $this->assertSame('<p>Tentang kami</p>', $clone->translated('about', 'id'));
+        $this->assertNull($clone->getStoredTranslation('name', 'en'));
+
+        $this->assertSame(
+            [['about', 'id', '<p>Tentang kami</p>'], ['name', 'id', 'Konferensi Tahunan']],
+            $this->clonedRows($clone),
+        );
+
+        $this->assertSame($sourceRows, $this->translationRows([
+            [Conference::class, $this->source->getKey()],
+            [Topic::class, $this->topic->getKey()],
+            [StaticPage::class, $this->page->getKey()],
+        ]));
+        $this->assertSame('Annual Conference', $this->source->fresh()->name);
         $this->assertSame('Konferensi Tahunan', $this->source->fresh()->translated('name', 'id'));
+    }
+
+    public function test_a_new_name_replaces_the_copied_default_language_name_of_the_clone(): void
+    {
+        $this->source->setTranslation('name', 'en', 'Annual Conference');
+        $sourceRows = $this->translationRows();
+
+        $clone = ConferenceCloneAction::run([
+            'conference_id' => $this->source->getKey(),
+            'name' => 'Regional Workshop',
+            'path' => 'workshop',
+        ]);
+
+        $clone = Conference::query()->findOrFail($clone->getKey());
+
+        $this->assertSame('Regional Workshop', $clone->name);
+        $this->assertSame('Regional Workshop', $clone->getStoredTranslation('name', 'en'));
+        $this->assertSame('Konferensi Tahunan', $clone->translated('name', 'id'));
+
+        $this->assertSame(
+            [['about', 'id', '<p>Tentang kami</p>'], ['name', 'en', 'Regional Workshop'], ['name', 'id', 'Konferensi Tahunan']],
+            $this->clonedRows($clone),
+        );
+
+        $this->assertSame($sourceRows, $this->translationRows([
+            [Conference::class, $this->source->getKey()],
+            [Topic::class, $this->topic->getKey()],
+            [StaticPage::class, $this->page->getKey()],
+        ]));
+        $this->assertSame('Annual Conference', $this->source->fresh()->getStoredTranslation('name', 'en'));
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string, 2: string}>
+     */
+    protected function clonedRows(Conference $clone): array
+    {
+        return Translate::query()
+            ->where('translatable_type', $clone->getMorphClass())
+            ->where('translatable_id', $clone->getKey())
+            ->orderBy('key')
+            ->orderBy('locale')
+            ->get(['key', 'locale', 'value'])
+            ->map(fn (Translate $row) => [$row->key, $row->locale, $row->value])
+            ->all();
     }
 
     /**
