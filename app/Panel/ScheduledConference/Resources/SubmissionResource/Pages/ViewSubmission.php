@@ -11,10 +11,10 @@ use App\Infolists\Components\VerticalTabs\Tab as PublicationTab;
 use App\Infolists\Components\VerticalTabs\Tabs as PublicationTabs;
 use App\Mail\Templates\PublishSubmissionMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\MailTemplate;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFormItem;
@@ -38,6 +38,7 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\SubmissionBillingNotifier;
 use App\Services\Notifications\OperationalNotificationRecipients;
 use App\Support\Multilingual\ContentLocales;
+use App\Support\Multilingual\RecipientLocale;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -238,11 +239,11 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->authorize('publish', $this->record)
                 ->successNotificationTitle(__('general.submission_published_successfully'))
                 ->mountUsing(function (Form $form) {
-                    $mailTemplate = DefaultMailTemplate::where('mailable', PublishSubmissionMail::class)->first();
+                    $mailTemplate = MailTemplate::contentFor(PublishSubmissionMail::class, RecipientLocale::for($this->record->user));
                     $form->fill([
                         'email' => $this->record->user->email,
-                        'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                        'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                        'subject' => $mailTemplate['subject'],
+                        'message' => $mailTemplate['html_template'],
                     ]);
                 })
                 ->form([
@@ -270,7 +271,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
                     if (! $data['do-not-notify-author']) {
                         try {
-                            Mail::to($this->record->user->email)
+                            Mail::to($this->record->user)
                                 ->send(
                                     (new PublishSubmissionMail($this->record))
                                         ->subjectUsing($data['subject'])

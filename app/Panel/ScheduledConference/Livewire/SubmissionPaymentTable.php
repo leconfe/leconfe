@@ -4,8 +4,8 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Mail\Templates\SubmissionPaymentMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\MailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\Submission;
@@ -13,6 +13,7 @@ use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\InvoicePaymentContextResolver;
+use App\Support\Multilingual\RecipientLocale;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -200,11 +201,15 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
             ])
             ->bulkActions([
                 BulkAction::make('send-email')
-                    ->mountUsing(function (Form $form): void {
-                        $mailTemplate = DefaultMailTemplate::where('mailable', SubmissionPaymentMail::class)->first();
+                    ->mountUsing(function (Form $form, Collection $records): void {
+                        // A single recipient gets the template in their language, several get the site default language.
+                        $recipient = $records->count() === 1
+                            ? rescue(fn () => app(InvoicePaymentContextResolver::class)->submission($records->first()->getKey())->user, report: false)
+                            : null;
+                        $mailTemplate = MailTemplate::contentFor(SubmissionPaymentMail::class, $recipient ? RecipientLocale::for($recipient) : null);
                         $form->fill([
-                            'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                            'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            'subject' => $mailTemplate['subject'],
+                            'message' => $mailTemplate['html_template'],
                         ]);
                     })
                     ->form([

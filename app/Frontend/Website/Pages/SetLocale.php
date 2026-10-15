@@ -16,6 +16,7 @@ class SetLocale extends Page
 
         if (app(ContentLocales::class)->isEnabled($locale)) {
             session()->put('locale', $locale);
+            auth()->user()?->rememberPreferredLocale($locale);
         }
 
         return SafeRedirect::back(request(), $this->getFallbackUrl());

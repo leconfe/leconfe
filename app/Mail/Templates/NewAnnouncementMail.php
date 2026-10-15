@@ -19,6 +19,8 @@ class NewAnnouncementMail extends TemplateMailable
             'Announcement Summary' => $announcement->getMeta('summary'),
             'Announcement URL' => $announcement->getUrl(),
         ]);
+        $this->setTranslatableData('Announcement Title', $announcement, 'title');
+        $this->setTranslatableData('Announcement Summary', $announcement, 'summary');
         $this->log = Log::make(
             name: 'email',
             subject: $announcement,

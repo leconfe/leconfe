@@ -1162,4 +1162,6 @@ return [
     'make_new_submission' => 'Kirim naskah baru',
     'view_your_submissions' => 'Lihat naskah Anda yang sedang diproses',
     'track_policies' => 'Kebijakan Track',
+    'preferred_language' => 'Bahasa pilihan',
+    'preferred_language_helper' => 'Email dikirim kepada Anda dalam bahasa ini.',
 ];

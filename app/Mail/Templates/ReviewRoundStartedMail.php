@@ -29,6 +29,7 @@ class ReviewRoundStartedMail extends TemplateMailable
             'Review Round Name' => $reviewRoundName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',

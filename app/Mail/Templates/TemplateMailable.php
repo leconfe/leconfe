@@ -5,6 +5,7 @@ namespace App\Mail\Templates;
 use App\Models\MailTemplate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -24,9 +25,17 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
      */
     public $tries = 5;
 
+    /**
+     * Variables whose value is a translated model attribute, resolved when the email
+     * is rendered so it follows the recipient's language.
+     *
+     * @var array<string, array{0: class-string<Model>, 1: mixed, 2: string}>
+     */
+    protected array $translatableData = [];
+
     public static function getDefaultTextTemplate(): string
     {
-        return preg_replace("/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags(static::getDefaultHtmlTemplate()))));
+        return MailTemplate::textFromHtml(static::getDefaultHtmlTemplate());
     }
 
     public static function getVariables(): array
@@ -36,7 +45,37 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
 
     public function buildViewData(): array
     {
-        return array_merge(static::getConferenceViewData(), parent::buildViewData());
+        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData());
+    }
+
+    /**
+     * Use the translated value of a model attribute for a template variable.
+     */
+    public function setTranslatableData(string $variable, ?Model $model, string $attribute): static
+    {
+        if ($model && method_exists($model, 'translated')) {
+            $this->translatableData[$variable] = [$model::class, $model->getKey(), $attribute];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function resolveTranslatableData(): array
+    {
+        $data = [];
+
+        foreach ($this->translatableData as $variable => [$class, $key, $attribute]) {
+            $value = $class::query()->withoutGlobalScopes()->find($key)?->translated($attribute);
+
+            if (filled($value)) {
+                $data[$variable] = $value;
+            }
+        }
+
+        return $data;
     }
 
     public static function getConferenceViewData()
@@ -47,11 +86,13 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
             $logo = $scheduledConference->getFirstMedia('logo')
                 ?? $scheduledConference->conference?->getFirstMedia('logo');
 
+            $title = $scheduledConference->translated('title');
+
             return [
-                'conferenceName' => $scheduledConference->title,
+                'conferenceName' => $title,
                 'conferenceLink' => $scheduledConference->getHomeUrl(),
                 'conferenceLogoUrl' => $logo?->getAvailableUrl(['thumb', 'thumb-xl']),
-                'conferenceLogoAltText' => $scheduledConference->title,
+                'conferenceLogoAltText' => $title,
             ];
         }
 
@@ -61,11 +102,13 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
             return [];
         }
 
+        $name = $conference->translated('name');
+
         return [
-            'conferenceName' => $conference->name,
+            'conferenceName' => $name,
             'conferenceLink' => $conference->getHomeUrl(),
             'conferenceLogoUrl' => $conference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']),
-            'conferenceLogoAltText' => $conference->name,
+            'conferenceLogoAltText' => $name,
         ];
     }
 
@@ -74,9 +117,9 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
         return new Envelope(
             from: new Address(
                 config('mail.from.address'),
-                app()->getCurrentScheduledConference()?->title
-                    ?? app()->getCurrentConference()?->name
-                    ?? app()->getSite()->getMeta('name')
+                app()->getCurrentScheduledConference()?->translated('title')
+                    ?? app()->getCurrentConference()?->translated('name')
+                    ?? app()->getSite()->translated('name')
             ),
         );
     }

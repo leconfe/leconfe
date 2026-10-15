@@ -9,15 +9,16 @@ use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
 use App\Mail\Templates\SendForReviewMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\MailTemplate;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Notifications\AbstractDeclined;
 use App\Notifications\SubmissionSentForReview;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -58,10 +59,10 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel(__('general.decline'))
             ->extraAttributes(['class' => 'w-full'], true)
             ->mountUsing(function (Form $form): void {
-                $mailTempalte = DefaultMailTemplate::where('mailable', DeclineAbstractMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(DeclineAbstractMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
-                    'subject' => $mailTempalte ? $mailTempalte->subject : '',
-                    'message' => $mailTempalte ? $mailTempalte->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -92,7 +93,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
                 if (! data_get($data, 'no-notification', false)) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new DeclineAbstractMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -126,11 +127,11 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->color('gray')
             ->outlined()
             ->mountUsing(function (Form $form) {
-                $mailTemplate = DefaultMailTemplate::where('mailable', AcceptPaperMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(AcceptPaperMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -161,7 +162,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
                 if (! $data['do-not-notify-author']) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new AcceptPaperMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -194,10 +195,10 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->extraAttributes(['class' => 'w-full'])
             ->icon('lineawesome-check-circle-solid')
             ->mountUsing(function (Form $form): void {
-                $mailTemplate = DefaultMailTemplate::where('mailable', SendForReviewMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(SendForReviewMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([

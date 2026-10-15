@@ -1183,4 +1183,6 @@ return [
     'make_new_submission' => 'Make a new submission',
     'view_your_submissions' => 'View your pending submissions',
     'track_policies' => 'Track Policies',
+    'preferred_language' => 'Preferred language',
+    'preferred_language_helper' => 'Emails are sent to you in this language.',
 ];

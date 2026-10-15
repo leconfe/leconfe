@@ -29,6 +29,7 @@ class NewReviewFileUploadedMail extends TemplateMailable
             'Review Round Name' => $this->resolveReviewRoundName($submissionFile),
             'Submission URL' => $this->resolveSubmissionUrl($submissionFile),
         ]);
+        $this->setTranslatableData('Conference Title', $submissionFile->submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',

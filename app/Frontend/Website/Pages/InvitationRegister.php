@@ -92,6 +92,7 @@ class InvitationRegister extends Page
             'family_name' => $this->family_name,
             'email' => mb_strtolower($invitation->email),
             'password' => $this->password,
+            'locale' => app()->getLocale(),
         ]);
 
         $this->sendInvitationEmailVerificationNotification($user);

@@ -43,7 +43,7 @@ class AnnouncementBroadcastMail
             ->lazy();
 
         foreach ($users as $user) {
-            Mail::to($user->email)->send(new NewAnnouncementMail($announcement));
+            Mail::to($user)->send(new NewAnnouncementMail($announcement));
         }
     }
 

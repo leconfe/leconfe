@@ -15,6 +15,7 @@ class LanguageSwitcher extends Component
         }
 
         session()->put('locale', $lang);
+        auth()->user()?->rememberPreferredLocale($lang);
 
         return redirect(SafeRedirect::backUrl(request(), $this->getFallbackUrl()));
     }

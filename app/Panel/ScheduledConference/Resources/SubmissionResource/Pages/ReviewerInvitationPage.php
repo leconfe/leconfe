@@ -13,6 +13,7 @@ use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -134,10 +135,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     $editors = User::whereIn('id', $editorsId)->get();
                     if ($editors->count()) {
                         try {
-                            Mail::to($editors)
-                                ->send(
-                                    new ReviewerAcceptedInvitationMail($review)
-                                );
+                            RecipientLocale::send($editors, fn () => new ReviewerAcceptedInvitationMail($review));
                         } catch (\Exception $e) {
                             $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
                             $action->failure();
@@ -200,7 +198,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     ->save();
 
                 try {
-                    Mail::to($review->user->email)
+                    Mail::to($review->user)
                         ->send(
                             new ReviewerDeclinedInvitationMail($review)
                         );

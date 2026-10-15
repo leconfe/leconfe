@@ -14,6 +14,7 @@ use App\Models\ReviewFormItem;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -29,7 +30,6 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 {
@@ -240,9 +240,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                     $editors = User::whereIn('id', $editors)->get();
 
                     if ($editors->count()) {
-                        Mail::to($editors)->send(
-                            new ReviewCompleteMail($review)
-                        );
+                        RecipientLocale::send($editors, fn () => new ReviewCompleteMail($review));
                     }
 
                     $action->success();

@@ -6,12 +6,14 @@ use App\Mail\Templates\VerifyUserEmail;
 use App\Models\Enums\RegistrationPaymentState;
 use App\Models\Enums\UserRole;
 use App\Support\Media\RasterImageNormalizer;
+use App\Support\Multilingual\ContentLocales;
 use Exception;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +34,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 use Squire\Models\Country;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocalePreference, HasMedia, HasName, MustVerifyEmail
 {
     use Bannable,
         HasApiTokens,
@@ -52,6 +54,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         'family_name',
         'email',
         'password',
+        'locale',
     ];
 
     /**
@@ -99,6 +102,29 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
                 return Str::squish($this->given_name.' '.$this->family_name);
             },
         );
+    }
+
+    /**
+     * The language used for emails sent to this user: the stored language while it
+     * is enabled, otherwise the site default language.
+     */
+    public function preferredLocale(): string
+    {
+        $locales = app(ContentLocales::class);
+
+        return $locales->isEnabled($this->locale) ? $this->locale : $locales->default();
+    }
+
+    /**
+     * Store an enabled language as this user's preferred language.
+     */
+    public function rememberPreferredLocale(?string $locale): void
+    {
+        if (! app(ContentLocales::class)->isEnabled($locale) || $this->locale === $locale) {
+            return;
+        }
+
+        $this->forceFill(['locale' => $locale])->save();
     }
 
     public function getFilamentName(): string
@@ -228,7 +254,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
      */
     public function sendEmailVerificationNotification()
     {
-        Mail::to($this->getEmailForVerification())->send(new VerifyUserEmail($this));
+        Mail::to($this->getEmailForVerification())
+            ->locale($this->preferredLocale())
+            ->send(new VerifyUserEmail($this));
     }
 
     /**

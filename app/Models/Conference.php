@@ -49,7 +49,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
      *
      * @var array<int, string>
      */
-    protected array $translatableMeta = ['description', 'summary', 'about', 'page_footer', 'license_terms'];
+    protected array $translatableMeta = ['description', 'summary', 'about', 'page_footer', 'license_terms', 'settings_mail_header', 'settings_mail_footer'];
 
     /**
      * The attributes that should be cast.

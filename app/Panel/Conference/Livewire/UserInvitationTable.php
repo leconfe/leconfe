@@ -6,6 +6,7 @@ use App\Actions\UserInvitation\InviteUserAction;
 use App\Mail\Templates\UserRoleInvitationMail;
 use App\Models\Role;
 use App\Models\UserInvitation;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -165,7 +166,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                                 'expires_at' => now()->addDays(7),
                             ]);
 
-                            Mail::to($record->email)->send(new UserRoleInvitationMail($record->fresh()));
+                            Mail::to($record->email)->locale(RecipientLocale::for($record->email))->send(new UserRoleInvitationMail($record->fresh()));
 
                             Notification::make()
                                 ->title('Invitation resent.')
