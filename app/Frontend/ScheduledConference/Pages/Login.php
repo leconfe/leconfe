@@ -192,6 +192,8 @@ class Login extends WebsiteLogin implements HasActions, HasForms
 
         session()->regenerate();
 
+        app(\App\Http\Middleware\EnforceUserBan::class)->check(request());
+
         $user = auth()->user();
         $user->setMeta('last_login', now());
 

@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\Conference\Resources\UserResource\Pages;
+use App\Support\UserBanScope;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -70,9 +71,18 @@ class UserResource extends Resource
             ->when(!app()->isOnSite(), fn(Builder $query) => $query->where(function (Builder $query) {
                 $query
                     ->where('id', auth()->id())
-                    ->orWhereHas('roles', fn(Builder $query) => $query
-                        ->withoutGlobalScopes()
-                        ->availableRolesByContext());
+                    ->orWhereHas('roles', function (Builder $query) {
+                        $assignmentsTable = config('permission.table_names.model_has_roles', 'model_has_roles');
+                        $query->withoutGlobalScopes()
+                            ->whereColumn('roles.conference_id', $assignmentsTable.'.conference_id')
+                            ->whereColumn('roles.scheduled_conference_id', $assignmentsTable.'.scheduled_conference_id');
+
+                        if (app()->getCurrentScheduledConferenceId()) {
+                            $query->availableRolesByContext();
+                        } else {
+                            $query->where('roles.conference_id', app()->getCurrentConferenceId());
+                        }
+                    });
             }));
     }
 
@@ -133,24 +143,28 @@ class UserResource extends Resource
                 Forms\Components\Grid::make()
                     ->schema([
                         Forms\Components\Section::make()
-                            ->visible(fn(?User $record) => $record?->isBanned())
+                            ->visible(fn(?User $record) => $record?->isBannedInCurrentContext())
                             ->schema([
                                 Forms\Components\Placeholder::make('disabled_at')
-                                    ->visible(fn(?User $record) => $record?->isBanned())
+                                    ->visible(fn(?User $record) => $record?->isBannedInCurrentContext())
                                     ->label(__('general.disabled_at'))
                                     ->content(function (?User $record): ?string {
-                                        $ban = $record?->bans->first();
+                                        $ban = $record?->activeBanInCurrentContext();
 
                                         return $ban?->created_at?->format(Setting::get('format_date')) ?? '-';
                                     }),
                                 Forms\Components\Placeholder::make('disabled_until')
-                                    ->visible(fn(?User $record) => $record?->isBanned())
+                                    ->visible(fn(?User $record) => $record?->isBannedInCurrentContext())
                                     ->label(__('general.disabled_until'))
                                     ->content(function (?User $record): ?string {
-                                        $ban = $record?->bans->first();
+                                        $ban = $record?->activeBanInCurrentContext();
 
                                         return $ban?->expired_at?->format(Setting::get('format_date')) ?? '-';
                                     }),
+
+                                Forms\Components\Placeholder::make('ban_scope')
+                                    ->label(__('general.scope'))
+                                    ->content(fn (?User $record) => $record?->activeBanInCurrentContext()?->scope()->label()),
 
                             ]),
                         Forms\Components\Section::make(__('general.user_roles'))
@@ -230,17 +244,14 @@ class UserResource extends Resource
                             ->getStateUsing(fn(User $record) => $record->getMeta('affiliation')),
                         TextColumn::make('disabled')
                             ->getStateUsing(function (User $record) {
-                                if (!$record->isBanned()) {
+                                if (!$ban = $record->activeBanInCurrentContext()) {
                                     return null;
                                 }
 
-                                $ban = $record->bans->filter(function ($ban) {
-                                    return $ban->notExpired();
-                                })->first();
-
                                 $bannedUntil = $ban->expired_at;
 
-                                return __('general.disabled') . ($bannedUntil ? __('general.until') . $bannedUntil->format(Setting::get('format_date')) : '');
+                                return __('general.disabled').' · '.$ban->scope()->label()
+                                    . ($bannedUntil ? ' '.__('general.until').' '.$bannedUntil->format(Setting::get('format_date')) : '');
                             })
                             ->color('danger')
                             ->badge(),
@@ -319,21 +330,27 @@ class UserResource extends Resource
                             UserMailAction::run($record, ...Arr::only($data, ['subject', 'message']));
                         }),
                     Action::make('enable')
+                        ->authorize('enable')
                         ->visible(fn(User $record) => auth()->user()->can('enable', $record))
                         ->label(__('general.enable_user'))
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
+                        ->modalDescription(fn () => __('ban.enable_scope_description', ['scope' => UserBanScope::current()->label()]))
                         ->action(function (User $record) {
-                            $record->unban();
+                            $record->unbanInCurrentContext();
                         }),
                     Action::make('disable')
+                        ->authorize('disable')
                         ->visible(fn(User $record) => auth()->user()->can('disable', $record))
                         ->label(fn(User $record) => __('general.disable'))
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->modalWidth('xl')
                         ->modalHeading(fn(User $record) => "Disable User : {$record->full_name}")
+                        ->modalDescription(fn () => UserBanScope::current()->isGlobal()
+                            ? __('ban.disable_global_description')
+                            : __('ban.disable_scope_description', ['scope' => UserBanScope::current()->label()]))
                         ->form([
                             Textarea::make('comment')
                                 ->label(__('general.reason_for_disabling_user')),
@@ -343,7 +360,7 @@ class UserResource extends Resource
                                 ->hint(__('general.to_disable_permanently_leave_field_empty')),
                         ])
                         ->action(function (array $data, User $record) {
-                            $record->ban($data);
+                            $record->banInCurrentContext($data);
                         }),
                     DeleteAction::make()
                         ->visible(fn() => app()->isOnSite())

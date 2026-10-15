@@ -271,7 +271,7 @@ class ScheduledConferenceAccessFlowTest extends TestCase
 
         $this->assertTrue($conferenceVisibleUserIds->contains($admin->getKey()));
         $this->assertFalse($conferenceVisibleUserIds->contains($previousAuthor->getKey()));
-        $this->assertFalse($conferenceVisibleUserIds->contains($currentAuthor->getKey()));
+        $this->assertTrue($conferenceVisibleUserIds->contains($currentAuthor->getKey()));
     }
 
     protected function createAdminRole(): void

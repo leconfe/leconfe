@@ -39,7 +39,7 @@ class AnnouncementBroadcastMail
                 ->withoutGlobalScopes()
                 ->where('roles.name', UserRole::Admin->value))
             ->whereMeta('enable_new_announcement_email', true)
-            ->notBanned()
+            ->notBannedInScope(new \App\Support\UserBanScope($scheduledConference->conference_id, $scheduledConference->getKey()))
             ->lazy();
 
         foreach ($users as $user) {

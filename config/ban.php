@@ -13,6 +13,8 @@ return [
 
     'table' => 'bans',
 
+    'model' => \App\Models\Ban::class,
+
     /*
     |--------------------------------------------------------------------------
     | Where to redirect banned Models
