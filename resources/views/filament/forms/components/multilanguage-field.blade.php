@@ -18,8 +18,7 @@
                 return false;
             }
 
-            const element = document.createElement('div');
-            element.innerHTML = String(value);
+            const element = new DOMParser().parseFromString(String(value), 'text/html').body;
 
             if (element.querySelector('img, iframe, video, audio, embed, object, svg, picture, table, hr')) {
                 return true;
