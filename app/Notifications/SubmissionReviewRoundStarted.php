@@ -49,7 +49,7 @@ class SubmissionReviewRoundStarted extends Notification implements ShouldQueue
             ->icon('lineawesome-sync-alt-solid')
             ->iconColor('primary')
             ->title(__('general.sent_for_a_new_round_of_reviews'))
-            ->body("Title: {$this->submission->getMeta('title')}")
+            ->body("Title: {$this->submission->translated('title')}")
             ->actions([
                 Action::make('view-submission')
                     ->url(SubmissionResource::getUrl('view', ['record' => $this->submission, 'tenant' => $this->submission->conference]))

@@ -32,7 +32,7 @@ class PresentationDetail extends Page implements HasForms
             throw new NotFoundHttpException;
         }
 
-        $this->record->load(['submission' => ['authors.role', 'meta']]);
+        $this->record->load(['submission' => ['authors.role', 'meta', 'translate']]);
         $this->record->registerView((int) auth()->id());
     }
 
@@ -42,9 +42,9 @@ class PresentationDetail extends Page implements HasForms
         $this->record->toggleLike((int) auth()->id());
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
-        return $this->record->submission->getMeta('title');
+        return (string) $this->record->submission->translated('title');
     }
 
     /**

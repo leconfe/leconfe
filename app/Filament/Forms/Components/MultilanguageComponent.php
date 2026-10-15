@@ -6,6 +6,7 @@ use App\Support\Multilingual\ContentLocales;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Renders the wrapped fields once per enabled content language.
@@ -64,9 +65,25 @@ class MultilanguageComponent extends Component
         return $this;
     }
 
+    /**
+     * The explicit primary locale, else the primary language of the form's record, else
+     * the site default language.
+     */
     public function getPrimaryLocale(): string
     {
-        return $this->evaluate($this->primaryLocale) ?? app(ContentLocales::class)->default();
+        $locale = $this->evaluate($this->primaryLocale);
+
+        if (filled($locale)) {
+            return $locale;
+        }
+
+        $record = $this->getRecord();
+
+        if ($record instanceof Model && method_exists($record, 'getPrimaryContentLocale')) {
+            return $record->getPrimaryContentLocale();
+        }
+
+        return app(ContentLocales::class)->default();
     }
 
     /**

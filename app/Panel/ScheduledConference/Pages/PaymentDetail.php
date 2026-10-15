@@ -455,7 +455,7 @@ class PaymentDetail extends Page
                             ->schema([
                                 TextEntry::make('submission')
                                     ->visible(fn (Payment $record) => $record->type == PaymentManager::TYPE_SUBMISSION_FEE)
-                                    ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
+                                    ->state(fn (Payment $record) => ($record->model instanceof Submission ? $record->model->translated('title') : $record->model?->getMeta('title')) ?? '-')
                                     ->url(fn (Payment $record) => $record->model ? SubmissionResource::getUrl('view', ['record' => $record->model]) : null)
                                     ->color('primary'),
                                 TextEntry::make('full_name')

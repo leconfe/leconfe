@@ -1164,4 +1164,6 @@ return [
     'track_policies' => 'Kebijakan Track',
     'preferred_language' => 'Bahasa pilihan',
     'preferred_language_helper' => 'Email dikirim kepada Anda dalam bahasa ini.',
+    'paper_language' => 'Bahasa makalah',
+    'paper_language_helper' => 'Bahasa yang digunakan dalam makalah. Metadata dalam bahasa ini wajib diisi dan digunakan untuk sitasi dan pengindeksan.',
 ];

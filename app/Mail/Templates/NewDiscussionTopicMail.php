@@ -22,6 +22,7 @@ class NewDiscussionTopicMail extends TemplateMailable
             'Submission URL' => $submissionUrl,
             'Topic Name' => $discussionTopic->name,
         ]);
+        $this->setTranslatableData('Submission Title', $discussionTopic->submission, 'title');
 
         $this->log = Log::make(
             name: 'email',

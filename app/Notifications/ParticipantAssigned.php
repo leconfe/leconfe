@@ -27,7 +27,7 @@ class ParticipantAssigned extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('primary')
             ->title('You have been assigned as a participant')
-            ->body("Title: {$this->submission->getMeta('title')}")
+            ->body("Title: {$this->submission->translated('title')}")
             ->actions([
                 Action::make('view-participant')
                     ->url(SubmissionResource::getUrl('view', ['record' => $this->submission, 'tenant' => $this->submission->conference]))

@@ -1178,4 +1178,6 @@ return [
     'track_policies' => 'Track Policies',
     'preferred_language' => 'Preferred language',
     'preferred_language_helper' => 'Emails are sent to you in this language.',
+    'paper_language' => 'Paper language',
+    'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
 ];

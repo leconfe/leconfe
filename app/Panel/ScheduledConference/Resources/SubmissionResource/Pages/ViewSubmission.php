@@ -182,7 +182,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         $paymentFee,
                         $submission->user,
                         PaymentManager::TYPE_SUBMISSION_FEE,
-                        $submission->getMeta('title'),
+                        $submission->translated('title', $submission->getPrimaryContentLocale()),
                         SubmissionResource::getUrl('view', ['record' => $submission]),
                         $paymentFee->getMeta('description'),
                         $totalAmount,
@@ -482,7 +482,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
     public function getHeading(): string|Htmlable
     {
-        return new HtmlString('<span class="text-xl ">'.$this->record->getMeta('title').'</span>');
+        return new HtmlString('<span class="text-xl ">'.e($this->record->translated('title')).'</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -643,7 +643,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
             return __('general.submission_wizard');
         }
 
-        return $this->record->getMeta('title') ?? __('general.submission');
+        return $this->record->translated('title') ?? __('general.submission');
     }
 
     public function getBreadcrumb(): ?string

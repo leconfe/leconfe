@@ -281,7 +281,7 @@ class CreateSubmission extends Page implements HasForms
                     $paymentFee,
                     $submission->user,
                     PaymentManager::TYPE_SUBMISSION_FEE,
-                    $submission->getMeta('title'),
+                    $submission->translated('title', $submission->getPrimaryContentLocale()),
                     SubmissionResource::getUrl('view', ['record' => $submission]),
                     $paymentFee->getMeta('description'),
                     $totalAmount,

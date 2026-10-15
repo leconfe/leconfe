@@ -51,6 +51,13 @@ class SubmissionUpdateAction
                 unset($data[$topicField]);
             }
 
+            // The paper language decides which values are primary, so it is saved first.
+            if (filled($data['meta']['language'] ?? null)) {
+                $submission->setMeta('language', $data['meta']['language']);
+            }
+
+            $data = $submission->syncTranslatableState($data);
+
             $submission->update($data);
 
             if ($topicField !== null) {
@@ -60,6 +67,8 @@ class SubmissionUpdateAction
             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                 $submission->setManyMeta($data['meta']);
             }
+
+            $submission->persistTranslatableState();
 
             if ($shouldEvaluateSubmissionBilling) {
                 DB::afterCommit(function () use ($submissionId) {

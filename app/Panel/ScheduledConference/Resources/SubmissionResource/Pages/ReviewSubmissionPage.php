@@ -87,7 +87,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     public function getHeading(): string|Htmlable
     {
         return __('general.review_submission_heading', [
-            'title' => $this->record->getMeta('title'),
+            'title' => $this->record->translated('title'),
         ]);
     }
 
@@ -105,7 +105,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.title'))
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('title')
+                                        fn (Submission $record): string => (string) $record->translated('title')
                                     ),
                                 TextEntry::make('author')
                                     ->label(__('general.author'))
@@ -116,13 +116,13 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->badge()
-                                    ->getStateUsing(fn (Submission $record) => $record->getMeta('keywords') ?: '-'),
+                                    ->getStateUsing(fn (Submission $record) => $record->translated('keywords') ?: '-'),
                                 TextEntry::make('abstract')
                                     ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('abstract')
+                                        fn (Submission $record): string => (string) $record->translated('abstract')
                                     ),
                                 TextEntry::make('review_mode')
                                     ->label(__('general.review_mode'))

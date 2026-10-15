@@ -47,7 +47,7 @@ class Invoice extends Page
             $data['user_post_code'] = $user->getMeta('post_code');
             $data['user_country_name'] = Country::find($user->getMeta('country'))?->name;
             $data['submissionTitle'] = $data['scheduledConference']->shouldShowSubmissionTitleOnInvoice()
-                ? $submission->getMeta('title')
+                ? $submission->translated('title')
                 : null;
         } elseif ($this->record->model instanceof Participant) {
             $participant = $this->record->model;
