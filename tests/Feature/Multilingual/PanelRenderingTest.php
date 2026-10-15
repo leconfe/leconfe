@@ -143,6 +143,7 @@ class PanelRenderingTest extends TestCase
             'competing_interests' => '<p>Declare conflicts</p>',
         ]);
         $this->scheduledConference->setTranslation('review_guidelines', 'id', '<p>Bersikap membangun</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'review_guidelines', '<p>Be kind and specific</p>');
         $this->storeDefaultLanguageRow($this->scheduledConference, 'competing_interests', '<p>Disclose every conflict</p>');
 
         $submission = $this->makeSubmission(SubmissionStage::PeerReview, SubmissionStatus::OnReview);
@@ -165,13 +166,16 @@ class PanelRenderingTest extends TestCase
             ->assertSee('Bersikap membangun')
             ->assertSee('Disclose every conflict')
             ->assertDontSee('Declare conflicts')
+            ->assertDontSee('Be kind and specific')
             ->assertDontSee('Be constructive');
 
         app()->setLocale('fr');
 
         Livewire::test(ReviewSubmissionPage::class, ['record' => $submission])
-            ->assertSee('Be constructive')
+            ->assertSee('Be kind and specific')
             ->assertSee('Disclose every conflict')
+            ->assertDontSee('Be constructive')
+            ->assertDontSee('Declare conflicts')
             ->assertDontSee('Bersikap membangun');
     }
 

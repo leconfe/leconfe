@@ -129,6 +129,16 @@ class SubmissionsPageTest extends TestCase
             ->assertDontSee('Stored privacy');
     }
 
+    public function test_page_falls_back_to_the_default_language_checklist_row(): void
+    {
+        $this->scheduledConference->setMeta('submission_checklist', '<p>Stored checklist</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'submission_checklist', '<p>References are complete</p>');
+
+        $this->visit('id')
+            ->assertSee('References are complete', false)
+            ->assertDontSee('Stored checklist');
+    }
+
     public function test_page_uses_legacy_values_without_translations(): void
     {
         $this->scheduledConference->setManyMeta([
