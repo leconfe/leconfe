@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\HasTranslatableContent;
+use App\Models\Scopes\ConferenceScope;
 use App\Support\Multilingual\ContentLocales;
 use Illuminate\Contracts\Mail\Mailable;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\MailTemplates\Interfaces\MailTemplateInterface;
 use Spatie\MailTemplates\Models\MailTemplate as BaseMailTemplate;
 
@@ -83,9 +85,23 @@ class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
         return static::textFromHtml($this->getHtmlTemplate());
     }
 
+    /**
+     * Limit the query to the templates of the current conference, also where the
+     * conference scope is not registered, such as in a queue worker.
+     */
+    public function scopeForCurrentConference(Builder $query): Builder
+    {
+        return $query
+            ->withoutGlobalScope(ConferenceScope::class)
+            ->where($this->qualifyColumn('conference_id'), app()->getCurrentConferenceId());
+    }
+
     public static function findForMailable(Mailable $mailable): self
     {
-        $mailTemplate = static::forMailable($mailable)->first();
+        $mailTemplate = static::query()
+            ->forCurrentConference()
+            ->forMailable($mailable)
+            ->first();
         if (! $mailTemplate) {
             $mailTemplate = new static([
                 'mailable' => get_class($mailable),
@@ -111,8 +127,8 @@ class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
         $locale ??= app(ContentLocales::class)->default();
 
         $template = static::query()
+            ->forCurrentConference()
             ->where('mailable', $mailable)
-            ->when(app()->getCurrentConferenceId(), fn ($query, $conferenceId) => $query->where('conference_id', $conferenceId))
             ->first();
 
         if (! $template) {

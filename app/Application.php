@@ -140,6 +140,31 @@ class Application extends LaravelApplication
         return $this->currentScheduledConference;
     }
 
+    /**
+     * Run a callback with the given conference and scheduled conference as the current
+     * context, then restore the previous context.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    public function withConferenceContext(?int $conferenceId, ?int $scheduledConferenceId, callable $callback): mixed
+    {
+        $previousConferenceId = $this->currentConferenceId;
+        $previousScheduledConferenceId = $this->currentScheduledConferenceId;
+
+        $this->currentConferenceId = $conferenceId;
+        $this->currentScheduledConferenceId = $scheduledConferenceId;
+
+        try {
+            return $callback();
+        } finally {
+            $this->currentConferenceId = $previousConferenceId;
+            $this->currentScheduledConferenceId = $previousScheduledConferenceId;
+        }
+    }
+
     public function scopeCurrentConference(): void
     {
         $models = [

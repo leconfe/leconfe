@@ -3,6 +3,7 @@
 namespace Tests\Feature\Multilingual;
 
 use App\Mail\Templates\DeclineAbstractMail;
+use App\Mail\Templates\ResetPasswordMail;
 use App\Mail\Templates\TestMail;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
@@ -157,6 +158,84 @@ class RecipientLanguageMailTest extends TestCase
         $this->assertStringContainsString('Isi email untuk Konferensi Tahunan 2026', $message->getHtmlBody());
         $this->assertStringContainsString('Kaki surat Konferensi Tahunan 2026', $message->getHtmlBody());
         $this->assertSame('en', app()->getLocale());
+    }
+
+    public function test_queued_email_is_rendered_for_its_conference_without_the_sender_context(): void
+    {
+        $otherConference = $this->makeConference('Other Conference', 'other');
+        MailTemplate::query()->create([
+            'conference_id' => $otherConference->getKey(),
+            'mailable' => TestMail::class,
+            'subject' => 'Other conference subject',
+            'html_template' => '<p>Other conference body</p>',
+        ]);
+        $this->customizeTestMail();
+        App::setLocale('en');
+
+        $payload = serialize((new TestMail)->to($this->indonesianReader));
+
+        app()->withConferenceContext(null, null, function () use ($payload) {
+            $this->assertNull(app()->getCurrentConference());
+            $this->assertNull(app()->getCurrentScheduledConference());
+
+            $restored = unserialize($payload);
+            $html = $restored->render();
+
+            $this->assertStringContainsString('Isi email untuk Konferensi Tahunan 2026', $html);
+            $this->assertStringContainsString('Kepala surat', $html);
+            $this->assertStringContainsString('Kaki surat Konferensi Tahunan 2026', $html);
+            $this->assertStringNotContainsString('Other conference', $html);
+
+            unserialize($payload)->send(app('mail.manager'));
+
+            $message = $this->lastSentMessage();
+
+            $this->assertSame('Halo Konferensi Tahunan 2026', $message->getSubject());
+            $this->assertStringContainsString('Kaki surat Konferensi Tahunan 2026', $message->getHtmlBody());
+            $this->assertSame('Konferensi Tahunan 2026', $message->getFrom()[0]->getName());
+            $this->assertNull(app()->getCurrentConference());
+        });
+
+        $this->assertSame($this->conference->getKey(), app()->getCurrentConferenceId());
+        $this->assertSame($this->scheduledConference->getKey(), app()->getCurrentScheduledConferenceId());
+    }
+
+    public function test_password_reset_email_names_the_site_in_the_recipients_language(): void
+    {
+        MailTemplate::query()->create([
+            'conference_id' => $this->conference->getKey(),
+            'mailable' => ResetPasswordMail::class,
+            'subject' => 'Reset password for {{ siteName }}',
+            'html_template' => '<p>Reset your password for {{ siteName }}</p>',
+        ]);
+        App::setLocale('en');
+
+        $mailable = (new ResetPasswordMail($this->indonesianReader))
+            ->to($this->indonesianReader->email)
+            ->locale(RecipientLocale::for($this->indonesianReader->email));
+
+        $this->assertSame('id', $mailable->locale);
+        $this->assertStringContainsString('Reset your password for Konferensi Tahunan 2026', $mailable->render());
+
+        $payload = serialize($mailable);
+
+        app()->withConferenceContext(null, null, function () use ($payload) {
+            $this->assertStringContainsString('Reset your password for Konferensi Tahunan 2026', unserialize($payload)->render());
+
+            unserialize($payload)->send(app('mail.manager'));
+        });
+
+        $this->assertSame('Reset password for Konferensi Tahunan 2026', $this->lastSentMessage()->getSubject());
+
+        Mail::fake();
+
+        Mail::to($this->englishReader->email)
+            ->locale(RecipientLocale::for($this->englishReader->email))
+            ->send(new ResetPasswordMail($this->englishReader));
+
+        $english = $this->queued(ResetPasswordMail::class);
+
+        $this->assertStringContainsString('Reset your password for Annual Conference 2026', $english->render());
     }
 
     public function test_notification_is_sent_in_the_recipients_language(): void

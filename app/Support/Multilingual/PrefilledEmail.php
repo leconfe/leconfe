@@ -4,6 +4,10 @@ namespace App\Support\Multilingual;
 
 use App\Models\MailTemplate;
 use App\Models\User;
+use DOMDocument;
+use DOMElement;
+use DOMNode;
+use DOMText;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 
@@ -52,8 +56,9 @@ class PrefilledEmail
     }
 
     /**
-     * Whether form text still equals the pre-filled text, ignoring markup and
-     * whitespace changes made by the editor.
+     * Whether form text still equals the pre-filled text. Whitespace, entity and
+     * attribute-order differences made by the editor are ignored, while changes to
+     * text, markup or attribute values such as link targets count as edits.
      */
     protected static function matches(mixed $value, ?string $prefilled): bool
     {
@@ -62,8 +67,60 @@ class PrefilledEmail
 
     protected static function normalize(mixed $value): string
     {
-        $text = html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $html = trim((string) $value);
 
-        return trim(preg_replace('/\s+/u', ' ', str_replace("\u{00A0}", ' ', $text)));
+        if ($html === '') {
+            return '';
+        }
+
+        $document = new DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $document->loadHTML(
+                '<?xml encoding="UTF-8"><div>'.$html.'</div>',
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET,
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+
+        $root = $document->getElementsByTagName('div')->item(0);
+
+        return $root ? trim(preg_replace('/\s+/u', ' ', static::serializeNodes($root))) : '';
+    }
+
+    protected static function serializeNodes(DOMNode $parent): string
+    {
+        $output = '';
+
+        foreach ($parent->childNodes as $node) {
+            if ($node instanceof DOMText) {
+                $output .= str_replace("\u{00A0}", ' ', $node->textContent);
+
+                continue;
+            }
+
+            if (! $node instanceof DOMElement) {
+                continue;
+            }
+
+            $attributes = [];
+
+            foreach ($node->attributes as $attribute) {
+                if (! str_starts_with($attribute->name, 'data-mce-')) {
+                    $attributes[$attribute->name] = trim(preg_replace('/\s+/u', ' ', $attribute->value));
+                }
+            }
+
+            ksort($attributes);
+
+            $output .= ' <'.strtolower($node->tagName).' '.json_encode($attributes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).'> ';
+            $output .= static::serializeNodes($node);
+            $output .= ' </'.strtolower($node->tagName).'> ';
+        }
+
+        return $output;
     }
 }

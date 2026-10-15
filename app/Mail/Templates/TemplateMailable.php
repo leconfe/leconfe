@@ -14,7 +14,10 @@ use Spatie\MailTemplates\TemplateMailable as BaseTemplateMailable;
 
 abstract class TemplateMailable extends BaseTemplateMailable implements Interfaces\HasDefaultMailVariable, ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels {
+        __serialize as serializeModels;
+    }
 
     protected static $templateModelClass = MailTemplate::class;
 
@@ -32,6 +35,45 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
      * @var array<string, array{0: class-string<Model>, 1: mixed, 2: string}>
      */
     protected array $translatableData = [];
+
+    /**
+     * The conference context the email was created in, kept when the email is queued so
+     * a queue worker renders it for the same conference.
+     *
+     * @var array{0: int, 1: int|null}|null
+     */
+    protected ?array $conferenceContext = null;
+
+    public function __serialize(): array
+    {
+        $this->conferenceContext ??= [app()->getCurrentConferenceId(), app()->getCurrentScheduledConferenceId()];
+
+        return $this->serializeModels();
+    }
+
+    public function send($mailer)
+    {
+        return $this->withinConferenceContext(fn () => parent::send($mailer));
+    }
+
+    public function render()
+    {
+        return $this->withinConferenceContext(fn () => parent::render());
+    }
+
+    /**
+     * Run a callback in the conference context the email was queued from.
+     */
+    protected function withinConferenceContext(callable $callback): mixed
+    {
+        if (! $this->conferenceContext) {
+            return $callback();
+        }
+
+        [$conferenceId, $scheduledConferenceId] = $this->conferenceContext;
+
+        return app()->withConferenceContext($conferenceId, $scheduledConferenceId, $callback);
+    }
 
     public static function getDefaultTextTemplate(): string
     {

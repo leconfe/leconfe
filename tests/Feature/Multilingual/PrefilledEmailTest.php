@@ -184,6 +184,61 @@ class PrefilledEmailTest extends TestCase
             && $mail->customizedContent === '<p>My own message</p>');
     }
 
+    public function test_reviewer_invitation_keeps_an_edited_link_when_the_reviewer_changes(): void
+    {
+        $this->translatedTemplate(
+            ReviewerInvitationMail::class,
+            ['Review invitation', '<p>Please review <a href="https://example.test/old">this paper</a>.</p>'],
+            ['Undangan menelaah', '<p>Mohon menelaah.</p>'],
+        );
+
+        $reviewer = $this->makeReviewer('penelaah@example.test', 'id');
+        $submission = $this->makeReviewableSubmission();
+        $edited = '<p>Please review <a href="https://example.test/corrected">this paper</a>.</p>';
+
+        $this->actingAs($this->editor);
+
+        Livewire::test(ReviewerList::class, ['record' => $submission])
+            ->mountTableAction('add-reviewer')
+            ->setTableActionData(['message' => $edited])
+            ->setTableActionData(['user_id' => $reviewer->getKey()])
+            ->assertTableActionDataSet([
+                'subject' => 'Undangan menelaah',
+                'message' => $edited,
+            ])
+            ->setTableActionData([
+                'meta' => ['review_mode' => Review::MODE_OPEN],
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        Mail::assertQueued(ReviewerInvitationMail::class, fn (ReviewerInvitationMail $mail) => $mail->locale === 'id'
+            && $mail->customizedSubject === 'Undangan menelaah'
+            && $mail->customizedContent === $edited);
+    }
+
+    public function test_reviewer_invitation_is_refilled_when_the_editor_only_reformatted_the_message(): void
+    {
+        $this->translatedTemplate(
+            ReviewerInvitationMail::class,
+            ['Review invitation', '<p>Please review <a href="https://example.test/paper" target="_blank">this paper</a>.</p>'],
+            ['Undangan menelaah', '<p>Mohon menelaah.</p>'],
+        );
+
+        $reviewer = $this->makeReviewer('penelaah@example.test', 'id');
+        $submission = $this->makeReviewableSubmission();
+
+        $this->actingAs($this->editor);
+
+        Livewire::test(ReviewerList::class, ['record' => $submission])
+            ->mountTableAction('add-reviewer')
+            ->setTableActionData(['message' => "<p>\n  Please review <a target=\"_blank\" href=\"https://example.test/paper\">this&nbsp;paper</a>.\n</p>"])
+            ->setTableActionData(['user_id' => $reviewer->getKey()])
+            ->assertTableActionDataSet([
+                'message' => '<p>Mohon menelaah.</p>',
+            ]);
+    }
+
     /**
      * @param  array{0: string, 1: string}  $english
      * @param  array{0: string, 1: string}  $indonesian
