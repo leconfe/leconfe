@@ -33,7 +33,7 @@ class ConferenceCloneAction
     {
         $clonedConferenceId = $data['conference_id'];
 
-        $clonedDataConference = Conference::with([
+        $sourceConference = Conference::with([
             'meta',
 
             'topics' => function ($query) {
@@ -41,13 +41,23 @@ class ConferenceCloneAction
             },
 
             'staticPages' => function ($query) {
-                $query->withoutGlobalScopes([ConferenceScope::class]);
+                $query->withoutGlobalScopes([ConferenceScope::class])->with('meta');
             },
-        ])->findOrFail($clonedConferenceId)->replicate();
+        ])->findOrFail($clonedConferenceId);
+
+        $clonedDataConference = $sourceConference->replicate();
 
         $clonedDataConference->fill($data);
         $clonedDataConference->path = $this->generateUniquePath($clonedDataConference->path);
         $clonedDataConference->save();
+
+        // Translations of a column given a new value (such as the name) describe the old value.
+        $renamedColumns = array_values(array_filter(
+            $sourceConference->getTranslatableColumns(),
+            fn (string $column) => $clonedDataConference->getAttribute($column) !== $sourceConference->getAttribute($column),
+        ));
+
+        $sourceConference->copyTranslationsTo($clonedDataConference, $renamedColumns);
 
         return $clonedDataConference;
     }
@@ -65,6 +75,8 @@ class ConferenceCloneAction
             $clonedTopic = $topic->replicate();
             $clonedTopic->conference_id = $clonedDataConference->id;
             $clonedTopic->save();
+
+            $topic->copyTranslationsTo($clonedTopic);
         }
     }
 
@@ -74,6 +86,14 @@ class ConferenceCloneAction
             $clonedStaticPage = $staticPage->replicate();
             $clonedStaticPage->conference_id = $clonedDataConference->id;
             $clonedStaticPage->save();
+
+            foreach ($staticPage->meta as $meta) {
+                $clonedMeta = $meta->replicate();
+                $clonedMeta->metable_id = $clonedStaticPage->id;
+                $clonedMeta->save();
+            }
+
+            $staticPage->copyTranslationsTo($clonedStaticPage);
         }
     }
 

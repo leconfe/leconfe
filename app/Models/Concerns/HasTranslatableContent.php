@@ -293,6 +293,25 @@ trait HasTranslatableContent
         $this->refreshTranslationCache();
     }
 
+    /**
+     * Copy every stored translation of this model onto another saved model, for
+     * example a replicated record. Keys listed in $except are not copied.
+     *
+     * @param  array<int, string>  $except
+     */
+    public function copyTranslationsTo(Model $target, array $except = []): void
+    {
+        $this->translate()
+            ->when($except, fn ($query) => $query->whereNotIn('key', $except))
+            ->get()
+            ->each(fn (Translate $translation) => $target->translate()->updateOrCreate(
+                ['key' => $translation->key, 'locale' => $translation->locale],
+                ['value' => $translation->value],
+            ));
+
+        $target->refreshTranslationCache();
+    }
+
     public function refreshTranslationCache(): void
     {
         $this->indexedTranslateCollection = null;
