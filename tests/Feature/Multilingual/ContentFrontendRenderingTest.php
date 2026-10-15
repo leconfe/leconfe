@@ -15,12 +15,14 @@ use App\Models\Timeline;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Blade;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
+use Tests\Feature\Multilingual\Concerns\StoresDefaultLanguageRows;
 use Tests\TestCase;
 
 class ContentFrontendRenderingTest extends TestCase
 {
     use InteractsWithContentLanguages;
     use RefreshDatabase;
+    use StoresDefaultLanguageRows;
 
     protected Conference $conference;
 
@@ -53,6 +55,11 @@ class ContentFrontendRenderingTest extends TestCase
         $legacy = StaticPage::query()->create(['title' => 'Legacy page', 'slug' => 'legacy']);
         $legacy->setMeta('content', '<p>Legacy content</p>');
 
+        $defaulted = StaticPage::query()->create(['title' => 'Stored accessibility title', 'slug' => 'accessibility']);
+        $defaulted->setMeta('content', '<p>Stored accessibility content</p>');
+        $this->storeDefaultLanguageRow($defaulted, 'title', 'Accessibility');
+        $this->storeDefaultLanguageRow($defaulted, 'content', '<p>Step-free entrance</p>');
+
         $url = fn (string $slug) => route('livewirePageGroup.scheduledConference.pages.static-page', [...$this->parameters, 'staticPage' => $slug]);
 
         $this->frontend('id', $url('visitor-guide'))
@@ -68,6 +75,12 @@ class ContentFrontendRenderingTest extends TestCase
         $this->frontend('id', $url('legacy'))
             ->assertSee('Legacy page')
             ->assertSee('Legacy content');
+
+        $this->frontend('id', $url('accessibility'))
+            ->assertSee('Accessibility')
+            ->assertSee('Step-free entrance')
+            ->assertDontSee('Stored accessibility title')
+            ->assertDontSee('Stored accessibility content');
     }
 
     public function test_navigation_labels_render_the_session_language_in_desktop_and_mobile_menus(): void
@@ -77,10 +90,14 @@ class ContentFrontendRenderingTest extends TestCase
         $translated = $this->makeMenuItem($menu, 'Visitor information', 'https://example.test/visitors', 90);
         $translated->setTranslation('label', 'id', 'Informasi pengunjung');
         $this->makeMenuItem($menu, 'Legacy link', 'https://example.test/legacy', 91);
+        $defaulted = $this->makeMenuItem($menu, 'Stored sponsors label', 'https://example.test/sponsors', 92);
+        $this->storeDefaultLanguageRow($defaulted, 'label', 'Our sponsors');
 
         $this->frontend('id', route('livewirePageGroup.scheduledConference.pages.home', $this->parameters))
             ->assertSee('Informasi pengunjung')
             ->assertSee('Legacy link')
+            ->assertSee('Our sponsors')
+            ->assertDontSee('Stored sponsors label')
             ->assertDontSee('Visitor information');
 
         $this->frontend('fr', route('livewirePageGroup.scheduledConference.pages.home', $this->parameters))
@@ -92,6 +109,8 @@ class ContentFrontendRenderingTest extends TestCase
         $mobile = $this->renderMobileMenu();
         $this->assertStringContainsString('Informasi pengunjung', $mobile);
         $this->assertStringContainsString('Legacy link', $mobile);
+        $this->assertStringContainsString('Our sponsors', $mobile);
+        $this->assertStringNotContainsString('Stored sponsors label', $mobile);
         $this->assertStringNotContainsString('Visitor information', $mobile);
 
         app()->setLocale('fr');
@@ -130,6 +149,12 @@ class ContentFrontendRenderingTest extends TestCase
         $legacy = Announcement::query()->create(['title' => 'Venue update']);
         $legacy->setManyMeta(['summary' => 'The venue has moved', 'content' => '<p>New venue</p>']);
 
+        $defaulted = Announcement::query()->create(['title' => 'Stored keynote title']);
+        $defaulted->setManyMeta(['summary' => 'Stored keynote summary', 'content' => '<p>Stored keynote content</p>']);
+        $this->storeDefaultLanguageRow($defaulted, 'title', 'Keynote speaker');
+        $this->storeDefaultLanguageRow($defaulted, 'summary', 'Meet our keynote');
+        $this->storeDefaultLanguageRow($defaulted, 'content', '<p>Keynote biography</p>');
+
         $list = route(Announcements::getRouteName('scheduledConference'), $this->parameters);
         $detail = fn (Announcement $item) => route(AnnouncementPage::getRouteName('scheduledConference'), [...$this->parameters, 'announcement' => $item->getKey()]);
 
@@ -138,6 +163,10 @@ class ContentFrontendRenderingTest extends TestCase
             ->assertSee('Kirim makalah Anda')
             ->assertSee('Venue update')
             ->assertSee('The venue has moved')
+            ->assertSee('Keynote speaker')
+            ->assertSee('Meet our keynote')
+            ->assertDontSee('Stored keynote title')
+            ->assertDontSee('Stored keynote summary')
             ->assertDontSee('Call for papers');
 
         $this->frontend('fr', $list)
@@ -157,6 +186,12 @@ class ContentFrontendRenderingTest extends TestCase
         $this->frontend('id', $detail($legacy))
             ->assertSee('Venue update')
             ->assertSee('New venue');
+
+        $this->frontend('id', $detail($defaulted))
+            ->assertSee('Keynote speaker')
+            ->assertSee('Keynote biography')
+            ->assertDontSee('Stored keynote title')
+            ->assertDontSee('Stored keynote content');
     }
 
     public function test_expired_announcements_stay_hidden(): void
@@ -185,6 +220,14 @@ class ContentFrontendRenderingTest extends TestCase
             'date' => now()->addWeeks(2),
         ]);
 
+        $defaulted = Timeline::query()->create([
+            'name' => 'Stored closing name',
+            'description' => 'Stored closing description',
+            'date' => now()->addWeeks(3),
+        ]);
+        $this->storeDefaultLanguageRow($defaulted, 'name', 'Closing ceremony');
+        $this->storeDefaultLanguageRow($defaulted, 'description', 'Farewell dinner');
+
         $url = route(Timelines::getRouteName('scheduledConference'), $this->parameters);
 
         $this->frontend('id', $url)
@@ -192,6 +235,10 @@ class ContentFrontendRenderingTest extends TestCase
             ->assertSee('Hari terakhir pengiriman')
             ->assertSee('Opening ceremony')
             ->assertSee('Welcome speech')
+            ->assertSee('Closing ceremony')
+            ->assertSee('Farewell dinner')
+            ->assertDontSee('Stored closing name')
+            ->assertDontSee('Stored closing description')
             ->assertDontSee('Submission deadline');
 
         $this->frontend('fr', $url)

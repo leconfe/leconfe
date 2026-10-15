@@ -425,50 +425,76 @@ class ContentFormsTest extends TestCase
         Livewire::test(AuthorGuidance::class)
             ->assertSet('formData.meta.author_guidelines.en', '<p>Use the template</p>')
             ->assertSet('formData.meta.author_guidelines.id', null)
+            ->assertSeeHtml('formData.meta.author_guidelines.en')
             ->assertSeeHtml('formData.meta.author_guidelines.id')
+            ->assertSeeHtml('formData.meta.before_you_begin.en')
             ->assertSeeHtml('formData.meta.before_you_begin.id')
+            ->assertSeeHtml('formData.meta.submission_checklist.en')
             ->assertSeeHtml('formData.meta.submission_checklist.id')
             ->set('formData.meta.author_guidelines.id', '<p>Gunakan templat</p>')
+            ->set('formData.meta.before_you_begin.en', '<p>Before you begin</p>')
             ->set('formData.meta.before_you_begin.id', '<p>Sebelum mulai</p>')
+            ->set('formData.meta.submission_checklist.en', '<p>Checklist</p>')
             ->set('formData.meta.submission_checklist.id', '<p>Daftar periksa</p>')
             ->call('mountFormComponentAction', 'formData.saveAction', 'save')
             ->assertHasNoErrors();
 
-        $scheduledConference = ScheduledConference::query()->find($this->scheduledConference->getKey());
+        $this->assertGuidanceSaved([
+            'author_guidelines' => ['en' => '<p>Use the template</p>', 'id' => '<p>Gunakan templat</p>'],
+            'before_you_begin' => ['en' => '<p>Before you begin</p>', 'id' => '<p>Sebelum mulai</p>'],
+            'submission_checklist' => ['en' => '<p>Checklist</p>', 'id' => '<p>Daftar periksa</p>'],
+        ]);
 
-        $this->assertSame('<p>Use the template</p>', $scheduledConference->getMeta('author_guidelines'));
-        $this->assertSame('<p>Gunakan templat</p>', $scheduledConference->translated('author_guidelines', 'id'));
-        $this->assertSame('<p>Sebelum mulai</p>', $scheduledConference->translated('before_you_begin', 'id'));
-        $this->assertSame('<p>Daftar periksa</p>', $scheduledConference->translated('submission_checklist', 'id'));
+        Livewire::test(AuthorGuidance::class)
+            ->assertSet('formData.meta.author_guidelines', ['en' => '<p>Use the template</p>', 'id' => '<p>Gunakan templat</p>'])
+            ->assertSet('formData.meta.before_you_begin', ['en' => '<p>Before you begin</p>', 'id' => '<p>Sebelum mulai</p>'])
+            ->assertSet('formData.meta.submission_checklist', ['en' => '<p>Checklist</p>', 'id' => '<p>Daftar periksa</p>']);
     }
 
-    public function test_review_and_editor_guidance_save_every_language(): void
+    public function test_review_guidance_saves_every_language(): void
     {
         $this->enableLanguages(['en', 'id']);
 
         Livewire::test(ReviewGuidance::class)
+            ->assertSeeHtml('formData.meta.review_guidelines.en')
             ->assertSeeHtml('formData.meta.review_guidelines.id')
+            ->assertSeeHtml('formData.meta.competing_interests.en')
             ->assertSeeHtml('formData.meta.competing_interests.id')
             ->set('formData.meta.review_guidelines.en', '<p>Be constructive</p>')
             ->set('formData.meta.review_guidelines.id', '<p>Bersikap membangun</p>')
+            ->set('formData.meta.competing_interests.en', '<p>Competing interests</p>')
             ->set('formData.meta.competing_interests.id', '<p>Konflik kepentingan</p>')
             ->call('mountFormComponentAction', 'formData.saveAction', 'save')
             ->assertHasNoErrors();
 
+        $this->assertGuidanceSaved([
+            'review_guidelines' => ['en' => '<p>Be constructive</p>', 'id' => '<p>Bersikap membangun</p>'],
+            'competing_interests' => ['en' => '<p>Competing interests</p>', 'id' => '<p>Konflik kepentingan</p>'],
+        ]);
+
+        Livewire::test(ReviewGuidance::class)
+            ->assertSet('formData.meta.review_guidelines', ['en' => '<p>Be constructive</p>', 'id' => '<p>Bersikap membangun</p>'])
+            ->assertSet('formData.meta.competing_interests', ['en' => '<p>Competing interests</p>', 'id' => '<p>Konflik kepentingan</p>']);
+    }
+
+    public function test_editor_guidance_saves_every_language(): void
+    {
+        $this->enableLanguages(['en', 'id']);
+
         Livewire::test(EditorGuidance::class)
+            ->assertSeeHtml('formData.meta.editor_guidelines.en')
             ->assertSeeHtml('formData.meta.editor_guidelines.id')
             ->set('formData.meta.editor_guidelines.en', '<p>Check scope</p>')
             ->set('formData.meta.editor_guidelines.id', '<p>Periksa cakupan</p>')
             ->call('mountFormComponentAction', 'formData.saveAction', 'save')
             ->assertHasNoErrors();
 
-        $scheduledConference = ScheduledConference::query()->find($this->scheduledConference->getKey());
+        $this->assertGuidanceSaved([
+            'editor_guidelines' => ['en' => '<p>Check scope</p>', 'id' => '<p>Periksa cakupan</p>'],
+        ]);
 
-        $this->assertSame('<p>Be constructive</p>', $scheduledConference->getMeta('review_guidelines'));
-        $this->assertSame('<p>Bersikap membangun</p>', $scheduledConference->translated('review_guidelines', 'id'));
-        $this->assertSame('<p>Konflik kepentingan</p>', $scheduledConference->translated('competing_interests', 'id'));
-        $this->assertSame('<p>Check scope</p>', $scheduledConference->getMeta('editor_guidelines'));
-        $this->assertSame('<p>Periksa cakupan</p>', $scheduledConference->translated('editor_guidelines', 'id'));
+        Livewire::test(EditorGuidance::class)
+            ->assertSet('formData.meta.editor_guidelines', ['en' => '<p>Check scope</p>', 'id' => '<p>Periksa cakupan</p>']);
     }
 
     public function test_guidance_forms_keep_single_language_behaviour(): void
@@ -476,24 +502,68 @@ class ContentFormsTest extends TestCase
         Livewire::test(AuthorGuidance::class)
             ->assertSeeHtml('formData.meta.author_guidelines"')
             ->assertDontSeeHtml('formData.meta.author_guidelines.en')
+            ->assertDontSeeHtml('formData.meta.before_you_begin.en')
+            ->assertDontSeeHtml('formData.meta.submission_checklist.en')
             ->set('formData.meta.author_guidelines', '<p>Use the template</p>')
+            ->set('formData.meta.before_you_begin', '<p>Before you begin</p>')
+            ->set('formData.meta.submission_checklist', '<p>Checklist</p>')
             ->call('mountFormComponentAction', 'formData.saveAction', 'save')
             ->assertHasNoErrors();
 
         Livewire::test(ReviewGuidance::class)
+            ->assertDontSeeHtml('formData.meta.review_guidelines.en')
+            ->assertDontSeeHtml('formData.meta.competing_interests.en')
             ->set('formData.meta.review_guidelines', '<p>Be constructive</p>')
+            ->set('formData.meta.competing_interests', '<p>Competing interests</p>')
+            ->call('mountFormComponentAction', 'formData.saveAction', 'save')
+            ->assertHasNoErrors();
+
+        Livewire::test(EditorGuidance::class)
+            ->assertSeeHtml('formData.meta.editor_guidelines"')
+            ->assertDontSeeHtml('formData.meta.editor_guidelines.en')
+            ->set('formData.meta.editor_guidelines', '<p>Check scope</p>')
             ->call('mountFormComponentAction', 'formData.saveAction', 'save')
             ->assertHasNoErrors();
 
         $scheduledConference = ScheduledConference::query()->find($this->scheduledConference->getKey());
 
-        $this->assertSame('<p>Use the template</p>', $scheduledConference->getMeta('author_guidelines'));
-        $this->assertSame('<p>Be constructive</p>', $scheduledConference->getMeta('review_guidelines'));
+        foreach ([
+            'author_guidelines' => '<p>Use the template</p>',
+            'before_you_begin' => '<p>Before you begin</p>',
+            'submission_checklist' => '<p>Checklist</p>',
+            'review_guidelines' => '<p>Be constructive</p>',
+            'competing_interests' => '<p>Competing interests</p>',
+            'editor_guidelines' => '<p>Check scope</p>',
+        ] as $key => $value) {
+            $this->assertSame($value, $scheduledConference->getMeta($key), $key);
+        }
+
         $this->assertFalse(Translate::query()
             ->where('translatable_type', $scheduledConference->getMorphClass())
             ->where('translatable_id', $scheduledConference->getKey())
-            ->whereIn('key', ['author_guidelines', 'review_guidelines'])
+            ->whereIn('key', [
+                'author_guidelines',
+                'before_you_begin',
+                'submission_checklist',
+                'review_guidelines',
+                'competing_interests',
+                'editor_guidelines',
+            ])
             ->exists());
+    }
+
+    /**
+     * @param  array<string, array{en: string, id: string}>  $expected
+     */
+    protected function assertGuidanceSaved(array $expected): void
+    {
+        $scheduledConference = ScheduledConference::query()->find($this->scheduledConference->getKey());
+
+        foreach ($expected as $key => $values) {
+            $this->assertSame($values['en'], $scheduledConference->getMeta($key), "{$key} default-language meta");
+            $this->assertSame($values['en'], $scheduledConference->getStoredTranslation($key, 'en'), "{$key} en row");
+            $this->assertSame($values['id'], $scheduledConference->getStoredTranslation($key, 'id'), "{$key} id row");
+        }
     }
 
     protected function assertNoTranslationRows(Model $model): void

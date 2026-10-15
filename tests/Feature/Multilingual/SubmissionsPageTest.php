@@ -18,12 +18,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
+use Tests\Feature\Multilingual\Concerns\StoresDefaultLanguageRows;
 use Tests\TestCase;
 
 class SubmissionsPageTest extends TestCase
 {
     use InteractsWithContentLanguages;
     use RefreshDatabase;
+    use StoresDefaultLanguageRows;
 
     protected Conference $conference;
 
@@ -94,6 +96,54 @@ class SubmissionsPageTest extends TestCase
             ->assertSee('We keep your data safe', false)
             ->assertDontSee('Gunakan templat makalah')
             ->assertDontSee('Kimia');
+    }
+
+    public function test_page_prefers_the_default_language_row_over_the_legacy_value(): void
+    {
+        $this->scheduledConference->setManyMeta([
+            'author_guidelines' => '<p>Stored guidelines</p>',
+            'submission_checklist' => '<p>Stored checklist</p>',
+            'privacy_statement' => '<p>Stored privacy</p>',
+        ]);
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'author_guidelines', '<p>Follow the house style</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'submission_checklist', '<p>References are complete</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'privacy_statement', '<p>Data stays private</p>');
+        $this->scheduledConference->setTranslation('submission_checklist', 'id', '<p>Referensi lengkap</p>');
+
+        $this->track->update(['title' => 'Stored track title']);
+        $this->track->setMeta('policy', '<p>Stored track policy</p>');
+        $this->storeDefaultLanguageRow($this->track, 'title', 'Materials science');
+        $this->storeDefaultLanguageRow($this->track, 'policy', '<p>Materials papers only</p>');
+
+        $this->visit('id')
+            ->assertSee('Follow the house style', false)
+            ->assertSee('Referensi lengkap', false)
+            ->assertSee('Materials science')
+            ->assertSee('Materials papers only', false)
+            ->assertSee('Data stays private', false)
+            ->assertDontSee('Stored guidelines')
+            ->assertDontSee('References are complete')
+            ->assertDontSee('Stored checklist')
+            ->assertDontSee('Stored track title')
+            ->assertDontSee('Stored track policy')
+            ->assertDontSee('Stored privacy');
+    }
+
+    public function test_page_uses_legacy_values_without_translations(): void
+    {
+        $this->scheduledConference->setManyMeta([
+            'author_guidelines' => '<p>Legacy guidelines</p>',
+            'submission_checklist' => '<p>Legacy checklist</p>',
+            'privacy_statement' => '<p>Legacy privacy</p>',
+        ]);
+        $this->track->setMeta('policy', '<p>Legacy track policy</p>');
+
+        $this->visit('id')
+            ->assertSee('Legacy guidelines', false)
+            ->assertSee('Legacy checklist', false)
+            ->assertSee('Chemistry')
+            ->assertSee('Legacy track policy', false)
+            ->assertSee('Legacy privacy', false);
     }
 
     public function test_empty_sections_are_hidden(): void
@@ -213,6 +263,27 @@ class SubmissionsPageTest extends TestCase
             ->assertSee('Read this first')
             ->assertSee('The paper is original')
             ->assertDontSee('Baca ini dulu');
+    }
+
+    public function test_wizard_guidance_prefers_the_default_language_row_over_the_legacy_value(): void
+    {
+        $this->openSubmissions();
+        $this->scheduledConference->setManyMeta([
+            'before_you_begin' => '<p>Stored intro</p>',
+            'submission_checklist' => '<p>Stored checklist</p>',
+        ]);
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'before_you_begin', '<p>Prepare your files</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'submission_checklist', '<p>Figures are attached</p>');
+
+        $this->actingAsAuthorInPanel();
+
+        app()->setLocale('id');
+
+        Livewire::test(CreateSubmission::class)
+            ->assertSee('Prepare your files')
+            ->assertSee('Figures are attached')
+            ->assertDontSee('Stored intro')
+            ->assertDontSee('Stored checklist');
     }
 
     public function test_wizard_hides_the_guidelines_link_without_guidelines(): void

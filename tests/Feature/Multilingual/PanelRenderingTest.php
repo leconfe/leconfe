@@ -29,12 +29,14 @@ use Illuminate\Support\Facades\View;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
+use Tests\Feature\Multilingual\Concerns\StoresDefaultLanguageRows;
 use Tests\TestCase;
 
 class PanelRenderingTest extends TestCase
 {
     use InteractsWithContentLanguages;
     use RefreshDatabase;
+    use StoresDefaultLanguageRows;
 
     protected Conference $conference;
 
@@ -79,16 +81,25 @@ class PanelRenderingTest extends TestCase
         $chemistry->setTranslation('title', 'id', 'Kimia');
         $chemistry->setTranslation('policy', 'id', '<p>Hanya makalah kimia</p>');
         Track::query()->create(['title' => 'Physics', 'abbreviation' => 'PHY'])->setMeta('submit_only_for_editors', false);
+        $biology = Track::query()->create(['title' => 'Stored biology title', 'abbreviation' => 'BIO']);
+        $biology->setManyMeta(['policy' => '<p>Stored biology policy</p>', 'submit_only_for_editors' => false]);
+        $this->storeDefaultLanguageRow($biology, 'title', 'Biology');
+        $this->storeDefaultLanguageRow($biology, 'policy', '<p>Life science papers only</p>');
 
         app()->setLocale('id');
 
         Livewire::test(CreateSubmission::class)
             ->assertSee('Kimia')
             ->assertSee('Physics')
+            ->assertSee('Biology')
+            ->assertDontSee('Stored biology title')
             ->assertDontSee('Chemistry')
             ->set('data.track_id', $chemistry->getKey())
             ->assertSee('Hanya makalah kimia')
-            ->assertDontSee('Chemistry papers only');
+            ->assertDontSee('Chemistry papers only')
+            ->set('data.track_id', $biology->getKey())
+            ->assertSee('Life science papers only')
+            ->assertDontSee('Stored biology policy');
 
         app()->setLocale('fr');
 
@@ -107,18 +118,20 @@ class PanelRenderingTest extends TestCase
         $energy = Topic::query()->create(['name' => 'Energy']);
         $energy->setTranslation('name', 'id', 'Energi');
         $water = Topic::query()->create(['name' => 'Water']);
+        $soil = Topic::query()->create(['name' => 'Stored soil name']);
+        $this->storeDefaultLanguageRow($soil, 'name', 'Soil');
 
         app()->setLocale('id');
 
         $this->assertSame(
-            [$energy->getKey() => 'Energi', $water->getKey() => 'Water'],
+            [$energy->getKey() => 'Energi', $water->getKey() => 'Water', $soil->getKey() => 'Soil'],
             $this->topicOptions(Livewire::test(DetailStep::class, ['record' => $submission])),
         );
 
         app()->setLocale('fr');
 
         $this->assertSame(
-            [$energy->getKey() => 'Energy', $water->getKey() => 'Water'],
+            [$energy->getKey() => 'Energy', $water->getKey() => 'Water', $soil->getKey() => 'Soil'],
             $this->topicOptions(Livewire::test(DetailStep::class, ['record' => $submission])),
         );
     }
@@ -130,6 +143,7 @@ class PanelRenderingTest extends TestCase
             'competing_interests' => '<p>Declare conflicts</p>',
         ]);
         $this->scheduledConference->setTranslation('review_guidelines', 'id', '<p>Bersikap membangun</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'competing_interests', '<p>Disclose every conflict</p>');
 
         $submission = $this->makeSubmission(SubmissionStage::PeerReview, SubmissionStatus::OnReview);
         $round = StartSubmissionReviewRoundAction::run($submission, [], $this->user);
@@ -149,14 +163,43 @@ class PanelRenderingTest extends TestCase
 
         Livewire::test(ReviewSubmissionPage::class, ['record' => $submission])
             ->assertSee('Bersikap membangun')
-            ->assertSee('Declare conflicts')
+            ->assertSee('Disclose every conflict')
+            ->assertDontSee('Declare conflicts')
             ->assertDontSee('Be constructive');
 
         app()->setLocale('fr');
 
         Livewire::test(ReviewSubmissionPage::class, ['record' => $submission])
             ->assertSee('Be constructive')
+            ->assertSee('Disclose every conflict')
             ->assertDontSee('Bersikap membangun');
+    }
+
+    public function test_reviewer_guidance_uses_legacy_values_without_translations(): void
+    {
+        $this->scheduledConference->setManyMeta([
+            'review_guidelines' => '<p>Legacy review guidelines</p>',
+            'competing_interests' => '<p>Legacy competing interests</p>',
+        ]);
+
+        $submission = $this->makeSubmission(SubmissionStage::PeerReview, SubmissionStatus::OnReview);
+        $round = StartSubmissionReviewRoundAction::run($submission, [], $this->user);
+        $review = Review::query()->create([
+            'submission_id' => $submission->getKey(),
+            'review_round_id' => $round->getKey(),
+            'user_id' => $this->user->getKey(),
+            'status' => ReviewerStatus::ACCEPTED,
+            'date_confirmed' => now(),
+        ]);
+        $review->setMeta('review_mode', Review::MODE_OPEN);
+
+        View::share('currentScheduledConference', $this->scheduledConference);
+
+        app()->setLocale('id');
+
+        Livewire::test(ReviewSubmissionPage::class, ['record' => $submission])
+            ->assertSee('Legacy review guidelines')
+            ->assertSee('Legacy competing interests');
     }
 
     public function test_editor_guidance_uses_the_ui_language(): void
@@ -185,6 +228,28 @@ class PanelRenderingTest extends TestCase
         Livewire::test(ViewSubmission::class, ['record' => $submission->getKey()])
             ->assertSee('Check the scope')
             ->assertDontSee('Periksa cakupan');
+    }
+
+    public function test_editor_guidance_prefers_the_default_language_row_over_the_legacy_value(): void
+    {
+        $this->scheduledConference->setMeta('editor_guidelines', '<p>Stored editor guidance</p>');
+        $this->storeDefaultLanguageRow($this->scheduledConference, 'editor_guidelines', '<p>Assign two reviewers</p>');
+
+        $submission = $this->makeSubmission(SubmissionStage::PeerReview, SubmissionStatus::OnReview);
+        $editorRole = Role::withoutGlobalScopes()->firstOrCreate([
+            'name' => UserRole::ScheduledConferenceEditor->value,
+            'guard_name' => 'web',
+            'conference_id' => $this->conference->getKey(),
+            'scheduled_conference_id' => $this->scheduledConference->getKey(),
+        ]);
+        $this->user->assignRole($editorRole);
+        $submission->participants()->create(['user_id' => $this->user->getKey(), 'role_id' => $editorRole->getKey()]);
+
+        app()->setLocale('id');
+
+        Livewire::test(ViewSubmission::class, ['record' => $submission->getKey()])
+            ->assertSee('Assign two reviewers')
+            ->assertDontSee('Stored editor guidance');
     }
 
     public function test_editor_guidance_is_hidden_without_content(): void
