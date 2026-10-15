@@ -8,26 +8,16 @@ use App\Models\ScheduledConference;
 trait InteractsWithContentLanguages
 {
     /**
-     * Enable content languages for the site and every existing conference.
+     * Enable content languages the way Administration > Language settings does: on the site only.
      *
      * @param  array<int, string>  $languages
      */
     protected function enableLanguages(array $languages, string $default = 'en'): void
     {
-        $settings = [
+        app()->getSite()->setManyMeta([
             'settings_languages' => $languages,
             'settings_default_language' => $default,
-        ];
-
-        app()->getSite()->setManyMeta($settings);
-
-        $currentConference = app()->getCurrentConference();
-
-        Conference::query()->get()->each(function (Conference $conference) use ($settings, $currentConference) {
-            $target = $currentConference?->is($conference) ? $currentConference : $conference;
-
-            $target->setManyMeta($settings);
-        });
+        ]);
     }
 
     protected function makeConference(string $name = 'Annual Conference', string $path = 'annual'): Conference

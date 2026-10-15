@@ -5,7 +5,10 @@ namespace App\Support\Multilingual;
 use App\Facades\Setting;
 
 /**
- * Resolves the content languages enabled for the current context.
+ * Resolves the content languages enabled site-wide.
+ *
+ * The language list is a site setting, so it is read from the site even while a
+ * conference is active (conference meta may still hold stale language defaults).
  */
 class ContentLocales
 {
@@ -17,7 +20,7 @@ class ContentLocales
     public function enabled(): array
     {
         $enabled = array_values(array_intersect(
-            (array) Setting::get('languages', ['en']),
+            (array) $this->siteSetting('languages', ['en']),
             array_keys(config('app.locales', []))
         ));
 
@@ -27,9 +30,18 @@ class ContentLocales
     public function default(): string
     {
         $enabled = $this->enabled();
-        $default = Setting::get('default_language', 'en');
+        $default = $this->siteSetting('default_language', 'en');
 
         return in_array($default, $enabled, true) ? $default : $enabled[0];
+    }
+
+    protected function siteSetting(string $key, mixed $default): mixed
+    {
+        if (! app()->getCurrentConferenceId()) {
+            return Setting::get($key, $default);
+        }
+
+        return app()->getSite()->getMeta("settings_{$key}") ?? $default;
     }
 
     /**
