@@ -37,6 +37,7 @@ use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\SubmissionBillingNotifier;
 use App\Services\Notifications\OperationalNotificationRecipients;
+use App\Support\Multilingual\ContentLocales;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -119,7 +120,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 ->color('info')
                 ->visible(fn (): bool => $this->record->stage !== SubmissionStage::Wizard
                     && $this->record->isParticipantEditor(auth()->user())
-                    && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
+                    && ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('editor_guidelines')))
                 ->action(fn () => $this->dispatch('show-editor-guidance')),
             Action::make('submission_payment')
                 ->hidden(fn (Submission $record) => ! app()->getCurrentScheduledConference()->isSubmissionPaymentEnabled() || $record->status == SubmissionStatus::Incomplete || $record->payment)

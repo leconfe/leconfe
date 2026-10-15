@@ -107,7 +107,7 @@
                         {{ __('general.track') }}
                     </h2>
                     <div class="content text-slate-800">
-                        <p class="text-sm">{{ $paper->track->title }}</p>
+                        <p class="text-sm">{{ $paper->track->translated('title') }}</p>
                     </div>
                 </section>
             @endif

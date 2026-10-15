@@ -73,21 +73,25 @@ class Presentations extends Page implements HasForms
                             ->placeholder('All tracks')
                             ->searchable()
                             ->live()
-                            ->options(fn() => Track::query()
+                            ->options(fn () => Track::query()
                                 ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
-                                ->pluck('title', 'id')),
+                                ->with('translate')
+                                ->get()
+                                ->mapWithKeys(fn (Track $track) => [$track->getKey() => $track->translated('title')])),
                         Select::make('topic_id')
                             ->label('Topic')
                             ->placeholder('All topics')
                             ->searchable()
                             ->live()
                             ->options(
-                                fn() => Topic::query()
+                                fn () => Topic::query()
                                     ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
-                                    ->pluck('name', 'id')
+                                    ->with('translate')
+                                    ->get()
+                                    ->mapWithKeys(fn (Topic $topic) => [$topic->getKey() => $topic->translated('name')])
                             )
                             ->visible(
-                                fn($component) => count($component->getOptions()) > 0
+                                fn ($component) => count($component->getOptions()) > 0
                             ),
                         TextInput::make('keyword')
                             ->label('Keyword')
@@ -108,12 +112,12 @@ class Presentations extends Page implements HasForms
         $trackId = data_get($this->formData, 'track_id');
         $topicId = data_get($this->formData, 'topic_id');
         $keyword = trim((string) data_get($this->formData, 'keyword'));
-        
+
         $presentations = Presentation::query()
             ->with([
                 'meta',
                 'media',
-                'submission' => ['meta', 'track', 'authors'],
+                'submission' => ['meta', 'track.translate', 'authors'],
             ])
             ->isFinal()
             ->orderBy(
@@ -125,7 +129,7 @@ class Presentations extends Page implements HasForms
                 $query->whereHas('submission.meta', function ($metaQuery) use ($search) {
                     $metaQuery
                         ->where('key', 'title')
-                        ->where('value', 'like', '%' . $search . '%');
+                        ->where('value', 'like', '%'.$search.'%');
                 });
             })
             ->when($trackId, function ($query) use ($trackId) {
@@ -142,13 +146,13 @@ class Presentations extends Page implements HasForms
                 $query->whereHas('submission.meta', function ($metaQuery) use ($keyword) {
                     $metaQuery
                         ->where('key', 'keywords')
-                        ->where('value', 'like', '%' . $keyword . '%');
+                        ->where('value', 'like', '%'.$keyword.'%');
                 });
             })
             ->paginate(6);
 
         return [
-            'presentations' => $presentations
+            'presentations' => $presentations,
         ];
     }
 }

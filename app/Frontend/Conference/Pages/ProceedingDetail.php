@@ -57,6 +57,7 @@ class ProceedingDetail extends Page
         $tracks = Track::query()
             ->ordered()
             ->with([
+                'translate',
                 'submissions' => fn ($query) => $query
                     ->ordered()
                     ->where('proceeding_id', $this->proceeding->id)

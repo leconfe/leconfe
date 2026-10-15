@@ -72,7 +72,7 @@
                     <div class="tracks space-y-12">
                         @foreach ($tracks as $track)
                             <div class="track space-y-4">
-                                <x-website::heading-title :title="$track->title" class="track-title" />
+                                <x-website::heading-title :title="$track->translated('title')" class="track-title" />
                                 <div class="paper-summaries space-y-4">
                                     @forelse($track->submissions as $paper)
                                         <x-conference::paper-summary :paper="$paper" :hideAuthor="$track->getMeta('hide_author')" />

@@ -6,6 +6,8 @@ use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
+use App\Models\Topic;
+use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -256,12 +258,14 @@ class SubmissionResource extends Resource
                     )
                     ->searchable(),
                 SelectFilter::make('track')
-                    ->relationship('track', 'title')
+                    ->relationship('track', 'title', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Track $record) => $record->translated('title'))
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('topic')
-                    ->relationship('topics', 'name')
+                    ->relationship('topics', 'name', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Topic $record) => $record->translated('name'))
                     ->multiple()
                     ->searchable()
                     ->preload(),

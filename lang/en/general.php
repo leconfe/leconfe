@@ -1177,4 +1177,10 @@ return [
     'show_translations' => 'Show translations',
     'hide_translations' => 'Hide translations',
     'translation_in' => ':label (:language)',
+    'read_author_guidelines' => 'Read the author guidelines',
+    'not_accepting_submissions' => 'This conference is not accepting submissions at this time.',
+    'submissions_guest_notice' => 'Registration and login are required to submit items online and to check the status of current submissions.',
+    'make_new_submission' => 'Make a new submission',
+    'view_your_submissions' => 'View your pending submissions',
+    'track_policies' => 'Track Policies',
 ];

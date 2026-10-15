@@ -149,12 +149,12 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function hasReviewGuidelines(): bool
     {
-        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('review_guidelines'));
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->translated('review_guidelines'));
     }
 
     public function hasCompetingInterests(): bool
     {
-        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('competing_interests'));
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->translated('competing_interests'));
     }
 
     public function hasGuidanceModalContent(): bool

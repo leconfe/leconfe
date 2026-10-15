@@ -6,6 +6,7 @@ use App\Actions\NavigationMenu\CreateNavigationMenuAction;
 use App\Actions\NavigationMenu\CreateNavigationMenuItemAction;
 use App\Actions\NavigationMenu\UpdateNavigationMenuAction;
 use App\Actions\NavigationMenu\UpdateNavigationMenuItemAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\NavigationMenu;
 use App\Models\NavigationMenuItem;
 use Closure;
@@ -46,9 +47,12 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
                         $query
                             ->ordered()
                             ->whereNull('parent_id')
-                            ->with('children', function ($query) {
-                                $query->ordered();
-                            });
+                            ->with([
+                                'translate',
+                                'children' => function ($query) {
+                                    $query->ordered()->with('translate');
+                                },
+                            ]);
                     },
                 ])
                 ->orderBy('id')
@@ -154,10 +158,10 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
             ->fillForm(function (array $arguments) {
                 $navigationMenuItem = NavigationMenuItem::find($arguments['id']);
 
-                return [
-                    ...$navigationMenuItem->toArray(),
-                    'meta' => $navigationMenuItem->getAllMeta(),
-                ];
+                return $navigationMenuItem->fillTranslatableFormState([
+                    ...$navigationMenuItem->attributesToArray(),
+                    'meta' => $navigationMenuItem->getAllMeta()->all(),
+                ], ['label']);
             })
             ->color('gray')
             ->modalWidth('xl')
@@ -219,9 +223,11 @@ class NavigationMenuSetting extends Component implements HasActions, HasForms
     {
         return function (array $arguments) {
             return [
-                TextInput::make('label')
-                    ->label(__('general.label'))
-                    ->required(),
+                MultilanguageComponent::make([
+                    TextInput::make('label')
+                        ->label(__('general.label'))
+                        ->required(),
+                ]),
                 Select::make('type')
                     ->label(__('general.type'))
                     ->options(NavigationMenuItem::getTypeOptions())

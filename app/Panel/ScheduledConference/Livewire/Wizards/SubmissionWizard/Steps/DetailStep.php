@@ -78,7 +78,8 @@ class DetailStep extends Component implements HasActions, HasForms, HasWizardSte
                             ->helperText(fn (): ?string => $this->topicSelectionLimitHelperText())
                             ->label(__('general.topic'))
                             ->searchable()
-                            ->relationship('topics', 'name'),
+                            ->relationship('topics', 'name', fn ($query) => $query->with('translate'))
+                            ->getOptionLabelFromRecordUsing(fn (Topic $record) => $record->translated('name')),
                         TextInput::make('meta.title')
                             ->label(__('general.title'))
                             ->required(),

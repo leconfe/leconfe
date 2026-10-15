@@ -57,7 +57,21 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
      *
      * @var array<int, string>
      */
-    protected array $translatableMeta = ['description', 'conference_theme', 'summary', 'editorial_team', 'about', 'page_footer', 'privacy_statement'];
+    protected array $translatableMeta = [
+        'description',
+        'conference_theme',
+        'summary',
+        'editorial_team',
+        'about',
+        'page_footer',
+        'privacy_statement',
+        'author_guidelines',
+        'before_you_begin',
+        'submission_checklist',
+        'review_guidelines',
+        'competing_interests',
+        'editor_guidelines',
+    ];
 
     protected $casts = [
         'is_published' => 'boolean',

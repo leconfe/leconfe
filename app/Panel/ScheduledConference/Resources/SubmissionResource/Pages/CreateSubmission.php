@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Submissions\SubmissionCreateAction;
 use App\Facades\Hook;
+use App\Frontend\ScheduledConference\Pages\Submissions;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
@@ -13,7 +14,9 @@ use App\Models\Submission;
 use App\Models\SubmissionFormItem;
 use App\Models\Timeline;
 use App\Models\Track;
+use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\ContentLocales;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -53,18 +56,29 @@ class CreateSubmission extends Page implements HasForms
         return '';
     }
 
+    /**
+     * Whether the current scheduled conference accepts submissions from the user: the
+     * submission timeline is open and at least one active track is available to them.
+     */
+    public static function isAcceptingSubmissions(?User $user = null): bool
+    {
+        $isEditor = $user?->hasAnyRole([
+            UserRole::Admin,
+            UserRole::ConferenceManager,
+            UserRole::ScheduledConferenceEditor,
+            UserRole::TrackEditor,
+        ]) ?? false;
+
+        return Timeline::isSubmissionOpen() && Track::query()
+            ->active()
+            ->when(! $isEditor, fn ($query) => $query->whereMeta('submit_only_for_editors', false))
+            ->exists();
+    }
+
     protected function getViewData(): array
     {
-        $isOpen = Timeline::isSubmissionOpen() && Track::query()
-            ->active()
-            ->when(! auth()->user()->hasAnyRole([
-                UserRole::Admin,
-                UserRole::ConferenceManager,
-                UserRole::ScheduledConferenceEditor,
-                UserRole::TrackEditor,
-            ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
-            ->count();
-        $closedMessage = 'This conference is not accepting submissions at this time.';
+        $isOpen = static::isAcceptingSubmissions(auth()->user());
+        $closedMessage = __('general.not_accepting_submissions');
 
         Hook::call('Panel::ScheduledConference::SubmissionCreate::availability', [&$isOpen, &$closedMessage, $this]);
 
@@ -81,8 +95,16 @@ class CreateSubmission extends Page implements HasForms
                 Placeholder::make('before_you_begin')
                     ->label(__('general.before_you_begin'))
                     ->extraAttributes(['class' => 'prose prose-sm max-w-none'])
-                    ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
-                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
+                    ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('before_you_begin')))
+                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->translated('before_you_begin'))),
+                Placeholder::make('author_guidelines_link')
+                    ->hiddenLabel()
+                    ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('author_guidelines')))
+                    ->content(fn () => new HtmlString(sprintf(
+                        '<a href="%s" target="_blank" rel="noopener" class="text-primary-600 hover:underline">%s</a>',
+                        e(route(Submissions::getRouteName('scheduledConference'))),
+                        e(__('general.read_author_guidelines')),
+                    ))),
                 TextInput::make('meta.title')
                     ->required(),
                 Grid::make(1)
@@ -147,8 +169,9 @@ class CreateSubmission extends Page implements HasForms
                                 UserRole::ScheduledConferenceEditor,
                                 UserRole::TrackEditor,
                             ]))
+                            ->with('translate')
                             ->get()
-                            ->pluck('title', 'id')
+                            ->mapWithKeys(fn (Track $track) => [$track->getKey() => $track->translated('title')])
                     )
                     ->reactive(),
                 Placeholder::make('track_policy')
@@ -159,28 +182,25 @@ class CreateSubmission extends Page implements HasForms
                         }
 
                         $track = Track::find($get('track_id'));
-                        if ($track->getMeta('policy') === null) {
-                            return false;
-                        }
 
-                        return true;
+                        return $track && ! ContentLocales::isBlank($track->translated('policy'));
                     })
                     ->label(function (Get $get) {
                         if (! $get('track_id')) {
                             return '';
                         }
 
-                        return Track::find($get('track_id'))->title;
+                        return Track::find($get('track_id'))?->translated('title') ?? '';
                     })
-                    ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))->getMeta('policy')) : ''),
+                    ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))?->translated('policy') ?? '') : ''),
                 Fieldset::make(__('general.submission_checklist'))
                     ->columns(1)
                     ->schema([
                         Placeholder::make('submission_checklist')
                             ->hiddenLabel()
                             ->extraAttributes(['class' => 'prose prose-sm'])
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_checklist') !== null)
-                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('submission_checklist'))),
+                            ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('submission_checklist')))
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->translated('submission_checklist'))),
                         Checkbox::make('submissionRequirements')
                             ->required()
                             ->label(__('general.submission_meets_all_of_requirements')),

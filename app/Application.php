@@ -205,9 +205,12 @@ class Application extends LaravelApplication
                     $query
                         ->ordered()
                         ->whereNull('parent_id')
-                        ->with('children', function ($query) {
-                            $query->ordered();
-                        });
+                        ->with([
+                            'translate',
+                            'children' => function ($query) {
+                                $query->ordered()->with('translate');
+                            },
+                        ]);
                 },
             ])
             ->first()?->items ?? collect();

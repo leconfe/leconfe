@@ -5,6 +5,7 @@ namespace App\Panel\ScheduledConference\Livewire\Submissions\Forms;
 use App\Actions\Submissions\SubmissionUpdateAction;
 use App\Forms\Components\TinyEditor;
 use App\Models\Submission;
+use App\Models\Topic;
 use App\Utils\TinyMceWordCounter;
 use Closure;
 use Filament\Forms\Components\Select;
@@ -64,7 +65,8 @@ class Detail extends \Livewire\Component implements HasForms
                     ->multiple()
                     ->maxItems(fn (): ?int => $this->topicSelectionLimit())
                     ->helperText(fn (): ?string => $this->topicSelectionLimitHelperText())
-                    ->relationship('topics', 'name')
+                    ->relationship('topics', 'name', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Topic $record) => $record->translated('name'))
                     ->label(__('general.topic'))
                     ->searchable(),
                 TagsInput::make('meta.keywords')

@@ -16,7 +16,7 @@ class AnnouncementPage extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return $this->announcement->title;
+        return $this->announcement->translated('title');
     }
 
     public function getBreadcrumbs(): array
@@ -24,7 +24,7 @@ class AnnouncementPage extends Page
         return [
             route(Home::getRouteName()) => __('general.home'),
             route(Announcements::getRouteName()) => __('general.announcement'),
-            $this->announcement->title,
+            $this->announcement->translated('title'),
         ];
     }
 
