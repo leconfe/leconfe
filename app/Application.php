@@ -151,18 +151,34 @@ class Application extends LaravelApplication
      */
     public function withConferenceContext(?int $conferenceId, ?int $scheduledConferenceId, callable $callback): mixed
     {
-        $previousConferenceId = $this->currentConferenceId;
-        $previousScheduledConferenceId = $this->currentScheduledConferenceId;
+        $previous = $this->getConferenceContext();
 
-        $this->currentConferenceId = $conferenceId;
-        $this->currentScheduledConferenceId = $scheduledConferenceId;
+        $this->setConferenceContext($conferenceId, $scheduledConferenceId);
 
         try {
             return $callback();
         } finally {
-            $this->currentConferenceId = $previousConferenceId;
-            $this->currentScheduledConferenceId = $previousScheduledConferenceId;
+            $this->setConferenceContext(...$previous);
         }
+    }
+
+    /**
+     * The current conference and scheduled conference IDs.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
+    public function getConferenceContext(): array
+    {
+        return [$this->currentConferenceId, $this->currentScheduledConferenceId];
+    }
+
+    /**
+     * Set the current conference and scheduled conference, null meaning none.
+     */
+    public function setConferenceContext(?int $conferenceId, ?int $scheduledConferenceId): void
+    {
+        $this->currentConferenceId = $conferenceId;
+        $this->currentScheduledConferenceId = $scheduledConferenceId;
     }
 
     public function scopeCurrentConference(): void

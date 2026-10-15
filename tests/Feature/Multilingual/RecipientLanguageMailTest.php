@@ -17,7 +17,9 @@ use App\Notifications\AbstractDeclined;
 use App\Support\Multilingual\RecipientLocale;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Mailable;
+use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
@@ -256,14 +258,7 @@ class RecipientLanguageMailTest extends TestCase
     public function test_notification_email_is_written_in_the_recipients_language(): void
     {
         $submission = $this->makeSubmission($this->indonesianReader);
-        $template = MailTemplate::query()->create([
-            'conference_id' => $this->conference->getKey(),
-            'mailable' => DeclineAbstractMail::class,
-            'subject' => 'Declined at {{ Conference Title }}',
-            'html_template' => '<p>Sorry, {{ Submission Author }}</p>',
-        ]);
-        $template->setTranslation('subject', 'id', 'Ditolak di {{ Conference Title }}');
-        $template->setTranslation('html_template', 'id', '<p>Mohon maaf, {{ Submission Author }}</p>');
+        $this->customizeDeclineAbstractMail();
 
         App::setLocale('en');
 
@@ -275,6 +270,58 @@ class RecipientLanguageMailTest extends TestCase
         $this->assertStringContainsString('Mohon maaf, Rina Pembaca', $message->getHtmlBody());
         $this->assertStringContainsString('Kepala surat', $message->getHtmlBody());
         $this->assertSame('en', app()->getLocale());
+    }
+
+    public function test_queued_notification_email_is_written_for_its_conference_by_a_worker_without_the_sender_context(): void
+    {
+        config(['queue.default' => 'database']);
+        $submission = $this->makeSubmission($this->indonesianReader);
+        $this->customizeDeclineAbstractMail();
+        MailTemplate::query()->create([
+            'conference_id' => 0,
+            'mailable' => DeclineAbstractMail::class,
+            'subject' => 'Site-wide subject',
+            'html_template' => '<p>Site-wide body</p>',
+        ]);
+        App::setLocale('en');
+
+        $this->indonesianReader->notify(new AbstractDeclined($submission, channels: ['mail']));
+
+        $this->assertSame(1, DB::table('jobs')->count());
+        $this->assertSame([], app('mailer')->getSymfonyTransport()->messages()->all());
+
+        $this->runQueuedJobsWithoutConferenceContext();
+
+        $message = $this->lastSentMessage();
+
+        $this->assertSame('Ditolak di Konferensi Tahunan 2026', $message->getSubject());
+        $this->assertStringContainsString('Mohon maaf, Rina Pembaca', $message->getHtmlBody());
+        $this->assertStringContainsString('Kepala surat', $message->getHtmlBody());
+        $this->assertStringContainsString('Kaki surat Konferensi Tahunan 2026', $message->getHtmlBody());
+        $this->assertStringNotContainsString('Site-wide', $message->getHtmlBody());
+        $this->assertSame('Konferensi Tahunan 2026', $message->getFrom()[0]->getName());
+        $this->assertSame('en', app()->getLocale());
+    }
+
+    public function test_email_built_by_a_queued_job_is_written_for_the_conference_the_job_came_from(): void
+    {
+        config(['queue.default' => 'database']);
+        $this->customizeTestMail();
+        $reader = $this->indonesianReader;
+        App::setLocale('en');
+
+        dispatch(function () use ($reader) {
+            Mail::to($reader)->send(new TestMail);
+        });
+
+        $this->runQueuedJobsWithoutConferenceContext();
+
+        $message = $this->lastSentMessage();
+
+        $this->assertSame('Halo Konferensi Tahunan 2026', $message->getSubject());
+        $this->assertStringContainsString('Isi email untuk Konferensi Tahunan 2026', $message->getHtmlBody());
+        $this->assertStringContainsString('Kepala surat', $message->getHtmlBody());
+        $this->assertStringContainsString('Kaki surat Konferensi Tahunan 2026', $message->getHtmlBody());
     }
 
     public function test_variables_from_translated_content_follow_the_recipient_language(): void
@@ -344,6 +391,46 @@ class RecipientLanguageMailTest extends TestCase
         }
 
         return $template;
+    }
+
+    protected function customizeDeclineAbstractMail(): MailTemplate
+    {
+        $template = MailTemplate::query()->create([
+            'conference_id' => $this->conference->getKey(),
+            'mailable' => DeclineAbstractMail::class,
+            'subject' => 'Declined at {{ Conference Title }}',
+            'html_template' => '<p>Sorry, {{ Submission Author }}</p>',
+        ]);
+        $template->setTranslation('subject', 'id', 'Ditolak di {{ Conference Title }}');
+        $template->setTranslation('html_template', 'id', '<p>Mohon maaf, {{ Submission Author }}</p>');
+
+        return $template;
+    }
+
+    /**
+     * Work off the database queue the way a queue worker does, with no conference context
+     * of its own, and check that the sender's context is back afterwards.
+     */
+    protected function runQueuedJobsWithoutConferenceContext(): void
+    {
+        app()->withConferenceContext(null, null, function () {
+            $this->assertNull(app()->getCurrentConference());
+
+            $worker = app('queue.worker');
+            $options = new WorkerOptions(maxTries: 1);
+
+            for ($run = 0; $run < 10 && DB::table('jobs')->exists(); $run++) {
+                $worker->runNextJob('database', 'default', $options);
+
+                $this->assertNull(app()->getCurrentConference());
+                $this->assertNull(app()->getCurrentScheduledConferenceId());
+            }
+        });
+
+        $this->assertFalse(DB::table('jobs')->exists(), 'The queue was not worked off.');
+        $this->assertSame([], DB::table('failed_jobs')->pluck('exception')->all());
+        $this->assertSame($this->conference->getKey(), app()->getCurrentConferenceId());
+        $this->assertSame($this->scheduledConference->getKey(), app()->getCurrentScheduledConferenceId());
     }
 
     protected function makeUser(string $email, ?string $locale): User
