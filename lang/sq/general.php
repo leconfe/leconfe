@@ -1162,4 +1162,12 @@ return [
     'no_user_invitations' => 'Nuk ka ende ftesa',
     'no_user_invitations_description' => 'Krijo një ftesë për të caktuar role për konferencë ose konferencë të planifikuar.',
     'failed_to_send' => 'Dërgimi dështoi',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Facultades',
     'role_assigned_successfully' => 'Función asignada correctamente',
     'no_roles_selected' => 'Non se seleccionaron roles',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Факултети',
     'role_assigned_successfully' => 'Улогата е успешно доделена',
     'no_roles_selected' => 'Нема избрани улоги',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

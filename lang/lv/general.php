@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Fakultātes',
     'role_assigned_successfully' => 'Loma veiksmīgi piešķirta',
     'no_roles_selected' => 'Nav izvēlētas lomas',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

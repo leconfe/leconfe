@@ -111,7 +111,7 @@
                     </div>
                 </section>
             @endif
-            @if($paper->getMeta('license_url') || app()->getCurrentConference()->getMeta('license_terms'))
+            @if($paper->getMeta('license_url') || app()->getCurrentConference()->translated('license_terms'))
                 <section class="license">
                     <h2 class="pb-1 mb-3 text-base font-medium border-b border-b-slate-200">
                         {{ __('general.license') }}
@@ -129,8 +129,8 @@
                                 </a>
                             @endif
                         @endif
-                        @if(app()->getCurrentConference()->getMeta('license_terms'))
-                            {!! app()->getCurrentConference()->getMeta('license_terms') !!}
+                        @if(app()->getCurrentConference()->translated('license_terms'))
+                            {!! app()->getCurrentConference()->translated('license_terms') !!}
                         @endif
                     </div>
                 </section>

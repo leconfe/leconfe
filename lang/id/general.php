@@ -1148,4 +1148,12 @@ return [
     'slug_helper' => 'Masukkan pengenal ramah URL unik untuk laman ini. Gunakan huruf kecil, angka, tanda hubung, dan garis bawah saja. Misalnya, \'tentang-kami\' atau \'info-kontak\'',
     'submission_file_renamed_activity' => 'File dengan nama ":oldName" dan id :id, pada kategori ":category" diganti namanya menjadi ":newName".',
     'submission_file_deleted_activity' => 'File dengan nama ":name" dan id :id dihapus.',
+
+    'language' => 'Bahasa',
+    'switch_language' => 'Ganti bahasa',
+    'current_language' => 'Bahasa saat ini',
+    'translations_filled' => 'Terjemahan terisi: :filled/:total',
+    'show_translations' => 'Tampilkan terjemahan',
+    'hide_translations' => 'Sembunyikan terjemahan',
+    'translation_in' => ':label (:language)',
 ];

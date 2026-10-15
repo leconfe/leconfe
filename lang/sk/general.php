@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Fakulty',
     'role_assigned_successfully' => 'Rola bola úspešne priradená',
     'no_roles_selected' => 'Nie sú vybrané žiadne role',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

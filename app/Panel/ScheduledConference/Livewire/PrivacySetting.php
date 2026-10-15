@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -22,10 +23,10 @@ class PrivacySetting extends Component implements HasForms
     {
         $scheduledConference = app()->getCurrentScheduledConference();
 
-        $this->form->fill([
+        $this->form->fill($scheduledConference->fillTranslatableFormState([
             ...$scheduledConference->attributesToArray(),
-            'meta' => $scheduledConference->getAllMeta(),
-        ]);
+            'meta' => $scheduledConference->getAllMeta()->all(),
+        ], ['meta.privacy_statement']));
     }
 
     public function render()
@@ -40,9 +41,11 @@ class PrivacySetting extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        TinyEditor::make('meta.privacy_statement')
-                            ->label(__('general.privacy_statement'))
-                            ->helperText(__('general.statement_user_registration')),
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.privacy_statement')
+                                ->label(__('general.privacy_statement'))
+                                ->helperText(__('general.statement_user_registration')),
+                        ]),
                     ])
                     ->extraAttributes([
                         'class' => '!p-0',

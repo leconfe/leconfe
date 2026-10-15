@@ -1146,4 +1146,12 @@ return [
     'no_user_invitations' => 'Hozircha taklifnomalar yoʻq',
     'no_user_invitations_description' => 'Konferensiya yoki rejalashtirilgan konferensiya uchun rollarni tayinlash maqsadida taklifnoma yarating.',
     'failed_to_send' => 'Yuborib boʻlmadi',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

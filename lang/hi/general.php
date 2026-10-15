@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'संकाय',
     'role_assigned_successfully' => 'भूमिका सफलतापूर्वक सौंपी गई',
     'no_roles_selected' => 'कोई भूमिका चयनित नहीं',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

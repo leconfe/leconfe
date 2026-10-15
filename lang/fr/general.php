@@ -1068,4 +1068,12 @@ return [
     'sent_for_a_new_round_of_reviews' => 'Envoyé pour un nouveau cycle d\'évaluation.',
     'review_files' => 'Fichiers d\'évaluation',
     'review_file_uploaded' => 'Nouveau fichier d\'évaluation téléversé',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

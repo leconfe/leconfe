@@ -1086,4 +1086,12 @@ return [
     'faculties' => '学部',
     'role_assigned_successfully' => '役割が正常に割り当てられました',
     'no_roles_selected' => '役割が選択されていません',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

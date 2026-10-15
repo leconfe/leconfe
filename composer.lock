@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e548b7aaf7ce9420dc6993f86e1d652",
+    "content-hash": "7ed798d4988d63f9fab6f6d0d6fab781",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -8543,6 +8543,79 @@
                 "source": "https://github.com/rahmanramsi/laravel-async-queue/tree/1.0.0"
             },
             "time": "2024-05-31T03:35:35+00:00"
+        },
+        {
+            "name": "rahmanramsi/laravel-translatable",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rahmanramsi/laravel-translatable.git",
+                "reference": "490250de8c330976983c613fb78a9c792a5b337b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rahmanramsi/laravel-translatable/zipball/490250de8c330976983c613fb78a9c792a5b337b",
+                "reference": "490250de8c330976983c613fb78a9c792a5b337b",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0||^12.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^10.0.0||^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.3||^3.0",
+                "pestphp/pest-plugin-arch": "^2.7||^3.0",
+                "pestphp/pest-plugin-laravel": "^2.4||^3.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "LaravelTranslatable": "RahmanRamsi\\LaravelTranslatable\\Facades\\LaravelTranslatable"
+                    },
+                    "providers": [
+                        "RahmanRamsi\\LaravelTranslatable\\LaravelTranslatableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RahmanRamsi\\LaravelTranslatable\\": "src/",
+                    "RahmanRamsi\\LaravelTranslatable\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rahman Ramsi",
+                    "email": "rahmanramsi19@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package laravel-translatable",
+            "homepage": "https://github.com/rahmanramsi/laravel-translatable",
+            "keywords": [
+                "laravel",
+                "laravel-translatable"
+            ],
+            "support": {
+                "issues": "https://github.com/rahmanramsi/laravel-translatable/issues",
+                "source": "https://github.com/rahmanramsi/laravel-translatable/tree/1.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/rahmanramsi",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-23T01:57:47+00:00"
         },
         {
             "name": "rahmanramsi/livewire-page-group",

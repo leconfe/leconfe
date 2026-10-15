@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Dàmhan',
     'role_assigned_successfully' => 'Dreuchd air a shònrachadh gu soirbheachail',
     'no_roles_selected' => 'Cha deach dreuchdan a thaghadh',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

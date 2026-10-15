@@ -15,11 +15,15 @@ class ScheduledConferenceUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $scheduledConference->syncTranslatableState($data);
+
             $scheduledConference->update($data);
 
             if (data_get($data, 'meta')) {
                 $scheduledConference->setManyMeta(data_get($data, 'meta'));
             }
+
+            $scheduledConference->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

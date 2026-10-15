@@ -2,7 +2,6 @@
 
 namespace App\Frontend\Conference\Pages;
 
-use App\Facades\Citation;
 use App\Facades\Hook;
 use App\Facades\License;
 use App\Facades\MetaTag;
@@ -23,7 +22,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -57,8 +56,8 @@ class Paper extends Page
     public function addHead()
     {
         Hook::add('Frontend::Views::Head', function ($hookName, &$output) {
-            if($licenseUrl = $this->paper->getMeta('license_url')){
-                $output .= '<link rel="license" href="'. $licenseUrl .'">';
+            if ($licenseUrl = $this->paper->getMeta('license_url')) {
+                $output .= '<link rel="license" href="'.$licenseUrl.'">';
             }
         });
     }
@@ -67,8 +66,8 @@ class Paper extends Page
     {
         $conference = $this->paper->conference;
 
-        MetaTag::add(property: 'og:site_name', content: e($conference->name));
-        MetaTag::add(property: 'og:description', content: e($conference->getMeta('description')));
+        MetaTag::add(property: 'og:site_name', content: e($conference->translated('name')));
+        MetaTag::add(property: 'og:description', content: e($conference->translated('description')));
         MetaTag::add(property: 'og:title', content: e($this->paper->getMeta('title')));
         MetaTag::add(property: 'og:type', content: 'paper');
         MetaTag::add(property: 'og:url', content: route(static::getRouteName(), ['submission' => $this->paper->getKey()]));

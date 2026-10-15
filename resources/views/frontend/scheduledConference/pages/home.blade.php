@@ -1,6 +1,6 @@
 <x-website::layouts.main>
     <div class="space-y-8">
-        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->getMeta('about')||$currentScheduledConference->getMeta('additional_content'))
+        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->translated('about')||$currentScheduledConference->getMeta('additional_content'))
             <section id="highlight" class="space-y-4">
                 <div class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 gap-4">
                     <div class="flex flex-col gap-4 flex-1">
@@ -8,12 +8,12 @@
                             <div class="cf-cover">
                                 <img class="h-full"
                                     src="{{ $currentScheduledConference->getFirstMedia('cover')->getAvailableUrl(['thumb', 'thumb-xl']) }}"
-                                    alt="{{ $currentScheduledConference->title }}" />
+                                    alt="{{ $currentScheduledConference->translated('title') }}" />
                             </div>
                         @endif
-                        @if ($currentScheduledConference->getMeta('about'))
+                        @if ($currentScheduledConference->translated('about'))
                             <div class="user-content">
-                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getMeta('about')) }}
+                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->translated('about')) }}
                             </div>
                         @endif
                         @if ($currentScheduledConference->getMeta('additional_content'))

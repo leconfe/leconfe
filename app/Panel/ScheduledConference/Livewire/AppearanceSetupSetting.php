@@ -3,11 +3,12 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -24,10 +25,10 @@ class AppearanceSetupSetting extends Component implements HasForms
     {
         $scheduledConference = app()->getCurrentScheduledConference();
 
-        $this->form->fill([
+        $this->form->fill($scheduledConference->fillTranslatableFormState([
             ...$scheduledConference->attributesToArray(),
-            'meta' => $scheduledConference->getAllMeta(),
-        ]);
+            'meta' => $scheduledConference->getAllMeta()->all(),
+        ], ['meta.page_footer']));
     }
 
     public function render()
@@ -60,11 +61,13 @@ class AppearanceSetupSetting extends Component implements HasForms
                             ->helperText(__('general.image_representation_of_the_serie_will_uses'))
                             ->image()
                             ->conversion('thumb'),
-                        TinyEditor::make('meta.page_footer')
-                            ->label(__('general.page_footer'))
-                            ->profile('advanced')
-                            ->minHeight(300)
-                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.page_footer')
+                                ->label(__('general.page_footer'))
+                                ->profile('advanced')
+                                ->minHeight(300)
+                                ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        ]),
                     ]),
 
                 Actions::make([

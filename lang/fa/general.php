@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'دانشکده ها',
     'role_assigned_successfully' => 'نقش با موفقیت تعیین شد',
     'no_roles_selected' => 'هیچ نقشی انتخاب نشده است',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

@@ -1164,4 +1164,12 @@ return [
     'no_user_invitations' => 'لا توجد دعوات بعد',
     'no_user_invitations_description' => 'قم بإنشاء دعوة لتعيين الأدوار للمؤتمر أو المؤتمر المجدول.',
     'failed_to_send' => 'فشل الإرسال',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

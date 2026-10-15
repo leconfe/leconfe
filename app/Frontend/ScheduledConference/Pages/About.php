@@ -30,7 +30,7 @@ class About extends Page
     protected function getViewData(): array
     {
         return [
-            'about' => app()->getCurrentScheduledConference()?->getMeta('about'),
+            'about' => app()->getCurrentScheduledConference()?->translated('about'),
         ];
     }
 }

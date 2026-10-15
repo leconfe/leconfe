@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'پوهنځي',
     'role_assigned_successfully' => 'نقش په بریالیتوب سره ورکړل شو',
     'no_roles_selected' => 'هیڅ نقش نه دی ټاکل شوی',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

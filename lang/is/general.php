@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Deildir',
     'role_assigned_successfully' => 'Hlutverki úthlutað',
     'no_roles_selected' => 'Engin hlutverk valin',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

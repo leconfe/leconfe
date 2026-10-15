@@ -1086,4 +1086,12 @@ return [
     'faculties' => '院系列表',
     'role_assigned_successfully' => '角色分配成功',
     'no_roles_selected' => '未选择角色',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'فیکلٹیز',
     'role_assigned_successfully' => 'کردار کامیابی کے ساتھ تفویض ہو گیا',
     'no_roles_selected' => 'کوئی کردار منتخب نہیں کیا گیا',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

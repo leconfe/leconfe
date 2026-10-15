@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\InstallationMiddleware;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
+use App\Http\Middleware\ShareLocalizedContextData;
 use App\Http\Middleware\ThemeActivator;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -64,6 +65,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             InstallationMiddleware::class,
             SetLocale::class,
+            ShareLocalizedContextData::class,
         ],
 
         'api' => [

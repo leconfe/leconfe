@@ -1086,4 +1086,12 @@ return [
     'faculties' => 'Ֆակուլտետներ',
     'role_assigned_successfully' => 'Դերը հաջողությամբ նշանակվեց',
     'no_roles_selected' => 'Դերեր ընտրված չեն',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations_filled' => 'Translations filled: :filled/:total',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
 ];

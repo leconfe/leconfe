@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Site;
 use Filament\Forms\Components\Actions;
@@ -29,10 +30,10 @@ class MastHeadSetting extends Component implements HasForms
     {
         $scheduledConference = app()->getCurrentScheduledConference();
 
-        $this->form->fill([
+        $this->form->fill($scheduledConference->fillTranslatableFormState([
             ...$scheduledConference->attributesToArray(),
-            'meta' => $scheduledConference->getAllMeta(),
-        ]);
+            'meta' => $scheduledConference->getAllMeta()->all(),
+        ], ['title', 'meta.description', 'meta.conference_theme', 'meta.summary', 'meta.editorial_team', 'meta.about']));
     }
 
     public function render()
@@ -51,12 +52,14 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.information_about_the_scheduled_conference'))
                             ->aside()
                             ->schema([
-                                TextInput::make('title')
-                                    ->label(__('general.title'))
-                                    ->autofocus()
-                                    ->autocomplete()
-                                    ->required()
-                                    ->placeholder(__('general.enter_the_title_of_the_scheduled_conference')),
+                                MultilanguageComponent::make([
+                                    TextInput::make('title')
+                                        ->label(__('general.title'))
+                                        ->autofocus()
+                                        ->autocomplete()
+                                        ->required()
+                                        ->placeholder(__('general.enter_the_title_of_the_scheduled_conference')),
+                                ]),
                                 Grid::make()
                                     ->schema([
                                         DatePicker::make('date_start')
@@ -68,13 +71,15 @@ class MastHeadSetting extends Component implements HasForms
                                             ->afterOrEqual('date_start')
                                             ->placeholder(__('general.enter_the_end_date_of_the_serie')),
                                     ]),
-                                Textarea::make('meta.description')
-                                    ->label(__('general.description'))
-                                    ->rows(3)
-                                    ->autosize()
-                                    ->columnSpanFull()
-                                    ->hint(__('general.recommended_description_length'))
-                                    ->helperText(__('general.short_description_of_the_website')),
+                                MultilanguageComponent::make([
+                                    Textarea::make('meta.description')
+                                        ->label(__('general.description'))
+                                        ->rows(3)
+                                        ->autosize()
+                                        ->columnSpanFull()
+                                        ->hint(__('general.recommended_description_length'))
+                                        ->helperText(__('general.short_description_of_the_website')),
+                                ]),
                                 TextInput::make('meta.acronym')
                                     ->label(__('general.acronym'))
                                     ->rule('alpha_dash')
@@ -82,23 +87,25 @@ class MastHeadSetting extends Component implements HasForms
                                 Select::make('meta.faculty')
                                     ->label(__('general.faculty'))
                                     ->searchable()
-                                    ->options(fn() => collect(
+                                    ->options(fn () => collect(
                                         Site::getSite()->getMeta('scheduled_conference_faculties', [])
-                                    )->mapWithKeys(fn($item) => [$item => $item])->toArray()),
+                                    )->mapWithKeys(fn ($item) => [$item => $item])->toArray()),
                                 TextInput::make('meta.coordinator')
                                     ->label(__('general.coordinator'))
                                     ->helperText(__('general.coordinator_setting_description')),
-                                TextInput::make('meta.conference_theme')
-                                    ->label(__('general.theme'))
-                                    ->helperText(__('general.theme_information'))
-                                    ->columnSpanFull(),
+                                MultilanguageComponent::make([
+                                    TextInput::make('meta.conference_theme')
+                                        ->label(__('general.theme'))
+                                        ->helperText(__('general.theme_information'))
+                                        ->columnSpanFull(),
+                                ]),
                                 Select::make('meta.category')
                                     ->label(__('general.categories'))
                                     ->searchable()
                                     ->multiple()
-                                    ->options(fn() => collect(
+                                    ->options(fn () => collect(
                                         Site::getSite()->getMeta('scheduled_conference_categories', [])
-                                    )->mapWithKeys(fn($item) => [$item => $item])->toArray()),
+                                    )->mapWithKeys(fn ($item) => [$item => $item])->toArray()),
                                 TextInput::make('meta.location')
                                     ->label(__('general.location'))
                                     ->helperText(__('general.location_description')),
@@ -107,20 +114,24 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.key_information_pricide_a_short_description'))
                             ->aside()
                             ->schema([
-                                TinyEditor::make('meta.summary')
-                                    ->label(__('general.conference_summary')),
-                                TinyEditor::make('meta.editorial_team')
-                                    ->label(__('general.editorial_team'))
-                                    ->profile('basic')
-                                    ->minHeight(100),
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.summary')
+                                        ->label(__('general.conference_summary')),
+                                    TinyEditor::make('meta.editorial_team')
+                                        ->label(__('general.editorial_team'))
+                                        ->profile('basic')
+                                        ->minHeight(100),
+                                ]),
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
                             ->description(__('general.include_about_your_conference'))
                             ->schema([
-                                TinyEditor::make('meta.about')
-                                    ->label(__('general.about_the_scheduled_conference'))
-                                    ->profile('advanced'),
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.about')
+                                        ->label(__('general.about_the_scheduled_conference'))
+                                        ->profile('advanced'),
+                                ]),
                             ]),
                     ]),
                 Actions::make([
@@ -142,7 +153,9 @@ class MastHeadSetting extends Component implements HasForms
                                 $action->sendFailureNotification();
                             }
                         }),
-                ])->alignLeft(),
+                ])
+                    ->key('saveAction')
+                    ->alignLeft(),
 
             ])
             ->statePath('formData');

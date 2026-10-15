@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableContent;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -19,7 +20,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Conference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use Cachable, HasFactory, HasSlug, InteractsWithMedia, Metable;
+    use Cachable, HasFactory, HasSlug, HasTranslatableContent, InteractsWithMedia, Metable;
 
     public const SCOPE_INTERNATIONAL = 'international';
 
@@ -35,6 +36,20 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
         'status',
         'path',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name'];
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['description', 'summary', 'about', 'page_footer', 'license_terms'];
 
     /**
      * The attributes that should be cast.
@@ -275,7 +290,7 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
         ];
     }
 
-    public function getContextString() : string
+    public function getContextString(): string
     {
         return 'conference';
     }
