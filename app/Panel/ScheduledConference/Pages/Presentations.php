@@ -117,7 +117,7 @@ class Presentations extends Page implements HasForms
             ->with([
                 'meta',
                 'media',
-                'submission' => ['meta', 'track.translate', 'authors'],
+                'submission' => ['meta', 'translate', 'track.translate', 'authors'],
             ])
             ->isFinal()
             ->orderBy(

@@ -28,7 +28,7 @@
 
                             <h3
                                 class="text-sm font-semibold tracking-tight text-gray-700 group-hover:text-black line-clamp-3">
-                                {{ $presentation->submission->getMeta('title') }}
+                                {{ $presentation->submission->translated('title') }}
                             </h3>
 
                             @php

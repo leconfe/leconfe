@@ -22,6 +22,7 @@ class SubmissionPaymentMail extends TemplateMailable
             'Payment Amount' => $submission->payment->getFormattedFee(),
             'Payment Link' => $submission->payment->getPaymentDetailUrl(),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
         $this->setTranslatableData('Conference Title', $submission->payment->scheduledConference, 'title');
 
         $this->log = Log::make(

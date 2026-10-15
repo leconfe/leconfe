@@ -7,6 +7,7 @@ use App\Interfaces\HasPayment;
 use App\Models\Concerns\BelongsToScheduledConference;
 use App\Models\Concerns\HasDOI;
 use App\Models\Concerns\HasTopics;
+use App\Models\Concerns\HasTranslatableContent;
 use App\Models\Concerns\InteractsWithPayment;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
@@ -22,6 +23,7 @@ use App\Models\States\Submission\OnReviewSubmissionState;
 use App\Models\States\Submission\PublishedSubmissionState;
 use App\Models\States\Submission\QueuedSubmissionState;
 use App\Models\States\Submission\WithdrawnSubmissionState;
+use App\Support\Multilingual\ContentLocales;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +46,7 @@ use Spatie\Tags\HasTags;
 
 class Submission extends Model implements HasMedia, HasPayment, Sortable
 {
-    use Cachable, HasDOI, HasFactory, HasTags, HasTopics, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait, BelongsToScheduledConference;
+    use BelongsToScheduledConference, Cachable, HasDOI, HasFactory, HasTags, HasTopics, HasTranslatableContent, InteractsWithMedia, InteractsWithPayment, Metable, SortableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -77,6 +79,16 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         'revision_required' => 'boolean',
     ];
 
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['title', 'subtitle', 'abstract', 'keywords'];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableListMeta = ['keywords'];
+
     public $sortable = [
         'order_column_name' => 'proceeding_order_column',
         'sort_when_creating' => true,
@@ -106,6 +118,59 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             $submission->media->each->delete();
             $submission->payment?->delete();
         });
+    }
+
+    /**
+     * The language the paper is written in. Submissions saved without one are treated
+     * as written in the site default language. A language disabled after the paper was
+     * submitted stays the paper's language.
+     */
+    public function getPrimaryContentLocale(): string
+    {
+        $language = $this->getMeta('language');
+
+        if (is_string($language) && array_key_exists($language, config('app.locales', []))) {
+            return $language;
+        }
+
+        return app(ContentLocales::class)->default();
+    }
+
+    /**
+     * Languages a paper can be written in: the enabled languages, plus the paper's
+     * current language if it has since been disabled.
+     *
+     * @return array<string, string>
+     */
+    public function getLanguageOptions(): array
+    {
+        $contentLocales = app(ContentLocales::class);
+        $current = $this->getPrimaryContentLocale();
+
+        return [
+            ...$contentLocales->options(),
+            ...($contentLocales->isEnabled($current) ? [] : [$current => $contentLocales->label($current)]),
+        ];
+    }
+
+    /**
+     * The paper language as a BCP 47 tag, such as `pt-BR`, for `lang` and `xml:lang`.
+     */
+    public function getLanguageTag(?string $locale = null): string
+    {
+        return str_replace('_', '-', $locale ?? $this->getPrimaryContentLocale());
+    }
+
+    /**
+     * The language tag of the value translated() shows for a key, when it differs from
+     * the requested locale; null when they match. Use it as the `lang` attribute.
+     */
+    public function getTranslatedLanguageTag(string $key, ?string $locale = null): ?string
+    {
+        $locale ??= app()->getLocale();
+        $resolved = $this->translatedLocale($key, $locale) ?? $this->getPrimaryContentLocale();
+
+        return $resolved === $locale ? null : $this->getLanguageTag($resolved);
     }
 
     public function proceeding(): BelongsTo
@@ -178,38 +243,38 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         return $this->belongsTo(ScheduledConference::class);
     }
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function submissionFiles() : HasMany
+    public function submissionFiles(): HasMany
     {
         return $this->hasMany(SubmissionFile::class);
     }
 
-    public function galleys() : HasMany
+    public function galleys(): HasMany
     {
         return $this->hasMany(SubmissionGalley::class);
     }
 
-    public function discussionTopics() : HasMany
+    public function discussionTopics(): HasMany
     {
         return $this->hasMany(DiscussionTopic::class);
     }
 
-    public function participants() : HasMany
+    public function participants(): HasMany
     {
         return $this->hasMany(SubmissionParticipant::class);
     }
 
-    public function editors() 
+    public function editors()
     {
         return $this->participants()
             ->whereHas('role', fn (Builder $query) => $query->whereIn('name', [UserRole::ScheduledConferenceEditor, UserRole::TrackEditor, UserRole::ConferenceManager]));
     }
 
-    public function presentations() : HasMany
+    public function presentations(): HasMany
     {
         return $this->hasMany(Presentation::class);
     }
@@ -410,7 +475,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         return $message;
     }
 
-    public function isReviewer(User $user) : bool
+    public function isReviewer(User $user): bool
     {
         return (bool) $this->getReviewForUserInActiveRound($user);
     }
@@ -430,7 +495,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
             ->first();
     }
 
-    public function isAuthor(User $user) : bool
+    public function isAuthor(User $user): bool
     {
         return $this->user->is($user);
     }

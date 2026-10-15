@@ -21,6 +21,7 @@ class ReviewerCancelationMail extends TemplateMailable
             'Submission Title' => $review->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $review->submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $review->submission, 'title');
         $this->setTranslatableData('Conference Title', $review->submission->scheduledConference, 'title');
         $this->log = Log::make(
             name: 'email',

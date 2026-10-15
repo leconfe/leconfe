@@ -21,7 +21,7 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public function __construct(SubmissionParticipant $participant)
     {
-        $this->submissionTitle = $participant->submission->getMeta('title');
+        $this->submissionTitle = (string) $participant->submission->translated('title');
         $this->name = $participant->user->fullName;
         $this->position = $participant->role->name;
 
@@ -32,6 +32,7 @@ class ParticipantAssignedMail extends TemplateMailable
             'Submission Title' => $participant->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $participant->submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $participant->submission, 'title');
         $this->setTranslatableData('Conference Title', $participant->submission->scheduledConference, 'title');
 
         $this->log = Log::make(

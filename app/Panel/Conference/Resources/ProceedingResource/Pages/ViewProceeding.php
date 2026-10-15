@@ -108,7 +108,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
             ->query(
                 Submission::query()
                     ->where('proceeding_id', $this->record->id)
-                    ->with(['scheduledConference', 'meta', 'track.translate'])
+                    ->with(['scheduledConference', 'meta', 'translate', 'track.translate'])
                     ->ordered()
             )
             ->defaultGroup('track.title')
@@ -124,7 +124,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
                 TextColumn::make('title')
                     ->wrap()
                     ->label(__('general.title'))
-                    ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                    ->getStateUsing(fn (Submission $record) => $record->translated('title'))
                     ->url(fn (Submission $record) => route('filament.scheduledConference.resources.submissions.view', ['record' => $record->id, 'serie' => $record->scheduledConference]))
                     ->searchable()
                     ->color('primary'),

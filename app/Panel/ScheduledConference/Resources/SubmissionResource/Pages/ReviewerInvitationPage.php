@@ -69,7 +69,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     public function getHeading(): string|Htmlable
     {
         return __('general.reviewer_request_heading', [
-            'title' => $this->record->getMeta('title'),
+            'title' => $this->record->translated('title'),
         ]);
     }
 
@@ -120,7 +120,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                         subject: $this->record,
                         description: __('general.submission_review_assign_accepted', [
                             'submissionId' => $this->record->getKey(),
-                            'submissionName' => $this->record->getMeta('title'),
+                            'submissionName' => $this->record->translated('title'),
                             'name' => $review->user->full_name,
                         ]),
                     )
@@ -190,7 +190,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     subject: $this->record,
                     description: __('general.submission_review_assign_declined', [
                         'submissionId' => $this->record->getKey(),
-                        'submissionName' => $this->record->getMeta('title'),
+                        'submissionName' => $this->record->translated('title'),
                         'name' => $review->user->full_name,
                     ]),
                 )
@@ -226,7 +226,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('title')
                                     ->label(__('general.title'))
                                     ->color('gray')
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('title')),
                                 TextEntry::make('author')
                                     ->label(__('general.author'))
                                     ->color('gray')
@@ -236,12 +236,12 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->badge()
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('keywords') ?: '-'),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('keywords') ?: '-'),
                                 TextEntry::make('abstract')
                                     ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('abstract')),
                                 TextEntry::make('review_mode')
                                     ->label(__('general.review_mode'))
                                     ->color('gray')

@@ -30,7 +30,7 @@ class SubmissionResource extends Resource
 
     public static function getRecordTitle(?Model $record): string|Htmlable|null
     {
-        return $record?->getMeta('title') ?? static::getModelLabel();
+        return $record?->translated('title') ?? static::getModelLabel();
     }
 
     public static function getNavigationLabel(): string
@@ -58,6 +58,7 @@ class SubmissionResource extends Resource
             ])
             ->with([
                 'meta',
+                'translate',
                 'user' => ['meta'],
                 'participants',
                 'editors',
@@ -125,7 +126,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn (Submission $record) => $record->translated('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->getReviewForUserInActiveRound(auth()->user());
                                 if ($review) {
@@ -135,9 +136,10 @@ class SubmissionResource extends Resource
                                 return $record->user->fullName;
                             })
                             ->searchable(query: function (Builder $query, string $search): Builder {
-                                return $query
+                                return $query->where(fn (Builder $query) => $query
                                     ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                    ->orWhereHas('translate', fn (Builder $query) => $query->where('key', 'title')->where('value', 'like', "%{$search}%"))
+                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%")));
                             }),
                         Split::make([
                             Tables\Columns\TextColumn::make('status')

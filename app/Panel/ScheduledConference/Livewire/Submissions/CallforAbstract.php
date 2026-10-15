@@ -394,7 +394,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                 $paymentFee,
                                 $this->submission->user,
                                 PaymentManager::TYPE_SUBMISSION_FEE,
-                                $this->submission->getMeta('title'),
+                                $this->submission->translated('title', $this->submission->getPrimaryContentLocale()),
                                 SubmissionResource::getUrl('view', ['record' => $this->submission]),
                                 $paymentFee->getMeta('description'),
                                 $totalAmount,

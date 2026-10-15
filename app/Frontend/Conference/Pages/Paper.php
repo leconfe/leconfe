@@ -22,7 +22,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track.translate', 'media', 'meta', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track.translate', 'media', 'meta', 'translate', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
             ->first();
 
         if (! $this->paper) {
@@ -50,7 +50,7 @@ class Paper extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return $this->paper->getMeta('title');
+        return (string) $this->paper->translated('title');
     }
 
     public function addHead()
@@ -68,14 +68,63 @@ class Paper extends Page
 
         MetaTag::add(property: 'og:site_name', content: e($conference->translated('name')));
         MetaTag::add(property: 'og:description', content: e($conference->translated('description')));
-        MetaTag::add(property: 'og:title', content: e($this->paper->getMeta('title')));
+        MetaTag::add(property: 'og:title', content: $this->paper->translated('title'));
         MetaTag::add(property: 'og:type', content: 'paper');
         MetaTag::add(property: 'og:url', content: route(static::getRouteName(), ['submission' => $this->paper->getKey()]));
         if ($this->paper->getFirstMedia('cover')) {
             MetaTag::add(property: 'og:image', content: $this->paper->getFirstMedia('cover')->getAvailableUrl(['thumb']));
         }
 
+        $this->addBibliographicMetadata();
+
         Hook::call('Frontend::Paper::addMetadata', [$this, $this->paper]);
+    }
+
+    /**
+     * Google Scholar and Dublin Core tags. The paper language is the primary metadata;
+     * Dublin Core also lists the translations into other languages.
+     */
+    protected function addBibliographicMetadata(): void
+    {
+        $paper = $this->paper;
+        $primary = $paper->getPrimaryContentLocale();
+        $languageTag = $paper->getLanguageTag();
+        $title = $paper->translated('title', $primary);
+        $abstract = static::plainText($paper->translated('abstract', $primary));
+
+        MetaTag::add(name: 'citation_title', content: $title);
+        MetaTag::add(name: 'citation_language', content: $languageTag);
+
+        if (filled($abstract)) {
+            MetaTag::add(name: 'citation_abstract', content: $abstract);
+        }
+
+        foreach ($paper->translated('keywords', $primary) as $keyword) {
+            MetaTag::add(name: 'citation_keywords', content: $keyword);
+        }
+
+        MetaTag::add(name: 'DC.Title', content: $title, xmlLang: $languageTag);
+
+        foreach ($paper->getOtherTranslations('title') as $locale => $translation) {
+            MetaTag::add(name: 'DC.Title.Alternative', content: $translation, xmlLang: $paper->getLanguageTag($locale));
+        }
+
+        if (filled($abstract)) {
+            MetaTag::add(name: 'DC.Description', content: $abstract, xmlLang: $languageTag);
+        }
+
+        foreach ($paper->getOtherTranslations('abstract') as $locale => $translation) {
+            MetaTag::add(name: 'DC.Description', content: static::plainText($translation), xmlLang: $paper->getLanguageTag($locale));
+        }
+
+        MetaTag::add(name: 'DC.Language', content: $languageTag);
+    }
+
+    protected static function plainText(?string $html): string
+    {
+        $text = html_entity_decode(strip_tags((string) $html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', str_replace("\u{00A0}", ' ', $text)));
     }
 
     public function canAccess(): bool

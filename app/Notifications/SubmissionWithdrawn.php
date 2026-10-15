@@ -33,7 +33,7 @@ class SubmissionWithdrawn extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('danger')
             ->title('Submission Withdrawn')
-            ->body("Title: {$this->submission->getMeta('title')}")
+            ->body("Title: {$this->submission->translated('title')}")
             ->actions([
                 Action::make('view-submission')
                     ->url(SubmissionResource::getUrl('view', ['record' => $this->submission, 'tenant' => $this->submission->conference]))

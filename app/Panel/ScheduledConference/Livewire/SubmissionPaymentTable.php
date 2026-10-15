@@ -96,7 +96,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                 [Submission::class],
                 fn (Builder $query) => $query->whereIn('status', static::getValidSubmissionStatusValues()),
             )
-            ->with(['model.conference', 'model.latestReviewRound', 'user', 'scheduledConference']);
+            ->with(['model.conference', 'model.latestReviewRound', 'model.translate', 'user', 'scheduledConference']);
     }
 
     public function table(Table $table): Table
@@ -119,7 +119,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                 TextColumn::make('title')
                     ->label('Submission Title')
-                    ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
+                    ->state(fn (Payment $record) => ($record->model instanceof Submission ? $record->model->translated('title') : $record->model?->getMeta('title')) ?? '-')
                     ->description(fn (Payment $record) => $record->user->full_name)
                     ->wrap(),
                 TextColumn::make('submission_status')
