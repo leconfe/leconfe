@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Mail\Templates\VerifyUserEmail;
+use App\Models\Concerns\HasScopedBans;
 use App\Models\Enums\RegistrationPaymentState;
 use App\Models\Enums\UserRole;
 use App\Support\Media\RasterImageNormalizer;
@@ -25,7 +26,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
-use Mchev\Banhammer\Traits\Bannable;
 use Plank\Metable\Metable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -36,7 +36,7 @@ use Squire\Models\Country;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocalePreference, HasMedia, HasName, MustVerifyEmail
 {
-    use Bannable,
+    use HasScopedBans,
         HasApiTokens,
         HasFactory,
         HasRoles,
@@ -155,7 +155,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
 
     public function canBeImpersonated()
     {
-        if ($this->isBanned()) {
+        if ($this->isBannedInCurrentContext()) {
             return false;
         }
 

@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
             InstallationMiddleware::class,
             SetLocale::class,
             ShareLocalizedContextData::class,
+            \App\Http\Middleware\EnforceUserBan::class,
         ],
 
         'api' => [
