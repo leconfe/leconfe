@@ -31,6 +31,7 @@ class NewReviewFileUploadedMail extends TemplateMailable
         ]);
         $this->setTranslatableData('Submission Title', $submissionFile->submission, 'title');
         $this->setTranslatableData('Conference Title', $submissionFile->submission->scheduledConference, 'title');
+        $this->setTranslatableData('File Type', $submissionFile->type, 'name');
 
         $this->log = Log::make(
             name: 'email',

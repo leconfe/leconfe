@@ -236,7 +236,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             ->where('category', SubmissionFileCategory::ABSTRACT_FILES)
                             ->get()
                             ->mapWithKeys(function (SubmissionFile $paper) {
-                                return [$paper->getKey() => $paper->type->name];
+                                return [$paper->getKey() => $paper->type->translated('name')];
                             });
                     }),
                 Grid::make()

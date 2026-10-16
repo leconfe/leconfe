@@ -173,7 +173,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 Section::make()
                     ->heading(__('scheduled_conference.review_form'))
                     ->schema([
-                        ...ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
+                        ...ReviewFormItem::with('translate')->ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
                         TinyEditor::make('meta.review_for_author_editor')
                             ->minHeight(300)
                             ->label(__('general.review_for_author_and_editor')),

@@ -289,7 +289,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                     ->descriptions(function () {
                         return $this->reviewableFiles
                             ->mapWithKeys(function (SubmissionFile $paper) {
-                                return [$paper->getKey() => $paper->type->name.' ('.$paper->category.')'];
+                                return [$paper->getKey() => $paper->type->translated('name').' ('.$paper->category.')'];
                             });
                     }),
                 Fieldset::make('Notification')
@@ -481,7 +481,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                     ->label('Paper Score')
                                     ->hidden(fn (Review $record) => ! $record->score)
                                     ->content(fn (Review $record) => $record->score),
-                                ...ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
+                                ...ReviewFormItem::with('translate')->ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
                                 Section::make('Reviewer Comments')
                                     ->schema([
                                         Placeholder::make('for_author_and_editor')

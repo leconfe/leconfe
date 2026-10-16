@@ -438,7 +438,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
 
                 $reviewResponses = $review->getMeta('review_responses') ?? [];
                 $reviewForms = ReviewFormItem::query()
-                    ->with(['meta'])
+                    ->with(['meta', 'translate'])
                     ->ordered()
                     ->get();
 
@@ -463,7 +463,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
                             return [];
                         }
 
-                        $label = $reviewForm->label;
+                        $label = $reviewForm->translated('label');
                         $content = $reviewForm->getContentFromValue($value, $review);
 
                         return [$label => $content];

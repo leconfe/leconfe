@@ -239,7 +239,7 @@ class PeerReview extends Component implements HasActions, HasForms
                     )
                     ->descriptions(
                         fn () => $this->reviewableFiles
-                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->name.' ('.$file->category.')'])
+                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->translated('name').' ('.$file->category.')'])
                             ->toArray()
                     ),
                 Fieldset::make('Notification')
