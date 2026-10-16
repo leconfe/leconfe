@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class CommitteeRole extends Model implements Sortable
 {
-    use BelongsToScheduledConference, HasFactory, SortableTrait;
+    use BelongsToScheduledConference, HasFactory, HasTranslatableContent, SortableTrait;
 
     protected $table = 'committee_roles';
 
@@ -21,6 +22,11 @@ class CommitteeRole extends Model implements Sortable
         'parent_id',
         'name',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name'];
 
     /**
      * The "booted" method of the model.

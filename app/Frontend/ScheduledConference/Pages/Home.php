@@ -19,6 +19,7 @@ class Home extends Page
         $currentScheduledConference = app()->getCurrentScheduledConference();
         $currentScheduledConference->load([
             'speakerRoles' => fn($query) => $query->ordered()->with([
+                'translate',
                 'speakers' => fn($query) => $query->ordered()->with('meta'),
             ]),
         ]);

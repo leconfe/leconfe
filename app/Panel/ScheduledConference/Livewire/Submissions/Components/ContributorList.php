@@ -47,7 +47,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
     {
         return Author::query()
             ->whereSubmissionId($this->submission->getKey())
-            ->with(['role', 'media', 'meta'])
+            ->with(['role.translate', 'media', 'meta'])
             ->orderBy('order_column');
     }
 
@@ -86,7 +86,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->relationship(
                             name: 'role',
                             titleAttribute: 'name',
+                            modifyQueryUsing: fn (Builder $query) => $query->with('translate'),
                         )
+                        ->getOptionLabelFromRecordUsing(fn (AuthorRole $record) => $record->translated('name'))
                         ->required()
                         ->columnSpanFull(),
                     ...ContributorForm::additionalFormField(),
@@ -164,6 +166,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->color('gray')
                     ->alignStart(),
                 TextColumn::make('role.name')
+                    ->formatStateUsing(fn (Author $record) => $record->role?->translated('name'))
                     ->badge(),
                 IconColumn::make('primary_contact')
                     ->getStateUsing(fn ($record) => $record->isPrimaryContact($this->submission))

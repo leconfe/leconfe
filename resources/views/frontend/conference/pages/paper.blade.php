@@ -45,7 +45,7 @@
                             @if($contributor->getMeta('affiliation'))
                                 <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->getMeta('affiliation') }}</div>
                             @endif
-                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role->name }}</div>
+                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role?->translated('name') }}</div>
                         </div>
                     @endforeach
                 </div>

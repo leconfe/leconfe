@@ -22,7 +22,7 @@ class Paper extends Page
     {
         $this->paper = Submission::query()
             ->where('id', $submission)
-            ->with(['proceeding', 'track.translate', 'media', 'meta', 'translate', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role', 'meta'])])
+            ->with(['proceeding', 'track.translate', 'media', 'meta', 'translate', 'galleys.file.media', 'authors' => fn ($query) => $query->with(['role.translate', 'meta'])])
             ->first();
 
         if (! $this->paper) {
