@@ -17,12 +17,19 @@ class SubmissionCreateAction
         try {
             DB::beginTransaction();
 
+            $meta = is_array($data['meta'] ?? null) ? $data['meta'] : [];
+            unset($data['meta']);
+
             $submission = Submission::create($data);
 
-            $meta = is_array($data['meta'] ?? null) ? $data['meta'] : [];
-            $meta['language'] ??= app(ContentLocales::class)->default();
+            // The paper language decides which title is primary, so it is saved first.
+            $meta['language'] = filled($meta['language'] ?? null) ? $meta['language'] : app(ContentLocales::class)->default();
+            $submission->setMeta('language', $meta['language']);
+
+            $meta = $submission->syncTranslatableState(['meta' => $meta])['meta'];
 
             $submission->setManyMeta($meta);
+            $submission->persistTranslatableState();
 
             Log::make(
                 name: 'submission',

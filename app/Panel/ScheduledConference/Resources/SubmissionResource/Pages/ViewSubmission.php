@@ -135,8 +135,9 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                         ->options(
                             fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                 ->active()
+                                ->with('translate')
                                 ->get()
-                                ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                         )
                         ->descriptions(
                             fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
@@ -151,7 +152,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                                 return [];
                             }
 
-                            return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                            return collect($paymentFee->getTranslatedAdditionalItems())->map(function ($item) use ($paymentFee) {
                                 $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
 
                                 return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")

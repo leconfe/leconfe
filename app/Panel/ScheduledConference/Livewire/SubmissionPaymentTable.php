@@ -130,6 +130,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->color(fn (string $state): string => static::getSubmissionStatusBadgeColor($state))
                     ->wrap(),
                 TextColumn::make('fee.name')
+                    ->formatStateUsing(fn (Payment $record, $state) => $record->fee?->translated('name') ?? $state)
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')

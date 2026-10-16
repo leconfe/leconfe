@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Form;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
@@ -46,11 +47,13 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('meta.name')
-                    ->required()
-                    ->label('Item Name'),
-                Textarea::make('meta.description')
-                    ->label('Description and Instructions'),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
+                        ->required()
+                        ->label('Item Name'),
+                    Textarea::make('meta.description')
+                        ->label('Description and Instructions'),
+                ]),
                 Checkbox::make('required')
                     ->label('Indicates required item'),
                 Select::make('type')
@@ -63,14 +66,17 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                         }
                     })
                     ->label('Item Type'),
-                TagsInput::make('meta.response_options')
-                    ->placeholder('New Option')
-                    ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX]))
-                    ->reorderable()
-                    ->requiredIf('type', [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])
-                    ->validationMessages([
-                        'required_if' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
-                    ]),
+                MultilanguageComponent::make([
+                    TagsInput::make('meta.response_options')
+                        ->label('Response Options')
+                        ->placeholder('New Option')
+                        ->reorderable()
+                        ->required()
+                        ->validationMessages([
+                            'required' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
+                        ]),
+                ])
+                    ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])),
 
             ]);
     }
@@ -82,7 +88,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ->heading('Payment Fee Form Items')
             ->query(
                 $this->record->formItems()->getQuery()
-                    ->with(['meta'])
+                    ->with(['meta', 'translate'])
                     ->ordered()
             )
             ->reorderable('order_column')
@@ -90,7 +96,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('#'),
                 TextColumn::make('name')
-                    ->getStateUsing(fn ($record) => $record->getMeta('name')),
+                    ->getStateUsing(fn ($record) => $record->translated('name')),
             ])
             ->filters([
                 // ...
@@ -103,11 +109,15 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                         try {
                             DB::beginTransaction();
 
-                            $item = $this->record->formItems()->create($data);
+                            $item = $this->record->formItems()->make();
+                            $data = $item->syncTranslatableState($data);
+                            $item->fill($data)->save();
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                                 $item->setManyMeta($data['meta']);
                             }
+
+                            $item->persistTranslatableState();
 
                             DB::commit();
 
@@ -128,20 +138,23 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                 EditAction::make()
                     ->hidden(fn () => $this->record->payments->count())
                     ->mutateRecordDataUsing(function (PaymentFeeFormItem $record, array $data): array {
-                        $data['meta'] = $record->getAllMeta();
+                        $data['meta'] = $record->getAllMeta()->all();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, ['meta.name', 'meta.description', 'meta.response_options']);
                     })
                     ->form(fn ($form) => $this->form($form))
                     ->using(function (array $data, PaymentFeeFormItem $record, EditAction $action) {
                         try {
                             DB::beginTransaction();
 
+                            $data = $record->syncTranslatableState($data);
                             $record->update($data);
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                                 $record->setManyMeta($data['meta']);
                             }
+
+                            $record->persistTranslatableState();
 
                             DB::commit();
 

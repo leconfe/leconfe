@@ -144,8 +144,9 @@ class PaymentDetail extends Page
                             ->options(
                                 fn (Payment $record) => PaymentFee::type($record->type)
                                     ->active()
+                                    ->with('translate')
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                             )
                             ->descriptions(
                                 fn (Payment $record) => PaymentFee::type($record->type)
@@ -169,7 +170,7 @@ class PaymentDetail extends Page
 
                                 $existingItems = $record->getMeta('additional_items', []);
 
-                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee, $existingItems) {
+                                return collect($paymentFee->getTranslatedAdditionalItems())->map(function ($item) use ($paymentFee, $existingItems) {
                                     $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
                                     $existingItem = collect($existingItems)->firstWhere('key', $item['key']);
                                     $defaultValue = $existingItem ? (int) data_get($existingItem, 'quantity', 0) : 0;
@@ -479,7 +480,8 @@ class PaymentDetail extends Page
                                         }
                                     }),
                                 TextEntry::make('fee.name')
-                                    ->label('Payment Fee Name'),
+                                    ->label('Payment Fee Name')
+                                    ->state(fn (Payment $record) => $record->fee?->translated('name')),
                                 TextEntry::make('base_amount')
                                     ->label('Base Fee')
                                     ->state(function (Payment $record) {
@@ -491,7 +493,10 @@ class PaymentDetail extends Page
                                     ->label('Add-on Items')
                                     ->visible(fn (Payment $record) => count($record->getMeta('additional_items', [])) > 0)
                                     ->state(function (Payment $record) {
-                                        $lines = collect($record->getMeta('additional_items', []))
+                                        $items = $record->getMeta('additional_items', []);
+                                        $items = is_array($items) ? $items : [];
+
+                                        $lines = collect($record->fee?->localizeAdditionalItems($items) ?? $items)
                                             ->map(function ($item) use ($record) {
                                                 $name = data_get($item, 'name', '-');
                                                 $quantity = (int) data_get($item, 'quantity', 1);

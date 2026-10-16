@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Submissions\SubmissionCreateAction;
 use App\Facades\Hook;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Frontend\ScheduledConference\Pages\Submissions;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
@@ -23,11 +24,13 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -48,7 +51,43 @@ class CreateSubmission extends Page implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([]);
+        $this->form->fill([
+            'meta' => ['language' => app(ContentLocales::class)->default()],
+        ]);
+    }
+
+    /**
+     * The chosen paper language when it is enabled, else the site default language.
+     */
+    protected function paperLanguage(): string
+    {
+        $language = data_get($this->data, 'meta.language');
+        $contentLocales = app(ContentLocales::class);
+
+        return $contentLocales->isEnabled($language) ? $language : $contentLocales->default();
+    }
+
+    /**
+     * Moves a title typed for the previous paper language to the new one when the new
+     * language has no title yet, so changing the language does not lose input.
+     */
+    protected function moveTitleToPaperLanguage(Get $get, Set $set, ?string $old, ?string $new): void
+    {
+        if (! $old || ! $new || $old === $new) {
+            return;
+        }
+
+        $titles = $get('meta.title');
+
+        if (! is_array($titles) || array_is_list($titles)) {
+            return;
+        }
+
+        if (ContentLocales::isBlank($titles[$new] ?? null) && ! ContentLocales::isBlank($titles[$old] ?? null)) {
+            $titles[$new] = $titles[$old];
+            $titles[$old] = null;
+            $set('meta.title', $titles);
+        }
     }
 
     public function getHeading(): string|Htmlable
@@ -105,8 +144,24 @@ class CreateSubmission extends Page implements HasForms
                         e(route(Submissions::getRouteName('scheduledConference'))),
                         e(__('general.read_author_guidelines')),
                     ))),
-                TextInput::make('meta.title')
-                    ->required(),
+                Select::make('meta.language')
+                    ->label(__('general.paper_language'))
+                    ->helperText(__('general.paper_language_helper'))
+                    ->options(fn (): array => app(ContentLocales::class)->options())
+                    ->in(fn (): array => array_keys(app(ContentLocales::class)->options()))
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->default(fn (): string => app(ContentLocales::class)->default())
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Set $set, ?string $old, ?string $state) => $this->moveTitleToPaperLanguage($get, $set, $old, $state))
+                    ->visible(fn (): bool => app(ContentLocales::class)->isMultilingual()),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
+                        ->label(__('general.title'))
+                        ->required(),
+                ])
+                    ->primaryLocale(fn (): string => $this->paperLanguage())
+                    ->locales(fn (): array => [$this->paperLanguage(), ...app(ContentLocales::class)->ordered()]),
                 Grid::make(1)
                     ->visible(SubmissionFormItem::exists())
                     ->schema([
@@ -122,8 +177,9 @@ class CreateSubmission extends Page implements HasForms
                             ->options(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
+                                    ->with('translate')
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                             )
                             ->descriptions(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
@@ -138,7 +194,7 @@ class CreateSubmission extends Page implements HasForms
                                     return [];
                                 }
 
-                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                return collect($paymentFee->getTranslatedAdditionalItems())->map(function ($item) use ($paymentFee) {
                                     $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
 
                                     return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")

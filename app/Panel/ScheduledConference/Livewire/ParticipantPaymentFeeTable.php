@@ -90,6 +90,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
+                    ->formatStateUsing(fn (Payment $record, $state) => $record->fee?->translated('name') ?? $state)
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')

@@ -89,7 +89,7 @@
                 <tbody>
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
-                            <p>{{ $record->fee->name }}</p>
+                            <p>{{ $record->fee->translated('name') }}</p>
                             @if($submissionTitle)
                             <p class="text-xs text-gray-600">Submission Title: {{ $submissionTitle }}</p>
                             @endif

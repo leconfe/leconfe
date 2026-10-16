@@ -21,6 +21,7 @@ class PaymentConfirmedMail extends TemplateMailable
             'Payment Fee Name' => $payment->fee->name,
             'Payment ID' => $payment->getKey(),
         ]);
+        $this->setTranslatableData('Payment Fee Name', $payment->fee, 'name');
         $this->setTranslatableData('Conference Title', $payment->scheduledConference, 'title');
 
         $this->log = Log::make(
