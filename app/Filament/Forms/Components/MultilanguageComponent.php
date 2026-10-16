@@ -186,7 +186,8 @@ class MultilanguageComponent extends Component
                 'label' => $field->getLabel(),
                 'language' => $this->getLocaleLabel($locale),
             ]))
-            ->meta('locale', $locale);
+            ->meta('locale', $locale)
+            ->meta('primary', $isPrimary);
 
         if (method_exists($localeField, 'extraInputAttributes')) {
             $localeField->extraInputAttributes(['lang' => $locale, 'dir' => $direction], merge: true);

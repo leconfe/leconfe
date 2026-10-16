@@ -4,7 +4,6 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\PaymentFormItem;
-use App\Support\Multilingual\ContentLocales;
 use App\Tables\Columns\IndexColumn;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -154,7 +153,7 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                                 ->required(),
                         )
                         // Only the primary language starts with an empty option; translations are optional.
-                        ->defaultItems(fn (Repeater $component): int => in_array($component->getMeta('locale'), [null, app(ContentLocales::class)->default()], true) ? 1 : 0)
+                        ->defaultItems(fn (Repeater $component): int => ($component->getMeta('primary') ?? true) ? 1 : 0)
                         ->reorderable()
                         ->required()
                         ->validationMessages([
