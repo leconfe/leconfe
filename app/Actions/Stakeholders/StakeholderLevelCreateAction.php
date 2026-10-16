@@ -15,7 +15,11 @@ class StakeholderLevelCreateAction
         try {
             DB::beginTransaction();
 
-            $record = StakeholderLevel::create($data);
+            $record = new StakeholderLevel;
+            $data = $record->syncTranslatableState($data);
+            $record->fill($data)->save();
+
+            $record->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

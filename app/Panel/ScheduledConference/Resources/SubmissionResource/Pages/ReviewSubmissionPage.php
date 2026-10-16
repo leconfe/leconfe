@@ -14,6 +14,7 @@ use App\Models\ReviewFormItem;
 use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -29,7 +30,6 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 {
@@ -87,7 +87,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
     public function getHeading(): string|Htmlable
     {
         return __('general.review_submission_heading', [
-            'title' => $this->record->getMeta('title'),
+            'title' => $this->record->translated('title'),
         ]);
     }
 
@@ -105,7 +105,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.title'))
                                     ->color('gray')
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('title')
+                                        fn (Submission $record): string => (string) $record->translated('title')
                                     ),
                                 TextEntry::make('author')
                                     ->label(__('general.author'))
@@ -116,13 +116,13 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->badge()
-                                    ->getStateUsing(fn (Submission $record) => $record->getMeta('keywords') ?: '-'),
+                                    ->getStateUsing(fn (Submission $record) => $record->translated('keywords') ?: '-'),
                                 TextEntry::make('abstract')
                                     ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
                                     ->getStateUsing(
-                                        fn (Submission $record): string => $record->getMeta('abstract')
+                                        fn (Submission $record): string => (string) $record->translated('abstract')
                                     ),
                                 TextEntry::make('review_mode')
                                     ->label(__('general.review_mode'))
@@ -149,12 +149,12 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
 
     public function hasReviewGuidelines(): bool
     {
-        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('review_guidelines'));
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->translated('review_guidelines'));
     }
 
     public function hasCompetingInterests(): bool
     {
-        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->getMeta('competing_interests'));
+        return $this->hasHtmlContent(app()->getCurrentScheduledConference()?->translated('competing_interests'));
     }
 
     public function hasGuidanceModalContent(): bool
@@ -173,7 +173,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                 Section::make()
                     ->heading(__('scheduled_conference.review_form'))
                     ->schema([
-                        ...ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
+                        ...ReviewFormItem::with('translate')->ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray(),
                         TinyEditor::make('meta.review_for_author_editor')
                             ->minHeight(300)
                             ->label(__('general.review_for_author_and_editor')),
@@ -240,9 +240,7 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
                     $editors = User::whereIn('id', $editors)->get();
 
                     if ($editors->count()) {
-                        Mail::to($editors)->send(
-                            new ReviewCompleteMail($review)
-                        );
+                        RecipientLocale::send($editors, fn () => new ReviewCompleteMail($review));
                     }
 
                     $action->success();

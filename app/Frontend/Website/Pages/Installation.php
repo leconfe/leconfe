@@ -7,6 +7,7 @@ use App\Facades\MetaTag;
 use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
+use App\Http\Middleware\ShareLocalizedContextData;
 use App\Http\Middleware\ThemeActivator;
 use App\Livewire\Forms\InstallationForm;
 use App\Utils\Installer;
@@ -22,6 +23,7 @@ class Installation extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
+        ShareLocalizedContextData::class,
         RedirectToConference::class,
         ThemeActivator::class,
     ];

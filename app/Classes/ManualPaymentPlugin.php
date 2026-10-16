@@ -51,7 +51,7 @@ class ManualPaymentPlugin extends Plugin
 
                         app(OperationalNotificationRecipients::class)
                             ->forRoles([UserRole::ConferenceManager, UserRole::ScheduledConferenceEditor])
-                            ->each(fn ($user) => Mail::to($user->email)->send(new UserPayPaymentMail($record)));
+                            ->each(fn ($user) => Mail::to($user)->send(new UserPayPaymentMail($record)));
 
                         $action->successNotificationTitle('Submit success.');
                         $action->success();

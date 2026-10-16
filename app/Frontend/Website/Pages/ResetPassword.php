@@ -4,6 +4,7 @@ namespace App\Frontend\Website\Pages;
 
 use App\Mail\Templates\ResetPasswordMail;
 use App\Models\User;
+use App\Support\Multilingual\RecipientLocale;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
@@ -80,8 +81,8 @@ class ResetPassword extends Page implements HasActions, HasForms
 
     public function getAuthLogoAltText(): string
     {
-        return app()->getCurrentScheduledConference()?->title
-            ?? app()->getCurrentConference()?->name
+        return app()->getCurrentScheduledConference()?->translated('title')
+            ?? app()->getCurrentConference()?->translated('name')
             ?? config('app.name', 'Leconfe');
     }
 
@@ -198,6 +199,7 @@ class ResetPassword extends Page implements HasActions, HasForms
         $user = User::where('email', $this->email)->first();
 
         Mail::to($this->email)
+            ->locale(RecipientLocale::for($user ?? $this->email))
             ->send(new ResetPasswordMail($user));
 
         $this->success = true;

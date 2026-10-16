@@ -8,7 +8,7 @@
             @foreach ($committeeRoles as $role)
                 @if ($role->committees->isNotEmpty())
                     <div class="space-y-4">
-                        <h3 class="text-lg">{{ $role->name }}</h3>
+                        <h3 class="text-lg">{{ $role->translated('name') }}</h3>
                         <div class="cf-speaker-list grid gap-2 sm:grid-cols-2">
                             @foreach ($role->committees as $committee)
                                 <div class="cf-committee flex items-center h-full gap-2">

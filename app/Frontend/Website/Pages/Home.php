@@ -69,6 +69,7 @@ class Home extends Page
                 'conference',
                 'media',
                 'meta',
+                'translate',
             ])
             ->whereNotNull('featured')
             ->orderBy('featured', 'ASC')
@@ -79,6 +80,7 @@ class Home extends Page
                 'conference',
                 'media',
                 'meta',
+                'translate',
             ])
             ->published()
             ->orderBy('date_start', 'DESC');
@@ -99,7 +101,10 @@ class Home extends Page
         if ($search !== '') {
             $scheduledQuery->where(function ($q) use ($search) {
                 $searchTerm = '%'.mb_strtolower($search).'%';
-                $q->whereRaw('LOWER(title) LIKE ?', [$searchTerm]);
+                $q->whereRaw('LOWER(title) LIKE ?', [$searchTerm])
+                    ->orWhereHas('translate', fn ($translation) => $translation
+                        ->where('key', 'title')
+                        ->whereRaw('LOWER(value) LIKE ?', [$searchTerm]));
             });
         }
 

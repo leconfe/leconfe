@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class NavigationMenuItem extends Model implements Sortable
 {
-    use Cachable, HasFactory, Metable, SortableTrait;
+    use Cachable, HasFactory, HasTranslatableContent, Metable, SortableTrait;
 
     protected $fillable = [
         'label',
@@ -21,6 +22,13 @@ class NavigationMenuItem extends Model implements Sortable
         'navigation_menu_id',
         'parent_id',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['label'];
 
     /**
      * The "booted" method of the model.
@@ -69,6 +77,7 @@ class NavigationMenuItem extends Model implements Sortable
             'profile' => NavigationItemType\Profile::class,
             'register' => NavigationItemType\Register::class,
             'search' => NavigationItemType\Search::class,
+            'submissions' => NavigationItemType\Submissions::class,
         ];
     }
 
@@ -91,12 +100,14 @@ class NavigationMenuItem extends Model implements Sortable
 
     public function getLabel(): string
     {
+        $label = (string) $this->translated('label');
+
         // replace {$username} with the user's name
-        if (auth()->check() && strpos($this->label, '{$username}') !== false) {
-            $this->label = str_replace('{$username}', auth()->user()->fullName, $this->label);
+        if (auth()->check() && str_contains($label, '{$username}')) {
+            $label = str_replace('{$username}', auth()->user()->fullName, $label);
         }
 
-        return $this->label;
+        return $label;
     }
 
     public function isDisplayed(): bool

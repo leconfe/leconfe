@@ -72,7 +72,7 @@ class PrivacyStatement extends Page
     protected function getViewData(): array
     {
         return [
-            'privacyStatement' => app()->getCurrentScheduledConference()->getMeta('privacy_statement'),
+            'privacyStatement' => app()->getCurrentScheduledConference()->translated('privacy_statement'),
         ];
     }
 }

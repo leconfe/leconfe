@@ -18,6 +18,8 @@ class SubmissionWithdrawnMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',

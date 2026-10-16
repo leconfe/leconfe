@@ -1,7 +1,7 @@
 <x-filament::page
     x-on:show-editor-guidance.window="$dispatch('open-modal', { id: 'editor-guidance' })"
     x-data="{
-        shouldAutoShowEditorGuidance: {{ $this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')) ? 'true' : 'false' }},
+        shouldAutoShowEditorGuidance: {{ $this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && ! \App\Support\Multilingual\ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('editor_guidelines')) ? 'true' : 'false' }},
         autoShowEditorGuidanceEnabled() {
             return localStorage.getItem('autoShowEditorGuidance') != 0;
         },
@@ -23,7 +23,7 @@
         {{ $this->infolist }}
     @endif
 
-    @if ($this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
+    @if ($this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && ! \App\Support\Multilingual\ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('editor_guidelines')))
         <x-filament::modal id="editor-guidance" width="3xl" :close-by-clicking-away="false">
             <x-slot name="heading">
                 {{ __('general.editor_guidance') }}
@@ -41,7 +41,7 @@
                 }"
             >
                 <div class="prose max-w-none dark:prose-invert">
-                    {!! app()->getCurrentScheduledConference()->getMeta('editor_guidelines') !!}
+                    {!! app()->getCurrentScheduledConference()->translated('editor_guidelines') !!}
                 </div>
 
                 <div class="flex items-center">

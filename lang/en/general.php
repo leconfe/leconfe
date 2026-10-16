@@ -115,6 +115,7 @@ return [
 
     'navigation_menu' => 'Navigation Menu',
     'languages' => 'Languages',
+    'languages_english_fallback' => 'English is used when no language is selected.',
 
     'no_navigation_menu_items_found' => 'No Navigation Menu items found',
     'no_navigation_menu_found' => 'No Navigation Menu found',
@@ -1169,4 +1170,22 @@ return [
 
     'role_assigned_successfully' => 'Role assigned successfully',
     'no_roles_selected' => 'No roles selected',
+
+    'language' => 'Language',
+    'switch_language' => 'Switch language',
+    'current_language' => 'Current language',
+    'translations' => 'Translations',
+    'show_translations' => 'Show translations',
+    'hide_translations' => 'Hide translations',
+    'translation_in' => ':label (:language)',
+    'read_author_guidelines' => 'Read the author guidelines',
+    'not_accepting_submissions' => 'This conference is not accepting submissions at this time.',
+    'submissions_guest_notice' => 'Registration and login are required to submit items online and to check the status of current submissions.',
+    'make_new_submission' => 'Make a new submission',
+    'view_your_submissions' => 'View your pending submissions',
+    'track_policies' => 'Track Policies',
+    'preferred_language' => 'Preferred language',
+    'preferred_language_helper' => 'Emails are sent to you in this language.',
+    'paper_language' => 'Paper language',
+    'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
 ];

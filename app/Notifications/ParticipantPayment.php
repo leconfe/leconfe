@@ -50,7 +50,7 @@ class ParticipantPayment extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('primary')
             ->title('Payment Required')
-            ->body('Participant Payment for: '.$participant->payment->fee->name)
+            ->body('Participant Payment for: '.$participant->payment->fee->translated('name'))
             ->actions([
                 Action::make('new-submission')
                     ->url($participant->payment->getPaymentDetailUrl())

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableFormItem;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Radio;
@@ -20,7 +21,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class SubmissionFormItem extends Model implements Sortable
 {
-    use BelongsToScheduledConference, Cachable, Metable, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasTranslatableFormItem, Metable, SortableTrait;
 
     public const TYPE_TEXT = 1;
 
@@ -56,6 +57,16 @@ class SubmissionFormItem extends Model implements Sortable
         'type' => 'integer',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['name', 'description', 'response_options'];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableListMeta = ['response_options'];
 
     /**
      * The "booted" method of the model.
@@ -101,8 +112,8 @@ class SubmissionFormItem extends Model implements Sortable
     public function textEntry()
     {
         return TextEntry::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->getStateUsing(fn ($record) => $record->getFormItemResponse($this));
+            ->label($this->translated('name'))
+            ->getStateUsing(fn ($record) => $this->displayResponse($record->getFormItemResponse($this)));
     }
 
     protected function getFieldId(): string
@@ -110,32 +121,27 @@ class SubmissionFormItem extends Model implements Sortable
         return 'submission_form_responses.'.$this->getKey();
     }
 
-    protected function getResponseOptions(): array
-    {
-        return array_combine($this->getMeta('response_options') ?? [], $this->getMeta('response_options') ?? []);
-    }
-
     protected function fieldText(): TextInput
     {
         return TextInput::make($this->getFieldId())
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
-            ->label($this->getMeta('name'));
+            ->label($this->translated('name'));
     }
 
     protected function fieldTextarea(): Textarea
     {
         return Textarea::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required);
     }
 
     protected function fieldCheckbox(): CheckboxList
     {
         return CheckboxList::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
             ->options($this->getResponseOptions());
     }
@@ -143,8 +149,8 @@ class SubmissionFormItem extends Model implements Sortable
     protected function fieldRadio(): Radio
     {
         return Radio::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
             ->options($this->getResponseOptions());
     }
@@ -152,8 +158,8 @@ class SubmissionFormItem extends Model implements Sortable
     protected function fieldSelect(): Select
     {
         return Select::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->native(false)
             ->searchable()
             ->required($this->required)
@@ -163,8 +169,8 @@ class SubmissionFormItem extends Model implements Sortable
     protected function fieldUpload(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->disk('private-files')
             ->visibility('private')
             ->multiple(false)
@@ -193,6 +199,7 @@ class SubmissionFormItem extends Model implements Sortable
     public static function buildFormSchema(): array
     {
         return static::query()
+            ->with(['meta', 'translate'])
             ->ordered()
             ->lazy()
             ->map(fn (self $item) => $item->getFormField())
@@ -202,6 +209,7 @@ class SubmissionFormItem extends Model implements Sortable
     public static function buildInfolistSchema(): array
     {
         return static::query()
+            ->with(['meta', 'translate'])
             ->ordered()
             ->lazy()
             ->map(fn (self $item) => $item->getInfolistEntry())

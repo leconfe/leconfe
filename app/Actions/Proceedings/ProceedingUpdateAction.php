@@ -15,10 +15,14 @@ class ProceedingUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $proceeding->syncTranslatableState($data);
+
             $proceeding->update($data);
             if (data_get($data, 'meta')) {
                 $proceeding->setManyMeta(data_get($data, 'meta'));
             }
+
+            $proceeding->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

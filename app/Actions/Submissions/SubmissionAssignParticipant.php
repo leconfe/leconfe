@@ -4,9 +4,10 @@ namespace App\Actions\Submissions;
 
 use App\Classes\Log;
 use App\Mail\Templates\ParticipantAssignedMail;
-use App\Models\DefaultMailTemplate;
+use App\Models\MailTemplate;
 use App\Models\Submission;
 use App\Notifications\ParticipantAssigned;
+use App\Support\Multilingual\RecipientLocale;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -41,13 +42,21 @@ class SubmissionAssignParticipant
                 ])->save();
 
             if ($sendNotification) {
-                $mailTemplate = DefaultMailTemplate::where('mailable', ParticipantAssignedMail::class)->first();
-                Mail::to($submissionParticipant->user->email)
-                    ->send(
-                        (new ParticipantAssignedMail($submissionParticipant))
-                            ->contentUsing($message ?? $mailTemplate->html_template)
-                            ->subjectUsing($subject ?? $mailTemplate->subject)
+                $mail = new ParticipantAssignedMail($submissionParticipant);
+
+                // Text written by the sender is sent as written; the rest of the template
+                // is taken in the recipient's language.
+                if (filled($message) || filled($subject)) {
+                    $template = MailTemplate::contentFor(
+                        ParticipantAssignedMail::class,
+                        RecipientLocale::for($submissionParticipant->user),
                     );
+
+                    $mail->contentUsing(filled($message) ? $message : $template['html_template'])
+                        ->subjectUsing(filled($subject) ? $subject : $template['subject']);
+                }
+
+                Mail::to($submissionParticipant->user)->send($mail);
             }
 
             $submissionParticipant->user->notify(

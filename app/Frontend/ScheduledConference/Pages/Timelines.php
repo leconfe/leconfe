@@ -28,6 +28,7 @@ class Timelines extends Page
             'timelines' => Timeline::query()
                 ->where('hide', false)
                 ->orderBy('date')
+                ->with('translate')
                 ->get(),
         ];
     }

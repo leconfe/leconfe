@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Facades\Setting;
+use App\Support\Multilingual\ContentLocales;
 use Closure;
 use Illuminate\Support\Facades\App;
 
@@ -14,18 +14,10 @@ class SetLocale
             return $next($request);
         }
 
+        $locales = app(ContentLocales::class);
         $sessionLocale = session('locale');
-        $enabledLocales = array_values(array_intersect(
-            Setting::get('languages', ['en']),
-            array_keys(config('app.locales'))
-        ));
-        $defaultLocale = Setting::get('default_language', 'en');
 
-        if (! in_array($defaultLocale, $enabledLocales, true)) {
-            $defaultLocale = $enabledLocales[0] ?? 'en';
-        }
-
-        $locale = in_array($sessionLocale, $enabledLocales, true) ? $sessionLocale : $defaultLocale;
+        $locale = $locales->isEnabled($sessionLocale) ? $sessionLocale : $locales->default();
 
         App::setLocale($locale);
 

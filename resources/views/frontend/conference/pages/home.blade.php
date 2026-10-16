@@ -2,12 +2,12 @@
     @if ($conference->hasMedia('cover'))
         <div class="conference-cover">
             <img class="h-full" src="{{ $conference->getFirstMedia('cover')->getAvailableUrl(['thumb', 'thumb-xl']) }}"
-                alt="{{ $conference->title }}" />
+                alt="{{ $conference->translated('name') }}" />
         </div>
     @endif
-    @if ($conference->getMeta('about'))
+    @if ($conference->translated('about'))
         <div class="conference-about user-content mb-4">
-            {!! $conference->getMeta('about') !!}
+            {!! $conference->translated('about') !!}
         </div>
     @endif
     @if($upcomingScheduledConferences->isNotEmpty() || $pastScheduledConferences->isNotEmpty())
@@ -20,14 +20,14 @@
                         <div class="scheduled-conference sm:flex gap-4">
                             @if ($scheduledConference->hasThumbnail())
                                 <div class="scheduled-conference-cover max-w-40">
-                                    <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->title }}">
+                                    <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->translated('title') }}">
                                 </div>
                             @endif
                             <div class="information flex-1 space-y-3">
                                 <div>
                                     <h3 class="scheduled-conference-title">
                                         <a href="{{ $scheduledConference->getHomeUrl() }}"
-                                            class="link link-primary link-hover font-medium">{{ $scheduledConference->title }}</a>
+                                            class="link link-primary link-hover font-medium">{{ $scheduledConference->translated('title') }}</a>
                                     </h3>
                                     <div class="scheduled-conference-date text-sm text-gray-700">
                                         @if($scheduledConference->date_start)
@@ -39,9 +39,9 @@
                                     </div>
                                 </div>
 
-                                @if ($scheduledConference->getMeta('summary'))
+                                @if ($scheduledConference->translated('summary'))
                                     <div class="scheduled-conference-summary user-content">
-                                        {!! $scheduledConference->getMeta('summary') !!}
+                                        {!! $scheduledConference->translated('summary') !!}
                                     </div>
                                 @endif
                                 <div class="scheduled-conference-link">
@@ -62,14 +62,14 @@
                         <div class="scheduled-conference sm:flex gap-4">
                             @if ($scheduledConference->hasThumbnail())
                                 <div class="scheduled-conference-cover max-w-40">
-                                    <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->title }}">
+                                    <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->translated('title') }}">
                                 </div>
                             @endif
                             <div class="information flex-1 space-y-3">
                                 <div>
                                     <h3 class="scheduled-conference-title">
                                         <a href="{{ $scheduledConference->getHomeUrl() }}"
-                                            class="link link-primary link-hover font-medium">{{ $scheduledConference->title }}</a>
+                                            class="link link-primary link-hover font-medium">{{ $scheduledConference->translated('title') }}</a>
                                     </h3>
                                     <div class="scheduled-conference-date text-sm text-gray-700">
                                         @if($scheduledConference->date_start)
@@ -81,9 +81,9 @@
                                     </div>
                                 </div>
 
-                                @if ($scheduledConference->getMeta('summary'))
+                                @if ($scheduledConference->translated('summary'))
                                     <div class="scheduled-conference-summary user-content">
-                                        {!! $scheduledConference->getMeta('summary') !!}
+                                        {!! $scheduledConference->translated('summary') !!}
                                     </div>
                                 @endif
                                 <div class="scheduled-conference-link">

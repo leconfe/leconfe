@@ -29,12 +29,12 @@
                     <tr>
                         <th class="w-40">Participant</th>
                         <td class="w-4">:</td>
-                        <td>{{$participant->payment->getMeta('title')}}</td>
+                        <td>{{ $participant->payment->fee?->translated('name') ?: $participant->payment->getMeta('title') }}</td>
                     </tr>
                     <tr>
                         <th class="w-40">Description</th>
                         <td class="w-4">:</td>
-                        <td>{{$participant->payment->getMeta('description')}}</td>
+                        <td>{{ $participant->payment->fee?->translated('description') ?: $participant->payment->getMeta('description') }}</td>
                     </tr>
                     <tr>
                         <th class="w-40">Amount</th>

@@ -78,7 +78,7 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
         return $requiredTypes
             ->map(fn (SubmissionFileType $type) => [
                 'id' => $type->getKey(),
-                'name' => $type->name,
+                'name' => $type->translated('name'),
                 'uploaded' => $uploadedRequiredTypeIds->contains($type->getKey()),
             ])
             ->values();
@@ -125,6 +125,7 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
             ->where('required', true)
             ->orderBy('order_column')
             ->orderBy('id')
+            ->with('translate')
             ->get(['id', 'name']);
     }
 }

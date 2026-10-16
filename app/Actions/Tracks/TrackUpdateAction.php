@@ -15,11 +15,15 @@ class TrackUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $track->syncTranslatableState($data);
+
             $track->update($data);
 
             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                 $track->setManyMeta($data['meta']);
             }
+
+            $track->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

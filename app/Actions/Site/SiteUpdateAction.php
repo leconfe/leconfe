@@ -17,9 +17,13 @@ class SiteUpdateAction
 
             $site = app()->getSite();
 
+            $data = $site->syncTranslatableState($data);
+
             if ($meta = data_get($data, 'meta')) {
                 $site->setManyMeta($meta);
             }
+
+            $site->persistTranslatableState();
 
             $site->touch();
 

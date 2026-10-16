@@ -57,11 +57,12 @@ class ProceedingDetail extends Page
         $tracks = Track::query()
             ->ordered()
             ->with([
+                'translate',
                 'submissions' => fn ($query) => $query
                     ->ordered()
                     ->where('proceeding_id', $this->proceeding->id)
                     ->where('status', SubmissionStatus::Published)
-                    ->with(['authors.meta', 'doi', 'galleys.file.media', 'meta']),
+                    ->with(['authors.meta', 'doi', 'galleys.file.media', 'meta', 'translate']),
             ])
             ->whereHas(
                 'submissions',

@@ -12,7 +12,7 @@
                 </svg>
                 <span class="sr-only">Info</span>
                 <div>
-                    {{ $closedMessage ?? 'This conference is not accepting submissions at this time.' }}
+                    {{ $closedMessage ?? __('general.not_accepting_submissions') }}
                 </div>
             </div>
         @else

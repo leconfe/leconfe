@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\Topics\TopicCreateAction;
 use App\Actions\Topics\TopicUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Topic;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -32,19 +33,20 @@ class TopicTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn() => Topic::query()->orderBy('order_column'))
+            ->query(fn () => Topic::query()->with('translate')->orderBy('order_column'))
             ->heading(__('general.topic'))
             ->reorderable('order_column')
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
+                    ->formatStateUsing(fn (Topic $record) => $record->translated('name'))
                     ->searchable(),
             ])
             ->headerActions([
                 CreateAction::make('createtopic')
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn(Form $form) => $this->form($form))
-                    ->using(fn(array $data) => TopicCreateAction::run($data)),
+                    ->form(fn (Form $form) => $this->form($form))
+                    ->using(fn (array $data) => TopicCreateAction::run($data)),
             ])
             ->filters([
                 // ...
@@ -52,8 +54,9 @@ class TopicTable extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn(Form $form) => $this->form($form))
-                    ->action(fn(Topic $record, array $data) => TopicUpdateAction::run($record, $data)),
+                    ->form(fn (Form $form) => $this->form($form))
+                    ->mutateRecordDataUsing(fn (Topic $record, array $data) => $record->fillTranslatableFormState($data, ['name']))
+                    ->action(fn (Topic $record, array $data) => TopicUpdateAction::run($record, $data)),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -65,9 +68,11 @@ class TopicTable extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('general.name'))
-                    ->required(),
+                MultilanguageComponent::make([
+                    TextInput::make('name')
+                        ->label(__('general.name'))
+                        ->required(),
+                ]),
             ]);
     }
 }

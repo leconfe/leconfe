@@ -69,7 +69,7 @@ class SubmissionFileUploaded extends Notification implements ShouldQueue
                     default => 'New File Uploaded'
                 };
             })
-            ->body("Title: {$this->submissionFile->submission->getMeta('title')}")
+            ->body("Title: {$this->submissionFile->submission->translated('title')}")
             ->actions([
                 Action::make('new-submission')
                     ->url($this->resolveSubmissionUrl())

@@ -42,7 +42,7 @@ class ReviewResult extends Page implements HasForms, HasTable
     public static function reviewResultsQuery(): Builder
     {
         return Submission::query()
-            ->with(['meta'])
+            ->with(['meta', 'translate'])
             ->select('submissions.*')
             ->whereIn('status', [
                 SubmissionStatus::OnReview,
@@ -117,7 +117,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ])
                     ->grow(false),
                 TextColumn::make('title')
-                    ->getStateUsing(fn ($record) => $record->getMeta('title'))
+                    ->getStateUsing(fn ($record) => $record->translated('title'))
                     ->color('primary')
                     ->openUrlInNewTab()
                     ->url(fn ($record) => SubmissionResource::getUrl('view', ['record' => $record]))

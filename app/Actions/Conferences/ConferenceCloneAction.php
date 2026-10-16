@@ -4,6 +4,7 @@ namespace App\Actions\Conferences;
 
 use App\Models\Conference;
 use App\Models\Scopes\ConferenceScope;
+use App\Support\Multilingual\ContentLocales;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -33,7 +34,7 @@ class ConferenceCloneAction
     {
         $clonedConferenceId = $data['conference_id'];
 
-        $clonedDataConference = Conference::with([
+        $sourceConference = Conference::with([
             'meta',
 
             'topics' => function ($query) {
@@ -41,15 +42,43 @@ class ConferenceCloneAction
             },
 
             'staticPages' => function ($query) {
-                $query->withoutGlobalScopes([ConferenceScope::class]);
+                $query->withoutGlobalScopes([ConferenceScope::class])->with('meta');
             },
-        ])->findOrFail($clonedConferenceId)->replicate();
+        ])->findOrFail($clonedConferenceId);
+
+        $clonedDataConference = $sourceConference->replicate();
 
         $clonedDataConference->fill($data);
         $clonedDataConference->path = $this->generateUniquePath($clonedDataConference->path);
         $clonedDataConference->save();
 
+        $sourceConference->copyTranslationsTo($clonedDataConference);
+
+        $this->syncDefaultTranslationsOfChangedColumns($sourceConference, $clonedDataConference);
+
         return $clonedDataConference;
+    }
+
+    /**
+     * A column given a new value for the clone (such as the name) replaces a copied
+     * default-language translation, so the default language shows the new value
+     * while the other languages keep the copied translations.
+     */
+    private function syncDefaultTranslationsOfChangedColumns(Conference $sourceConference, Conference $clonedDataConference): void
+    {
+        $default = app(ContentLocales::class)->default();
+
+        foreach ($clonedDataConference->getTranslatableColumns() as $column) {
+            $value = $clonedDataConference->getAttribute($column);
+
+            if ($value === $sourceConference->getAttribute($column)) {
+                continue;
+            }
+
+            if ($clonedDataConference->getStoredTranslation($column, $default) !== null) {
+                $clonedDataConference->setTranslation($column, $default, $value);
+            }
+        }
     }
 
     private function cloneRelations(Conference $clonedDataConference): void
@@ -65,6 +94,8 @@ class ConferenceCloneAction
             $clonedTopic = $topic->replicate();
             $clonedTopic->conference_id = $clonedDataConference->id;
             $clonedTopic->save();
+
+            $topic->copyTranslationsTo($clonedTopic);
         }
     }
 
@@ -74,6 +105,14 @@ class ConferenceCloneAction
             $clonedStaticPage = $staticPage->replicate();
             $clonedStaticPage->conference_id = $clonedDataConference->id;
             $clonedStaticPage->save();
+
+            foreach ($staticPage->meta as $meta) {
+                $clonedMeta = $meta->replicate();
+                $clonedMeta->metable_id = $clonedStaticPage->id;
+                $clonedMeta->save();
+            }
+
+            $staticPage->copyTranslationsTo($clonedStaticPage);
         }
     }
 

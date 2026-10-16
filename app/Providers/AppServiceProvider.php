@@ -16,6 +16,7 @@ use App\Managers\SidebarManager;
 use App\Models\Conference;
 use App\Models\ScheduledConference;
 use App\Routing\CustomUrlGenerator;
+use App\Support\Queue\QueuedConferenceContext;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Infolists\Infolist as FilamentInfolist;
 use Illuminate\Database\Eloquent\Model;
@@ -133,6 +134,8 @@ class AppServiceProvider extends ServiceProvider
             }
         }));
         Event::subscribe(SubmissionEventSubscriber::class);
+
+        QueuedConferenceContext::register($this->app['events']);
     }
 
     protected function extendBlade(): void

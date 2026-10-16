@@ -23,12 +23,12 @@
 
                         <div class="p-6 flex flex-col gap-4 flex-1">
                             <div class="inline-flex w-fit items-center border text-xs font-medium px-1.5 py-0.5 rounded-sm">
-                                {{ $presentation->submission->track->title }}
+                                {{ $presentation->submission->track->translated('title') }}
                             </div>
 
                             <h3
                                 class="text-sm font-semibold tracking-tight text-gray-700 group-hover:text-black line-clamp-3">
-                                {{ $presentation->submission->getMeta('title') }}
+                                {{ $presentation->submission->translated('title') }}
                             </h3>
 
                             @php

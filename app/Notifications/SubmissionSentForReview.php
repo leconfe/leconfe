@@ -46,7 +46,7 @@ class SubmissionSentForReview extends Notification implements ShouldQueue
             ->icon('lineawesome-check-circle')
             ->iconColor('success')
             ->title(__('general.submission_sent_for_review'))
-            ->body("Title: {$this->submission->getMeta('title')}")
+            ->body("Title: {$this->submission->translated('title')}")
             ->actions([
                 Action::make('view-abstract')
                     ->url(SubmissionResource::getUrl('view', ['record' => $this->submission, 'tenant' => $this->submission->conference]))

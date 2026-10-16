@@ -92,6 +92,7 @@ class InvitationRegister extends Page
             'family_name' => $this->family_name,
             'email' => mb_strtolower($invitation->email),
             'password' => $this->password,
+            'locale' => app()->getLocale(),
         ]);
 
         $this->sendInvitationEmailVerificationNotification($user);
@@ -110,9 +111,9 @@ class InvitationRegister extends Page
 
         return [
             'invitation' => $invitation,
-            'invitationDisplayName' => $invitation->scheduledConference?->title
-                ?? $invitation->conference?->name
-                ?? app()->getSite()->getMeta('name'),
+            'invitationDisplayName' => $invitation->scheduledConference?->translated('title')
+                ?? $invitation->conference?->translated('name')
+                ?? app()->getSite()->translated('name'),
             'privacyStatementUrl' => $invitation->scheduledConference && $invitation->conference
                 ? route('livewirePageGroup.scheduledConference.pages.privacy-statement', [
                     'conference' => $invitation->conference->path,

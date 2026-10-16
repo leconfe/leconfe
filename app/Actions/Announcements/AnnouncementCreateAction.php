@@ -3,7 +3,6 @@
 namespace App\Actions\Announcements;
 
 use App\Models\Announcement;
-use App\Models\ScheduledConference;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -16,10 +15,14 @@ class AnnouncementCreateAction
         try {
             DB::beginTransaction();
 
-            $announcement = Announcement::create($data);
+            $announcement = new Announcement;
+            $data = $announcement->syncTranslatableState($data);
+            $announcement->fill($data)->save();
             if (data_get($data, 'meta')) {
                 $announcement->setManyMeta(data_get($data, 'meta'));
             }
+
+            $announcement->persistTranslatableState();
 
             if ($sendEmail) {
                 AnnouncementBroadcastMail::dispatch($announcement);

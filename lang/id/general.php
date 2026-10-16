@@ -105,6 +105,7 @@ return [
 
     'navigation_menu' => 'Menu Navigasi',
     'languages' => 'Bahasa',
+    'languages_english_fallback' => 'Bahasa Inggris digunakan jika tidak ada bahasa yang dipilih.',
 
     'no_navigation_menu_items_found' => 'Item Menu Navigasi tidak ditemukan',
     'no_navigation_menu_found' => 'Menu Navigasi tidak ditemukan',
@@ -1148,4 +1149,22 @@ return [
     'slug_helper' => 'Masukkan pengenal ramah URL unik untuk laman ini. Gunakan huruf kecil, angka, tanda hubung, dan garis bawah saja. Misalnya, \'tentang-kami\' atau \'info-kontak\'',
     'submission_file_renamed_activity' => 'File dengan nama ":oldName" dan id :id, pada kategori ":category" diganti namanya menjadi ":newName".',
     'submission_file_deleted_activity' => 'File dengan nama ":name" dan id :id dihapus.',
+
+    'language' => 'Bahasa',
+    'switch_language' => 'Ganti bahasa',
+    'current_language' => 'Bahasa saat ini',
+    'translations' => 'Terjemahan',
+    'show_translations' => 'Tampilkan terjemahan',
+    'hide_translations' => 'Sembunyikan terjemahan',
+    'translation_in' => ':label (:language)',
+    'read_author_guidelines' => 'Baca panduan penulis',
+    'not_accepting_submissions' => 'Konferensi ini sedang tidak menerima naskah.',
+    'submissions_guest_notice' => 'Pendaftaran dan login diperlukan untuk mengirimkan naskah secara daring dan memeriksa status naskah yang sedang diproses.',
+    'make_new_submission' => 'Kirim naskah baru',
+    'view_your_submissions' => 'Lihat naskah Anda yang sedang diproses',
+    'track_policies' => 'Kebijakan Track',
+    'preferred_language' => 'Bahasa pilihan',
+    'preferred_language_helper' => 'Email dikirim kepada Anda dalam bahasa ini.',
+    'paper_language' => 'Bahasa makalah',
+    'paper_language_helper' => 'Bahasa yang digunakan dalam makalah. Metadata dalam bahasa ini wajib diisi dan digunakan untuk sitasi dan pengindeksan.',
 ];

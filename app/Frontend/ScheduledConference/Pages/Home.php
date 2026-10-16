@@ -19,12 +19,13 @@ class Home extends Page
         $currentScheduledConference = app()->getCurrentScheduledConference();
         $currentScheduledConference->load([
             'speakerRoles' => fn($query) => $query->ordered()->with([
+                'translate',
                 'speakers' => fn($query) => $query->ordered()->with('meta'),
             ]),
         ]);
 
         $sponsorLevels = StakeholderLevel::sponsors()
-            ->with(['stakeholders'])
+            ->with(['stakeholders', 'translate'])
             ->whereHas('stakeholders')
             ->orderBy('order_column', 'asc')
             ->get();
