@@ -19,7 +19,7 @@ class Proceedings extends Page
     public function mount()
     {
         $this->proceedings = Proceeding::query()
-            ->with(['conference'])
+            ->with(['conference', 'translate'])
             ->published()
             ->ordered()
             ->get();

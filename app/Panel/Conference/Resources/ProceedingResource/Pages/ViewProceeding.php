@@ -40,10 +40,10 @@ class ViewProceeding extends Page implements HasForms, HasTable
         $this->record = $this->resolveRecord($record);
 
         $this->authorizeAccess();
-        $this->form->fill([
+        $this->form->fill($this->record->fillTranslatableFormState([
             ...$this->record->attributesToArray(),
             'meta' => $this->record->getAllMeta()->toArray(),
-        ]);
+        ], ['title', 'description']));
     }
 
     protected function getHeaderActions(): array
@@ -74,7 +74,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
     public function getTitle(): string|Htmlable
     {
-        return $this->record->title;
+        return (string) $this->record->translated('title');
     }
 
     public function form(Form $form): Form

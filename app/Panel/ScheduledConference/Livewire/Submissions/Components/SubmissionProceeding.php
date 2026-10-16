@@ -58,7 +58,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                     ->html()
                     ->getStateUsing(function (Submission $record) {
                         if ($record->proceeding) {
-                            $proceedingTitle = $record->proceeding->title;
+                            $proceedingTitle = e($record->proceeding->translated('title'));
                             $proceedingRoute = route('filament.conference.resources.proceedings.view', ['record' => $record->proceeding]);
 
                             return __(
@@ -94,11 +94,15 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                     fn () => [
                         __('general.future_proceedings') => Proceeding::query()
                             ->where('published', false)
-                            ->pluck('title', 'id')
+                            ->with('translate')
+                            ->get()
+                            ->mapWithKeys(fn (Proceeding $proceeding) => [$proceeding->getKey() => $proceeding->translated('title')])
                             ->toArray(),
                         __('general.back_proceedings') => Proceeding::query()
                             ->where('published', true)
-                            ->pluck('title', 'id')
+                            ->with('translate')
+                            ->get()
+                            ->mapWithKeys(fn (Proceeding $proceeding) => [$proceeding->getKey() => $proceeding->translated('title')])
                             ->toArray(),
                     ]
                 ),

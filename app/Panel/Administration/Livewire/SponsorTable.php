@@ -5,6 +5,7 @@ namespace App\Panel\Administration\Livewire;
 use App\Actions\Stakeholders\StakeholderCreateAction;
 use App\Actions\Stakeholders\StakeholderUpdateAction;
 use App\Models\Stakeholder;
+use App\Models\StakeholderLevel;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Select;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -22,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Livewire\Component;
 
@@ -37,11 +39,16 @@ class SponsorTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Stakeholder::sponsors())
+            ->query(Stakeholder::sponsors()->with('level.translate'))
             ->heading(__('general.sponsors'))
             ->reorderable('order_column')
             ->defaultSort('order_column', 'asc')
             ->defaultGroup('level.name')
+            ->groups([
+                Group::make('level.name')
+                    ->label(__('general.level'))
+                    ->getTitleFromRecordUsing(fn (Stakeholder $record) => $record->level?->translated('name')),
+            ])
             ->columns([
                 IndexColumn::make('no.'),
                 SpatieMediaLibraryImageColumn::make('logo')
@@ -54,6 +61,7 @@ class SponsorTable extends Component implements HasForms, HasTable
                     ->searchable(),
                 TextColumn::make('level.name')
                     ->label(__('general.level'))
+                    ->formatStateUsing(fn (Stakeholder $record) => $record->level?->translated('name'))
                     ->badge()
                     ->searchable(),
                 ToggleColumn::make('is_shown')
@@ -121,7 +129,8 @@ class SponsorTable extends Component implements HasForms, HasTable
                     ]),
                 Select::make('level_id')
                     ->label(__('general.level'))
-                    ->relationship('level', 'name', fn ($query) => $query->sponsors()->orderBy('order_column', 'asc')),
+                    ->relationship('level', 'name', fn ($query) => $query->sponsors()->with('translate')->orderBy('order_column', 'asc'))
+                    ->getOptionLabelFromRecordUsing(fn (StakeholderLevel $record) => $record->translated('name')),
             ]);
     }
 }

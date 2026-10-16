@@ -25,7 +25,7 @@ class Home extends Page
         ]);
 
         $sponsorLevels = StakeholderLevel::sponsors()
-            ->with(['stakeholders'])
+            ->with(['stakeholders', 'translate'])
             ->whereHas('stakeholders')
             ->orderBy('order_column', 'asc')
             ->get();

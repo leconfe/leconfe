@@ -77,7 +77,7 @@
                     @endif
                     @foreach ($sponsorLevels as $sponsorLevel)
                         <div class="conference-sponsor-level">
-                            <h3 class="text-lg mb-4">{{ $sponsorLevel->name }}</h3>
+                            <h3 class="text-lg mb-4">{{ $sponsorLevel->translated('name') }}</h3>
                             <div class="conference-sponsors flex flex-wrap items-center gap-4">
                                 @foreach($sponsorLevel->stakeholders as $sponsor)
                                     @if(!$sponsor->getFirstMedia('logo'))

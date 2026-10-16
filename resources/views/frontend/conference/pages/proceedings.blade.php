@@ -18,7 +18,7 @@
                         <div>
                             <div class="mb-3 text-base space-y-0.5">
                                 <h2>
-                                    <a href="{{ route('livewirePageGroup.conference.pages.proceeding-detail', ['proceeding' => $proceeding]) }}" class="font-semibold text-gray-700 hover:text-primary">{{ $proceeding->title }}</a>
+                                    <a href="{{ route('livewirePageGroup.conference.pages.proceeding-detail', ['proceeding' => $proceeding]) }}" class="font-semibold text-gray-700 hover:text-primary">{{ $proceeding->translated('title') }}</a>
                                 </h2>
                                 <div class="text-sm text-gray-500">
                                     {{ $proceeding->volume ? 'Vol. '.$proceeding->volume : '' }}

@@ -58,7 +58,7 @@
                             <div class="flex-1">
                                 <div class="space-y-4">
                                     <div class="user-content">
-                                        {{ new Illuminate\Support\HtmlString($proceeding->description) }}
+                                        {{ new Illuminate\Support\HtmlString($proceeding->translated('description')) }}
                                     </div>
                                     <div class="text-sm">
                                         <span class="font-semibold">Published: </span>

@@ -16,11 +16,15 @@ class ProceedingCreateAction
         try {
             DB::beginTransaction();
 
-            $proceeding = Proceeding::create($data);
+            $proceeding = new Proceeding;
+            $data = $proceeding->syncTranslatableState($data);
+            $proceeding->fill($data)->save();
 
             if (data_get($data, 'meta')) {
                 $proceeding->setManyMeta($data['meta']);
             }
+
+            $proceeding->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

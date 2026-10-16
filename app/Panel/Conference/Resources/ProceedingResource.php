@@ -2,7 +2,9 @@
 
 namespace App\Panel\Conference\Resources;
 
+use App\Actions\Proceedings\ProceedingUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
@@ -44,6 +46,7 @@ class ProceedingResource extends Resource
     {
         return static::getModel()::query()
             ->ordered()
+            ->with('translate')
             ->withCount('submissions');
     }
 
@@ -77,14 +80,16 @@ class ProceedingResource extends Resource
                             ->numeric()
                             ->minValue(0),
                     ]),
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                TinyEditor::make('description')
-                    ->label(__('general.description'))
-                    ->profile('basic')
-                    ->minHeight(300)
-                    ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                MultilanguageComponent::make([
+                    TextInput::make('title')
+                        ->label(__('general.title'))
+                        ->required(),
+                    TinyEditor::make('description')
+                        ->label(__('general.description'))
+                        ->profile('basic')
+                        ->minHeight(300)
+                        ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                ]),
                 Repeater::make('meta.additional_content')
                     ->label(__('general.additional_content'))
                     ->addActionAlignment(Alignment::Start)
@@ -114,6 +119,7 @@ class ProceedingResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
+                    ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('submissions_count')
@@ -136,7 +142,13 @@ class ProceedingResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()
-                        ->modalWidth('xl'),
+                        ->modalWidth('xl')
+                        ->mutateRecordDataUsing(function (Proceeding $record, array $data) {
+                            $data['meta'] = $record->getAllMeta()->toArray();
+
+                            return $record->fillTranslatableFormState($data, ['title', 'description']);
+                        })
+                        ->using(fn (Proceeding $record, array $data) => ProceedingUpdateAction::run($record, $data)),
                     Tables\Actions\Action::make('preview')
                         ->label(__('general.preview'))
                         ->icon('heroicon-o-eye')
