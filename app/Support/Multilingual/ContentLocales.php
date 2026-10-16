@@ -2,14 +2,13 @@
 
 namespace App\Support\Multilingual;
 
-use App\Facades\Setting;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Resolves the content languages enabled site-wide.
+ * Resolves the enabled content languages.
  *
- * The language list is a site setting, so it is read from the site even while a
- * conference is active (conference meta may still hold stale language defaults).
+ * A conference has its own language settings. A conference that has not saved them
+ * uses the site languages. With no language enabled, English is used.
  */
 class ContentLocales
 {
@@ -49,7 +48,7 @@ class ContentLocales
     public function enabled(): array
     {
         $enabled = array_values(array_intersect(
-            (array) $this->siteSetting('languages', ['en']),
+            (array) $this->setting('languages', ['en']),
             array_keys(config('app.locales', []))
         ));
 
@@ -59,15 +58,17 @@ class ContentLocales
     public function default(): string
     {
         $enabled = $this->enabled();
-        $default = $this->siteSetting('default_language', 'en');
+        $default = $this->setting('default_language', 'en');
 
         return in_array($default, $enabled, true) ? $default : $enabled[0];
     }
 
-    protected function siteSetting(string $key, mixed $default): mixed
+    protected function setting(string $key, mixed $default): mixed
     {
-        if (! app()->getCurrentConferenceId()) {
-            return Setting::get($key, $default);
+        $conference = app()->getCurrentConferenceId() ? app()->getCurrentConference() : null;
+
+        if ($conference?->hasMeta("settings_{$key}")) {
+            return $conference->getMeta("settings_{$key}") ?? $default;
         }
 
         return app()->getSite()->getMeta("settings_{$key}") ?? $default;

@@ -261,8 +261,6 @@ class Conference extends Model implements HasAvatar, HasMedia, HasName
             'settings_format_date' => 'j F Y',
             'settings_select_format_time' => 'H:i',
             'settings_format_time' => 'H:i',
-            'settings_default_language' => 'en',
-            'settings_languages' => ['en'],
             'page_footer' => view('frontend.examples.footer')->render(),
             'languages' => ['en'],
             'primary_citation_format' => 'apa',

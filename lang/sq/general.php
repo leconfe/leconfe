@@ -1167,6 +1167,7 @@ return [
     'switch_language' => 'Switch language',
     'current_language' => 'Current language',
     'translations_filled' => 'Translations filled: :filled/:total',
+    'languages_english_fallback' => 'English is used when no language is selected.',
     'show_translations' => 'Show translations',
     'hide_translations' => 'Hide translations',
     'translation_in' => ':label (:language)',

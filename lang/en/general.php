@@ -115,6 +115,7 @@ return [
 
     'navigation_menu' => 'Navigation Menu',
     'languages' => 'Languages',
+    'languages_english_fallback' => 'English is used when no language is selected.',
 
     'no_navigation_menu_items_found' => 'No Navigation Menu items found',
     'no_navigation_menu_found' => 'No Navigation Menu found',

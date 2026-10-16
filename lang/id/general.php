@@ -105,6 +105,7 @@ return [
 
     'navigation_menu' => 'Menu Navigasi',
     'languages' => 'Bahasa',
+    'languages_english_fallback' => 'Bahasa Inggris digunakan jika tidak ada bahasa yang dipilih.',
 
     'no_navigation_menu_items_found' => 'Item Menu Navigasi tidak ditemukan',
     'no_navigation_menu_found' => 'Menu Navigasi tidak ditemukan',
