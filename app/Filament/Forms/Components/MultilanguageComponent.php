@@ -4,9 +4,11 @@ namespace App\Filament\Forms\Components;
 
 use App\Support\Multilingual\ContentLocales;
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 /**
  * Renders the wrapped fields once per enabled content language.
@@ -126,13 +128,17 @@ class MultilanguageComponent extends Component
     protected function prepareMultilanguageComponent(Component $component): Component
     {
         if ($component instanceof Field) {
-            return MultilanguageField::make(
-                collect($this->getLocales())
-                    ->map(fn (string $locale) => $this->prepareLocaleField($component, $locale))
-                    ->all()
-            )
+            $localeFields = collect($this->getLocales())
+                ->map(fn (string $locale) => $this->prepareLocaleField($component, $locale))
+                ->all();
+
+            $group = MultilanguageField::make($localeFields)
                 ->primaryLocale($this->getPrimaryLocale())
                 ->columnSpan($component->getColumnSpan());
+
+            $this->addTranslationsToggle($localeFields[0], $group);
+
+            return $group;
         }
 
         $clonedComponent = clone $component;
@@ -147,6 +153,23 @@ class MultilanguageComponent extends Component
         }
 
         return $clonedComponent;
+    }
+
+    protected function addTranslationsToggle(Field $primaryField, MultilanguageField $group): void
+    {
+        $primaryField->hintAction(
+            Action::make('translations')
+                ->label(fn (): HtmlString => $group->getTranslationsLabel())
+                ->icon('heroicon-m-language')
+                ->link()
+                ->alpineClickHandler('open = ! open')
+                ->extraAttributes(fn (): array => [
+                    'aria-controls' => $group->getTranslationsId(),
+                    'x-bind:aria-expanded' => 'String(open)',
+                    'data-multilanguage-toggle' => true,
+                ])
+                ->visible(fn (): bool => $group->getTranslationStatePaths() !== []),
+        );
     }
 
     protected function prepareLocaleField(Field $field, string $locale): Field

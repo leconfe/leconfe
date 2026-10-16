@@ -1153,7 +1153,7 @@ return [
     'language' => 'Bahasa',
     'switch_language' => 'Ganti bahasa',
     'current_language' => 'Bahasa saat ini',
-    'translations_filled' => 'Terjemahan terisi: :filled/:total',
+    'translations' => 'Terjemahan',
     'show_translations' => 'Tampilkan terjemahan',
     'hide_translations' => 'Sembunyikan terjemahan',
     'translation_in' => ':label (:language)',

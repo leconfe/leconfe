@@ -2,9 +2,11 @@
 
 namespace App\Filament\Forms\Components;
 
+use App\Support\Multilingual\ContentLocales;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\HtmlString;
 
 /**
  * Groups the per-locale copies of one field. The default-language input comes first.
@@ -49,6 +51,22 @@ class MultilanguageField extends Component
                 ->parentComponent($this)
                 ->components([$component]))
             ->all();
+    }
+
+    public function getTranslationsId(): string
+    {
+        return 'translations-'.md5(implode('|', $this->getTranslationStatePaths()));
+    }
+
+    public function getTranslationsLabel(): HtmlString
+    {
+        $paths = $this->getTranslationStatePaths();
+        $livewire = $this->getLivewire();
+
+        return new HtmlString(view('filament.forms.components.multilanguage-field-toggle', [
+            'filledCount' => collect($paths)->reject(fn (string $path) => ContentLocales::isBlank(data_get($livewire, $path)))->count(),
+            'total' => count($paths),
+        ])->render());
     }
 
     /**
