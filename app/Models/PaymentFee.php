@@ -366,9 +366,10 @@ class PaymentFee extends Model implements Sortable
     }
 
     /**
-     * Write the add-on item translations under each item's current key. An item saved
-     * with single-language state keeps the translations of the key it had before it was
-     * edited. Translations of items that no longer exist are removed.
+     * Write the add-on item translations under each item's current key. An item whose
+     * key changed keeps the translations of the key it had before it was edited, so
+     * languages that were not in the form are not lost; the submitted languages then
+     * replace them. Translations of items that no longer exist are removed.
      */
     public function persistAdditionalItemTranslations(): void
     {
@@ -380,6 +381,10 @@ class PaymentFee extends Model implements Sortable
         $items = is_array($items) ? array_values($items) : [];
         $primary = $this->getPrimaryContentLocale();
         $keep = [];
+        $existing = $this->translate()
+            ->where('key', 'like', 'additional_items.%')
+            ->get()
+            ->groupBy('key');
 
         foreach ($items as $index => $item) {
             $key = static::additionalItemKey($item);
@@ -393,27 +398,21 @@ class PaymentFee extends Model implements Sortable
 
             foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
                 $translationKey = static::additionalItemTranslationKey($key, $field);
+                $submitted = $pending['translations'][$field] ?? [];
 
-                if (array_key_exists($field, $pending['translations'])) {
-                    foreach ($pending['translations'][$field] as $locale => $value) {
-                        $this->writeTranslation($translationKey, $locale, is_scalar($value) ? $value : null);
-                    }
-
-                    continue;
+                if ($pending['copyFrom'] !== null && $pending['copyFrom'] !== $key) {
+                    $existing->get(static::additionalItemTranslationKey($pending['copyFrom'], $field), collect())
+                        ->reject(fn ($translation) => array_key_exists($translation->locale, $submitted))
+                        ->each(fn ($translation) => $this->writeTranslation(
+                            $translationKey,
+                            $translation->locale,
+                            $translation->locale === $primary ? ($item[$field] ?? null) : $translation->value,
+                        ));
                 }
 
-                if ($pending['copyFrom'] === null || $pending['copyFrom'] === $key) {
-                    continue;
+                foreach ($submitted as $locale => $value) {
+                    $this->writeTranslation($translationKey, $locale, is_scalar($value) ? $value : null);
                 }
-
-                $this->translate()
-                    ->where('key', static::additionalItemTranslationKey($pending['copyFrom'], $field))
-                    ->get()
-                    ->each(fn ($translation) => $this->writeTranslation(
-                        $translationKey,
-                        $translation->locale,
-                        $translation->locale === $primary ? ($item[$field] ?? null) : $translation->value,
-                    ));
             }
         }
 

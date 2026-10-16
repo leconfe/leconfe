@@ -2,6 +2,8 @@
 
 namespace App\Models\Concerns;
 
+use Illuminate\Support\Arr;
+
 /**
  * A custom form item whose name, description and response options are entered per
  * language. Models declare `$translatableMeta = ['name', 'description', 'response_options']`
@@ -12,7 +14,9 @@ namespace App\Models\Concerns;
  */
 trait HasTranslatableFormItem
 {
-    use HasTranslatableContent;
+    use HasTranslatableContent {
+        normalizeTranslationValue as normalizeContentTranslationValue;
+    }
 
     /**
      * The primary-language response options.
@@ -21,17 +25,7 @@ trait HasTranslatableFormItem
      */
     public function getPrimaryResponseOptions(): array
     {
-        $options = $this->getMeta('response_options');
-
-        if (is_string($options)) {
-            $options = [$options];
-        }
-
-        return collect(is_array($options) ? $options : [])
-            ->filter(fn (mixed $option) => is_scalar($option))
-            ->map(fn (mixed $option) => (string) $option)
-            ->values()
-            ->all();
+        return array_values($this->getIndexedPrimaryResponseOptions());
     }
 
     /**
@@ -43,12 +37,11 @@ trait HasTranslatableFormItem
      */
     public function translatedResponseOptions(?string $locale = null): array
     {
-        $primaryOptions = $this->getPrimaryResponseOptions();
         $primary = $this->getPrimaryContentLocale();
         $localized = $this->getStoredTranslation('response_options', $locale ?? app()->getLocale()) ?? [];
         $primaryLocalized = $this->getStoredTranslation('response_options', $primary) ?? [];
 
-        return collect($primaryOptions)
+        return collect($this->getIndexedPrimaryResponseOptions())
             ->map(function (string $option, int $index) use ($localized, $primaryLocalized) {
                 foreach ([$localized[$index] ?? null, $primaryLocalized[$index] ?? null] as $label) {
                     if (! static::isBlankContent($label)) {
@@ -58,7 +51,55 @@ trait HasTranslatableFormItem
 
                 return $option;
             })
+            ->values()
             ->all();
+    }
+
+    /**
+     * The non-empty primary-language options keyed by their position in the stored list,
+     * which is the position of their translations.
+     *
+     * @return array<int, string>
+     */
+    protected function getIndexedPrimaryResponseOptions(): array
+    {
+        $options = $this->getMeta('response_options');
+
+        if (is_string($options)) {
+            $options = [$options];
+        }
+
+        return collect(is_array($options) ? array_values($options) : [])
+            ->filter(fn (mixed $option) => is_scalar($option) && trim((string) $option) !== '')
+            ->map(fn (mixed $option) => (string) $option)
+            ->all();
+    }
+
+    /**
+     * Response options keep their positions so each translation stays matched to its
+     * primary-language option: an empty option becomes an empty string instead of
+     * being removed. Other keys are normalised as usual.
+     */
+    protected function normalizeTranslationValue(string $key, mixed $value): mixed
+    {
+        if ($key !== 'response_options') {
+            return $this->normalizeContentTranslationValue($key, $value);
+        }
+
+        if (is_string($value)) {
+            $value = explode(',', $value);
+        }
+
+        $items = collect(Arr::wrap($value))
+            ->values()
+            ->map(fn (mixed $item) => is_scalar($item) ? trim((string) $item) : '')
+            ->all();
+
+        while ($items !== [] && end($items) === '') {
+            array_pop($items);
+        }
+
+        return $items ?: null;
     }
 
     /**

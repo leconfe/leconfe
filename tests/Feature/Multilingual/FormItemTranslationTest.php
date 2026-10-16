@@ -293,6 +293,27 @@ class FormItemTranslationTest extends TestCase
             ->assertDontSee('Apa saja');
     }
 
+    public function test_a_partly_translated_option_list_keeps_each_label_on_its_option(): void
+    {
+        $item = SubmissionFormItem::query()->create(['type' => SubmissionFormItem::TYPE_RADIO]);
+
+        $this->storeTranslations($item, [
+            'name' => ['en' => 'Presentation', 'id' => 'Presentasi'],
+            'response_options' => ['en' => ['Oral', 'Poster', 'Online'], 'id' => ['', 'Poster digital', ' ']],
+        ]);
+
+        $item = SubmissionFormItem::query()->find($item->getKey());
+
+        $this->assertSame(['Oral', 'Poster', 'Online'], $item->getPrimaryResponseOptions());
+        $this->assertSame(['Oral', 'Poster digital', 'Online'], $item->translatedResponseOptions('id'));
+        $this->assertSame(['', 'Poster digital'], $item->getStoredTranslation('response_options', 'id'));
+
+        app()->setLocale('id');
+
+        $this->assertSame(['Oral' => 'Oral', 'Poster' => 'Poster digital', 'Online' => 'Online'], $item->getResponseOptions());
+        $this->assertSame('Poster digital', $item->displayResponse('Poster'));
+    }
+
     protected function makeSubmissionFormItem(): SubmissionFormItem
     {
         $item = SubmissionFormItem::query()->create(['type' => SubmissionFormItem::TYPE_RADIO]);

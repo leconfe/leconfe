@@ -194,6 +194,44 @@ class PaymentFeeTranslationTest extends TestCase
         $this->assertSame('Makan siang', $fee->getTranslatedAdditionalItems('id')[0]['name']);
     }
 
+    public function test_renaming_an_item_keeps_the_translations_of_disabled_languages(): void
+    {
+        $this->enableLanguages(['en', 'id', 'fr']);
+
+        $fee = $this->makeFee(PaymentManager::TYPE_SUBMISSION_FEE, [
+            $this->addOn(
+                ['en' => 'Lunch', 'id' => 'Makan siang', 'fr' => 'Déjeuner'],
+                ['en' => 'Daily lunch', 'id' => 'Makan siang harian', 'fr' => 'Repas'],
+                10,
+            ),
+        ]);
+
+        $this->enableLanguages(['en', 'id']);
+
+        $component = Livewire::test(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
+            ->loadTable()
+            ->mountTableAction('edit', $fee);
+
+        $item = array_key_first($component->get('mountedTableActionsData.0.meta.additional_items'));
+
+        $component
+            ->set("mountedTableActionsData.0.meta.additional_items.{$item}.name.en", 'Buffet lunch')
+            ->set("mountedTableActionsData.0.meta.additional_items.{$item}.description.id", 'Makan siang prasmanan')
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $this->enableLanguages(['en', 'id', 'fr']);
+
+        $fee = PaymentFee::query()->find($fee->getKey());
+
+        $this->assertSame('Buffet lunch', $fee->getTranslatedAdditionalItems('en')[0]['name']);
+        $this->assertSame('Makan siang', $fee->getTranslatedAdditionalItems('id')[0]['name']);
+        $this->assertSame('Makan siang prasmanan', $fee->getTranslatedAdditionalItems('id')[0]['description']);
+        $this->assertSame('Déjeuner', $fee->getTranslatedAdditionalItems('fr')[0]['name']);
+        $this->assertSame('Repas', $fee->getTranslatedAdditionalItems('fr')[0]['description']);
+        $this->assertSame(0, $fee->translate()->where('key', 'like', 'additional_items.'.PaymentFee::additionalItemKey(['name' => 'Lunch', 'amount' => 10, 'description' => 'Daily lunch']).'.%')->count());
+    }
+
     public function test_the_create_submission_form_shows_the_fee_in_the_session_language(): void
     {
         $this->enableLanguages(['en', 'id', 'fr']);
