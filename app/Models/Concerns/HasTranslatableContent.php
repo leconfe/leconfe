@@ -43,12 +43,20 @@ trait HasTranslatableContent
     public static function bootHasTranslatableContent(): void
     {
         static::saved(function (Model $model) {
+            if (! ContentLocales::hasTranslationStorage()) {
+                return;
+            }
+
             $model->syncDefaultTranslationsFromColumns();
             $model->flushPendingTranslations();
         });
 
         static::deleted(function (Model $model) {
             if (method_exists($model, 'isForceDeleting') && ! $model->isForceDeleting()) {
+                return;
+            }
+
+            if (! ContentLocales::hasTranslationStorage()) {
                 return;
             }
 
@@ -195,6 +203,10 @@ trait HasTranslatableContent
     {
         if (! $this->exists) {
             return $this->pendingTranslations[$key][$locale] ?? null;
+        }
+
+        if (! ContentLocales::hasTranslationStorage()) {
+            return null;
         }
 
         $value = $this->getTranslateRecord($key, $locale)?->getAttribute('value');

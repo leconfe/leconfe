@@ -24,6 +24,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Plank\Metable\Metable;
@@ -36,10 +37,10 @@ use Squire\Models\Country;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocalePreference, HasMedia, HasName, MustVerifyEmail
 {
-    use HasScopedBans,
-        HasApiTokens,
+    use HasApiTokens,
         HasFactory,
         HasRoles,
+        HasScopedBans,
         InteractsWithMedia,
         Metable,
         Notifiable;
@@ -121,6 +122,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasLocale
     public function rememberPreferredLocale(?string $locale): void
     {
         if (! app(ContentLocales::class)->isEnabled($locale) || $this->locale === $locale) {
+            return;
+        }
+
+        // The column is added by the 1.5.2 upgrade.
+        if (! Schema::hasColumn($this->getTable(), 'locale')) {
             return;
         }
 

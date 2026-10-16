@@ -16,7 +16,8 @@ class ShareLocalizedContextData
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app()->isInstalled()) {
+        // While upgrading, the translation storage may not exist yet.
+        if (! app()->isInstalled() || app()->isUpgrading()) {
             return $next($request);
         }
 

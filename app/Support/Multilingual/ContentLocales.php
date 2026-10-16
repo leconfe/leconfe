@@ -3,6 +3,7 @@
 namespace App\Support\Multilingual;
 
 use App\Facades\Setting;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Resolves the content languages enabled site-wide.
@@ -12,6 +13,34 @@ use App\Facades\Setting;
  */
 class ContentLocales
 {
+    protected const STORAGE_READY = 'leconfe.multilingual.storage-ready';
+
+    /**
+     * Whether the `translate` table exists. It does not exist on an installation that
+     * has not run the upgrade yet; translation reads then fall back to stored values.
+     * Only a positive result is remembered, so the table is picked up once migrated.
+     */
+    public static function hasTranslationStorage(): bool
+    {
+        $app = app();
+
+        if ($app->bound(static::STORAGE_READY)) {
+            return true;
+        }
+
+        try {
+            $ready = Schema::hasTable('translate');
+        } catch (\Throwable) {
+            return false;
+        }
+
+        if ($ready) {
+            $app->instance(static::STORAGE_READY, true);
+        }
+
+        return $ready;
+    }
+
     /**
      * Enabled languages that the application supports.
      *
