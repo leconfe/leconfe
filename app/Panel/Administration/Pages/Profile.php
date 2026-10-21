@@ -3,6 +3,8 @@
 namespace App\Panel\Administration\Pages;
 
 use App\Actions\User\UserUpdateAction;
+use App\Filament\Forms\Components\PreferredLanguageSelect;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Infolists\Components\BladeEntry;
 use App\Models\Enums\UserRole;
 use App\Models\User;
@@ -11,7 +13,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -50,7 +51,7 @@ class Profile extends Page implements HasForms
         ]);
 
         $this->rolesForm->fill([
-            'roles' => $user->roles->filter(fn($role) => in_array($role->name, UserRole::getAllowedSelfAssignRoleNames()))->pluck('name')->toArray(),
+            'roles' => $user->roles->filter(fn ($role) => in_array($role->name, UserRole::getAllowedSelfAssignRoleNames()))->pluck('name')->toArray(),
             'meta' => $meta,
         ]);
 
@@ -93,12 +94,14 @@ class Profile extends Page implements HasForms
                             ->label(__('general.email'))
                             ->columnSpan(['lg' => 2])
                             ->unique(ignoreRecord: true),
+                        PreferredLanguageSelect::make()
+                            ->columnSpan(['lg' => 2]),
                         TextInput::make('password')
                             ->label(__('general.password'))
-                            ->required(fn(?User $record) => ! $record)
+                            ->required(fn (?User $record) => ! $record)
                             ->password()
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state))
                             ->confirmed(),
                         TextInput::make('password_confirmation')
                             ->label(__('general.password_confirmation'))

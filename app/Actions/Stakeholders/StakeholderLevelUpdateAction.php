@@ -15,7 +15,11 @@ class StakeholderLevelUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $record->syncTranslatableState($data);
+
             $record->update($data);
+
+            $record->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

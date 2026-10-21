@@ -20,6 +20,8 @@ class UserPayPaymentMail extends TemplateMailable
             'Payment ID' => $payment->getKey(),
             'Payer Name' => $payment->user->full_name,
         ]);
+        $this->setTranslatableData('Payment Fee Name', $payment->fee, 'name');
+        $this->setTranslatableData('Conference Title', $payment->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',

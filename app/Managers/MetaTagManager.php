@@ -11,9 +11,10 @@ class MetaTagManager
 
     /**
      * Add a meta tag.
-     * You can specify either 'name' or 'property' (or both).
+     * You can specify either 'name' or 'property' (or both), and the language of the
+     * content as `xml:lang`.
      */
-    public function add(?string $name = null, ?string $content = null, ?string $property = null): self
+    public function add(?string $name = null, ?string $content = null, ?string $property = null, ?string $xmlLang = null): self
     {
         $meta = [
             'content' => e($content),
@@ -25,6 +26,10 @@ class MetaTagManager
 
         if ($property) {
             $meta['property'] = $property;
+        }
+
+        if ($xmlLang) {
+            $meta['xml:lang'] = e($xmlLang);
         }
 
         $this->metas[] = $meta;
@@ -44,14 +49,17 @@ class MetaTagManager
                 ->map(function ($meta) {
                     $attributes = [];
                     if (isset($meta['name'])) {
-                        $attributes[] = 'name="' . $meta['name'] . '"';
+                        $attributes[] = 'name="'.$meta['name'].'"';
                     }
                     if (isset($meta['property'])) {
-                        $attributes[] = 'property="' . $meta['property'] . '"';
+                        $attributes[] = 'property="'.$meta['property'].'"';
                     }
-                    $attributes[] = 'content="' . $meta['content'] . '"';
+                    $attributes[] = 'content="'.$meta['content'].'"';
+                    if (isset($meta['xml:lang'])) {
+                        $attributes[] = 'xml:lang="'.$meta['xml:lang'].'"';
+                    }
 
-                    return '<meta ' . implode(' ', $attributes) . '>';
+                    return '<meta '.implode(' ', $attributes).'>';
                 })
                 ->implode("\n")
         );

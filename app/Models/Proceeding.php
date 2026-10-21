@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Frontend\Conference\Pages\ProceedingDetail;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\HasDOI;
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Proceeding extends Model implements HasMedia, Sortable
 {
-    use BelongsToConference, Cachable, HasDOI, HasFactory, InteractsWithMedia, Metable, SortableTrait;
+    use BelongsToConference, Cachable, HasDOI, HasFactory, HasTranslatableContent, InteractsWithMedia, Metable, SortableTrait;
 
     protected $table = 'proceedings';
 
@@ -40,6 +41,11 @@ class Proceeding extends Model implements HasMedia, Sortable
         'published_at' => 'datetime',
         'current' => 'boolean',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['title', 'description'];
 
     /**
      * The "booted" method of the model.
@@ -135,7 +141,7 @@ class Proceeding extends Model implements HasMedia, Sortable
             $string .= ': ';
         }
 
-        return $string.$this->title;
+        return $string.$this->translated('title');
     }
 
     public function getUrl(): string

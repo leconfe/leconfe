@@ -140,6 +140,47 @@ class Application extends LaravelApplication
         return $this->currentScheduledConference;
     }
 
+    /**
+     * Run a callback with the given conference and scheduled conference as the current
+     * context, then restore the previous context.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    public function withConferenceContext(?int $conferenceId, ?int $scheduledConferenceId, callable $callback): mixed
+    {
+        $previous = $this->getConferenceContext();
+
+        $this->setConferenceContext($conferenceId, $scheduledConferenceId);
+
+        try {
+            return $callback();
+        } finally {
+            $this->setConferenceContext(...$previous);
+        }
+    }
+
+    /**
+     * The current conference and scheduled conference IDs.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
+    public function getConferenceContext(): array
+    {
+        return [$this->currentConferenceId, $this->currentScheduledConferenceId];
+    }
+
+    /**
+     * Set the current conference and scheduled conference, null meaning none.
+     */
+    public function setConferenceContext(?int $conferenceId, ?int $scheduledConferenceId): void
+    {
+        $this->currentConferenceId = $conferenceId;
+        $this->currentScheduledConferenceId = $scheduledConferenceId;
+    }
+
     public function scopeCurrentConference(): void
     {
         $models = [
@@ -205,9 +246,12 @@ class Application extends LaravelApplication
                     $query
                         ->ordered()
                         ->whereNull('parent_id')
-                        ->with('children', function ($query) {
-                            $query->ordered();
-                        });
+                        ->with([
+                            'translate',
+                            'children' => function ($query) {
+                                $query->ordered()->with('translate');
+                            },
+                        ]);
                 },
             ])
             ->first()?->items ?? collect();

@@ -13,7 +13,7 @@ class Home extends Page
     protected static string $view = 'frontend.conference.pages.home';
 
     protected static string|array $routeMiddleware = [
-        RedirectToScheduledConference::class
+        RedirectToScheduledConference::class,
     ];
 
     public function mount() {}
@@ -22,14 +22,14 @@ class Home extends Page
     {
         $conference = app()->getCurrentConference();
         $upcomingScheduledConferences = ScheduledConference::query()
-            ->with(['media', 'meta', 'conference'])
+            ->with(['media', 'meta', 'conference', 'translate'])
             ->published()
             ->where('date_start', '>', now())
             ->orderBy('date_start', 'desc')
             ->get();
 
         $pastScheduledConferences = ScheduledConference::query()
-            ->with(['media', 'meta', 'conference'])
+            ->with(['media', 'meta', 'conference', 'translate'])
             ->published()
             ->where('date_start', '<', now())
             ->orderBy('date_start', 'desc')

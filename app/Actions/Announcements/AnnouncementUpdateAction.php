@@ -16,11 +16,15 @@ class AnnouncementUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $announcement->syncTranslatableState($data);
+
             $announcement->update($data);
 
             if (data_get($data, 'meta')) {
                 $announcement->setManyMeta(data_get($data, 'meta'));
             }
+
+            $announcement->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

@@ -15,7 +15,11 @@ class TopicUpdateAction
         try {
             DB::beginTransaction();
 
+            $data = $topic->syncTranslatableState($data);
+
             $topic->update($data);
+
+            $topic->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

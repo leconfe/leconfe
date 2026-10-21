@@ -5,9 +5,25 @@ on:
     types: [published]
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - id: tag
+        name: Make a valid Docker tag from the ref name
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          tag="${REF_NAME//\//-}"
+          tag="$(printf '%s' "$tag" | tr -c 'A-Za-z0-9_.-' '-')"
+          tag="${tag#[.-]}"
+          echo "tag=${tag:0:128}" >> "$GITHUB_OUTPUT"
+
   release:
+    needs: prepare
     uses: ./.github/workflows/service_docker-build-and-publish.yml
     with:
-      docker-tags: "leconfe/leconfe:${{ github.ref_name }}"
+      docker-tags: "leconfe/leconfe:${{ needs.prepare.outputs.tag }}"
       dockerfile: "./Dockerfile"
     secrets: inherit

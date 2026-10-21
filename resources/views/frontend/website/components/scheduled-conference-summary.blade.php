@@ -2,7 +2,7 @@
 <div class="scheduled-conference-summary flex flex-col sm:flex-row gap-4">
     @if($scheduledConference->hasThumbnail())
     <div class="cover max-w-40">
-        <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->title }}">
+        <img src="{{ $scheduledConference->getThumbnailUrl() }}" alt="{{ $scheduledConference->translated('title') }}">
     </div>
     @endif
     <div class="information flex-1 space-y-2">
@@ -23,12 +23,12 @@
 
         <{{ $header }} class="">
             <a href="{{ $scheduledConference->getHomeUrl() }}"
-                class="scheduled-conference-name link link-primary link-hover font-bold">{{ $scheduledConference->title }}</a>
+                class="scheduled-conference-name link link-primary link-hover font-bold">{{ $scheduledConference->translated('title') }}</a>
         </{{ $header }}>
 
-        @if ($scheduledConference->getMeta('summary'))
+        @if ($scheduledConference->translated('summary'))
             <div class="scheduled-conference-summary user-content">
-                {!! $scheduledConference->getMeta('summary') !!}
+                {!! $scheduledConference->translated('summary') !!}
             </div>
         @endif
     </div>

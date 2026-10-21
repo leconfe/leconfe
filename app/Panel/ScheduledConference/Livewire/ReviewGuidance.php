@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\ScheduledConferences\ScheduledConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -22,10 +23,10 @@ class ReviewGuidance extends Component implements HasForms
     {
         $scheduledConference = app()->getCurrentScheduledConference();
 
-        $this->form->fill([
+        $this->form->fill($scheduledConference->fillTranslatableFormState([
             ...$scheduledConference->attributesToArray(),
-            'meta' => $scheduledConference->getAllMeta(),
-        ]);
+            'meta' => $scheduledConference->getAllMeta()->all(),
+        ], ['meta.review_guidelines', 'meta.competing_interests']));
     }
 
     public function render()
@@ -40,14 +41,16 @@ class ReviewGuidance extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->schema([
-                        TinyEditor::make('meta.review_guidelines')
-                            ->label(__('general.review_guidelines'))
-                            ->plugins('autoresize link wordcount image code lists')
-                            ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist'),
-                        TinyEditor::make('meta.competing_interests')
-                            ->label(__('general.competing_interests'))
-                            ->plugins('autoresize link wordcount image code lists')
-                            ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist'),
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.review_guidelines')
+                                ->label(__('general.review_guidelines'))
+                                ->plugins('autoresize link wordcount image code lists')
+                                ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist'),
+                            TinyEditor::make('meta.competing_interests')
+                                ->label(__('general.competing_interests'))
+                                ->plugins('autoresize link wordcount image code lists')
+                                ->toolbar('bold italic superscript subscript | link | blockquote bullist numlist'),
+                        ]),
                     ]),
                 Actions::make([
                     Action::make('save')

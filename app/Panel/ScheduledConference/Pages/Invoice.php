@@ -32,7 +32,7 @@ class Invoice extends Page
             'record' => $this->record,
             'baseAmount' => (float) $this->record->getMeta('base_amount', $this->record->fee?->amount ?? 0),
             'submissionTitle' => null,
-            'additionalItems' => collect($this->record->getMeta('additional_items', []))
+            'additionalItems' => collect($this->localizedAdditionalItems())
                 ->filter(fn ($item) => is_array($item) && data_get($item, 'name'))
                 ->values(),
         ];
@@ -47,7 +47,7 @@ class Invoice extends Page
             $data['user_post_code'] = $user->getMeta('post_code');
             $data['user_country_name'] = Country::find($user->getMeta('country'))?->name;
             $data['submissionTitle'] = $data['scheduledConference']->shouldShowSubmissionTitleOnInvoice()
-                ? $submission->getMeta('title')
+                ? $submission->translated('title')
                 : null;
         } elseif ($this->record->model instanceof Participant) {
             $participant = $this->record->model;
@@ -72,5 +72,17 @@ class Invoice extends Page
     public static function getRoutePath(): string
     {
         return '/payments/invoice/{record}';
+    }
+
+    /**
+     * The add-on items stored on the payment, with their name and description in the
+     * current language when the fee still has them.
+     */
+    protected function localizedAdditionalItems(): array
+    {
+        $items = $this->record->getMeta('additional_items', []);
+        $items = is_array($items) ? $items : [];
+
+        return $this->record->fee?->localizeAdditionalItems($items) ?? $items;
     }
 }

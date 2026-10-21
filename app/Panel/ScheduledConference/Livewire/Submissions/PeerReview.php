@@ -12,9 +12,9 @@ use App\Mail\Templates\DeclinePaperMail;
 use App\Mail\Templates\ReviewRoundStartedMail;
 use App\Mail\Templates\RevisionRequestMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\MailTemplate;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
@@ -25,6 +25,7 @@ use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\ReviewFi
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerList;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -217,11 +218,11 @@ class PeerReview extends Component implements HasActions, HasForms
             ->extraAttributes(['class' => 'w-full'], true)
             ->hidden(fn (): bool => ! $this->isSelectedRoundActionable())
             ->mountUsing(function (Form $form): void {
-                $mailTemplate = DefaultMailTemplate::where('mailable', ReviewRoundStartedMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(ReviewRoundStartedMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : ReviewRoundStartedMail::getDefaultSubject(),
-                    'message' => $mailTemplate ? $mailTemplate->html_template : ReviewRoundStartedMail::getDefaultHtmlTemplate(),
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                     'do-not-notify-author' => false,
                 ]);
             })
@@ -238,7 +239,7 @@ class PeerReview extends Component implements HasActions, HasForms
                     )
                     ->descriptions(
                         fn () => $this->reviewableFiles
-                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->name.' ('.$file->category.')'])
+                            ->mapWithKeys(fn (SubmissionFile $file) => [$file->getKey() => $file->type->translated('name').' ('.$file->category.')'])
                             ->toArray()
                     ),
                 Fieldset::make('Notification')
@@ -384,11 +385,11 @@ class PeerReview extends Component implements HasActions, HasForms
             ->outlined()
             ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form) {
-                $mailTemplate = DefaultMailTemplate::where('mailable', DeclinePaperMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(DeclinePaperMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -429,7 +430,7 @@ class PeerReview extends Component implements HasActions, HasForms
 
                 if (! $data['do-not-notify-author']) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new DeclinePaperMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -461,11 +462,11 @@ class PeerReview extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel(__('general.accept'))
             ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form) {
-                $mailTemplate = DefaultMailTemplate::where('mailable', AcceptPaperMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(AcceptPaperMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -563,7 +564,7 @@ class PeerReview extends Component implements HasActions, HasForms
 
                 if (! $data['do-not-notify-author']) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new AcceptPaperMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -594,11 +595,11 @@ class PeerReview extends Component implements HasActions, HasForms
             ->label(__('general.request_revision'))
             ->hidden(fn (): bool => ! $this->isSelectedRoundDecisionContext())
             ->mountUsing(function (Form $form): void {
-                $mailTemplate = DefaultMailTemplate::where('mailable', RevisionRequestMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(RevisionRequestMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([

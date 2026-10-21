@@ -15,9 +15,9 @@
                     <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                         {{ $timeline->fullDate }}
                     </time>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $timeline->name }}</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $timeline->translated('name') }}</h3>
                     <p class="text-base font-normal text-gray-500 dark:text-gray-400">
-                        {{ $timeline->description }}
+                        {{ $timeline->translated('description') }}
                     </p>
                 </li>
             @endforeach

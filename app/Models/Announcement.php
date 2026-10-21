@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
@@ -12,12 +13,26 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Announcement extends Model implements HasMedia
 {
-    use BelongsToScheduledConference, Cachable, InteractsWithMedia, Metable;
+    use BelongsToScheduledConference, Cachable, HasTranslatableContent, InteractsWithMedia, Metable;
 
     protected $fillable = [
         'title',
         'expires_at',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['title'];
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['summary', 'content'];
 
     protected static function booted(): void
     {

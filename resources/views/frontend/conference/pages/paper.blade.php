@@ -14,7 +14,10 @@
                 </div>
             </div>
         @endif
-        <x-website::heading-title tag="h1" :title="$paper->getMeta('title')" />
+        <x-website::heading-title tag="h1" :title="$paper->translated('title')" :lang="$paper->getTranslatedLanguageTag('title')" />
+        @if(filled($paper->translated('subtitle')))
+            <p class="mb-2 text-base text-slate-500" @if($subtitleLang = $paper->getTranslatedLanguageTag('subtitle')) lang="{{ $subtitleLang }}" @endif>{{ $paper->translated('subtitle') }}</p>
+        @endif
         <div class="mb-4 text-sm text-slate-400">
             <span class="flex items-center ">
                 <x-lineawesome-calendar-check-solid class="w-3 h-3 mr-0.5" />
@@ -42,7 +45,7 @@
                             @if($contributor->getMeta('affiliation'))
                                 <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->getMeta('affiliation') }}</div>
                             @endif
-                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role->name }}</div>
+                            <div class="ml-[25px] text-sm text-slate-500">{{ $contributor->role?->translated('name') }}</div>
                         </div>
                     @endforeach
                 </div>
@@ -72,14 +75,14 @@
                     </div>
                 </section>
             @endif
-            @if($paper->getMeta('keywords'))
+            @if($paper->translated('keywords'))
                 <section class="keywords">
                     <h2 class="pb-1 mb-3 text-base font-medium border-b border-b-slate-200">
                         {{ __('general.keywords') }}
                     </h2>
                     <div class="content text-slate-800">
-                        <div class="flex flex-wrap gap-3">
-                            @foreach ($paper->getMeta('keywords') as $keyword)
+                        <div class="flex flex-wrap gap-3" @if($keywordsLang = $paper->getTranslatedLanguageTag('keywords')) lang="{{ $keywordsLang }}" @endif>
+                            @foreach ($paper->translated('keywords') as $keyword)
                                 <span
                                     class="flex items-center px-2 py-1 text-xs border rounded-md shadow-sm bg-slate-100 border-slate-200 link-primary">
                                     {{ $keyword }}
@@ -107,11 +110,11 @@
                         {{ __('general.track') }}
                     </h2>
                     <div class="content text-slate-800">
-                        <p class="text-sm">{{ $paper->track->title }}</p>
+                        <p class="text-sm">{{ $paper->track->translated('title') }}</p>
                     </div>
                 </section>
             @endif
-            @if($paper->getMeta('license_url') || app()->getCurrentConference()->getMeta('license_terms'))
+            @if($paper->getMeta('license_url') || app()->getCurrentConference()->translated('license_terms'))
                 <section class="license">
                     <h2 class="pb-1 mb-3 text-base font-medium border-b border-b-slate-200">
                         {{ __('general.license') }}
@@ -129,8 +132,8 @@
                                 </a>
                             @endif
                         @endif
-                        @if(app()->getCurrentConference()->getMeta('license_terms'))
-                            {!! app()->getCurrentConference()->getMeta('license_terms') !!}
+                        @if(app()->getCurrentConference()->translated('license_terms'))
+                            {!! app()->getCurrentConference()->translated('license_terms') !!}
                         @endif
                     </div>
                 </section>
@@ -139,8 +142,8 @@
                 <h2 class="pb-1 mb-3 text-base font-medium border-b border-b-slate-200">
                     {{ __('general.abstract') }}
                 </h2>
-                <div class="citation_abstract content user-content text-sm">
-                    {!! $paper->getMeta('abstract') !!}
+                <div class="citation_abstract content user-content text-sm" @if($abstractLang = $paper->getTranslatedLanguageTag('abstract')) lang="{{ $abstractLang }}" @endif>
+                    {!! $paper->translated('abstract') !!}
                 </div>
             </section>
             <section class="references">

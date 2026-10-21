@@ -3,10 +3,11 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Proceeding;
 use App\Models\Submission;
+use App\Models\Track;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -57,7 +58,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                     ->html()
                     ->getStateUsing(function (Submission $record) {
                         if ($record->proceeding) {
-                            $proceedingTitle = $record->proceeding->title;
+                            $proceedingTitle = e($record->proceeding->translated('title'));
                             $proceedingRoute = route('filament.conference.resources.proceedings.view', ['record' => $record->proceeding]);
 
                             return __(
@@ -93,11 +94,15 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                     fn () => [
                         __('general.future_proceedings') => Proceeding::query()
                             ->where('published', false)
-                            ->pluck('title', 'id')
+                            ->with('translate')
+                            ->get()
+                            ->mapWithKeys(fn (Proceeding $proceeding) => [$proceeding->getKey() => $proceeding->translated('title')])
                             ->toArray(),
                         __('general.back_proceedings') => Proceeding::query()
                             ->where('published', true)
-                            ->pluck('title', 'id')
+                            ->with('translate')
+                            ->get()
+                            ->mapWithKeys(fn (Proceeding $proceeding) => [$proceeding->getKey() => $proceeding->translated('title')])
                             ->toArray(),
                     ]
                 ),
@@ -119,10 +124,11 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
             ->schema([
                 Select::make('track_id')
                     ->required()
-                    ->relationship('track', 'title')
+                    ->relationship('track', 'title', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Track $record) => $record->translated('title'))
                     ->label(__('general.track')),
                 TextInput::make('meta.isbn')
-                    ->label("ISBN"),
+                    ->label('ISBN'),
                 SpatieMediaLibraryFileUpload::make('media.cover')
                     ->label(__('general.cover_image'))
                     ->collection('cover')

@@ -26,7 +26,7 @@ class Committees extends Page
     {
         $committeeRoles = CommitteeRole::query()
             ->whereHas('committees')
-            ->with(['committees' => fn ($query) => $query->orderBy('order_column')])
+            ->with(['translate', 'committees' => fn ($query) => $query->orderBy('order_column')])
             ->orderBy('order_column')
             ->get();
 

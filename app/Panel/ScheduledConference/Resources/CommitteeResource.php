@@ -4,8 +4,10 @@ namespace App\Panel\ScheduledConference\Resources;
 
 use App\Actions\Committees\CommitteeCreateAction;
 use App\Actions\Committees\CommitteeDeleteAction;
+use App\Actions\Committees\CommitteeRoleCreateAction;
 use App\Actions\Committees\CommitteeUpdateAction;
 use App\Models\Committee;
+use App\Models\CommitteeRole;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use App\Panel\ScheduledConference\Resources\CommitteeResource\Pages;
 use Filament\Forms;
@@ -37,7 +39,7 @@ class CommitteeResource extends Resource
         return static::getModel()::query()
             ->orderBy('order_column')
             ->with([
-                'role',
+                'role.translate',
                 'media',
                 'meta',
             ])
@@ -61,9 +63,12 @@ class CommitteeResource extends Resource
                     ->relationship(
                         name: 'role',
                         titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->with('translate'),
                     )
+                    ->getOptionLabelFromRecordUsing(fn (CommitteeRole $record) => $record->translated('name'))
                     ->preload()
                     ->createOptionForm(fn ($form) => CommitteeRoleResource::form($form))
+                    ->createOptionUsing(fn (array $data) => CommitteeRoleCreateAction::run($data)->getKey())
                     ->createOptionAction(
                         fn (FormAction $action) => $action->color('primary')
                             ->modalWidth('xl')

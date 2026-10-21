@@ -298,6 +298,13 @@ class ExportArticleCrossref
 
         $metadata = [];
 
+        // Crossref takes a two-letter ISO 639-1 code for the language of the paper.
+        $language = strtolower(strtok($this->submission->getLanguageTag(), '-'));
+
+        if (preg_match('/^[a-z]{2}$/', $language)) {
+            $metadata['_attributes'] = ['language' => $language];
+        }
+
         if ($authors->isNotEmpty()) {
             $metadata['contributors'] = [
                 'person_name' => $authors->map(function ($author, $index) {
@@ -307,19 +314,41 @@ class ExportArticleCrossref
                             'contributor_role' => 'author',
                         ],
                         'given_name' => $author->given_name,
-                        'surname' => !empty($author->family_name) ? $author->family_name : $author->given_name
+                        'surname' => ! empty($author->family_name) ? $author->family_name : $author->given_name,
                     ];
                 })->toArray(),
             ];
         }
 
+        $primary = $this->submission->getPrimaryContentLocale();
+
         $metadata['titles'] = [
-            'title' => $this->submission->getMeta('title'),
+            'title' => $this->submission->translated('title', $primary),
         ];
 
-        $metadata['jats:abstract'] = [
-            'jats:p' => strip_tags($this->submission->getMeta('abstract')),
-        ];
+        $subtitle = $this->submission->translated('subtitle', $primary);
+
+        if (filled($subtitle)) {
+            $metadata['titles']['subtitle'] = $subtitle;
+        }
+
+        // The abstract in the paper language comes first, then its translations.
+        $abstracts = collect([$primary => $this->submission->translated('abstract', $primary)])
+            ->union($this->submission->getOtherTranslations('abstract'))
+            ->map(fn (?string $abstract) => trim(strip_tags((string) $abstract)))
+            ->filter(fn (string $abstract) => $abstract !== '');
+
+        if ($abstracts->isNotEmpty()) {
+            $metadata['jats:abstract'] = $abstracts
+                ->map(fn (string $abstract, string $locale) => [
+                    '_attributes' => [
+                        'xml:lang' => $this->submission->getLanguageTag($locale),
+                    ],
+                    'jats:p' => $abstract,
+                ])
+                ->values()
+                ->all();
+        }
 
         $metadata['publication_date'] = [
             '_attributes' => [

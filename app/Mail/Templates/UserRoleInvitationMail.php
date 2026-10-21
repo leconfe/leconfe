@@ -4,6 +4,7 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
+use App\Models\ScheduledConference;
 use App\Models\UserInvitation;
 use Carbon\Carbon;
 
@@ -31,6 +32,13 @@ class UserRoleInvitationMail extends TemplateMailable
             'Invitation URL' => $invitation->getAcceptUrl(),
             'Invitation Expiration Date' => Carbon::parse($invitation->expires_at)->format('d F Y H:i'),
         ]);
+
+        $titleSource = $invitation->scheduledConference
+            ?? $invitation->conference
+            ?? app()->getCurrentConference()
+            ?? app()->getSite();
+        $this->setTranslatableData('Conference Title', $titleSource, $titleSource instanceof ScheduledConference ? 'title' : 'name');
+        $this->setTranslatableData('Scheduled Conference Title', $invitation->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',

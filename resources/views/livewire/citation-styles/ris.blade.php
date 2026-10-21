@@ -10,9 +10,9 @@ JA  - {{ $citationData->{'container-title-short'} }}
 VL  - {{ $citationData->volume }}
 IS  - {{ $citationData->issue }}
 SE  - {{ $citationData->section }}
-@foreach($citationData->languages as $language)
-LA  - {{ $language }}
-@endforeach
+@if (isset($citationData->language))
+LA  - {{ $citationData->language }}
+@endif
 @foreach ($citationData->keywords as $keyword)
 KW  - {{ $keyword }}
 @endforeach

@@ -42,9 +42,12 @@ class AnnouncementBroadcastMail
             ->notBannedInScope(new \App\Support\UserBanScope($scheduledConference->conference_id, $scheduledConference->getKey()))
             ->lazy();
 
-        foreach ($users as $user) {
-            Mail::to($user->email)->send(new NewAnnouncementMail($announcement));
-        }
+        // Build the emails for the announcement's conference, also when run outside a request.
+        app()->withConferenceContext($scheduledConference->conference_id, $scheduledConference->getKey(), function () use ($users, $announcement) {
+            foreach ($users as $user) {
+                Mail::to($user)->send(new NewAnnouncementMail($announcement));
+            }
+        });
     }
 
     public function asJob(Announcement $announcement): void

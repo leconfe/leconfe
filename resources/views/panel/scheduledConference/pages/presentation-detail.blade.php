@@ -36,7 +36,7 @@
                 @endif
                 <div class="py-2.5 px-3">
                     <h1 class="text-lg font-medium">
-                        {{ $record->submission->getMeta('title') }}
+                        {{ $record->submission->translated('title') }}
                     </h1>
 
                     @php
@@ -111,7 +111,7 @@
                     </div>
                     <div class="py-2.5 px-3" x-show="activeTab === 'abstract-tab'" x-cloak>
                         <div class="citation_abstract content user-content text-sm">
-                            {!! $record->submission->getMeta('abstract') !!}
+                            {!! $record->submission->translated('abstract') !!}
                         </div>
                     </div>
                     <div class="py-2.5 px-3" x-show="activeTab === 'authors-tab'" x-cloak>
@@ -126,7 +126,7 @@
                                     @if($author->getMeta('affiliation'))
                                         <div class="ml-[20px] text-xs text-slate-500">{{ $author->getMeta('affiliation') }}</div>
                                     @endif
-                                    <div class="ml-[20px] text-xs text-slate-500">{{ $author->role->name }}</div>
+                                    <div class="ml-[20px] text-xs text-slate-500">{{ $author->role?->translated('name') }}</div>
                                 </div>
                             @endforeach
                         </div>

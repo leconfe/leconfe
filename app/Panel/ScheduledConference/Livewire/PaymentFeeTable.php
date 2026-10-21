@@ -3,11 +3,13 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\PaymentFee;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -49,7 +51,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
     public function getTableQuery(): Builder
     {
         return PaymentFee::query()
-            ->with(['formItems', 'payments'])
+            ->with(['formItems', 'payments', 'translate'])
             ->type($this->paymentType)
             ->ordered();
     }
@@ -62,6 +64,7 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('No'),
                 TextColumn::make('name')
+                    ->formatStateUsing(fn (PaymentFee $record) => $record->translated('name'))
                     ->grow(false)
                     ->description(function (PaymentFee $record) {
                         $description = '';
@@ -83,35 +86,22 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                     ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {
                         $record = new PaymentFee;
-                        $record->fill($data);
                         $record->type = $this->paymentType;
-                        $record->save();
 
-                        if (array_key_exists('meta', $data) && is_array($data['meta'])) {
-                            $record->setManyMeta($data['meta']);
-                        }
-
-                        return $record;
+                        return $this->saveRecord($record, $data);
                     }),
             ])
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
                         ->mutateRecordDataUsing(function (PaymentFee $record, array $data): array {
-                            $data['meta'] = $record->getAllMeta();
+                            $data['meta'] = $record->getAllMeta()->all();
+                            $data = $record->fillTranslatableFormState($data, ['name', 'meta.description']);
 
-                            return $data;
+                            return $record->fillAdditionalItemFormState($data);
                         })
                         ->form(fn (Form $form) => $this->form($form))
-                        ->using(function (PaymentFee $record, array $data) {
-                            $record->update($data);
-
-                            if (array_key_exists('meta', $data) && is_array($data['meta'])) {
-                                $record->setManyMeta($data['meta']);
-                            }
-
-                            return $record;
-                        }),
+                        ->using(fn (PaymentFee $record, array $data) => $this->saveRecord($record, $data)),
                     Action::make('items')
                         ->label('Form Items')
                         ->modalWidth(MaxWidth::TwoExtraLarge)
@@ -128,15 +118,35 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
             ]);
     }
 
+    protected function saveRecord(PaymentFee $record, array $data): PaymentFee
+    {
+        $data = $record->syncTranslatableState($data);
+        $data = $record->syncAdditionalItemState($data);
+
+        $record->fill($data);
+        $record->save();
+
+        if (array_key_exists('meta', $data) && is_array($data['meta'])) {
+            $record->setManyMeta($data['meta']);
+        }
+
+        $record->persistTranslatableState();
+        $record->persistAdditionalItemTranslations();
+
+        return $record;
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Grid::make()
                     ->schema([
-                        TextInput::make('name')
-                            ->label(__('general.name'))
-                            ->required(),
+                        MultilanguageComponent::make([
+                            TextInput::make('name')
+                                ->label(__('general.name'))
+                                ->required(),
+                        ]),
                         TextInput::make('limit')
                             ->label('Limit')
                             ->placeholder('Enter 0 for no limit')
@@ -144,9 +154,11 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                             ->minValue(0)
                             ->required(),
                     ]),
-                Textarea::make('meta.description')
-                    ->label(__('general.description'))
-                    ->autosize(),
+                MultilanguageComponent::make([
+                    Textarea::make('meta.description')
+                        ->label(__('general.description'))
+                        ->autosize(),
+                ]),
                 Grid::make()
                     ->schema([
                         Select::make('currency')
@@ -185,12 +197,15 @@ class PaymentFeeTable extends Component implements HasForms, HasTable
                 Repeater::make('meta.additional_items')
                     ->label('Add-on Items')
                     ->schema([
-                        TextInput::make('name')
-                            ->label('Item Name')
-                            ->required(),
-                        Textarea::make('description')
-                            ->label('Description')
-                            ->autosize(),
+                        Hidden::make('original_key'),
+                        MultilanguageComponent::make([
+                            TextInput::make('name')
+                                ->label('Item Name')
+                                ->required(),
+                            Textarea::make('description')
+                                ->label('Description')
+                                ->autosize(),
+                        ]),
                         TextInput::make('amount')
                             ->label('Amount')
                             ->numeric()

@@ -30,10 +30,11 @@ class ProceedingDOI extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Proceeding::query()->with('doi'))
+            ->query(Proceeding::query()->with(['doi', 'translate']))
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
+                    ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
                     ->searchable(),
                 TextColumn::make('doi.doi')
                     ->searchable()
@@ -61,7 +62,7 @@ class ProceedingDOI extends Component implements HasForms, HasTable
                         ];
                     })
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->modalHeading(fn ($record) => $record->title)
+                    ->modalHeading(fn (Proceeding $record) => $record->translated('title'))
                     ->form([
                         TextInput::make('doi')
                             ->label('DOI')

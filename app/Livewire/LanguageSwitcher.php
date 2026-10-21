@@ -2,37 +2,40 @@
 
 namespace App\Livewire;
 
-use App\Facades\Setting;
+use App\Support\Multilingual\ContentLocales;
+use App\Support\SafeRedirect;
 use Livewire\Component;
 
 class LanguageSwitcher extends Component
 {
     public function switchLanguage($lang)
     {
-        if (! array_key_exists($lang, config('app.locales')) ||
-            ! in_array($lang, Setting::get('languages', ['en']), true)) {
+        if (! app(ContentLocales::class)->isEnabled($lang)) {
             abort(404);
         }
 
         session()->put('locale', $lang);
+        auth()->user()?->rememberPreferredLocale($lang);
 
-        return redirect(request()->header('Referer'));
+        return redirect(SafeRedirect::backUrl(request(), $this->getFallbackUrl()));
+    }
+
+    protected function getFallbackUrl(): string
+    {
+        try {
+            return filament()->getCurrentPanel()?->getUrl() ?? url('/');
+        } catch (\Throwable) {
+            return url('/');
+        }
     }
 
     public function render()
     {
-        $languageCodes = Setting::get('languages', ['en']);
-        $supportedLanguages = config('app.locales');
+        $locales = app(ContentLocales::class);
 
-        $languages = [];
-
-        foreach ($languageCodes as $code) {
-            if (! array_key_exists($code, $supportedLanguages)) {
-                continue;
-            }
-
-            $languages[$code] = $supportedLanguages[$code];
-        }
+        $languages = collect($locales->enabled())
+            ->mapWithKeys(fn (string $locale) => [$locale => $locales->label($locale)])
+            ->all();
 
         return view('livewire.language-switcher', [
             'languages' => $languages,

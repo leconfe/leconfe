@@ -7,6 +7,7 @@ use App\Facades\MetaTag;
 use App\Http\Middleware\RedirectToConference;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetupDefaultData;
+use App\Http\Middleware\ShareLocalizedContextData;
 
 class Upgrade extends Page
 {
@@ -15,6 +16,7 @@ class Upgrade extends Page
     protected static string|array $withoutRouteMiddleware = [
         SetLocale::class,
         SetupDefaultData::class,
+        ShareLocalizedContextData::class,
         RedirectToConference::class,
     ];
 

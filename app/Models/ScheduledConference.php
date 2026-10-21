@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Actions\ScheduledConferences\ScheduledConferencePing;
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\HasTranslatableContent;
 use App\Models\Enums\ScheduledConferenceState;
 use App\Models\Enums\ScheduledConferenceType;
 use App\Models\Enums\SubmissionStage;
@@ -28,7 +29,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
 {
-    use BelongsToConference, Cachable, HasFactory, InteractsWithMedia, Metable, SoftDeletes;
+    use BelongsToConference, Cachable, HasFactory, HasTranslatableContent, InteractsWithMedia, Metable, SoftDeletes;
 
     public const META_SUBMISSION_TOPIC_SELECTION_LIMIT = 'submission_topic_selection_limit';
 
@@ -42,6 +43,34 @@ class ScheduledConference extends Model implements HasAvatar, HasMedia, HasName
         'type',
         'is_published',
         'featured',
+    ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['title'];
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = [
+        'description',
+        'conference_theme',
+        'summary',
+        'editorial_team',
+        'about',
+        'page_footer',
+        'privacy_statement',
+        'author_guidelines',
+        'before_you_begin',
+        'submission_checklist',
+        'review_guidelines',
+        'competing_interests',
+        'editor_guidelines',
     ];
 
     protected $casts = [

@@ -21,7 +21,7 @@ class EditorialTeam extends Page
     public function getViewData(): array
     {
         return [
-            'editorialTeam' => app()->getCurrentScheduledConference()?->getMeta('editorial_team'),
+            'editorialTeam' => app()->getCurrentScheduledConference()?->translated('editorial_team'),
         ];
     }
 }

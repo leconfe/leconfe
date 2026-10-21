@@ -37,7 +37,7 @@ class CrossrefDOIRegistration extends BaseDOIRegistration
                     ->action(function (Submission $record) {
                         try {
                             $xml = $this->exportXml($record);
-                            $filename = Str::slug($record->getKey().'-'.$record->getMeta('title')).'.xml';
+                            $filename = Str::slug($record->getKey().'-'.$record->translated('title', $record->getPrimaryContentLocale())).'.xml';
 
                             return response()->streamDownload(function () use ($xml) {
                                 echo $xml;

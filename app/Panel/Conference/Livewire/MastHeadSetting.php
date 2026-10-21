@@ -3,6 +3,7 @@
 namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Conference;
 use Filament\Forms\Components\Actions;
@@ -26,10 +27,10 @@ class MastHeadSetting extends Component implements HasForms
     {
         $conference = app()->getCurrentConference();
 
-        $this->form->fill([
+        $this->form->fill($conference->fillTranslatableFormState([
             ...$conference->attributesToArray(),
-            'meta' => $conference->getAllMeta(),
-        ]);
+            'meta' => $conference->getAllMeta()->all(),
+        ], ['name', 'meta.description', 'meta.summary', 'meta.about']));
     }
 
     public function render()
@@ -48,21 +49,25 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.information_about_conference'))
                             ->aside()
                             ->schema([
-                                TextInput::make('name')
-                                    ->label(__('general.name'))
-                                    ->autofocus()
-                                    ->autocomplete()
-                                    ->required(),
+                                MultilanguageComponent::make([
+                                    TextInput::make('name')
+                                        ->label(__('general.name'))
+                                        ->autofocus()
+                                        ->autocomplete()
+                                        ->required(),
+                                ]),
                                 TextInput::make('meta.issn')
                                     ->label(__('general.ISSN'))
                                     ->helperText(__('general.the_issn_of_the_conference')),
-                                Textarea::make('meta.description')
-                                    ->label(__('general.description'))
-                                    ->rows(3)
-                                    ->autosize()
-                                    ->columnSpanFull()
-                                    ->hint(__('general.recommended_description_length'))
-                                    ->helperText(__('general.short_description_of_the_website')),
+                                MultilanguageComponent::make([
+                                    Textarea::make('meta.description')
+                                        ->label(__('general.description'))
+                                        ->rows(3)
+                                        ->autosize()
+                                        ->columnSpanFull()
+                                        ->hint(__('general.recommended_description_length'))
+                                        ->helperText(__('general.short_description_of_the_website')),
+                                ]),
                                 Select::make('meta.scope')
                                     ->options([
                                         Conference::SCOPE_INTERNATIONAL => __('general.international'),
@@ -74,17 +79,21 @@ class MastHeadSetting extends Component implements HasForms
                             ->description(__('general.provide_short_description_your_conference'))
                             ->aside()
                             ->schema([
-                                TinyEditor::make('meta.summary')
-                                    ->label(__('general.conference_summary')),
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.summary')
+                                        ->label(__('general.conference_summary')),
+                                ]),
 
                             ]),
                         Section::make(__('general.description'))
                             ->aside()
                             ->description(__('general.include_about_your_conference'))
                             ->schema([
-                                TinyEditor::make('meta.about')
-                                    ->label(__('general.about_the_conference'))
-                                    ->profile('basic'),
+                                MultilanguageComponent::make([
+                                    TinyEditor::make('meta.about')
+                                        ->label(__('general.about_the_conference'))
+                                        ->profile('basic'),
+                                ]),
                             ]),
                     ]),
                 Actions::make([
@@ -93,14 +102,18 @@ class MastHeadSetting extends Component implements HasForms
                         ->successNotificationTitle(__('general.saved'))
                         ->failureNotificationTitle(__('general.data_could_not_saved'))
                         ->action(function (Action $action) {
+                            $formData = $this->form->getState();
+
                             try {
-                                ConferenceUpdateAction::run($this->form->getRecord(), $this->form->getState());
+                                ConferenceUpdateAction::run($this->form->getRecord(), $formData);
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
                                 $action->sendFailureNotification();
                             }
                         }),
-                ])->alignLeft(),
+                ])
+                    ->key('saveAction')
+                    ->alignLeft(),
 
             ])
             ->statePath('formData');

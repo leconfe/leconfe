@@ -83,7 +83,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                     return response()->download($record->media->getPath(), $name.'.'.$record->media->extension);
                 })
-                ->description(fn (SubmissionFile $record) => $record->type->name),
+                ->description(fn (SubmissionFile $record) => $record->type->translated('name')),
             TextColumn::make('created_at')
                 ->visibleFrom('md')
                 ->label(__('general.uploaded_at'))
@@ -322,7 +322,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     {
         $query = $this->submission
             ->submissionFiles()
-            ->with(['media', 'submission'])
+            ->with(['media', 'submission', 'type.translate'])
             ->where('category', $this->category)
             ->getQuery();
 
@@ -364,8 +364,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     protected function submissionFileTypeOptions(): array
     {
         return $this->submissionFileTypeQuery()
+            ->with('translate')
             ->ordered()
-            ->pluck('name', 'id')
+            ->get()
+            ->mapWithKeys(fn (SubmissionFileType $type) => [$type->getKey() => $type->translated('name')])
             ->toArray();
     }
 

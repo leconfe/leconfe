@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Facades\MetaTag;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -48,13 +47,8 @@ class SetupDefaultData
         View::share('site', $site);
         View::share('homeUrl', route('livewirePageGroup.website.pages.home'));
         View::share('headerLogo', $site->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
-        View::share('headerLogoAltText', $site->getMeta('name'));
-        View::share('contextName', $site->getMeta('name'));
-        View::share('pageFooter', $site->getMeta('page_footer'));
         View::share('favicon', $site->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $site->getFirstMediaUrl('styleSheet'));
-
-        MetaTag::add('description', $site->getMeta('description'));
     }
 
     protected function setupConference(Request $request, $currentConference)
@@ -62,17 +56,8 @@ class SetupDefaultData
         View::share('currentConference', $currentConference);
         View::share('homeUrl', route('livewirePageGroup.conference.pages.home'));
         View::share('headerLogo', $currentConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
-        View::share('headerLogoAltText', $currentConference->name);
-        View::share('contextName', $currentConference->name);
-        View::share('pageFooter', $currentConference->getMeta('page_footer'));
         View::share('favicon', $currentConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $currentConference->getFirstMediaUrl('styleSheet'));
-
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentConference->getMeta('description')));
-
-        foreach ($currentConference->getMeta('meta_tags') ?? [] as $name => $content) {
-            MetaTag::add($name, $content);
-        }
     }
 
     protected function setupScheduledConference(Request $request, $currentScheduledConference)
@@ -81,15 +66,7 @@ class SetupDefaultData
         View::share('currentScheduledConference', $currentScheduledConference);
         View::share('homeUrl', route('livewirePageGroup.scheduledConference.pages.home'));
         View::share('headerLogo', $currentScheduledConference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']));
-        View::share('headerLogoAltText', $currentScheduledConference->title);
-        View::share('contextName', $currentScheduledConference->title);
-        View::share('pageFooter', $currentScheduledConference->getMeta('page_footer'));
         View::share('favicon', $currentScheduledConference->getFirstMedia('favicon')?->getAvailableUrl(['tenant', 'thumb', 'thumb-xl']));
         View::share('styleSheet', $currentScheduledConference->getFirstMediaUrl('styleSheet'));
-        MetaTag::add('description', preg_replace("/\r|\n/", '', $currentScheduledConference->getMeta('description')));
-
-        foreach ($currentScheduledConference->getMeta('meta_tags') ?? [] as $name => $content) {
-            MetaTag::add($name, $content);
-        }
     }
 }

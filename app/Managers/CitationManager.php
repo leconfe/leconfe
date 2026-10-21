@@ -2,7 +2,6 @@
 
 namespace App\Managers;
 
-use App\Facades\Setting;
 use App\Models\Submission;
 use Illuminate\Support\Facades\App;
 use Seboettg\CiteProc\CiteProc;
@@ -137,12 +136,17 @@ class CitationManager
         return file_get_contents($path);
     }
 
-    public function getCitation(Submission $paper, $citationStyle = 'apa'): string
+    /**
+     * CSL-JSON data of a paper. Title, abstract and keywords are in the paper language.
+     */
+    public function getCitationData(Submission $paper): \stdClass
     {
+        $primary = $paper->getPrimaryContentLocale();
+
         $citationData = new \stdClass;
         $citationData->type = 'paper-conference';
         $citationData->id = $paper->getKey();
-        $citationData->title = $paper->getMeta('title');
+        $citationData->title = $paper->translated('title', $primary);
         $citationData->{'container-title'} = $paper->conference->name;
         $citationData->volume = $paper->proceeding->volume;
         $citationData->issue = $paper->proceeding->number;
@@ -150,9 +154,9 @@ class CitationManager
             $citationData->page = $paper->getMeta('article_pages');
         }
 
-        $citationData->section = $paper->track->title;
-        $citationData->keywords = $paper->getMeta('keywords') ?? [];
-        $citationData->abstract = strip_tags($paper->getMeta('abstract'));
+        $citationData->section = $paper->track?->translated('title');
+        $citationData->keywords = $paper->translated('keywords', $primary);
+        $citationData->abstract = strip_tags((string) $paper->translated('abstract', $primary));
         foreach ($paper->authors as $author) {
             $currentAuthor = new \stdClass;
 
@@ -191,7 +195,7 @@ class CitationManager
         if ($paper->doi?->doi) {
             $citationData->DOI = $paper->doi->doi;
         }
-        $citationData->languages = [Setting::get('default_language', 'en')];
+        $citationData->language = $paper->getLanguageTag();
 
         $citationData->{'container-title-short'} = $paper->conference->path;
 
@@ -202,6 +206,13 @@ class CitationManager
         $issued = new \stdClass;
         $issued->raw = $paper->published_at?->format('Y-m-d');
         $citationData->issued = $issued;
+
+        return $citationData;
+    }
+
+    public function getCitation(Submission $paper, $citationStyle = 'apa'): string
+    {
+        $citationData = $this->getCitationData($paper);
 
         $styleConfig = $this->getCitationStyleConfig($citationStyle);
 
