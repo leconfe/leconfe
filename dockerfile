@@ -4,7 +4,7 @@
 
 # Learn more about the Server Side Up PHP Docker Images at:
 # https://serversideup.net/open-source/docker-php/
-FROM serversideup/php:8.1-fpm-nginx-alpine-v3.5.2 as base
+FROM serversideup/php:8.3-fpm-nginx-alpine AS base
 
 # Switch to root so we can do root things
 USER root
@@ -20,7 +20,7 @@ RUN install-php-extensions intl bcmath gd exif
 ############################################
 # Production Image
 ############################################
-FROM base as release
+FROM base AS release
 COPY --chown=www-data:www-data . /var/www/html
 
 ENV SSL_MODE=mixed
