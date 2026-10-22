@@ -3,6 +3,7 @@
 namespace App\Services\EmailPreferences;
 
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class Preferences
@@ -41,6 +42,40 @@ class Preferences
         }
 
         return true;
+    }
+
+    /**
+     * Filter users down to those receiving the category, resolving every
+     * preference in a single metadata query.
+     *
+     * @param  Collection<int, User>  $users
+     * @return Collection<int, User>
+     */
+    public function enabledFor(Collection $users, int $conferenceId, int $scheduledConferenceId, string $category): Collection
+    {
+        if ($users->isEmpty()) {
+            return $users;
+        }
+
+        $key = static::key($conferenceId, $scheduledConferenceId, $category);
+        $legacyKey = $category === Categories::ANNOUNCEMENT ? 'enable_new_announcement_email' : null;
+
+        $meta = $users->first()->meta()->getRelated()->newQuery()
+            ->where('metable_type', $users->first()->getMorphClass())
+            ->whereIn('metable_id', $users->map->getKey()->all())
+            ->whereIn('key', array_filter([$key, $legacyKey]))
+            ->get()
+            ->groupBy('metable_id');
+
+        return $users->filter(function (User $user) use ($meta, $key, $legacyKey) {
+            $values = $meta->get($user->getKey(), collect())->keyBy('key');
+
+            if ($values->has($key)) {
+                return (bool) $values->get($key)->value;
+            }
+
+            return $legacyKey ? (bool) $values->get($legacyKey)?->value : true;
+        })->values();
     }
 
     /**

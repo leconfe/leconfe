@@ -53,9 +53,22 @@ class ContextAccess
 
     public function allows(User $user, int $conferenceId, int $scheduledConferenceId): bool
     {
-        return $conferenceId > 0
-            && $scheduledConferenceId > 0
-            && array_key_exists($conferenceId.':'.$scheduledConferenceId, $this->contexts($user));
+        if ($conferenceId <= 0 || $scheduledConferenceId <= 0) {
+            return false;
+        }
+
+        $memberships = $this->memberships($user);
+
+        $isMember = $memberships->contains(fn ($role) => ($role->name === UserRole::Admin->value && (int) $role->conference_id === 0)
+            || ((int) $role->conference_id === $conferenceId && $role->name === UserRole::ConferenceManager->value && (int) $role->scheduled_conference_id === 0)
+            || ((int) $role->conference_id === $conferenceId && (int) $role->scheduled_conference_id === $scheduledConferenceId));
+
+        return $isMember && ScheduledConference::withoutGlobalScopes()
+            ->whereKey($scheduledConferenceId)
+            ->where('conference_id', $conferenceId)
+            ->whereNull('deleted_at')
+            ->whereHas('conference', fn ($query) => $query->withoutGlobalScopes())
+            ->exists();
     }
 
     /**

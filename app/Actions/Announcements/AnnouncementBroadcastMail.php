@@ -43,13 +43,13 @@ class AnnouncementBroadcastMail
 
         $preferences = app(Preferences::class);
 
-        foreach ($users as $user) {
+        foreach ($users->chunk(500) as $chunk) {
             // Only users subscribed to announcements for this scheduled conference.
-            if (! $preferences->enabled($user, $scheduledConference->conference_id, $scheduledConference->getKey(), Categories::ANNOUNCEMENT)) {
-                continue;
-            }
+            $recipients = $preferences->enabledFor(collect($chunk->all()), $scheduledConference->conference_id, $scheduledConference->getKey(), Categories::ANNOUNCEMENT);
 
-            Mail::to($user->email)->send(new NewAnnouncementMail($announcement));
+            foreach ($recipients as $user) {
+                Mail::to($user->email)->send(new NewAnnouncementMail($announcement));
+            }
         }
     }
 
