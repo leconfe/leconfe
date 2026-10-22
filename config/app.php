@@ -137,10 +137,7 @@ return [
         'az' => 'Azerbaijani',
         'be' => 'Belarusian',
         'bg' => 'Bulgarian',
-        'bs' => 'Bosnian',
-        'bs_Latn' => 'Bosnian (Latin)',
         'ca' => 'Catalan',
-        'ckb' => 'Central Kurdish',
         'cs' => 'Czech',
         'da' => 'Danish',
         'de' => 'German',
@@ -170,9 +167,7 @@ return [
         'ka' => 'Georgian',
         'kk' => 'Kazakh',
         'ko' => 'Korean',
-        'ky' => 'Kyrgyz',
         'lo' => 'Lao',
-        'lt' => 'Lithuanian',
         'lv' => 'Latvian',
         'mk' => 'Macedonian',
         'mn' => 'Mongolian',
@@ -204,7 +199,7 @@ return [
         'zh_Hant' => 'Chinese (Traditional)',
     ],
 
-    'rtl_locales' => ['ar', 'ckb', 'fa', 'fa_AF', 'he', 'ps', 'ur'],
+    'rtl_locales' => ['ar', 'fa', 'fa_AF', 'he', 'ps', 'ur'],
 
     /*
     |--------------------------------------------------------------------------

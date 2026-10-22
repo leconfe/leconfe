@@ -8,7 +8,7 @@ class TranslationCompletenessTest extends TestCase
 {
     public function test_supported_locale_catalog_is_available(): void
     {
-        $expectedLocales = explode(' ', 'ar az be bg bs bs_Latn ca ckb cs da de el en eo es es_MX et eu fa fa_AF fi fr fr_CA gd gl he hi hr hu hy id is it ja ka kk ko ky lo lt lv mk mn mr ms nb_NO nl nn pl ps pt pt_BR ro ru sk sl sq sr_Cyrl sr_Latn sv th tr uk ur uz uz_Latn vi zh_Hans zh_Hant');
+        $expectedLocales = explode(' ', 'ar az be bg ca cs da de el en eo es es_MX et eu fa fa_AF fi fr fr_CA gd gl he hi hr hu hy id is it ja ka kk ko lo lv mk mn mr ms nb_NO nl nn pl ps pt pt_BR ro ru sk sl sq sr_Cyrl sr_Latn sv th tr uk ur uz uz_Latn vi zh_Hans zh_Hant');
         $configured = array_keys(config('app.locales'));
         sort($configured);
 
@@ -30,7 +30,6 @@ class TranslationCompletenessTest extends TestCase
     public function test_regional_variants_reuse_available_panel_translations(): void
     {
         $aliases = [
-            'bs_Latn' => 'bs',
             'es_MX' => 'es',
             'fa_AF' => 'fa',
             'fr_CA' => 'fr',
