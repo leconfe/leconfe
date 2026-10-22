@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\PluginInstalled;
+use App\Listeners\FilterMutedEmailRecipients;
 use App\Listeners\LogSentEmail;
 use App\Listeners\RegisterPluginVersion;
 use App\Models\Conference;
@@ -16,6 +17,7 @@ use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 
 class EventServiceProvider extends ServiceProvider
@@ -28,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        MessageSending::class => [
+            FilterMutedEmailRecipients::class,
         ],
         MessageSent::class => [
             LogSentEmail::class,

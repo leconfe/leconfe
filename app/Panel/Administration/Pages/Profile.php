@@ -8,7 +8,6 @@ use App\Models\Enums\UserRole;
 use App\Models\User;
 use App\Panel\Conference\Livewire\Forms\Conferences\ContributorForm;
 use Filament\Forms;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -38,8 +37,6 @@ class Profile extends Page implements HasForms
 
     public array $rolesFormData = [];
 
-    public array $notificationFormData = [];
-
     public function mount(): void
     {
         $user = auth()->user();
@@ -53,10 +50,6 @@ class Profile extends Page implements HasForms
             'roles' => $user->roles->filter(fn($role) => in_array($role->name, UserRole::getAllowedSelfAssignRoleNames()))->pluck('name')->toArray(),
             'meta' => $meta,
         ]);
-
-        $this->notificationForm->fill([
-            'meta' => ['enable_new_announcement_email' => $user->getMeta('enable_new_announcement_email')],
-        ]);
     }
 
     protected function getForms(): array
@@ -64,7 +57,6 @@ class Profile extends Page implements HasForms
         return [
             'informationForm',
             'rolesForm',
-            'notificationForm',
         ];
     }
 
@@ -180,43 +172,6 @@ class Profile extends Page implements HasForms
         }
     }
 
-    public function notificationForm(Form $form)
-    {
-        return $form
-            ->statePath('notificationFormData')
-            ->schema([
-                Section::make(__('general.new_announcement'))
-                    ->description(__('general.notifications_announcement_send'))
-                    ->schema([
-                        Checkbox::make('meta.enable_new_announcement_email')
-                            ->label(__('general.enable_email_notification')),
-                    ])
-                    ->aside(),
-            ]);
-    }
-
-    public function submitNotificationsForm()
-    {
-        $data = $this->notificationForm->getState();
-
-        try {
-            $user = auth()->user();
-
-            UserUpdateAction::run($user, $data);
-
-            Notification::make()
-                ->success()
-                ->title(__('general.saved'))
-                ->send();
-        } catch (\Throwable $th) {
-            Notification::make()
-                ->danger()
-                ->title(__('general.failed_to_save'))
-                ->send();
-            throw $th;
-        }
-    }
-
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -271,17 +226,7 @@ class Profile extends Page implements HasForms
                             ->icon('heroicon-o-bell')
                             ->schema([
                                 BladeEntry::make('notification-form')
-                                    ->blade('
-                                        <form wire:submit="submitNotificationsForm" class="space-y-4">
-                                            <x-filament::section>
-                                                {{ $this->notificationForm }}
-                                            </x-filament::section>
-
-                                            <x-filament::button type="submit">
-                                                {{ __("general.save")}}
-                                            </x-filament::button>
-                                        </form>
-                                    '),
+                                    ->blade('@livewire(App\\Livewire\\EmailPreferencesForm::class, [], key("email-preferences-form"))'),
                             ]),
                     ])
                     ->contained(false)
