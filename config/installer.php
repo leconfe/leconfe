@@ -2,7 +2,7 @@
 
 return [
 
-    'php_min_version' => '8.1.0',
+    'php_min_version' => '8.3.0',
 
     'php_extension' => [
         'openssl',

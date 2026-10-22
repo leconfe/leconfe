@@ -1,5 +1,5 @@
 [variables]
-PHP_VERSION = '8.1'
+PHP_VERSION = '8.3'
 NIXPACKS_PHP_ROOT_DIR = '/app/public'
 COMPOSER_NO_DEV = '1'
 
