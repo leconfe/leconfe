@@ -80,7 +80,8 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
                 TextInput::make('name')
                     ->label(__('general.topic_name'))
                     ->placeholder(__('general.topic_name'))
-                    ->required(),
+                    ->required()
+                    ->maxLength(191),
                 CheckboxList::make('user_id')
                     ->label(__('general.participants'))
                     ->default([Auth::id()])
