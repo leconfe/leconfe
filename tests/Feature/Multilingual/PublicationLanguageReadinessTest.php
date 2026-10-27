@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Panel\Conference\Resources\ProceedingResource\Pages\ManageProceedings;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ViewSubmission;
 use App\Providers\PanelProvider;
+use App\Support\Multilingual\ContentLocales;
 use App\Support\Multilingual\LanguageReadiness;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -65,11 +66,11 @@ class PublicationLanguageReadinessTest extends TestCase
 
         Livewire::test(ViewSubmission::class, ['record' => $paper->getKey()])
             ->mountAction('publish')
-            ->assertSee('Langue de l’article : English.')
-            ->assertSee('La langue de la conférence est French. Les articles rédigés dans une autre langue peuvent tout de même être publiés.')
-            ->assertSee('French : aucune traduction pour Résumé, Mots-clés. Les lecteurs verront le texte d’origine (English).')
+            ->assertSee('Langue de l’article : Anglais.')
+            ->assertSee('La langue de la conférence est Français. Les articles rédigés dans une autre langue peuvent tout de même être publiés.')
+            ->assertSee('Français : aucune traduction pour Résumé, Mots-clés. Les lecteurs verront le texte d’origine (Anglais).')
             ->assertDontSee('Sous-titre')
-            ->assertSee('E-mail de notification à l’auteur : French.')
+            ->assertSee('E-mail de notification à l’auteur : Français.')
             ->assertDontSee('Le modèle d’e-mail n’est pas traduit')
             ->callMountedAction()
             ->assertHasNoActionErrors();
@@ -87,8 +88,8 @@ class PublicationLanguageReadinessTest extends TestCase
 
         Livewire::test(ViewSubmission::class, ['record' => $paper->getKey()])
             ->mountAction('publish')
-            ->assertSee('E-mail de notification à l’auteur : English.')
-            ->assertSee('Le modèle d’e-mail n’est pas traduit dans cette langue : le texte utilisé sera la version « French ».');
+            ->assertSee('E-mail de notification à l’auteur : Anglais.')
+            ->assertSee('Le modèle d’e-mail n’est pas traduit dans cette langue : le texte utilisé sera la version « Français ».');
     }
 
     public function test_proceeding_publish_dialog_summarises_its_metadata_and_papers(): void
@@ -100,8 +101,8 @@ class PublicationLanguageReadinessTest extends TestCase
 
         Livewire::test(ManageProceedings::class)
             ->mountTableAction('publish', $proceeding)
-            ->assertSee('English : aucune traduction pour Titre, Description. Les lecteurs verront le texte d’origine (French).')
-            ->assertSee('French : 1 article de ces actes a des métadonnées non traduites. Les lecteurs le verront dans sa langue de rédaction.')
+            ->assertSee('Anglais : aucune traduction pour Titre, Description. Les lecteurs verront le texte d’origine (Français).')
+            ->assertSee('Français : 1 article de ces actes a des métadonnées non traduites. Les lecteurs le verront dans sa langue de rédaction.')
             ->callMountedTableAction();
 
         $this->assertTrue((bool) $proceeding->refresh()->published);
@@ -122,9 +123,9 @@ class PublicationLanguageReadinessTest extends TestCase
 
         Livewire::test(ManageProceedings::class)
             ->mountTableAction('publish', $proceeding)
-            ->assertSee('English : toutes les métadonnées sont traduites.')
-            ->assertSee('English : les métadonnées de tous les articles sont traduites.')
-            ->assertSee('French : 2 articles de ces actes ont des métadonnées non traduites. Les lecteurs les verront dans leur langue de rédaction.');
+            ->assertSee('Anglais : toutes les métadonnées sont traduites.')
+            ->assertSee('Anglais : les métadonnées de tous les articles sont traduites.')
+            ->assertSee('Français : 2 articles de ces actes ont des métadonnées non traduites. Les lecteurs les verront dans leur langue de rédaction.');
     }
 
     public function test_proceeding_publish_dialog_shows_no_summary_for_a_single_language(): void
@@ -143,6 +144,8 @@ class PublicationLanguageReadinessTest extends TestCase
 
     public function test_proceeding_summary_query_count_does_not_grow_with_its_papers(): void
     {
+        config(['laravel-model-caching.enabled' => false]);
+
         $proceeding = $this->unpublishedProceeding();
         $this->partiallyTranslatedPaper($proceeding);
         $single = $this->countSummaryQueries($proceeding);
@@ -156,7 +159,7 @@ class PublicationLanguageReadinessTest extends TestCase
     protected function countSummaryQueries(Proceeding $proceeding): int
     {
         $proceeding = $proceeding->fresh();
-        LanguageReadiness::forProceeding($proceeding);
+        app(ContentLocales::class)->ordered();
 
         DB::flushQueryLog();
         DB::enableQueryLog();
