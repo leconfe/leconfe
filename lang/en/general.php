@@ -1185,7 +1185,7 @@ return [
     'view_your_submissions' => 'View your pending submissions',
     'track_policies' => 'Track Policies',
     'preferred_language' => 'Interface and email language',
-    'preferred_language_helper' => 'Emails to you are sent in this language when a translation exists, and the interface switches to it when you sign in. It does not translate content.',
+    'preferred_language_helper' => 'Emails are sent in this language when a translation exists, and the interface switches to it at sign-in. Choosing a language from the interface language menu also updates this setting. It does not translate content.',
     'paper_language' => 'Paper language',
     'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
     'interface_language' => 'Interface language',

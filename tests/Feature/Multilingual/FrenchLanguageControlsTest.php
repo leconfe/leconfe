@@ -68,7 +68,8 @@ class FrenchLanguageControlsTest extends TestCase
 
         Livewire::test(Profile::class)
             ->assertSee('Interface and email language')
-            ->assertSee('the interface switches to it when you sign in. It does not translate content.');
+            ->assertSee('Choosing a language from the interface language menu also updates this setting.')
+            ->assertDontSee('Emails to you');
     }
 
     public function test_profile_interface_and_email_language_is_in_french(): void
@@ -79,7 +80,8 @@ class FrenchLanguageControlsTest extends TestCase
 
         Livewire::test(Profile::class)
             ->assertSee('Langue de l\'interface et des e-mails')
-            ->assertSee('l\'interface passe dans cette langue à votre connexion. Ce choix ne traduit pas le contenu.')
+            ->assertSee('Choisir une langue dans le menu de langue de l\'interface met aussi ce réglage à jour.')
+            ->assertDontSee('vous sont adressés')
             ->assertDontSee('Preferred language')
             ->assertDontSee('Emails are sent to you in this language.');
     }

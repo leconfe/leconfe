@@ -1103,7 +1103,7 @@ return [
     'view_your_submissions' => 'Voir vos soumissions en attente',
     'track_policies' => 'Politiques des axes thématiques',
     'preferred_language' => 'Langue de l\'interface et des e-mails',
-    'preferred_language_helper' => 'Les e-mails qui vous sont adressés sont envoyés dans cette langue lorsqu\'une traduction existe, et l\'interface passe dans cette langue à votre connexion. Ce choix ne traduit pas le contenu.',
+    'preferred_language_helper' => 'Les e-mails sont envoyés dans cette langue lorsqu\'une traduction existe, et l\'interface passe dans cette langue à la connexion. Choisir une langue dans le menu de langue de l\'interface met aussi ce réglage à jour. Ce choix ne traduit pas le contenu.',
     'paper_language' => 'Langue de l\'article',
     'paper_language_helper' => 'La langue dans laquelle l\'article est rédigé. Les métadonnées dans cette langue sont obligatoires et servent aux citations et à l\'indexation.',
     'interface_language' => 'Langue de l\'interface',
