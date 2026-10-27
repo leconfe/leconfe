@@ -1158,4 +1158,13 @@ return [
     'receipt_number_prefix' => 'Prefix Number of Receipt',
     'next_receipt_number' => 'Next Receipt Number',
     'receipt_number_suffix' => 'Suffix Number of Receipt',
+    'language_readiness_heading' => 'Languages',
+    'language_readiness_paper_language' => 'Paper language: :language.',
+    'language_readiness_paper_language_differs' => 'The conference language is :conference. Papers in other languages can still be published.',
+    'language_readiness_complete' => ':language: all metadata is translated.',
+    'language_readiness_fallback' => ':language: no translation for :fields. Readers see the :fallback text.',
+    'language_readiness_papers_complete' => ':language: the metadata of all :count papers is translated.',
+    'language_readiness_papers_incomplete' => ':language: :incomplete of :count papers have metadata without a translation. Readers see those papers in their paper language.',
+    'language_readiness_email' => 'Notification email to the author: :language.',
+    'language_readiness_email_fallback' => 'The email template has no translation in this language: the :fallback text is used.',
 ];

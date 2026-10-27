@@ -8,6 +8,7 @@ use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
+use App\Support\Multilingual\LanguageReadiness;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -160,6 +161,7 @@ class ProceedingResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-arrow-up-tray')
                         ->hidden(fn (Proceeding $record) => $record->published)
+                        ->modalContent(fn (Proceeding $record) => LanguageReadiness::forProceeding($record)->render())
                         ->action(fn (Proceeding $record) => $record->publish()),
                     Tables\Actions\Action::make('unpublish')
                         ->label(__('general.unpublish'))

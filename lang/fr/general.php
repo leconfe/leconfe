@@ -1159,4 +1159,13 @@ return [
     'translation_missing' => 'Manquant',
     'translation_fallback' => 'Langue de secours : :language',
     'translation_invalid' => 'Erreur',
+    'language_readiness_heading' => 'Langues',
+    'language_readiness_paper_language' => 'Langue de l’article : :language.',
+    'language_readiness_paper_language_differs' => 'La langue de la conférence est :conference. Les articles rédigés dans une autre langue peuvent tout de même être publiés.',
+    'language_readiness_complete' => ':language : toutes les métadonnées sont traduites.',
+    'language_readiness_fallback' => ':language : aucune traduction pour :fields. Les lecteurs verront le texte d’origine (:fallback).',
+    'language_readiness_papers_complete' => ':language : les métadonnées des :count articles sont traduites.',
+    'language_readiness_papers_incomplete' => ':language : :incomplete article(s) sur :count ont des métadonnées non traduites. Les lecteurs verront ces articles dans leur langue de rédaction.',
+    'language_readiness_email' => 'E-mail de notification à l’auteur : :language.',
+    'language_readiness_email_fallback' => 'Le modèle d’e-mail n’est pas traduit dans cette langue : le texte utilisé sera la version « :fallback ».',
 ];
