@@ -35,9 +35,9 @@ class ReviewerInvitationMail extends TemplateMailable
             'Conference Title' => $submission->scheduledConference->title,
             'Submission Title' => $submission->getMeta('title'),
             'Submission Invitation URL' => SubmissionResource::getUrl('reviewer-invitation', ['record' => $submission]),
-            'Response Due Date' => Carbon::parse($review->getMeta('response_due_date'))->format('d F Y'),
-            'Review Due Date' => Carbon::parse($review->getMeta('review_due_date'))->format('d F Y'),
         ]);
+        $this->setDateData('Response Due Date', Carbon::parse($review->getMeta('response_due_date')), 'd F Y');
+        $this->setDateData('Review Due Date', Carbon::parse($review->getMeta('review_due_date')), 'd F Y');
         $this->setTranslatableData('Submission Title', $submission, 'title');
         $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 

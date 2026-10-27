@@ -3,6 +3,7 @@
 namespace App\Mail\Templates;
 
 use App\Models\MailTemplate;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,14 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
      * @var array<string, array{0: class-string<Model>, 1: mixed, 2: string}>
      */
     protected array $translatableData = [];
+
+    /**
+     * Variables whose value is a date, formatted when the email is rendered so month
+     * and day names follow the recipient's language.
+     *
+     * @var array<string, array{0: CarbonInterface, 1: string}>
+     */
+    protected array $dateData = [];
 
     /**
      * The conference context the email was created in, kept when the email is queued so
@@ -87,7 +96,7 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
 
     public function buildViewData(): array
     {
-        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData());
+        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData(), $this->resolveDateData());
     }
 
     /**
@@ -100,6 +109,26 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
         }
 
         return $this;
+    }
+
+    /**
+     * Use a date formatted in the recipient's language for a template variable.
+     */
+    public function setDateData(string $variable, CarbonInterface $date, string $format): static
+    {
+        $this->dateData[$variable] = [$date, $format];
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function resolveDateData(): array
+    {
+        return collect($this->dateData)
+            ->map(fn (array $date) => $date[0]->translatedFormat($date[1]))
+            ->all();
     }
 
     /**

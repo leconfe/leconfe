@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="text-sm">
                                         <span class="font-semibold">Published: </span>
-                                        {{ $proceeding->published_at ? $proceeding->published_at->format(Setting::get('format_date')) : '-' }}
+                                        {{ $proceeding->published_at ? $proceeding->published_at->translatedFormat(Setting::get('format_date')) : '-' }}
                                     </div>
                                 </div>
                             </div>

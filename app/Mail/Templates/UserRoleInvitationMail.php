@@ -30,8 +30,8 @@ class UserRoleInvitationMail extends TemplateMailable
             'Conference Title' => $conferenceTitle,
             'Scheduled Conference Title' => $scheduledConferenceTitle ?: '-',
             'Invitation URL' => $invitation->getAcceptUrl(),
-            'Invitation Expiration Date' => Carbon::parse($invitation->expires_at)->format('d F Y H:i'),
         ]);
+        $this->setDateData('Invitation Expiration Date', Carbon::parse($invitation->expires_at), 'd F Y H:i');
 
         $titleSource = $invitation->scheduledConference
             ?? $invitation->conference
