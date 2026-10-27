@@ -36,6 +36,8 @@ class LanguageSettingOptionsTest extends TestCase
             ->assertSeeHtml('Français')
             ->assertSeeHtml('Deutsch')
             ->assertSeeHtml('日本語')
+            ->assertSeeHtml('ქართული')
+            ->assertDontSeeHtml('Ქართული')
             ->assertSeeInOrder(['Français', 'French'])
             ->assertSeeInOrder(['Deutsch', 'German']);
     }
@@ -54,6 +56,7 @@ class LanguageSettingOptionsTest extends TestCase
 
         Livewire::test(LanguageSetting::class)
             ->assertSeeHtml('placeholder="Rechercher"')
+            ->assertSeeHtml('searchPrompt: \'Rechercher\'')
             ->assertDontSeeHtml('Commencez à taper pour rechercher');
     }
 }

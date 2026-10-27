@@ -51,6 +51,7 @@ class LanguageSetting extends Component implements HasForms
                             ->label(__('general.default_language'))
                             ->options(fn (Get $get): array => Arr::only($this->languageOptions(), $this->selectedLanguages($get('languages'))))
                             ->searchable()
+                            ->searchPrompt(__('general.search'))
                             ->selectablePlaceholder(false)
                             ->helperText(__('general.languages_english_fallback')),
                         CheckboxList::make('languages')

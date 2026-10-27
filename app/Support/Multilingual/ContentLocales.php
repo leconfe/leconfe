@@ -123,7 +123,7 @@ class ContentLocales
             return $this->label($locale);
         }
 
-        return mb_strtoupper(mb_substr($name, 0, 1)).mb_substr($name, 1);
+        return mb_convert_case(mb_substr($name, 0, 1), MB_CASE_TITLE).mb_substr($name, 1);
     }
 
     /**
