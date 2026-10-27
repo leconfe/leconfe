@@ -145,6 +145,7 @@ trait HasTranslatableContent
         $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
         $term = "%{$search}%";
         $matches = fn (Builder $query) => $query->where('key', $key)->where('value', $operator, $term);
+        $translatedIds = $matches(Translate::query()->select('translatable_id')->where('translatable_type', $this->getMorphClass()))->toBase();
 
         return $query->where(fn (Builder $query) => $query
             ->when(
@@ -152,7 +153,8 @@ trait HasTranslatableContent
                 fn (Builder $query) => $query->where($query->qualifyColumn($key), $operator, $term),
                 fn (Builder $query) => $query->whereHas('meta', $matches),
             )
-            ->orWhereHas('translate', $matches));
+            // A raw clause, because laravel-model-caching cannot build a cache key for a whereIn subquery with bindings.
+            ->orWhereRaw($query->getGrammar()->wrap($this->getQualifiedKeyName()).' in ('.$translatedIds->toSql().')', $translatedIds->getBindings()));
     }
 
     /**
