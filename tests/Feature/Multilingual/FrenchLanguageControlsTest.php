@@ -93,7 +93,7 @@ class FrenchLanguageControlsTest extends TestCase
         App::setLocale('fr');
 
         Livewire::test(LanguageSetting::class)
-            ->assertSee('L\'anglais est utilisé lorsqu\'aucune langue n\'est sélectionnée.')
+            ->assertSee('L’anglais est utilisé si aucune langue n’est cochée.')
             ->assertSee('Langues du contenu')
             ->assertSee('Les langues du contenu sont celles dans lesquelles les visiteurs peuvent afficher l\'interface et dans lesquelles le contenu peut être traduit.')
             ->assertDontSee('English is used when no language is selected.');

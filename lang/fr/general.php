@@ -1092,7 +1092,7 @@ return [
     'switch_language' => 'Changer la langue de l\'interface',
     'current_language' => 'Langue actuelle',
     'translations' => 'Traductions',
-    'languages_english_fallback' => 'L\'anglais est utilisé lorsqu\'aucune langue n\'est sélectionnée.',
+    'languages_english_fallback' => 'L’anglais est utilisé si aucune langue n’est cochée.',
     'show_translations' => 'Afficher les traductions',
     'hide_translations' => 'Masquer les traductions',
     'translation_in' => ':label (:language)',

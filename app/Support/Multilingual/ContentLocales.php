@@ -112,6 +112,21 @@ class ContentLocales
     }
 
     /**
+     * The language's name in its own language, such as "Français" for `fr`, falling
+     * back to its configured label.
+     */
+    public function autonym(string $locale): string
+    {
+        $name = class_exists(\Locale::class) ? \Locale::getDisplayName($locale, $locale) : '';
+
+        if ($name === '' || $name === $locale) {
+            return $this->label($locale);
+        }
+
+        return mb_convert_case(mb_substr($name, 0, 1), MB_CASE_TITLE).mb_substr($name, 1);
+    }
+
+    /**
      * Enabled languages keyed by locale with their labels, default language first.
      *
      * @return array<string, string>
