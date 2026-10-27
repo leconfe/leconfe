@@ -314,6 +314,42 @@ class FormItemTranslationTest extends TestCase
         $this->assertSame('Poster digital', $item->displayResponse('Poster'));
     }
 
+    public function test_reordering_the_options_keeps_the_meaning_of_a_stored_answer(): void
+    {
+        $this->enableLanguages(['en', 'fr']);
+
+        Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('create')
+            ->set('mountedTableActionsData.0.type', SubmissionFormItem::TYPE_RADIO)
+            ->set('mountedTableActionsData.0.meta.name', ['en' => 'Consent', 'fr' => 'Consentement'])
+            ->set('mountedTableActionsData.0.meta.response_options', [
+                'en' => ['a' => ['text' => 'Yes'], 'b' => ['text' => 'No']],
+                'fr' => ['a' => ['text' => 'Oui'], 'b' => ['text' => 'Non']],
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $item = SubmissionFormItem::query()->sole();
+
+        Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('edit', $item)
+            ->set('mountedTableActionsData.0.meta.response_options', [
+                'en' => ['a' => ['text' => 'Yes'], 'b' => ['text' => 'No']],
+                'fr' => ['b' => ['text' => 'Non'], 'a' => ['text' => 'Oui']],
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $item = SubmissionFormItem::query()->sole();
+
+        app()->setLocale('fr');
+
+        $this->assertSame('Oui', $item->displayResponse('Yes'));
+        $this->assertSame('Non', $item->displayResponse('No'));
+    }
+
     protected function makeSubmissionFormItem(): SubmissionFormItem
     {
         $item = SubmissionFormItem::query()->create(['type' => SubmissionFormItem::TYPE_RADIO]);
