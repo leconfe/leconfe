@@ -7,8 +7,8 @@ use Filament\Forms\Components\Select;
 use Illuminate\Validation\Rule;
 
 /**
- * The language a user receives email in. Lists the enabled languages and is hidden
- * while only one language is enabled.
+ * The language a user receives email in and that the interface switches to at sign-in.
+ * Lists the enabled languages and is hidden while only one language is enabled.
  */
 class PreferredLanguageSelect extends Select
 {
