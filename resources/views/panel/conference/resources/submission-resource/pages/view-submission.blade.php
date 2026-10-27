@@ -47,7 +47,7 @@
                 <div class="flex items-center">
                     <input id="editor-guidance-checkbox" type="checkbox" value="" class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" :checked="!autoShowEditorGuidanceEnabled()" x-on:change="toggleAutoShowEditorGuidance()">
                     <label for="editor-guidance-checkbox" class="ms-2 text-sm text-gray-900 dark:text-gray-300">
-                        Understood editor guidance. Don't show this again
+                        {{ __('general.editor_guidance_understood') }}
                     </label>
                 </div>
             </div>

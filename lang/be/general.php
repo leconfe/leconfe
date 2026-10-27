@@ -1272,4 +1272,6 @@ return [
     'reviewer_number' => 'Reviewer :number',
 
     'form_item' => 'form item',
+
+    'editor_guidance_understood' => 'Understood editor guidance. Don\'t show this again',
 ];

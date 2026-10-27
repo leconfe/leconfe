@@ -1273,4 +1273,6 @@ return [
     'reviewer_number' => 'Évaluateur :number',
 
     'form_item' => 'élément de formulaire',
+
+    'editor_guidance_understood' => 'Instructions aux éditeurs lues. Ne plus afficher',
 ];
