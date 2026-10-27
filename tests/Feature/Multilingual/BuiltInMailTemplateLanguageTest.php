@@ -142,6 +142,18 @@ class BuiltInMailTemplateLanguageTest extends TestCase
         $this->assertSame('en', app()->getLocale());
     }
 
+    public function test_canadian_french_recipients_get_the_french_built_in_email(): void
+    {
+        $this->enableLanguages(['en', 'fr', 'fr_CA']);
+        $reader = $this->makeUser('Gabrielle', 'lectrice-ca@example.com', 'fr_CA');
+
+        $message = $this->send($reader, $this->make(PublishSubmissionMail::class));
+
+        $this->assertSame('Soumission publiée', $message->getSubject());
+        $this->assertStringContainsString('Votre soumission « Rice terraces » a été publiée sur Annual Conference 2026', $message->getHtmlBody());
+        $this->assertStringContainsString('Gérez facilement votre conférence avec', $message->getHtmlBody());
+    }
+
     public function test_a_customized_template_is_sent_as_the_organiser_wrote_it(): void
     {
         MailTemplate::query()->create([
