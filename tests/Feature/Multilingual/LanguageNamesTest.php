@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Multilingual;
 
+use App\Livewire\LanguageSwitcher;
 use App\Models\User;
 use App\Panel\Administration\Pages\Profile;
 use App\Panel\Conference\Livewire\MastHeadSetting;
@@ -91,6 +92,25 @@ class LanguageNamesTest extends TestCase
             ->assertSee('<span class="sr-only">Current language:</span>', false)
             ->assertSee('<span lang="en">English</span>', false)
             ->assertSee('<span>Français</span>', false);
+    }
+
+    public function test_language_switcher_keeps_the_colon_in_other_interface_languages(): void
+    {
+        $this->enableLanguages(['en', 'fr', 'id']);
+
+        $this->withoutVite()
+            ->withSession(['locale' => 'id'])
+            ->get(route('livewirePageGroup.website.pages.home'))
+            ->assertOk()
+            ->assertSee('<span class="sr-only">Bahasa saat ini:</span>', false);
+    }
+
+    public function test_panel_language_switcher_marks_each_language_name_with_its_language(): void
+    {
+        App::setLocale('fr');
+
+        Livewire::test(LanguageSwitcher::class)
+            ->assertSeeHtmlInOrder(['lang="en"', 'English', 'lang="fr"', 'Français']);
     }
 
     /**
