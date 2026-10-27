@@ -27,6 +27,8 @@ class Receipt extends Page
 
         abort_unless($canAccess, 404);
 
+        app()->setLocale($this->record->documentLocale());
+
         $data = [
             'scheduledConference' => app()->getCurrentScheduledConference(),
             'record' => $this->record,

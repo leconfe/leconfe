@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Support\Multilingual\ContentLocales;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -177,6 +178,17 @@ class Payment extends Model implements HasMedia
     public function getPaymentType()
     {
         return PaymentManager::get()->getPaymentTypeName($this->type);
+    }
+
+    /**
+     * The language of this payment's invoice and receipt: the payer's stored language
+     * while it is enabled, otherwise the current language.
+     */
+    public function documentLocale(): string
+    {
+        $locale = $this->user?->locale;
+
+        return app(ContentLocales::class)->isEnabled($locale) ? $locale : app()->getLocale();
     }
 
     public function getFormattedFee()

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app(\App\Support\Multilingual\ContentLocales::class)->direction() }}">
 
 <head>
     <meta charset="UTF-8">
         <title>
-            Receipt - {{ $record->receipt }} - {{ $scheduledConference->title }}
+            {{ __('general.receipt_document') }} - {{ $record->receipt }} - {{ $scheduledConference->title }}
         </title>
 
     @vite(['resources/panel/css/panel.css'])
@@ -66,21 +66,21 @@
             {!! $scheduledConference->getMeta('receipt_sender_information') ?: $scheduledConference->getMeta('invoice_sender_information') !!}
         </div>
         <div class="bg-gray-200 p-2 mt-4">
-            <p class="text-xl font-bold">Receipt No: {{ $record->receipt }}</p>
-             <p>Registration Date: {{ $record->created_at->format('jS M Y, h:i:sa') }} </p>
+            <p class="text-xl font-bold">{{ __('general.receipt_number_value', ['number' => $record->receipt]) }}</p>
+             <p>{{ __('general.document_registration_date', ['date' => $record->created_at->locale(app()->getLocale())->isoFormat('LLL')]) }}</p>
         </div>
         <div class="mt-8 text-base">
-            <p>Dear {{ $user_fullname }},</p>
+            <p>{{ __('general.receipt_greeting', ['name' => $user_fullname]) }}</p>
             <p>
-                We have successfully received your registration fee of {{ $record->getFormattedFee() }}.
+                {{ __('general.receipt_fee_received', ['amount' => $record->getFormattedFee()]) }}
             </p>
             @if($submissionTitle)
-            <p>Submission Title: <b>{{ $submissionTitle }}</b></p>
+            <p>{{ __('general.document_submission_title_label') }} <b>{{ $submissionTitle }}</b></p>
             @endif
             @if(count($additionalItems))
-            <p class="mt-2">Payment breakdown:</p>
+            <p class="mt-2">{{ __('general.payment_breakdown') }}</p>
             <ul class="list-disc ml-6">
-                <li>Base Fee: {{ money($baseAmount, $record->currency, true)->formatWithoutZeroes() }}</li>
+                <li>{{ __('general.base_fee_amount', ['amount' => money($baseAmount, $record->currency, true)->formatWithoutZeroes()]) }}</li>
                 @foreach($additionalItems as $item)
                 <li>
                     {{ data_get($item, 'name') }}
@@ -92,7 +92,7 @@
                 @endforeach
             </ul>
             @endif
-            <p>Thank you for your payment. We look forward to your participation and wish you a successful and enjoyable conference experience.</p>
+            <p>{{ __('general.receipt_thank_you') }}</p>
         </div>
         @php($receiptNotes = $scheduledConference->getMeta('receipt_notes'))
         @if($receiptNotes)
