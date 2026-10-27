@@ -31,11 +31,14 @@ class NavigationMenuItem extends Model implements Sortable
     protected array $translatableColumns = ['label'];
 
     /**
-     * Interface text for the items of the built-in user account menu.
+     * Interface text for item types whose default label is built in.
      *
      * @var array<string, string>
      */
-    protected const ACCOUNT_LABELS = [
+    protected const BUILT_IN_LABELS = [
+        'home' => 'general.home',
+        'about' => 'general.about',
+        'proceedings' => 'general.proceedings',
         'login' => 'general.login',
         'register' => 'general.register',
         'dashboard' => 'general.dashboard',
@@ -115,8 +118,8 @@ class NavigationMenuItem extends Model implements Sortable
     {
         $label = (string) $this->translated('label');
 
-        if ($this->hasBuiltInAccountLabel($label)) {
-            $label = __(static::ACCOUNT_LABELS[$this->type]);
+        if ($this->hasBuiltInLabel($label)) {
+            $label = __(static::BUILT_IN_LABELS[$this->type]);
         }
 
         // replace {$username} with the user's name
@@ -128,12 +131,12 @@ class NavigationMenuItem extends Model implements Sortable
     }
 
     /**
-     * Whether the label is still the built-in English label of an account item and
-     * has no translation for the active language, so the interface text is shown.
+     * Whether the label is still the built-in English label of its type and has no
+     * translation for the active language, so the interface text is shown.
      */
-    protected function hasBuiltInAccountLabel(string $label): bool
+    protected function hasBuiltInLabel(string $label): bool
     {
-        return array_key_exists($this->type, static::ACCOUNT_LABELS)
+        return array_key_exists($this->type, static::BUILT_IN_LABELS)
             && $label === static::getType($this->type)::getLabel()
             && $this->translatedLocale('label') !== app()->getLocale();
     }

@@ -122,6 +122,34 @@ class PublicInterfaceLabelsTest extends TestCase
             ->assertDontSee('Espace auteur');
     }
 
+    public function test_built_in_primary_menu_follows_the_visitor_language_and_custom_labels_stay(): void
+    {
+        $paper = $this->makePaper($this->author, 'en', [
+            'title' => ['en' => 'Coral reefs'],
+        ], SubmissionStage::Proceeding, SubmissionStatus::Published, $this->proceeding);
+
+        $response = $this->visitPaper($this->conference, $paper, 'fr');
+        $labels = $this->menuLabels($response);
+        $this->assertContains('Actes', $labels);
+        $this->assertNotContains('Proceedings', $labels);
+        $response->assertSee('Conférences');
+
+        app()->setLocale('fr');
+        $this->assertSame(['Accueil'], $this->labelsOf('home'));
+        $this->assertSame(['À propos'], $this->labelsOf('about'));
+
+        NavigationMenuItem::query()->where('type', 'proceedings')->get()->each->update(['label' => 'Archive']);
+        NavigationMenuItem::query()->where('type', 'about')->get()->each->setTranslation('label', 'fr', 'Le congrès');
+
+        $this->assertSame(['Le congrès'], $this->labelsOf('about'));
+
+        $french = $this->menuLabels($this->visitPaper($this->conference, $paper, 'fr'));
+        $this->assertContains('Archive', $french);
+        $this->assertNotContains('Actes', $french);
+
+        $this->assertContains('Archive', $this->menuLabels($this->visitPaper($this->conference, $paper, 'en')));
+    }
+
     public function test_login_page_back_link_follows_the_visitor_language(): void
     {
         $this->withoutVite()
@@ -149,12 +177,38 @@ class PublicInterfaceLabelsTest extends TestCase
     /**
      * @return array<int, string>
      */
+    protected function labelsOf(string $type): array
+    {
+        return NavigationMenuItem::query()->where('type', $type)->get()
+            ->map(fn (NavigationMenuItem $item) => $item->getLabel())
+            ->unique()->values()->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function menuLabels(TestResponse $response): array
+    {
+        return $this->texts($response, '//a[contains(@class, "navigation-menu-item")]');
+    }
+
+    /**
+     * @return array<int, string>
+     */
     protected function breadcrumbs(TestResponse $response): array
+    {
+        return $this->texts($response, '//div[contains(@class, "breadcrumbs")]//li');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function texts(TestResponse $response, string $query): array
     {
         $document = new DOMDocument;
         @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
 
-        $items = (new DOMXPath($document))->query('//div[contains(@class, "breadcrumbs")]//li');
+        $items = (new DOMXPath($document))->query($query);
 
         return collect(iterator_to_array($items))
             ->map(fn ($item) => trim(preg_replace('/\s+/', ' ', $item->textContent)))
