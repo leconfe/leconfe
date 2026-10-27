@@ -19,7 +19,8 @@
                             x-on:click="activeTab='home'"
                             class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'home', 'hover:bg-gray-100' : activeTab != 'home'}"
-                            aria-current="page">
+                            aria-current="true"
+                            x-bind:aria-current="activeTab == 'home' ? 'true' : null">
                             {{ __('general.home') }}
                         </button>
                     </li>
@@ -30,7 +31,7 @@
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'tab-{{ $key }}', 'hover:bg-gray-100' : activeTab != 'tab-{{ $key }}'}"
                             type="button"
                             class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
-                            aria-current="page">
+                            x-bind:aria-current="activeTab == 'tab-{{ $key }}' ? 'true' : null">
                             {{ $additionalContent['title'] }}
                         </button>
                     </li>

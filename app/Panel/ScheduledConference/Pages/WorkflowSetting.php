@@ -111,7 +111,7 @@ class WorkflowSetting extends Page
                                     ]),
                             ]),
                         Tabs\Tab::make('Review')
-                            ->label(__('general.review'))
+                            ->label(__('general.peer_review'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make('workflow-review')
                                     ->schema([
