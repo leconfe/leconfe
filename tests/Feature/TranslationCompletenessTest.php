@@ -145,6 +145,18 @@ class TranslationCompletenessTest extends TestCase
         }
     }
 
+    public function test_catalogs_use_real_line_breaks(): void
+    {
+        foreach (glob(lang_path('*/*.php')) ?: [] as $file) {
+            $literal = array_keys(array_filter(
+                $this->flattenTranslations(require $file),
+                fn ($value) => is_string($value) && str_contains($value, '\\n'),
+            ));
+
+            $this->assertSame([], $literal, basename(dirname($file)).'/'.basename($file).' has a literal \\n in: '.implode(', ', $literal));
+        }
+    }
+
     private function flattenTranslations(array $translations, string $prefix = ''): array
     {
         $flattened = [];
