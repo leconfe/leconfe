@@ -178,7 +178,7 @@ class TranslationCompletenessTest extends TestCase
     {
         preg_match_all('/(?<![A-Za-z0-9_]):[A-Za-z][A-Za-z0-9_]*/', $value, $matches);
 
-        $placeholders = $matches[0];
+        $placeholders = array_values(array_unique($matches[0]));
         sort($placeholders);
 
         return $placeholders;
