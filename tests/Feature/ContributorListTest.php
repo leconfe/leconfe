@@ -140,6 +140,74 @@ class ContributorListTest extends TestCase
         );
     }
 
+    public function test_review_summary_shows_contributor_changes_without_reload(): void
+    {
+        $context = $this->makeSubmissionContext();
+        $authorRole = $this->createAuthorRole($context['conference']);
+
+        $this->actingAs($context['user']);
+
+        $summary = Livewire::test(ContributorList::class, [
+            'submission' => $context['submission'],
+            'viewOnly' => true,
+        ])
+            ->assertSee(__('general.no_contributors'));
+
+        $editor = Livewire::test(ContributorList::class, ['submission' => $context['submission']])
+            ->callTableAction('addMyselfAsContributor')
+            ->assertDispatched('contributorsUpdated');
+
+        $summary
+            ->dispatch('contributorsUpdated')
+            ->assertSee($context['user']->email)
+            ->assertDontSee(__('general.no_contributors'));
+
+        $editor
+            ->callTableAction('create', data: [
+                'given_name' => 'Second',
+                'family_name' => 'Writer',
+                'email' => 'second-writer@example.test',
+                'author_role_id' => $authorRole->getKey(),
+            ])
+            ->assertHasNoTableActionErrors()
+            ->assertDispatched('contributorsUpdated');
+
+        $summary
+            ->dispatch('contributorsUpdated')
+            ->assertSee('second-writer@example.test');
+
+        $second = Author::query()->where('email', 'second-writer@example.test')->firstOrFail();
+
+        $editor
+            ->callTableAction('edit', $second, data: ['email' => 'renamed-writer@example.test'])
+            ->assertHasNoTableActionErrors()
+            ->assertDispatched('contributorsUpdated');
+
+        $summary
+            ->dispatch('contributorsUpdated')
+            ->assertSee('renamed-writer@example.test')
+            ->assertDontSee('second-writer@example.test');
+
+        $first = Author::query()->where('email', $context['user']->email)->firstOrFail();
+
+        $editor
+            ->call('reorderTable', [(string) $second->getKey(), (string) $first->getKey()])
+            ->assertDispatched('contributorsUpdated');
+
+        $summary
+            ->dispatch('contributorsUpdated')
+            ->assertSeeInOrder(['renamed-writer@example.test', $context['user']->email]);
+
+        $editor
+            ->callTableAction('delete', $second)
+            ->assertDispatched('contributorsUpdated');
+
+        $summary
+            ->dispatch('contributorsUpdated')
+            ->assertDontSee('renamed-writer@example.test')
+            ->assertSee($context['user']->email);
+    }
+
     public function test_add_myself_as_contributor_action_hides_in_view_only_mode(): void
     {
         $context = $this->makeSubmissionContext();
