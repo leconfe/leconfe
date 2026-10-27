@@ -17,6 +17,7 @@ use App\Managers\SidebarManager;
 use App\Models\Conference;
 use App\Models\ScheduledConference;
 use App\Routing\CustomUrlGenerator;
+use App\Support\Multilingual\PluralSelector;
 use App\Support\Queue\QueuedConferenceContext;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Infolists\Infolist as FilamentInfolist;
@@ -51,6 +52,8 @@ class AppServiceProvider extends ServiceProvider
 
             return $sidebars;
         });
+
+        $this->app->extend('translator', fn ($translator) => tap($translator)->setSelector(new PluralSelector));
 
         $this->app->scoped('metatag', function () {
             return new MetaTagManager;
