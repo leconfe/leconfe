@@ -15,13 +15,21 @@ class TrackPopulateAction
         foreach ([
             'general' => 'General Track',
         ] as $abbr => $title) {
+            if (Track::where('scheduled_conference_id', $scheduledConference->id)
+                ->where('builtin_code', 'general_track')->exists()) {
+                continue;
+            }
+
             $track = Track::firstOrCreate([
                 'abbreviation' => $abbr,
                 'title' => $title,
                 'scheduled_conference_id' => $scheduledConference->id,
             ]);
 
-            $track->setManyMeta($track->getAllMeta()->toArray());
+            if ($track->wasRecentlyCreated) {
+                $track->forceFill(['builtin_code' => 'general_track'])->save();
+                $track->setManyMeta($track->getAllMeta()->toArray());
+            }
         }
     }
 }

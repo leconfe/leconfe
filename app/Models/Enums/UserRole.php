@@ -19,7 +19,26 @@ enum UserRole: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return __('general.'.match ($this) {
+            self::Admin => 'admin',
+            self::ConferenceManager => 'conference_manager',
+            self::ScheduledConferenceEditor => 'scheduled_conference_editor',
+            self::TrackEditor => 'track_editor',
+            self::Reviewer => 'reviewer',
+            self::Author => 'author',
+            self::Participant => 'participant',
+        });
+    }
+
+    public static function displayLabel(string $value): string
+    {
+        return self::tryFrom($value)?->getLabel() ?? $value;
+    }
+
+    public static function selfAssignedRoleLabels(): array
+    {
+        return collect(self::getAllowedSelfAssignRoleNames())
+            ->map(fn (string $role) => self::displayLabel($role))->all();
     }
 
     public static function selfAssignedRoles(): array

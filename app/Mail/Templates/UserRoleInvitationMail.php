@@ -4,6 +4,7 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
+use App\Models\Enums\UserRole;
 use App\Models\ScheduledConference;
 use App\Models\UserInvitation;
 use Carbon\Carbon;
@@ -26,7 +27,7 @@ class UserRoleInvitationMail extends TemplateMailable
 
         $this->setAdditionalData([
             'Invitation Email' => $invitation->email,
-            'Role Name' => $invitation->role_name,
+            'Role Name' => UserRole::displayLabel($invitation->role_name),
             'Conference Title' => $conferenceTitle,
             'Scheduled Conference Title' => $scheduledConferenceTitle ?: '-',
             'Invitation URL' => $invitation->getAcceptUrl(),

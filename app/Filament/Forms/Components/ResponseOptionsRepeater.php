@@ -13,7 +13,7 @@ class ResponseOptionsRepeater extends Repeater
         parent::setUp();
 
         $this
-            ->label('Response Options')
+            ->label(__('general.response_options'))
             ->schema([
                 Hidden::make('position'),
                 MultilanguageComponent::make([
@@ -26,7 +26,7 @@ class ResponseOptionsRepeater extends Repeater
             ->reorderable()
             ->required()
             ->validationMessages([
-                'required' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
+                'required' => __('general.response_options_required'),
             ]);
     }
 }

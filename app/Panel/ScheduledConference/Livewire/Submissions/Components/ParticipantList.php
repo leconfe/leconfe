@@ -60,6 +60,7 @@ class ParticipantList extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('general.participant'))
             ->query(
                 fn (): Builder => $this->submission->participants()->with(['role'])->getQuery()
             )
@@ -86,7 +87,8 @@ class ParticipantList extends Component implements HasForms, HasTable
                             ->getStateUsing(fn ($record) => $record->user->getMeta('affiliation'))
                             ->color('gray')
                             ->size('xs'),
-                        TextColumn::make('role.name')
+                        TextColumn::make('role.display_name')
+                            ->label(__('general.role'))
                             ->extraAttributes(['class' => 'mt-2'])
                             ->size('xs'),
                     ]),
@@ -121,7 +123,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                         Grid::make(3)
                             ->schema([
                                 Select::make('role_id')
-                                    ->label('Role')
+                                    ->label(__('general.role'))
                                     ->options(function () {
                                         return app()->getCurrentConference()->roles()->whereIn('name', [
                                             UserRole::ConferenceManager,
@@ -129,7 +131,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                             UserRole::TrackEditor,
                                             UserRole::Author,
                                         ])
-                                            ->pluck('name', 'id');
+                                            ->get()->pluck('display_name', 'id');
                                     })
                                     ->placeholder(__('general.select_role'))
                                     ->columnSpan(1),

@@ -41,6 +41,11 @@ class PluginManagement extends Page implements HasForms, HasInfolists
         return __('general.plugin');
     }
 
+    public function getTitle(): string
+    {
+        return __('general.plugin_management');
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()->can('viewAny', Plugin::class);
@@ -97,11 +102,13 @@ class PluginManagement extends Page implements HasForms, HasInfolists
                 Tabs::make('Tabs')
                     ->tabs([
                         Tabs\Tab::make('Installed Plugins')
+                            ->label(__('general.installed_plugins'))
                             ->schema([
                                 Livewire::make(PluginTable::class)
                                     ->key('plugin-table'),
                             ]),
                         Tabs\Tab::make('Plugin Gallery')
+                            ->label(__('general.plugin_gallery'))
                             ->schema([
                                 Livewire::make(PluginGalleryTable::class)
                                     ->key('plugin-gallery-table')

@@ -141,7 +141,7 @@ class Profile extends Page implements HasForms
                     ->schema([
                         CheckboxList::make('roles')
                             ->label(__('general.roles'))
-                            ->options(UserRole::getAllowedSelfAssignRoleNames()),
+                            ->options(UserRole::selfAssignedRoleLabels()),
                         TagsInput::make('meta.reviewing_interests')
                             ->label(__('general.reviewing_interests'))
                             ->placeholder('')

@@ -144,7 +144,7 @@ class SubmissionResource extends Resource
                             Tables\Columns\TextColumn::make('status')
                                 ->grow(false)
                                 ->badge()
-                                ->getStateUsing(fn (Submission $record) => $record->status?->value),
+                                ->getStateUsing(fn (Submission $record) => $record->status?->getLabel()),
                             Tables\Columns\TextColumn::make('latest-review-round')
                                 ->grow(false)
                                 ->badge()

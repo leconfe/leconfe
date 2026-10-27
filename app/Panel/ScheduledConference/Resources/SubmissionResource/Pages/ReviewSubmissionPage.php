@@ -84,6 +84,11 @@ class ReviewSubmissionPage extends Page implements HasActions, HasInfolists
         return $this->review = $review;
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.review_submission_page');
+    }
+
     public function getHeading(): string|Htmlable
     {
         return __('general.review_submission_heading', [

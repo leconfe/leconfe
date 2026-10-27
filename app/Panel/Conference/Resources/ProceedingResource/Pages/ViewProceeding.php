@@ -116,6 +116,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
             ->groupingSettingsHidden()
             ->groups([
                 Group::make('track.title')
+                    ->label(__('general.track'))
                     ->getTitleFromRecordUsing(fn (Submission $record) => $record->track?->translated('title')),
             ])
             ->reorderable('proceeding_order_column')

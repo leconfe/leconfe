@@ -231,6 +231,7 @@ class PanelRenderingTest extends TestCase
 
         Livewire::test(ViewSubmission::class, ['record' => $submission->getKey()])
             ->assertSee('Check the scope')
+            ->assertSee('Instructions aux éditeurs lues. Ne plus afficher')
             ->assertDontSee('Periksa cakupan');
     }
 

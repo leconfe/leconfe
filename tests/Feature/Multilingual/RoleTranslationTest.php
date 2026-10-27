@@ -314,7 +314,7 @@ class RoleTranslationTest extends TestCase
             ->assertDontSee('Translator');
 
         $this->visitPaper($this->conference, $paper, 'fr')
-            ->assertSee('Translator')
+            ->assertSee('Traducteur')
             ->assertDontSee('Penerjemah');
     }
 

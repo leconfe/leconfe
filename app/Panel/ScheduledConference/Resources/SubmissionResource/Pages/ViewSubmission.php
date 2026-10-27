@@ -655,6 +655,6 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
     public function getBreadcrumb(): ?string
     {
-        return 'View';
+        return __('general.view');
     }
 }

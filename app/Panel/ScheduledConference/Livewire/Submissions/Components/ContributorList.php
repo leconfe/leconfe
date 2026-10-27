@@ -271,7 +271,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
     {
         return AuthorRole::withoutGlobalScopes()
             ->where('conference_id', $this->submission->conference_id)
-            ->where('name', 'Author')
+            ->where(fn ($query) => $query->where('builtin_code', 'author')
+                ->orWhere(fn ($query) => $query->whereNull('builtin_code')->where('name', 'Author')))
+            ->orderByRaw('builtin_code IS NULL')
             ->first();
     }
 

@@ -33,7 +33,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Reviewer Files')
+            ->heading(__('general.reviewer_files'))
             ->headerActions([
                 Action::make('download_all')
                     ->hidden(
@@ -49,7 +49,7 @@ class ReviewerFiles extends \Livewire\Component implements HasForms, HasTable
                         return MediaStream::create('files.zip')->addMedia($downloads);
                     }),
                 Action::make('upload')
-                    ->label('Upload Files')
+                    ->label(__('general.upload_files'))
                     ->hidden(
                         fn (): bool => $this->isViewOnly()
                     )

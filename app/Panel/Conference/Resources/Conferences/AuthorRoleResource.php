@@ -29,7 +29,7 @@ class AuthorRoleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Author';
+        return __('general.author');
     }
 
     public static string $roleType = 'author';

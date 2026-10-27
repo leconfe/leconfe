@@ -126,6 +126,6 @@ class UploadFilesStep extends Component implements HasActions, HasForms, HasWiza
             ->orderBy('order_column')
             ->orderBy('id')
             ->with('translate')
-            ->get(['id', 'name']);
+            ->get(['id', 'name', 'builtin_code']);
     }
 }
