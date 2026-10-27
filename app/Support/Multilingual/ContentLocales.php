@@ -106,21 +106,30 @@ class ContentLocales
         return $this->isRtl($locale) ? 'rtl' : 'ltr';
     }
 
+    /**
+     * The language's name in the interface language, such as "Anglais" for `en` in
+     * the French interface, falling back to its configured English name.
+     */
     public function label(string $locale): string
     {
-        return config("app.locales.{$locale}", $locale);
+        return $this->displayName($locale, app()->getLocale());
     }
 
     /**
      * The language's name in its own language, such as "Français" for `fr`, falling
-     * back to its configured label.
+     * back to its configured English name.
      */
     public function autonym(string $locale): string
     {
-        $name = class_exists(\Locale::class) ? \Locale::getDisplayName($locale, $locale) : '';
+        return $this->displayName($locale, $locale);
+    }
+
+    protected function displayName(string $locale, string $inLocale): string
+    {
+        $name = class_exists(\Locale::class) ? \Locale::getDisplayName($locale, $inLocale) : '';
 
         if ($name === '' || $name === $locale) {
-            return $this->label($locale);
+            return config("app.locales.{$locale}", $locale);
         }
 
         return mb_convert_case(mb_substr($name, 0, 1), MB_CASE_TITLE).mb_substr($name, 1);

@@ -27,7 +27,7 @@
                 class="navigation-menu-item btn btn-ghost no-animation btn-sm rounded-lg inline-flex items-center justify-center gap-1 px-3 transition-colors focus:outline-none disabled:opacity-50 disabled:pointer-events-none w-max ease-out duration-300"
             >
                 <x-heroicon-m-language class="h-4 w-4" aria-hidden="true" />
-                <span class="sr-only">{{ __('general.current_language') }}:</span>
+                <span class="sr-only">{{ __('general.current_language') }}</span>
                 <span lang="{{ str_replace('_', '-', $currentLocale) }}">{{ $contentLocales->label($currentLocale) }}</span>
                 <x-heroicon-m-chevron-down class="transition relative top-[1px] h-3 w-3" x-bind:class="{ '-rotate-180': open }" aria-hidden="true" />
             </button>
@@ -39,7 +39,7 @@
                 class="navbar-dropdown-content z-[60] text-gray-800"
             >
                 <ul class="flex flex-col divide-y mt-1 min-w-[12rem] bg-white rounded-md shadow-md">
-                    @foreach ($contentLocales->options() as $locale => $label)
+                    @foreach ($contentLocales->ordered() as $locale)
                         <li>
                             <a
                                 href="{{ route($setLocaleRoute, ['lang' => $locale]) }}"
@@ -51,7 +51,7 @@
                                     'font-semibold text-primary' => $locale === $currentLocale,
                                 ])
                             >
-                                <span>{{ $label }}</span>
+                                <span>{{ $contentLocales->autonym($locale) }}</span>
                                 @if ($locale === $currentLocale)
                                     <x-heroicon-m-check class="h-4 w-4" aria-hidden="true" />
                                 @endif

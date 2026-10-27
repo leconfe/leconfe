@@ -1152,7 +1152,7 @@ return [
 
     'language' => 'Bahasa',
     'switch_language' => 'Ganti bahasa',
-    'current_language' => 'Bahasa saat ini',
+    'current_language' => 'Bahasa saat ini:',
     'translations' => 'Terjemahan',
     'show_translations' => 'Tampilkan terjemahan',
     'hide_translations' => 'Sembunyikan terjemahan',

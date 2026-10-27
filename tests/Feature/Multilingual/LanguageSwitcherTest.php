@@ -95,7 +95,8 @@ class LanguageSwitcherTest extends TestCase
         $this->assertSame('en', session('locale'));
 
         Livewire::test(LanguageSwitcher::class)
-            ->assertSee('Indonesian')
+            ->assertSee('Indonesia')
+            ->assertDontSee('Indonesian')
             ->call('switchLanguage', 'id')
             ->assertRedirect();
     }

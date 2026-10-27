@@ -1090,7 +1090,7 @@ return [
 
     'language' => 'Langue',
     'switch_language' => 'Changer la langue de l\'interface',
-    'current_language' => 'Langue actuelle',
+    'current_language' => 'Langue actuelle :',
     'translations' => 'Traductions',
     'languages_english_fallback' => 'L’anglais est utilisé si aucune langue n’est cochée.',
     'show_translations' => 'Afficher les traductions',

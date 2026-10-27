@@ -1165,7 +1165,7 @@ return [
 
     'language' => 'Language',
     'switch_language' => 'Switch language',
-    'current_language' => 'Current language',
+    'current_language' => 'Current language:',
     'translations' => 'Translations',
     'languages_english_fallback' => 'English is used when no language is selected.',
     'show_translations' => 'Show translations',
