@@ -13,7 +13,7 @@
         x-on:click="openModal()"
         x-on:keydown.meta.k.window="openModal()"
         class="navigation-menu-item btn btn-ghost no-animation btn-sm rounded-lg inline-flex items-center justify-center px-4 transition-colors focus:outline-none disabled:opacity-50 disabled:pointer-events-none group w-max gap-0 ease-out duration-300">
-        <span>Conferences</span>
+        <span>{{ __('general.conferences') }}</span>
         <x-heroicon-m-chevron-down class="transition relative top-[1px] ms-1 h-3 w-3" />
     </button>
     <dialog id="globalsearch" class="modal" wire:ignore.self x-cloak>
