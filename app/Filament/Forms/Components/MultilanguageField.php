@@ -3,9 +3,11 @@
 namespace App\Filament\Forms\Components;
 
 use App\Support\Multilingual\ContentLocales;
+use App\Support\Multilingual\TranslationStatus;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -76,12 +78,55 @@ class MultilanguageField extends Component
      */
     public function getTranslationStatePaths(): array
     {
-        return collect($this->getChildComponentContainers())
+        return $this->getLocaleFields()
             ->skip(1)
-            ->flatMap(fn (ComponentContainer $container) => $container->getComponents())
-            ->filter(fn (Component $component) => $component instanceof Field)
             ->map(fn (Field $component) => $component->getStatePath())
             ->values()
             ->all();
+    }
+
+    public function getPrimaryStatePath(): ?string
+    {
+        return $this->getLocaleFields()->first()?->getStatePath();
+    }
+
+    public function getPrimaryLanguage(): string
+    {
+        return app(ContentLocales::class)->label($this->primaryLocale ?? app(ContentLocales::class)->default());
+    }
+
+    /**
+     * @return array<int, array{path: string, language: string, status: TranslationStatus}>
+     */
+    public function getTranslationStatuses(): array
+    {
+        $livewire = $this->getLivewire();
+        $primary = data_get($livewire, $this->getPrimaryStatePath());
+        $errors = $livewire->getErrorBag();
+
+        return $this->getLocaleFields()
+            ->skip(1)
+            ->map(fn (Field $component) => [
+                'path' => $component->getStatePath(),
+                'language' => app(ContentLocales::class)->label($component->getMeta('locale')),
+                'status' => TranslationStatus::of(
+                    data_get($livewire, $component->getStatePath()),
+                    $primary,
+                    $errors->has($component->getStatePath()),
+                ),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return Collection<int, Field>
+     */
+    protected function getLocaleFields(): Collection
+    {
+        return collect($this->getChildComponentContainers())
+            ->flatMap(fn (ComponentContainer $container) => $container->getComponents())
+            ->filter(fn (Component $component) => $component instanceof Field)
+            ->values();
     }
 }

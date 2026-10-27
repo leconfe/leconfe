@@ -1154,4 +1154,9 @@ return [
     'receipt_number_prefix' => 'Préfixe du numéro de reçu',
     'next_receipt_number' => 'Prochain numéro de reçu',
     'receipt_number_suffix' => 'Suffixe du numéro de reçu',
+    'translation_status' => 'État des traductions',
+    'translation_complete' => 'Complet',
+    'translation_missing' => 'Manquant',
+    'translation_fallback' => 'Langue de secours : :language',
+    'translation_invalid' => 'Erreur',
 ];
