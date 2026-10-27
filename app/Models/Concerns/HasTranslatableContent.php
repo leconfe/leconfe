@@ -138,6 +138,23 @@ trait HasTranslatableContent
         return $query->with('translate');
     }
 
+    public function scopeWhereTranslatableLike(Builder $query, string $key, string $search): Builder
+    {
+        $this->guardAgainstNonTranslatableAttribute($key);
+
+        $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+        $term = "%{$search}%";
+        $matches = fn (Builder $query) => $query->where('key', $key)->where('value', $operator, $term);
+
+        return $query->where(fn (Builder $query) => $query
+            ->when(
+                $this->isTranslatableColumn($key),
+                fn (Builder $query) => $query->where($query->qualifyColumn($key), $operator, $term),
+                fn (Builder $query) => $query->whereHas('meta', $matches),
+            )
+            ->orWhereHas('translate', $matches));
+    }
+
     /**
      * The value for a locale, falling back to the primary language and then to the
      * value stored in the original column or meta.
