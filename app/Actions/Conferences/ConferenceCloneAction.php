@@ -123,6 +123,8 @@ class ConferenceCloneAction
             $clonedMeta->metable_id = $clonedDataConference->id;
             $clonedMeta->save();
         }
+
+        $clonedDataConference->load('meta');
     }
 
     private function generateUniquePath($basePath)

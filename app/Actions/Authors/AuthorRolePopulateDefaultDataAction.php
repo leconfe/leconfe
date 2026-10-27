@@ -32,7 +32,13 @@ class AuthorRolePopulateDefaultDataAction
                 }
 
                 $metaKey = 'citation_contributor_'.$citationGroup;
-                if ($conference->getMeta($metaKey) === null) {
+                $citedRoleIds = $conference->getMeta($metaKey);
+                $citesAnotherConference = AuthorRole::withoutGlobalScopes()
+                    ->whereKey($citedRoleIds ?? [])
+                    ->where('conference_id', '!=', $conference->getKey())
+                    ->exists();
+
+                if ($citedRoleIds === null || $citesAnotherConference) {
                     $conference->setMeta($metaKey, [$role->getKey()]);
                 }
             }

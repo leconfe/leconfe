@@ -69,6 +69,19 @@ class TranslationCatalogsTest extends TestCase
         $this->assertSame(['nested' => ['message' => '<p>Nouveau :name</p>'], 'literal.key' => 'Nouveau'], require $this->directory.'/fr/general.php');
     }
 
+    public function test_import_keeps_the_catalog_layout_and_changes_only_edited_lines(): void
+    {
+        $this->catalog('en', 'general', ['save' => 'Save', 'nested' => ['open' => 'Open'], 'review' => "Reviewer's note"]);
+        $french = "<?php\n\nreturn [\n    'save' => 'Enregistrer',\n    'nested' => [\n        'open' => 'Ouvrir',\n    ],\n    'review' => 'Note d\\'évaluateur',\n];\n";
+        file_put_contents($this->directory.'/fr/general.php', $french);
+        $catalogs = new TranslationCatalogs($this->directory);
+        $csv = $this->directory.'/export.csv';
+        $catalogs->export('fr', $csv);
+        file_put_contents($csv, str_replace('Ouvrir', 'Ouvrir le fichier', file_get_contents($csv)));
+        $catalogs->import('fr', $csv);
+        $this->assertSame(str_replace('Ouvrir', 'Ouvrir le fichier', $french), file_get_contents($this->directory.'/fr/general.php'));
+    }
+
     public function test_invalid_import_is_rejected_before_any_catalog_is_written(): void
     {
         $this->catalog('en', 'general', ['message' => '<p>Hello :name</p>']);

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Multilingual;
 
 use App\Actions\Authors\AuthorRolePopulateDefaultDataAction;
+use App\Actions\Conferences\ConferenceCloneAction;
 use App\Actions\SubmissionFiles\FilesTypePopulateAction;
 use App\Actions\Tracks\TrackPopulateAction;
 use App\Models\AuthorRole;
@@ -153,6 +154,31 @@ class BuiltinLabelTranslationTest extends TestCase
         $this->assertSame([], $this->conference->getMeta('citation_contributor_authors'));
         app()->setLocale('fr');
         $this->assertSame('Custom upload', SubmissionFileType::query()->where('builtin_code', 'abstract')->firstOrFail()->translated('name'));
+    }
+
+    public function test_a_cloned_conference_cites_its_own_author_and_translator_roles(): void
+    {
+        app()->setCurrentConferenceId(0);
+
+        $clone = ConferenceCloneAction::run([
+            'conference_id' => $this->conference->getKey(),
+            'name' => 'Cloned Conference',
+            'path' => 'cloned',
+        ]);
+
+        $roles = fn (Conference $conference) => AuthorRole::withoutGlobalScopes()
+            ->where('conference_id', $conference->getKey())
+            ->pluck('id', 'builtin_code');
+        $sourceRoles = $roles($this->conference);
+        $cloneRoles = $roles($clone);
+
+        $source = Conference::query()->findOrFail($this->conference->getKey());
+        $clone = Conference::query()->findOrFail($clone->getKey());
+
+        $this->assertSame([$cloneRoles['author']], $clone->getMeta('citation_contributor_authors'));
+        $this->assertSame([$cloneRoles['translator']], $clone->getMeta('citation_contributor_translators'));
+        $this->assertSame([$sourceRoles['author']], $source->getMeta('citation_contributor_authors'));
+        $this->assertSame([$sourceRoles['translator']], $source->getMeta('citation_contributor_translators'));
     }
 
     public function test_legacy_records_are_mapped_only_by_an_explicit_reviewed_command(): void

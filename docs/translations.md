@@ -46,6 +46,11 @@ Import reads the whole file before it writes anything. It rejects unknown keys,
 duplicate rows, rows whose English text has changed since the export, and
 translations that change placeholders or HTML tags.
 
+Import rewrites each catalog it changes as a short array with four-space
+indentation and single-quoted strings, the layout the catalogs already use.
+Edited lines change, and so does anything outside that layout: blank lines and
+comments are dropped, and double-quoted strings become single-quoted.
+
 `check` lists missing, empty, and invalid entries and exits with a nonzero
 status when it finds any. Without a locale it checks every locale.
 
@@ -69,8 +74,15 @@ Translator contributor roles, and the General Track.
 
 A renamed built-in, a custom record, and a record without a code are organizer
 text, so they skip step 2. Edit forms show the stored text, and a change of
-interface language never writes to the database. Running a populate action
-again does not recreate a renamed built-in or reset the citation roles.
+interface language never writes to the database.
+
+A populate action skips a code that already exists, so running it again does not
+recreate a renamed built-in that has a code. A record without a code is matched
+by its name instead (a track by its title and abbreviation): if it still has the
+built-in English name, the action reuses it and leaves it without a code. If it was renamed, the action creates a
+new built-in record next to it. The citation author and translator roles are
+kept unless they point to roles of another conference, as after a clone. In that
+case they are reset to the conference's own Author and Translator roles.
 
 `SubmissionFileType::builtinNames()` also lists Research Instrument, Research
 Material, Research Result, Transcripts, Data Analysis, Data Set, and Source Text.

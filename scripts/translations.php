@@ -95,7 +95,7 @@ final class TranslationCatalogs
         }
         foreach ($catalogs as $catalog => $values) {
             $file = $this->langPath.'/'.$locale.'/'.$catalog.'.php';
-            if (file_put_contents($file, "<?php\n\nreturn ".var_export($values, true).";\n") === false) {
+            if (file_put_contents($file, "<?php\n\nreturn ".$this->exportArray($values).";\n") === false) {
                 throw new RuntimeException('Cannot write catalog: '.$catalog);
             }
         }
@@ -106,6 +106,23 @@ final class TranslationCatalogs
         if (! preg_match('/^[A-Za-z][A-Za-z0-9_]*$/D', $locale) || ! is_dir($this->langPath.'/'.$locale)) {
             throw new InvalidArgumentException('Unknown locale.');
         }
+    }
+
+    private function exportArray(array $values, int $depth = 1): string
+    {
+        $lines = [];
+        foreach ($values as $key => $value) {
+            $exportedKey = is_int($key) ? $key : $this->exportString($key);
+            $exportedValue = is_array($value) ? $this->exportArray($value, $depth + 1) : $this->exportString($value);
+            $lines[] = str_repeat('    ', $depth).$exportedKey.' => '.$exportedValue.',';
+        }
+
+        return "[\n".implode("\n", $lines)."\n".str_repeat('    ', $depth - 1).']';
+    }
+
+    private function exportString(string $value): string
+    {
+        return "'".str_replace(['\\', "'"], ['\\\\', "\\'"], $value)."'";
     }
 
     private function flatten(array $values, array $prefix = []): array
