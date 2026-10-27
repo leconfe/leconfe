@@ -1164,8 +1164,8 @@ return [
     'language_readiness_paper_language_differs' => 'La langue de la conférence est :conference. Les articles rédigés dans une autre langue peuvent tout de même être publiés.',
     'language_readiness_complete' => ':language : toutes les métadonnées sont traduites.',
     'language_readiness_fallback' => ':language : aucune traduction pour :fields. Les lecteurs verront le texte d’origine (:fallback).',
-    'language_readiness_papers_complete' => ':language : les métadonnées des :count articles sont traduites.',
-    'language_readiness_papers_incomplete' => ':language : :incomplete article(s) sur :count ont des métadonnées non traduites. Les lecteurs verront ces articles dans leur langue de rédaction.',
+    'language_readiness_papers_complete' => ':language : les métadonnées de tous les articles sont traduites.',
+    'language_readiness_papers_incomplete' => '{1} :language : 1 article de ces actes a des métadonnées non traduites. Les lecteurs le verront dans sa langue de rédaction.|[2,*] :language : :incomplete articles de ces actes ont des métadonnées non traduites. Les lecteurs les verront dans leur langue de rédaction.',
     'language_readiness_email' => 'E-mail de notification à l’auteur : :language.',
     'language_readiness_email_fallback' => 'Le modèle d’e-mail n’est pas traduit dans cette langue : le texte utilisé sera la version « :fallback ».',
 ];

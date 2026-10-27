@@ -14,8 +14,10 @@ use App\Models\User;
 use App\Panel\Conference\Resources\ProceedingResource\Pages\ManageProceedings;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages\ViewSubmission;
 use App\Providers\PanelProvider;
+use App\Support\Multilingual\LanguageReadiness;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
@@ -99,12 +101,70 @@ class PublicationLanguageReadinessTest extends TestCase
         Livewire::test(ManageProceedings::class)
             ->mountTableAction('publish', $proceeding)
             ->assertSee('English : aucune traduction pour Titre, Description. Les lecteurs verront le texte d’origine (French).')
-            ->assertSee('French : 1 article(s) sur 1 ont des métadonnées non traduites.')
+            ->assertSee('French : 1 article de ces actes a des métadonnées non traduites. Les lecteurs le verront dans sa langue de rédaction.')
             ->callMountedTableAction();
 
         $this->assertTrue((bool) $proceeding->refresh()->published);
     }
 
+    public function test_proceeding_publish_dialog_counts_untranslated_papers_and_translated_ones(): void
+    {
+        Filament::setCurrentPanel(Filament::getPanel(PanelProvider::PANEL_CONFERENCE));
+
+        $proceeding = $this->unpublishedProceeding();
+        $proceeding->setTranslation('title', 'en', 'Proceedings 2026');
+        $proceeding->setTranslation('description', 'en', '<p>Selected papers</p>');
+        $this->partiallyTranslatedPaper($proceeding);
+        $this->partiallyTranslatedPaper($proceeding);
+        $this->makePaper($this->author, 'fr', [
+            'title' => ['fr' => 'Récifs coralliens', 'en' => 'Coral reefs'],
+        ], SubmissionStage::Editing, SubmissionStatus::Editing, $proceeding);
+
+        Livewire::test(ManageProceedings::class)
+            ->mountTableAction('publish', $proceeding)
+            ->assertSee('English : toutes les métadonnées sont traduites.')
+            ->assertSee('English : les métadonnées de tous les articles sont traduites.')
+            ->assertSee('French : 2 articles de ces actes ont des métadonnées non traduites. Les lecteurs les verront dans leur langue de rédaction.');
+    }
+
+    public function test_proceeding_publish_dialog_shows_no_summary_for_a_single_language(): void
+    {
+        Filament::setCurrentPanel(Filament::getPanel(PanelProvider::PANEL_CONFERENCE));
+        $this->enableLanguages(['fr'], default: 'fr');
+
+        $proceeding = $this->unpublishedProceeding();
+        $this->makePaper($this->author, 'fr', ['title' => ['fr' => 'Récifs coralliens']], SubmissionStage::Editing, SubmissionStatus::Editing, $proceeding);
+
+        Livewire::test(ManageProceedings::class)
+            ->mountTableAction('publish', $proceeding)
+            ->assertSee('Êtes-vous sûr de vouloir faire cela ?')
+            ->assertDontSeeHtml('data-language-readiness');
+    }
+
+    public function test_proceeding_summary_query_count_does_not_grow_with_its_papers(): void
+    {
+        $proceeding = $this->unpublishedProceeding();
+        $this->partiallyTranslatedPaper($proceeding);
+        $single = $this->countSummaryQueries($proceeding);
+
+        $this->partiallyTranslatedPaper($proceeding);
+        $this->partiallyTranslatedPaper($proceeding);
+
+        $this->assertSame($single, $this->countSummaryQueries($proceeding));
+    }
+
+    protected function countSummaryQueries(Proceeding $proceeding): int
+    {
+        $proceeding = $proceeding->fresh();
+        LanguageReadiness::forProceeding($proceeding);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        LanguageReadiness::forProceeding($proceeding);
+        DB::disableQueryLog();
+
+        return count(DB::getQueryLog());
+    }
     protected function partiallyTranslatedPaper(Proceeding $proceeding): Submission
     {
         return $this->makePaper($this->author, 'en', [

@@ -30,17 +30,15 @@
             </li>
         @endforeach
 
-        @if ($readiness->paperCount)
-            @foreach ($readiness->incompletePapers as $locale => $incomplete)
-                <li @class(['text-warning-600 dark:text-warning-400' => $incomplete])>
-                    @if ($incomplete)
-                        {{ __('general.language_readiness_papers_incomplete', ['language' => $locales->label($locale), 'incomplete' => $incomplete, 'count' => $readiness->paperCount]) }}
-                    @else
-                        {{ __('general.language_readiness_papers_complete', ['language' => $locales->label($locale), 'count' => $readiness->paperCount]) }}
-                    @endif
-                </li>
-            @endforeach
-        @endif
+        @foreach ($readiness->incompletePapers as $locale => $incomplete)
+            <li @class(['text-warning-600 dark:text-warning-400' => $incomplete])>
+                @if ($incomplete)
+                    {{ trans_choice('general.language_readiness_papers_incomplete', $incomplete, ['language' => $locales->label($locale), 'incomplete' => $incomplete]) }}
+                @else
+                    {{ __('general.language_readiness_papers_complete', ['language' => $locales->label($locale)]) }}
+                @endif
+            </li>
+        @endforeach
 
         @if ($readiness->emailLocale)
             <li @class(['text-warning-600 dark:text-warning-400' => $readiness->emailContentLocale !== $readiness->emailLocale])>

@@ -25,7 +25,6 @@ class LanguageReadiness
         public readonly bool $isPaper = false,
         public readonly ?string $emailLocale = null,
         public readonly ?string $emailContentLocale = null,
-        public readonly int $paperCount = 0,
         public readonly array $incompletePapers = [],
     ) {}
 
@@ -44,7 +43,7 @@ class LanguageReadiness
 
     public static function forProceeding(Proceeding $proceeding): self
     {
-        $papers = $proceeding->submissions()->get();
+        $papers = $proceeding->submissions()->with(['meta', 'translate'])->get();
         $incompletePapers = [];
 
         foreach ($papers as $paper) {
@@ -59,7 +58,6 @@ class LanguageReadiness
                 'title' => __('general.title'),
                 'description' => __('general.description'),
             ]),
-            paperCount: $papers->count(),
             incompletePapers: $incompletePapers,
         );
     }
@@ -117,8 +115,12 @@ class LanguageReadiness
         ];
     }
 
-    public function render(): View
+    public function render(): ?View
     {
+        if (! $this->isPaper && ! $this->missing && ! $this->incompletePapers) {
+            return null;
+        }
+
         return view('components.language-readiness', [
             'readiness' => $this,
             'locales' => app(ContentLocales::class),
