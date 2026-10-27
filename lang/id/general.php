@@ -1161,6 +1161,7 @@ return [
     'translation_complete' => 'Complete',
     'translation_missing' => 'Missing',
     'translation_fallback' => 'Fallback: :language',
+    'translation_invalid' => 'Error',
     'read_author_guidelines' => 'Baca panduan penulis',
     'not_accepting_submissions' => 'Konferensi ini sedang tidak menerima naskah.',
     'submissions_guest_notice' => 'Pendaftaran dan login diperlukan untuk mengirimkan naskah secara daring dan memeriksa status naskah yang sedang diproses.',

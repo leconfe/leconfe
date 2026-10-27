@@ -1158,4 +1158,5 @@ return [
     'translation_complete' => 'Complet',
     'translation_missing' => 'Manquant',
     'translation_fallback' => 'Langue de secours : :language',
+    'translation_invalid' => 'Erreur',
 ];

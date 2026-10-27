@@ -1100,6 +1100,7 @@ return [
     'translation_complete' => 'Complete',
     'translation_missing' => 'Missing',
     'translation_fallback' => 'Fallback: :language',
+    'translation_invalid' => 'Error',
     'read_author_guidelines' => 'Read the author guidelines',
     'not_accepting_submissions' => 'This conference is not accepting submissions at this time.',
     'submissions_guest_notice' => 'Registration and login are required to submit items online and to check the status of current submissions.',

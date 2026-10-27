@@ -7,12 +7,17 @@
     $translationsId = $getTranslationsId();
     $translationStatuses = $getTranslationStatuses();
     $primaryLanguage = $getPrimaryLanguage();
+    $liveStatuses = [
+        \App\Support\Multilingual\TranslationStatus::Complete,
+        \App\Support\Multilingual\TranslationStatus::Fallback,
+        \App\Support\Multilingual\TranslationStatus::Missing,
+    ];
 @endphp
 
 <div
     class="fi-fo-multilanguage-field grid gap-y-2"
     x-data="{
-        open: @js($hasTranslationErrors),
+        open: false,
         paths: @js($translationStatePaths),
         primaryPath: @js($getPrimaryStatePath()),
         isFilled(value) {
@@ -55,17 +60,27 @@
             @foreach ($translationStatuses as $translation)
                 <li class="inline-flex items-center gap-x-1.5">
                     <span class="font-medium text-gray-700 dark:text-gray-200">{{ $translation['language'] }}</span>
-                    @foreach (\App\Support\Multilingual\TranslationStatus::cases() as $status)
+                    @unless (in_array($translation['status'], $liveStatuses, true))
                         <span
-                            class="inline-flex items-center gap-x-0.5 {{ $status->textClasses() }}"
-                            data-status="{{ $status->value }}"
-                            x-show="status(@js($translation['path'])) === @js($status->value)"
-                            @if ($status !== $translation['status']) style="display: none" @endif
+                            class="inline-flex items-center gap-x-0.5 {{ $translation['status']->textClasses() }}"
+                            data-status="{{ $translation['status']->value }}"
                         >
-                            <x-filament::icon :icon="$status->icon()" class="h-4 w-4" />
-                            {{ $status->label($primaryLanguage) }}
+                            <x-filament::icon :icon="$translation['status']->icon()" class="h-4 w-4" />
+                            {{ $translation['status']->label($primaryLanguage) }}
                         </span>
-                    @endforeach
+                    @else
+                        @foreach ($liveStatuses as $status)
+                            <span
+                                class="inline-flex items-center gap-x-0.5 {{ $status->textClasses() }}"
+                                data-status="{{ $status->value }}"
+                                x-show="status(@js($translation['path'])) === @js($status->value)"
+                                @if ($status !== $translation['status']) style="display: none" @endif
+                            >
+                                <x-filament::icon :icon="$status->icon()" class="h-4 w-4" />
+                                {{ $status->label($primaryLanguage) }}
+                            </span>
+                        @endforeach
+                    @endunless
                 </li>
             @endforeach
         </ul>
@@ -80,5 +95,9 @@
                 {{ $componentContainer }}
             @endforeach
         </div>
+    @endif
+
+    @if ($hasTranslationErrors)
+        <span hidden wire:key="{{ \Illuminate\Support\Str::random() }}" x-init="$nextTick(() => open = true)" data-multilanguage-open-on-error></span>
     @endif
 </div>

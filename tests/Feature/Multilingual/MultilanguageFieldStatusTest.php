@@ -5,9 +5,13 @@ namespace Tests\Feature\Multilingual;
 use App\Models\Conference;
 use App\Models\User;
 use App\Panel\Conference\Livewire\MastHeadSetting as ConferenceMastHeadSetting;
+use App\Panel\ScheduledConference\Resources\TimelineResource\Pages\ManageTimeline;
+use App\Providers\PanelProvider;
 use DOMDocument;
 use DOMXPath;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
 use Tests\TestCase;
@@ -54,9 +58,33 @@ class MultilanguageFieldStatusTest extends TestCase
 
         $html = Livewire::test(ConferenceMastHeadSetting::class)->html();
 
-        $this->assertSame(['French' => 'Langue de secours : English'], $this->visibleStatuses($html, 'formData.name.fr'));
-        $this->assertSame(['French' => 'Complet'], $this->visibleStatuses($html, 'formData.meta.about.fr'));
-        $this->assertSame(['French' => 'Manquant'], $this->visibleStatuses($html, 'formData.meta.description.fr'));
+        $this->assertSame(['Français' => 'Langue de secours : Anglais'], $this->visibleStatuses($html, 'formData.name.fr'));
+        $this->assertSame(['Français' => 'Complet'], $this->visibleStatuses($html, 'formData.meta.about.fr'));
+        $this->assertSame(['Français' => 'Manquant'], $this->visibleStatuses($html, 'formData.meta.description.fr'));
+    }
+
+    public function test_a_translation_that_fails_validation_opens_the_translations_and_shows_an_error_status(): void
+    {
+        $this->useConference($this->conference, $this->makeScheduledConference($this->conference));
+        Filament::setCurrentPanel(Filament::getPanel(PanelProvider::PANEL_SCHEDULED_CONFERENCE));
+        Gate::before(fn () => true);
+        app()->setLocale('fr');
+
+        $html = Livewire::test(ManageTimeline::class)
+            ->mountAction('create')
+            ->setActionData([
+                'name' => ['en' => 'Deadline', 'fr' => 'Date limite'],
+                'description' => ['en' => 'Last day to submit', 'fr' => str_repeat('a', 300)],
+                'date' => now()->addWeek()->toDateString(),
+            ])
+            ->callMountedAction()
+            ->assertHasActionErrors(['description.fr' => 'max'])
+            ->html();
+
+        $this->assertSame(['Français' => 'Erreur'], $this->visibleStatuses($html, 'mountedActionsData.0.description.fr'));
+        $this->assertTrue($this->opensOnError($html, 'mountedActionsData.0.description.fr'));
+        $this->assertSame(['Français' => 'Complet'], $this->visibleStatuses($html, 'mountedActionsData.0.name.fr'));
+        $this->assertFalse($this->opensOnError($html, 'mountedActionsData.0.name.fr'));
     }
 
     /**
@@ -85,6 +113,13 @@ class MultilanguageFieldStatusTest extends TestCase
         $panel = $xpath->query('./*[starts-with(@id, "translations-")]', $this->field($xpath, $translationPath))->item(0);
 
         return ! str_contains((string) $panel->getAttribute('style'), 'display: none');
+    }
+
+    protected function opensOnError(string $html, string $translationPath): bool
+    {
+        $xpath = $this->xpath($html);
+
+        return $xpath->query('./*[@data-multilanguage-open-on-error]', $this->field($xpath, $translationPath))->length === 1;
     }
 
     protected function field(DOMXPath $xpath, string $translationPath): \DOMElement

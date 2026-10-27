@@ -102,13 +102,18 @@ class MultilanguageField extends Component
     {
         $livewire = $this->getLivewire();
         $primary = data_get($livewire, $this->getPrimaryStatePath());
+        $errors = $livewire->getErrorBag();
 
         return $this->getLocaleFields()
             ->skip(1)
             ->map(fn (Field $component) => [
                 'path' => $component->getStatePath(),
                 'language' => app(ContentLocales::class)->label($component->getMeta('locale')),
-                'status' => TranslationStatus::of(data_get($livewire, $component->getStatePath()), $primary),
+                'status' => TranslationStatus::of(
+                    data_get($livewire, $component->getStatePath()),
+                    $primary,
+                    $errors->has($component->getStatePath()),
+                ),
             ])
             ->values()
             ->all();
