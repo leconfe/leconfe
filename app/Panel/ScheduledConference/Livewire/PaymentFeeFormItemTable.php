@@ -3,6 +3,7 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Filament\Forms\Components\ResponseOptionsRepeater;
 use App\Forms\Form;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
@@ -10,7 +11,6 @@ use App\Tables\Columns\IndexColumn;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -66,16 +66,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                         }
                     })
                     ->label('Item Type'),
-                MultilanguageComponent::make([
-                    TagsInput::make('meta.response_options')
-                        ->label('Response Options')
-                        ->placeholder('New Option')
-                        ->reorderable()
-                        ->required()
-                        ->validationMessages([
-                            'required' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
-                        ]),
-                ])
+                ResponseOptionsRepeater::make('meta.response_options')
                     ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])),
 
             ]);
