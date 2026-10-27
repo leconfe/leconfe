@@ -32,8 +32,10 @@ class FrenchLanguageControlsTest extends TestCase
         $this->enableLanguages(['fr', 'en'], 'fr');
     }
 
-    public function test_language_switcher_is_labelled_in_french(): void
+    public function test_language_block_is_labelled_in_french(): void
     {
+        app()->getSite()->setMeta('sidebars', ['language']);
+
         $this->withoutVite()
             ->withSession(['locale' => 'fr'])
             ->get(route('livewirePageGroup.website.pages.home'))

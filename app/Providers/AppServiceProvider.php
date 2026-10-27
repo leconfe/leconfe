@@ -8,6 +8,7 @@ use App\Classes\Setting;
 use App\Console\Kernel as ConsoleKernel;
 use App\Events\UserLoggedIn;
 use App\Forms\Form;
+use App\Frontend\Website\Sidebars\LanguageSidebar;
 use App\Http\Kernel as HttpKernel;
 use App\Infolists\Infolist;
 use App\Listeners\SubmissionEventSubscriber;
@@ -45,7 +46,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(SidebarManager::class, function () {
-            return new SidebarManager;
+            $sidebars = new SidebarManager;
+            $sidebars->register(new LanguageSidebar);
+
+            return $sidebars;
         });
 
         $this->app->scoped('metatag', function () {

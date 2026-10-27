@@ -1113,7 +1113,7 @@ return [
     'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
     'interface_language' => 'Langue de l\'interface',
     'content_languages' => 'Langues du contenu',
-    'content_languages_helper' => 'Les langues du contenu sont celles dans lesquelles les visiteurs peuvent afficher l\'interface et dans lesquelles le contenu peut être traduit. La langue par défaut s\'affiche pour les visiteurs qui n\'en ont pas choisi et sert aux e-mails envoyés aux personnes qui n\'en ont pas choisi non plus. Les changements s\'appliquent dès l\'enregistrement.',
+    'content_languages_helper' => 'Les langues du contenu sont celles dans lesquelles les visiteurs peuvent afficher l\'interface et dans lesquelles le contenu peut être traduit. La langue par défaut s\'affiche pour les visiteurs qui n\'en ont pas choisi et sert aux e-mails envoyés aux personnes qui n\'en ont pas choisi non plus. Les changements s\'appliquent dès l\'enregistrement. Les visiteurs changent de langue depuis le bloc Langue, à ajouter dans l\'onglet Barre latérale.',
     'paper' => 'Paper',
     'logout' => 'Logout',
     'published_label' => 'Published:',

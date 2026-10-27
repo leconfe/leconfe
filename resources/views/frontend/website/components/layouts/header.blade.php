@@ -17,8 +17,6 @@
         <div class="navbar-end ms-auto gap-x-4 hidden lg:inline-flex">
             <x-website::navigation-menu :items="$userNavigationMenu" class="text-gray-800" />
         </div>
-
-        <x-website::language-switcher class="ms-auto lg:ms-2 text-gray-800" />
     </div>
 </div>
     
