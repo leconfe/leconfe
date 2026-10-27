@@ -67,7 +67,7 @@
         </div>
         <div class="bg-gray-200 p-2 mt-4">
             <p class="text-xl font-bold">{{ __('general.receipt_number_value', ['number' => $record->receipt]) }}</p>
-             <p>{{ __('general.document_registration_date', ['date' => $record->created_at->locale(app()->getLocale())->isoFormat('LLL')]) }}</p>
+             <p>{{ __('general.document_registration_date', ['date' => $record->created_at->locale(app()->getLocale())->isoFormat('LL LT')]) }}</p>
         </div>
         <div class="mt-8 text-base">
             <p>{{ __('general.receipt_greeting', ['name' => $user_fullname]) }}</p>

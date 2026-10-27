@@ -68,6 +68,18 @@ class PaymentDocumentLocaleTest extends TestCase
             ->assertSee('Invoiced To');
     }
 
+    public function test_document_date_keeps_the_year_in_the_payer_language(): void
+    {
+        [$payment, $payer] = $this->makeParticipantPayment(payerLocale: 'fi');
+
+        $this->actingAs($payer)
+            ->withoutVite()
+            ->get($this->documentUrl(Receipt::class, $payment))
+            ->assertOk()
+            ->assertSee('<html lang="fi"', false)
+            ->assertSee('14. maaliskuuta 2026 09.30', false);
+    }
+
     /**
      * @return array{0: Payment, 1: User}
      */
@@ -89,7 +101,7 @@ class PaymentDocumentLocaleTest extends TestCase
 
         app()->setCurrentConferenceId($conference->getKey());
         app()->setCurrentScheduledConferenceId($scheduledConference->getKey());
-        app()->getSite()->setMeta('settings_languages', ['en', 'fr']);
+        app()->getSite()->setMeta('settings_languages', ['en', 'fr', 'fi']);
 
         $payer = User::query()->create([
             'given_name' => 'Participant',
