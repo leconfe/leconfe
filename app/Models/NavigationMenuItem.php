@@ -39,6 +39,7 @@ class NavigationMenuItem extends Model implements Sortable
         'home' => 'general.home',
         'about' => 'general.about',
         'proceedings' => 'general.proceedings',
+        'announcements' => 'general.announcements',
         'login' => 'general.login',
         'register' => 'general.register',
         'dashboard' => 'general.dashboard',

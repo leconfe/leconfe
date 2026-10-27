@@ -137,6 +137,7 @@ class PublicInterfaceLabelsTest extends TestCase
         app()->setLocale('fr');
         $this->assertSame(['Accueil'], $this->labelsOf('home'));
         $this->assertSame(['À propos'], $this->labelsOf('about'));
+        $this->assertSame(['Annonces'], $this->labelsOf('announcements'));
 
         NavigationMenuItem::query()->where('type', 'proceedings')->get()->each->update(['label' => 'Archive']);
         NavigationMenuItem::query()->where('type', 'about')->get()->each->setTranslation('label', 'fr', 'Le congrès');

@@ -1206,4 +1206,5 @@ return [
     'error_419_message' => 'The session has expired, please log back in to continue',
     'error_429_message' => 'The request was rejected because too many requests were made',
     'error_500_message' => 'A server error occurred. Please try again later',
+    'announcements' => 'Announcements',
 ];

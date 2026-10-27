@@ -1124,4 +1124,5 @@ return [
     'error_419_message' => 'La session a expiré, veuillez vous reconnecter pour continuer',
     'error_429_message' => 'La demande a été refusée car trop de requêtes ont été envoyées',
     'error_500_message' => 'Une erreur serveur s’est produite. Veuillez réessayer plus tard',
+    'announcements' => 'Annonces',
 ];
