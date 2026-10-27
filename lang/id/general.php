@@ -1174,7 +1174,7 @@ return [
     'paper_language_helper' => 'Bahasa yang digunakan dalam makalah. Metadata dalam bahasa ini wajib diisi dan digunakan untuk sitasi dan pengindeksan.',
     'interface_language' => 'Interface language',
     'content_languages' => 'Content languages',
-    'content_languages_helper' => 'Content languages are the languages visitors can switch the interface to and that content can be translated into. The default language is shown to visitors who have not chosen one and is used for emails to people who have not chosen one either. Changes apply as soon as you save.',
+    'content_languages_helper' => 'Content languages are the languages visitors can switch the interface to and that content can be translated into. The default language is shown to visitors who have not chosen one and is used for emails to people who have not chosen one either. Changes apply as soon as you save. Visitors switch language from the Language block, which you add in the Sidebar tab.',
     'paper' => 'Paper',
     'logout' => 'Logout',
     'published_label' => 'Published:',

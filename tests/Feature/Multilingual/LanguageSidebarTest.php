@@ -3,6 +3,7 @@
 namespace Tests\Feature\Multilingual;
 
 use App\Models\User;
+use App\Panel\Administration\Livewire\LanguageSetting;
 use App\Panel\Administration\Livewire\SidebarSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
@@ -124,6 +125,19 @@ class LanguageSidebarTest extends TestCase
         $this->useConference($conference, $this->makeScheduledConference($conference));
 
         Livewire::test(SidebarSetting::class)->assertSee('Langue');
+    }
+
+    public function test_language_settings_point_to_the_sidebar_block(): void
+    {
+        App::setLocale('fr');
+
+        Livewire::test(LanguageSetting::class)
+            ->assertSee('Les visiteurs changent de langue depuis le bloc Langue, à ajouter dans l&#039;onglet Barre latérale.', false);
+
+        App::setLocale('en');
+
+        Livewire::test(LanguageSetting::class)
+            ->assertSee('Visitors switch language from the Language block, which you add in the Sidebar tab.');
     }
 
     protected function activateBlock(): void
