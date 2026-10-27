@@ -228,7 +228,15 @@ return [
     'name_organization_included_with_deposited_meta_data' => 'Nom de l\'organisation qui enregistre les DOI. Il est inclus dans les métadonnées déposées et sert à identifier l\'auteur du dépôt.',
     'depositor_email' => 'E-mail du déposant',
     'email_address_individual_responsible' => 'Adresse e-mail de la personne responsable de l\'enregistrement du contenu auprès de Crossref. Elle est incluse dans les métadonnées déposées et utilisée pour l\'envoi de l\'e-mail de confirmation du dépôt.',
-    'information_registration_doi' => '<div class="prose-sm prose max-w-none">\n<p>Si vous souhaitez enregistrer des identifiants d\'objet numérique (DOI) directement auprès de <a href="http://www.crossref.org/">Crossref</a>, vous devrez saisir vos <a href="https://www.crossref.org/documentation/member-setup/account-credentials/">identifiants de compte Crossref</a> dans les champs « Nom d\'utilisateur » et « Mot de passe » ci-dessous.</p>\n<p>Selon le type d\'adhésion à Crossref dont vous disposez, il existe deux façons de saisir votre nom d\'utilisateur et votre mot de passe :</p>\n<ul>\n<li>Si vous utilisez un compte organisationnel, saisissez votre <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00376">nom d\'utilisateur et votre mot de passe partagés</a>.</li>\n<li>Si vous utilisez un <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00368">compte personnel</a>, saisissez votre adresse e-mail ainsi que votre rôle dans le champ « nom d\'utilisateur ». Le format attendu est le suivant : email@example.com/role.</li>\n<li>Si vous ne connaissez pas vos identifiants Crossref ou n\'y avez pas accès, vous pouvez contacter le <a href="https://support.crossref.org/">support de Crossref</a> pour obtenir de l\'aide. Sans ces identifiants, vous pouvez toujours exporter les métadonnées au format XML de Crossref, mais vous ne pourrez pas enregistrer vos DOI auprès de Crossref depuis Leconfe.</li>\n</ul>\n</div>',
+    'information_registration_doi' => '<div class="prose-sm prose max-w-none">
+    <p>Si vous souhaitez enregistrer des identifiants d\'objet numérique (DOI) directement auprès de <a href="http://www.crossref.org/">Crossref</a>, vous devrez saisir vos <a href="https://www.crossref.org/documentation/member-setup/account-credentials/">identifiants de compte Crossref</a> dans les champs « Nom d\'utilisateur » et « Mot de passe » ci-dessous.</p>
+    <p>Selon le type d\'adhésion à Crossref dont vous disposez, il existe deux façons de saisir votre nom d\'utilisateur et votre mot de passe :</p>
+    <ul>
+    <li>Si vous utilisez un compte organisationnel, saisissez votre <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00376">nom d\'utilisateur et votre mot de passe partagés</a>.</li>
+    <li>Si vous utilisez un <a href="https://www.crossref.org/documentation/member-setup/account-credentials/#00368">compte personnel</a>, saisissez votre adresse e-mail ainsi que votre rôle dans le champ « nom d\'utilisateur ». Le format attendu est le suivant : email@example.com/role.</li>
+    <li>Si vous ne connaissez pas vos identifiants Crossref ou n\'y avez pas accès, vous pouvez contacter le <a href="https://support.crossref.org/">support de Crossref</a> pour obtenir de l\'aide. Sans ces identifiants, vous pouvez toujours exporter les métadonnées au format XML de Crossref, mais vous ne pourrez pas enregistrer vos DOI auprès de Crossref depuis Leconfe.</li>
+    </ul>
+    </div>',
     'username' => 'Nom d\'utilisateur',
     'use_crossref_test_api' => 'Utiliser l\'API de test Crossref (environnement de test) pour le dépôt de DOI.',
     'username_crossref' => 'Le nom d\'utilisateur Crossref qui sera utilisé pour authentifier vos dépôts. Si vous utilisez un compte personnel, veuillez consulter les conseils ci-dessus.',
@@ -303,8 +311,17 @@ return [
     'pending_withdrawal' => 'Retrait en attente',
     'submission_is_not_open' => 'La soumission n\'est pas ouverte',
     'before_you_begin' => 'Avant de commencer',
-    'before_you_begin_current_scheduled' => '<p>Merci de soumettre votre travail à :title. Il vous sera demandé de téléverser des fichiers, d\'identifier les coauteurs et de fournir des informations telles que le titre et le résumé.</p>\n <p>Veuillez lire nos directives de soumission si vous ne l\'avez pas encore fait. Pendant le renseignement des formulaires, fournissez autant de détails que possible pour aider nos éditeurs à évaluer votre travail.</p>\n <p>Une fois commencé, vous pouvez enregistrer votre soumission et y revenir plus tard. Vous pourrez vérifier et corriger toute information avant de soumettre.</p>',
-    'submission_checklist_following_requirements' => '<p>Toutes les soumissions doivent répondre aux exigences suivantes.</p>\n \n <ul>\n \n <li>La soumission n\'a pas été publiée auparavant et n\'est pas en cours d\'examen par une autre revue (ou une explication a été fournie dans la section « Commentaires à l\'éditeur »).</li>\n \n <li>Le fichier de soumission est au format OpenOffice, Microsoft Word ou RTF.</li>\n \n <li>Les URL des références ont été fournies, lorsqu\'elles sont disponibles.</li>\n \n <li>Le texte présente un interligne simple, utilise une police de 12 points et emploie l\'italique plutôt que le soulignement (sauf pour les adresses URL) ; toutes les illustrations, figures et tableaux sont insérés dans le texte aux endroits appropriés plutôt qu\'à la fin.</li>\n \n <li>Le texte respecte les exigences stylistiques et bibliographiques énoncées dans les directives aux auteurs.</li>\n \n </ul>',
+    'before_you_begin_current_scheduled' => '<p>Merci de soumettre votre travail à :title. Il vous sera demandé de téléverser des fichiers, d\'identifier les coauteurs et de fournir des informations telles que le titre et le résumé.</p>
+    <p>Veuillez lire nos directives de soumission si vous ne l\'avez pas encore fait. Pendant le renseignement des formulaires, fournissez autant de détails que possible pour aider nos éditeurs à évaluer votre travail.</p>
+    <p>Une fois commencé, vous pouvez enregistrer votre soumission et y revenir plus tard. Vous pourrez vérifier et corriger toute information avant de soumettre.</p>',
+    'submission_checklist_following_requirements' => '<p>Toutes les soumissions doivent répondre aux exigences suivantes.</p>
+    <ul>
+    <li>La soumission n\'a pas été publiée auparavant et n\'est pas en cours d\'examen par une autre revue (ou une explication a été fournie dans la section « Commentaires à l\'éditeur »).</li>
+    <li>Le fichier de soumission est au format OpenOffice, Microsoft Word ou RTF.</li>
+    <li>Les URL des références ont été fournies, lorsqu\'elles sont disponibles.</li>
+    <li>Le texte présente un interligne simple, utilise une police de 12 points et emploie l\'italique plutôt que le soulignement (sauf pour les adresses URL) ; toutes les illustrations, figures et tableaux sont insérés dans le texte aux endroits appropriés plutôt qu\'à la fin.</li>
+    <li>Le texte respecte les exigences stylistiques et bibliographiques énoncées dans les directives aux auteurs.</li>
+    </ul>',
     'track' => 'Axe thématique',
     'privacy_consent' => 'Consentement relatif à la confidentialité',
     'submission_checklist' => 'Liste de vérification pour la soumission',
@@ -673,7 +690,9 @@ return [
     'cant_edit_submission_because_already_published' => 'Vous ne pouvez pas modifier cette soumission car elle est déjà publiée.',
     'saved_successfuly' => 'Enregistré avec succès',
     'galleys' => 'Versions de publication',
-    'typically_identify_file_format' => '<p class="text-sm italic text-gray-600">\n \n Généralement utilisé pour identifier le format de fichier (par ex. PDF, HTML, etc.)\n \n </p>',
+    'typically_identify_file_format' => '<p class="text-sm italic text-gray-600">
+    Généralement utilisé pour identifier le format de fichier (par ex. PDF, HTML, etc.)
+    </p>',
     'galleys_available' => 'Cette version sera disponible sur un site web distinct.',
     'remote_url' => 'URL distante',
     'manually_set_file_name' => 'Entrer le nom du fichier',
