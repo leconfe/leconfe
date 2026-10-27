@@ -46,6 +46,16 @@ class Presentations extends Page implements HasForms
         return static::canAccess();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('general.presentations');
+    }
+
+    public function getTitle(): string
+    {
+        return __('general.presentations');
+    }
+
     public function mount(): void
     {
         $this->form->fill([]);
@@ -64,13 +74,13 @@ class Presentations extends Page implements HasForms
                     ->columns(4)
                     ->schema([
                         TextInput::make('search')
-                            ->label('Search Title')
-                            ->placeholder('Search by title')
+                            ->label(__('general.search_title'))
+                            ->placeholder(__('general.search_by_title'))
                             ->suffixIcon('heroicon-m-magnifying-glass')
                             ->debounce(),
                         Select::make('track_id')
-                            ->label('Track')
-                            ->placeholder('All tracks')
+                            ->label(__('general.track'))
+                            ->placeholder(__('general.all_tracks'))
                             ->searchable()
                             ->live()
                             ->options(fn () => Track::query()
@@ -79,8 +89,8 @@ class Presentations extends Page implements HasForms
                                 ->get()
                                 ->mapWithKeys(fn (Track $track) => [$track->getKey() => $track->translated('title')])),
                         Select::make('topic_id')
-                            ->label('Topic')
-                            ->placeholder('All topics')
+                            ->label(__('general.topic'))
+                            ->placeholder(__('general.all_topics'))
                             ->searchable()
                             ->live()
                             ->options(
@@ -94,8 +104,8 @@ class Presentations extends Page implements HasForms
                                 fn ($component) => count($component->getOptions()) > 0
                             ),
                         TextInput::make('keyword')
-                            ->label('Keyword')
-                            ->placeholder('Search by keyword')
+                            ->label(__('general.keyword'))
+                            ->placeholder(__('general.search_by_keyword'))
                             ->suffixIcon('heroicon-m-tag')
                             ->debounce(),
                     ]),

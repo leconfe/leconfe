@@ -74,7 +74,7 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                         ]);
                     }),
                 CreateAction::make()
-                    ->label('New Item')
+                    ->label(__('general.new_item'))
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {

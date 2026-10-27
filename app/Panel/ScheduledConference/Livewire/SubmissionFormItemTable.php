@@ -51,7 +51,7 @@ class SubmissionFormItemTable extends Component implements HasForms, HasTable
         return $table
             ->query($this->getTableQuery())
             ->reorderable('order_column')
-            ->heading('Submission Form')
+            ->heading(__('general.submission_form'))
             ->columns([
                 IndexColumn::make('#'),
                 TextColumn::make('name')
@@ -72,7 +72,7 @@ class SubmissionFormItemTable extends Component implements HasForms, HasTable
                         ]);
                     }),
                 CreateAction::make()
-                    ->label('New Item')
+                    ->label(__('general.new_item'))
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {

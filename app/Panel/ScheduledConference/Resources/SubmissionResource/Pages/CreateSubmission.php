@@ -41,13 +41,16 @@ class CreateSubmission extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $title = 'Make a Submission';
-
     protected static string $resource = SubmissionResource::class;
 
     protected static string $view = 'panel.conference.resources.submission-resource.pages.create-submission';
 
     public $data;
+
+    public function getTitle(): string
+    {
+        return __('general.make_a_submission');
+    }
 
     public function mount(): void
     {
@@ -171,7 +174,7 @@ class CreateSubmission extends Page implements HasForms
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
                         Radio::make('payment_fee_id')
-                            ->label('Payment Fee')
+                            ->label(__('general.payment_fee'))
                             ->required()
                             ->live()
                             ->options(
@@ -187,7 +190,7 @@ class CreateSubmission extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
-                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                        \Filament\Forms\Components\Fieldset::make(__('general.add_on_items'))
                             ->schema(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
                                 if (! $paymentFee) {

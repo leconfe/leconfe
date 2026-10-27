@@ -38,14 +38,14 @@ class PresentationSetting extends Component implements HasForms
         return $form
             ->model(app()->getCurrentScheduledConference())
             ->schema([
-                Section::make('Presentation Settings')
+                Section::make(__('general.presentation_settings'))
                     ->columns(1)
                     ->schema([
                         DatePicker::make('open_date')
-                            ->label('Presentation Open Date'),
+                            ->label(__('general.presentation_open_date')),
                         DatePicker::make('close_date')
                             ->afterOrEqual('open_date')
-                            ->label('Presentation Close Date'),
+                            ->label(__('general.presentation_close_date')),
                     ]),
                 Actions::make([
                     Action::make('save')

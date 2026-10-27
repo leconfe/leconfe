@@ -29,6 +29,16 @@ class ReviewResult extends Page implements HasForms, HasTable
 
     protected static ?int $navigationSort = 99;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('general.review_result');
+    }
+
+    public function getTitle(): string
+    {
+        return __('general.review_result');
+    }
+
     public function mount(): void
     {
         $this->authorize('update', App::getCurrentScheduledConference());
@@ -102,10 +112,11 @@ class ReviewResult extends Page implements HasForms, HasTable
                         'style' => 'width: 1px',
                     ])
                     ->sortable()
-                    ->label('Score')
+                    ->label(__('general.score'))
                     ->searchable(query: fn ($query, $search) => $query->whereTranslatableLike('title', $search))
                     ->numeric(maxDecimalPlaces: 2),
                 TextColumn::make('reviews')
+                    ->label(__('general.reviews'))
                     ->extraCellAttributes([
                         'style' => 'width: 1px',
                     ])

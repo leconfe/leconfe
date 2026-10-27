@@ -49,6 +49,7 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->label(__('general.title'))
                     ->formatStateUsing(fn (Track $record) => $record->translated('title')),
                 TextColumn::make('editors')
+                    ->label(__('general.editors'))
                     ->wrap()
                     ->bulleted()
                     ->listWithLineBreaks()
