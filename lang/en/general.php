@@ -1172,7 +1172,7 @@ return [
     'no_roles_selected' => 'No roles selected',
 
     'language' => 'Language',
-    'switch_language' => 'Switch language',
+    'switch_language' => 'Change interface language',
     'current_language' => 'Current language',
     'translations' => 'Translations',
     'show_translations' => 'Show translations',
@@ -1184,8 +1184,11 @@ return [
     'make_new_submission' => 'Make a new submission',
     'view_your_submissions' => 'View your pending submissions',
     'track_policies' => 'Track Policies',
-    'preferred_language' => 'Preferred language',
-    'preferred_language_helper' => 'Emails are sent to you in this language.',
+    'preferred_language' => 'Interface and email language',
+    'preferred_language_helper' => 'Emails to you are sent in this language when a translation exists, and the interface switches to it when you sign in. It does not translate content.',
     'paper_language' => 'Paper language',
     'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
+    'interface_language' => 'Interface language',
+    'content_languages' => 'Content languages',
+    'content_languages_helper' => 'Content languages are the languages visitors can switch the interface to and that content can be translated into. The default language is shown to visitors who have not chosen one and is used for emails to people who have not chosen one either. Changes apply as soon as you save.',
 ];

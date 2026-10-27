@@ -1089,7 +1089,7 @@ return [
     'review_file_uploaded' => 'Nouveau fichier d\'évaluation téléversé',
 
     'language' => 'Langue',
-    'switch_language' => 'Changer de langue',
+    'switch_language' => 'Changer la langue de l\'interface',
     'current_language' => 'Langue actuelle',
     'translations' => 'Traductions',
     'languages_english_fallback' => 'L\'anglais est utilisé lorsqu\'aucune langue n\'est sélectionnée.',
@@ -1102,8 +1102,11 @@ return [
     'make_new_submission' => 'Faire une nouvelle soumission',
     'view_your_submissions' => 'Voir vos soumissions en attente',
     'track_policies' => 'Politiques des axes thématiques',
-    'preferred_language' => 'Langue préférée',
-    'preferred_language_helper' => 'Les e-mails vous sont envoyés dans cette langue.',
+    'preferred_language' => 'Langue de l\'interface et des e-mails',
+    'preferred_language_helper' => 'Les e-mails qui vous sont adressés sont envoyés dans cette langue lorsqu\'une traduction existe, et l\'interface passe dans cette langue à votre connexion. Ce choix ne traduit pas le contenu.',
     'paper_language' => 'Langue de l\'article',
     'paper_language_helper' => 'La langue dans laquelle l\'article est rédigé. Les métadonnées dans cette langue sont obligatoires et servent aux citations et à l\'indexation.',
+    'interface_language' => 'Langue de l\'interface',
+    'content_languages' => 'Langues du contenu',
+    'content_languages_helper' => 'Les langues du contenu sont celles dans lesquelles les visiteurs peuvent afficher l\'interface et dans lesquelles le contenu peut être traduit. La langue par défaut s\'affiche pour les visiteurs qui n\'en ont pas choisi et sert aux e-mails envoyés aux personnes qui n\'en ont pas choisi non plus. Les changements s\'appliquent dès l\'enregistrement.',
 ];

@@ -45,6 +45,7 @@ class LanguageSetting extends Component implements HasForms
             ->model(app()->getCurrentConference())
             ->schema([
                 Section::make()
+                    ->description(__('general.content_languages_helper'))
                     ->schema([
                         Select::make('default_language')
                             ->label(__('general.default_language'))
@@ -53,7 +54,7 @@ class LanguageSetting extends Component implements HasForms
                             ->selectablePlaceholder(false)
                             ->helperText(__('general.languages_english_fallback')),
                         CheckboxList::make('languages')
-                            ->label(__('general.languages'))
+                            ->label(__('general.content_languages'))
                             ->options(config('app.locales'))
                             ->searchable()
                             ->bulkToggleable()

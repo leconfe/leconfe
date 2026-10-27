@@ -1181,4 +1181,7 @@ return [
     'preferred_language_helper' => 'Emails are sent to you in this language.',
     'paper_language' => 'Paper language',
     'paper_language_helper' => 'The language the paper is written in. Metadata in this language is required and used in citations and indexing.',
+    'interface_language' => 'Interface language',
+    'content_languages' => 'Content languages',
+    'content_languages_helper' => 'Content languages are the languages visitors can switch the interface to and that content can be translated into. The default language is shown to visitors who have not chosen one and is used for emails to people who have not chosen one either. Changes apply as soon as you save.',
 ];
