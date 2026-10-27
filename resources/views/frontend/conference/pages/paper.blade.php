@@ -21,7 +21,7 @@
         <div class="mb-4 text-sm text-slate-400">
             <span class="flex items-center ">
                 <x-lineawesome-calendar-check-solid class="w-3 h-3 mr-0.5" />
-                <span class="citation_publication_date">{{ __('general.paper_date_published', ['date' => $paper->published_at && $paper->isPublished() ? $paper->published_at->format(Setting::get('format_date')) : '-'])  }}</span>
+                <span class="citation_publication_date">{{ __('general.paper_date_published', ['date' => $paper->published_at && $paper->isPublished() ? $paper->published_at->translatedFormat(Setting::get('format_date')) : '-'])  }}</span>
             </span>
         </div>
         @if($paper->getFirstMedia('cover'))

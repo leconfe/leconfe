@@ -87,7 +87,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
             TextColumn::make('created_at')
                 ->visibleFrom('md')
                 ->label(__('general.uploaded_at'))
-                ->formatStateUsing(fn ($state) => $state?->format(Setting::get('format_date').' '.Setting::get('format_time')))
+                ->formatStateUsing(fn ($state) => $state?->translatedFormat(Setting::get('format_date').' '.Setting::get('format_time')))
                 ->sortable(),
         ];
     }

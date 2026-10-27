@@ -260,17 +260,17 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('editor_request')
                                     ->label(__('general.editor_request'))
                                     ->getStateUsing(
-                                        fn (): ?string => $this->review?->date_assigned?->format(Setting::get('format_date'))
+                                        fn (): ?string => $this->review?->date_assigned?->translatedFormat(Setting::get('format_date'))
                                     ),
                                 TextEntry::make('response_due_date')
                                     ->label(__('general.response_due_date'))
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date'))
+                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->translatedFormat(Setting::get('format_date'))
                                     ),
                                 TextEntry::make('review_due_date')
                                     ->label(__('general.review_due_date'))
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date'))
+                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->translatedFormat(Setting::get('format_date'))
                                     ),
                             ]),
                     ]),
