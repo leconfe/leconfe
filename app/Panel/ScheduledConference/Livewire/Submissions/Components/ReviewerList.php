@@ -402,7 +402,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 return '';
                             }
 
-                            return SubmissionStatusRecommendation::label($state);
+                            return __('general.recommend_value', ['recommendation' => SubmissionStatusRecommendation::label($state)]);
                         })
                         ->color(
                             fn (Review $record): string => match ($record->recommendation) {
@@ -469,8 +469,10 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                     )
                                     ->content(__('general.read_review_confirm_instructions')),
                                 Shout::make('completed')
+                                    ->label(__('general.completed'))
                                     ->content(fn (Review $record) => __('general.review_completed_on', ['date' => $record->date_completed])),
                                 Shout::make('recommendation')
+                                    ->label(__('general.recommendation'))
                                     ->color(
                                         fn (): string => match ($record->recommendation) {
                                             SubmissionStatusRecommendation::ACCEPT => 'success',

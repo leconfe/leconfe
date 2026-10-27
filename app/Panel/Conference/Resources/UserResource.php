@@ -260,7 +260,8 @@ class UserResource extends Resource
                             ->badge(),
                     ]),
                     Stack::make([
-                        TextColumn::make('roles.display_name')
+                        TextColumn::make('roles.name')
+                            ->formatStateUsing(fn (string $state) => UserRole::displayLabel($state))
                             ->badge(),
                     ]),
                 ])->from('md'),

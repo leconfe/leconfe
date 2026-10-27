@@ -1275,4 +1275,9 @@ return [
     'form_item' => 'élément de formulaire',
 
     'editor_guidance_understood' => 'Instructions aux éditeurs lues. Ne plus afficher',
+
+    'review_submission_page' => 'Évaluer la soumission',
+    'reviewer_invitation_page' => 'Invitation à évaluer',
+    'recommend_value' => 'Recommandation : :recommendation',
+    'completed' => 'Terminée',
 ];

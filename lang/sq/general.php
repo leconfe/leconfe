@@ -1350,4 +1350,9 @@ return [
     'form_item' => 'form item',
 
     'editor_guidance_understood' => 'Understood editor guidance. Don\'t show this again',
+
+    'review_submission_page' => 'Review Submission',
+    'reviewer_invitation_page' => 'Reviewer Invitation',
+    'recommend_value' => 'Recommend :recommendation',
+    'completed' => 'Completed',
 ];

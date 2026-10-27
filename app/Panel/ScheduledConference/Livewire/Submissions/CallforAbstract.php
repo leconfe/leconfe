@@ -50,6 +50,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
     public function declineAction()
     {
         return Action::make('decline')
+            ->label(__('general.decline'))
             ->outlined()
             ->color('danger')
             ->authorize('actAsEditor', $this->submission)

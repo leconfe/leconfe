@@ -66,6 +66,11 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
         return $this->review = $review;
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.reviewer_invitation_page');
+    }
+
     public function getHeading(): string|Htmlable
     {
         return __('general.reviewer_request_heading', [
@@ -77,7 +82,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     {
         if ($this->review->status == ReviewerStatus::DECLINED) {
             return new HtmlString(
-                BladeCompiler::render("<x-filament::badge color='danger' class='w-fit'>".ReviewerStatus::DECLINED.'</x-filament::badge>')
+                BladeCompiler::render("<x-filament::badge color='danger' class='w-fit'>".e(__('general.declined')).'</x-filament::badge>')
             );
         }
 

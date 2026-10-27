@@ -256,6 +256,7 @@ class CreateSubmission extends Page implements HasForms
                     ->columns(1)
                     ->schema([
                         Placeholder::make('submission_checklist')
+                            ->label(__('general.submission_checklist'))
                             ->hiddenLabel()
                             ->extraAttributes(['class' => 'prose prose-sm'])
                             ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('submission_checklist')))
