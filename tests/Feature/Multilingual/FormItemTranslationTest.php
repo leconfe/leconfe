@@ -68,8 +68,8 @@ class FormItemTranslationTest extends TestCase
     public function test_the_submission_form_item_form_saves_every_language(): void
     {
         $options = [
-            'en' => ['a' => ['text' => 'Oral'], 'b' => ['text' => 'Poster']],
-            'id' => ['a' => ['text' => 'Lisan'], 'b' => ['text' => 'Poster']],
+            'a' => ['label' => ['en' => 'Oral', 'id' => 'Lisan']],
+            'b' => ['label' => ['en' => 'Poster', 'id' => 'Poster']],
         ];
 
         Livewire::test(SubmissionFormItemTable::class)
@@ -78,7 +78,7 @@ class FormItemTranslationTest extends TestCase
             ->assertSeeHtml('mountedTableActionsData.0.meta.name.id')
             ->assertSeeHtml('mountedTableActionsData.0.meta.description.id')
             ->set('mountedTableActionsData.0.type', SubmissionFormItem::TYPE_RADIO)
-            ->assertSeeHtml('mountedTableActionsData.0.meta.response_options.id')
+            ->assertSeeHtml('.label.id')
             ->set('mountedTableActionsData.0.meta.response_options', $options)
             ->set('mountedTableActionsData.0.meta.name', ['en' => '', 'id' => 'Presentasi'])
             ->set('mountedTableActionsData.0.meta.description', ['en' => 'How you present', 'id' => 'Cara presentasi'])
@@ -106,8 +106,8 @@ class FormItemTranslationTest extends TestCase
             ])
             ->set('mountedTableActionsData.0.meta.name', ['en' => 'Presentation type', 'id' => 'Jenis presentasi'])
             ->set('mountedTableActionsData.0.meta.response_options', [
-                'en' => ['a' => ['text' => 'Oral'], 'b' => ['text' => 'Poster']],
-                'id' => ['a' => ['text' => 'Lisan'], 'b' => ['text' => 'Poster digital']],
+                'a' => ['label' => ['en' => 'Oral', 'id' => 'Lisan']],
+                'b' => ['label' => ['en' => 'Poster', 'id' => 'Poster digital']],
             ])
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors();
@@ -125,9 +125,10 @@ class FormItemTranslationTest extends TestCase
             ->loadTable()
             ->mountTableAction('create');
 
-        // Only the primary language starts with an empty option to fill in.
-        $this->assertCount(1, $component->get('mountedTableActionsData.0.meta.response_options.en'));
-        $this->assertCount(0, $component->get('mountedTableActionsData.0.meta.response_options.id'));
+        $this->assertSame(
+            [['position' => null, 'label' => ['en' => null, 'id' => null]]],
+            array_values($component->get('mountedTableActionsData.0.meta.response_options')),
+        );
 
         $component
             ->set('mountedTableActionsData.0.type', PaymentFormItem::TYPE_SELECT)
@@ -135,8 +136,8 @@ class FormItemTranslationTest extends TestCase
                 'name' => ['en' => 'Diet', 'id' => 'Makanan'],
                 'description' => ['en' => 'Your diet', 'id' => 'Pola makan Anda'],
                 'response_options' => [
-                    'en' => ['a' => ['text' => 'Vegetarian'], 'b' => ['text' => 'Any']],
-                    'id' => ['a' => ['text' => 'Vegetarian'], 'b' => ['text' => 'Apa saja']],
+                    'a' => ['label' => ['en' => 'Vegetarian', 'id' => 'Vegetarian']],
+                    'b' => ['label' => ['en' => 'Any', 'id' => 'Apa saja']],
                 ],
             ])
             ->callMountedTableAction()
@@ -160,14 +161,17 @@ class FormItemTranslationTest extends TestCase
 
         Livewire::test(PaymentFeeFormItemTable::class, ['record' => $fee])
             ->loadTable()
-            ->callTableAction('create', data: [
-                'type' => PaymentFeeFormItem::TYPE_CHECKBOX,
-                'meta' => [
-                    'name' => ['en' => 'Topics', 'id' => 'Topik'],
-                    'description' => ['en' => 'Pick topics', 'id' => 'Pilih topik'],
-                    'response_options' => ['en' => ['Ocean', 'Land'], 'id' => ['Laut', 'Darat']],
+            ->mountTableAction('create')
+            ->set('mountedTableActionsData.0.type', PaymentFeeFormItem::TYPE_CHECKBOX)
+            ->set('mountedTableActionsData.0.meta', [
+                'name' => ['en' => 'Topics', 'id' => 'Topik'],
+                'description' => ['en' => 'Pick topics', 'id' => 'Pilih topik'],
+                'response_options' => [
+                    'a' => ['label' => ['en' => 'Ocean', 'id' => 'Laut']],
+                    'b' => ['label' => ['en' => 'Land', 'id' => 'Darat']],
                 ],
             ])
+            ->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
         $item = PaymentFeeFormItem::query()->sole();
@@ -178,13 +182,15 @@ class FormItemTranslationTest extends TestCase
         $this->assertSame(['Ocean', 'Land'], $item->getMeta('response_options'));
         $this->assertSame(['Laut', 'Darat'], $item->translatedResponseOptions('id'));
 
-        Livewire::test(PaymentFeeFormItemTable::class, ['record' => $fee])
+        $component = Livewire::test(PaymentFeeFormItemTable::class, ['record' => $fee])
             ->loadTable()
             ->mountTableAction('edit', $item)
-            ->assertTableActionDataSet([
-                'meta.name' => ['en' => 'Topics', 'id' => 'Topik'],
-                'meta.response_options' => ['en' => ['Ocean', 'Land'], 'id' => ['Laut', 'Darat']],
-            ]);
+            ->assertTableActionDataSet(['meta.name' => ['en' => 'Topics', 'id' => 'Topik']]);
+
+        $this->assertSame([
+            ['position' => 0, 'label' => ['en' => 'Ocean', 'id' => 'Laut']],
+            ['position' => 1, 'label' => ['en' => 'Land', 'id' => 'Darat']],
+        ], array_values($component->get('mountedTableActionsData.0.meta.response_options')));
     }
 
     public function test_the_create_submission_form_shows_translated_items_and_stores_the_primary_option(): void
@@ -324,21 +330,27 @@ class FormItemTranslationTest extends TestCase
             ->set('mountedTableActionsData.0.type', SubmissionFormItem::TYPE_RADIO)
             ->set('mountedTableActionsData.0.meta.name', ['en' => 'Consent', 'fr' => 'Consentement'])
             ->set('mountedTableActionsData.0.meta.response_options', [
-                'en' => ['a' => ['text' => 'Yes'], 'b' => ['text' => 'No']],
-                'fr' => ['a' => ['text' => 'Oui'], 'b' => ['text' => 'Non']],
+                'a' => ['label' => ['en' => 'Yes', 'fr' => 'Oui']],
+                'b' => ['label' => ['en' => 'No', 'fr' => 'Non']],
             ])
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
         $item = SubmissionFormItem::query()->sole();
 
-        Livewire::test(SubmissionFormItemTable::class)
+        $component = Livewire::test(SubmissionFormItemTable::class)
             ->loadTable()
-            ->mountTableAction('edit', $item)
-            ->set('mountedTableActionsData.0.meta.response_options', [
-                'en' => ['a' => ['text' => 'Yes'], 'b' => ['text' => 'No']],
-                'fr' => ['b' => ['text' => 'Non'], 'a' => ['text' => 'Oui']],
-            ])
+            ->mountTableAction('edit', $item);
+
+        $options = $component->get('mountedTableActionsData.0.meta.response_options');
+
+        $this->assertSame([
+            ['position' => 0, 'label' => ['en' => 'Yes', 'fr' => 'Oui']],
+            ['position' => 1, 'label' => ['en' => 'No', 'fr' => 'Non']],
+        ], array_values($options));
+
+        $component
+            ->set('mountedTableActionsData.0.meta.response_options', array_reverse($options, preserve_keys: true))
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
@@ -346,8 +358,100 @@ class FormItemTranslationTest extends TestCase
 
         app()->setLocale('fr');
 
+        $this->assertSame(['No' => 'Non', 'Yes' => 'Oui'], $item->getResponseOptions());
         $this->assertSame('Oui', $item->displayResponse('Yes'));
         $this->assertSame('Non', $item->displayResponse('No'));
+    }
+
+    public function test_reordering_with_a_language_disabled_keeps_its_labels_on_their_options(): void
+    {
+        $this->enableLanguages(['en', 'fr']);
+
+        $item = SubmissionFormItem::query()->create(['type' => SubmissionFormItem::TYPE_RADIO]);
+
+        $this->storeTranslations($item, [
+            'name' => ['en' => 'Consent', 'fr' => 'Consentement'],
+            'response_options' => ['en' => ['Yes', 'No'], 'fr' => ['Oui', 'Non']],
+        ]);
+
+        $this->enableLanguages(['en']);
+
+        $component = Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('edit', $item);
+
+        $component
+            ->set('mountedTableActionsData.0.meta.response_options', array_reverse($component->get('mountedTableActionsData.0.meta.response_options'), preserve_keys: true))
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $this->enableLanguages(['en', 'fr']);
+
+        $item = SubmissionFormItem::query()->sole();
+
+        app()->setLocale('fr');
+
+        $this->assertSame(['No' => 'Non', 'Yes' => 'Oui'], $item->getResponseOptions());
+        $this->assertSame('Oui', $item->displayResponse('Yes'));
+    }
+
+    public function test_options_saved_before_the_option_rows_open_and_save_unchanged(): void
+    {
+        $item = SubmissionFormItem::query()->create(['type' => SubmissionFormItem::TYPE_RADIO]);
+
+        $this->storeTranslations($item, [
+            'name' => ['en' => 'Presentation', 'id' => 'Presentasi'],
+            'response_options' => ['en' => ['Oral', 'Poster', 'Online'], 'id' => ['Lisan', '', 'Daring', 'Lainnya']],
+        ]);
+
+        $component = Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('edit', $item);
+
+        $this->assertSame([
+            ['position' => 0, 'label' => ['en' => 'Oral', 'id' => 'Lisan']],
+            ['position' => 1, 'label' => ['en' => 'Poster', 'id' => '']],
+            ['position' => 2, 'label' => ['en' => 'Online', 'id' => 'Daring']],
+        ], array_values($component->get('mountedTableActionsData.0.meta.response_options')));
+
+        $component
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $item = SubmissionFormItem::query()->sole();
+
+        $this->assertSame(['Oral', 'Poster', 'Online'], $item->getPrimaryResponseOptions());
+        $this->assertSame(['Lisan', 'Poster', 'Daring'], $item->translatedResponseOptions('id'));
+    }
+
+    public function test_the_option_rows_hold_one_label_with_a_single_language(): void
+    {
+        $this->enableLanguages(['en']);
+
+        Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('create')
+            ->set('mountedTableActionsData.0.type', SubmissionFormItem::TYPE_SELECT)
+            ->set('mountedTableActionsData.0.meta.name', 'Diet')
+            ->set('mountedTableActionsData.0.meta.response_options', [
+                'a' => ['label' => 'Vegetarian'],
+                'b' => ['label' => 'Any'],
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $item = SubmissionFormItem::query()->sole();
+
+        $this->assertSame(['Vegetarian', 'Any'], $item->getMeta('response_options'));
+
+        $component = Livewire::test(SubmissionFormItemTable::class)
+            ->loadTable()
+            ->mountTableAction('edit', $item);
+
+        $this->assertSame(
+            [['position' => 0, 'label' => 'Vegetarian'], ['position' => 1, 'label' => 'Any']],
+            array_values($component->get('mountedTableActionsData.0.meta.response_options')),
+        );
     }
 
     protected function makeSubmissionFormItem(): SubmissionFormItem

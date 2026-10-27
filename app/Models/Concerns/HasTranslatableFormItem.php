@@ -3,19 +3,22 @@
 namespace App\Models\Concerns;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 /**
  * A custom form item whose name, description and response options are entered per
  * language. Models declare `$translatableMeta = ['name', 'description', 'response_options']`
  * and `$translatableListMeta = ['response_options']`.
  *
- * Answers always store the primary-language option. A translated option is matched
- * to its primary-language option by position.
+ * Answers always store the primary-language option. Every language stores its labels
+ * in the order of the primary-language options.
  */
 trait HasTranslatableFormItem
 {
     use HasTranslatableContent {
+        fillTranslatableFormState as fillContentTranslatableFormState;
         normalizeTranslationValue as normalizeContentTranslationValue;
+        syncTranslatableState as syncContentTranslatableState;
     }
 
     /**
@@ -100,6 +103,92 @@ trait HasTranslatableFormItem
         }
 
         return $items ?: null;
+    }
+
+    public function fillTranslatableFormState(array $state, array $formKeys): array
+    {
+        $state = $this->fillContentTranslatableFormState($state, $formKeys);
+
+        if (! in_array('meta.response_options', $formKeys, true)) {
+            return $state;
+        }
+
+        $translations = $this->getTranslationsForForm('response_options');
+        $isMultilingual = count($translations) > 1;
+
+        $rows = collect($this->getIndexedPrimaryResponseOptions())
+            ->map(fn (string $option, int $index) => [
+                'position' => $index,
+                'label' => $isMultilingual
+                    ? array_map(fn (array $labels) => $labels[$index] ?? '', $translations)
+                    : $option,
+            ])
+            ->values()
+            ->all();
+
+        Arr::set($state, 'meta.response_options', $rows);
+
+        return $state;
+    }
+
+    public function syncTranslatableState(array $data): array
+    {
+        $rows = Arr::get($data, 'meta.response_options');
+
+        if (! $this->isResponseOptionRows($rows)) {
+            return $this->syncContentTranslatableState($data);
+        }
+
+        $rows = collect($rows)->values();
+        $labels = $rows->pluck('label');
+
+        Arr::set($data, 'meta.response_options', $labels->every(fn (mixed $label) => is_array($label))
+            ? $labels
+                ->flatMap(fn (array $label) => array_keys($label))
+                ->unique()
+                ->mapWithKeys(fn (string $locale) => [$locale => $labels->map(fn (array $label) => $label[$locale] ?? '')->all()])
+                ->all()
+            : $labels->all());
+
+        $data = $this->syncContentTranslatableState($data);
+
+        $this->moveResponseOptionTranslationsNotInForm($rows);
+
+        return $data;
+    }
+
+    protected function isResponseOptionRows(mixed $value): bool
+    {
+        return is_array($value)
+            && $value !== []
+            && collect($value)->every(fn (mixed $row) => is_array($row) && array_key_exists('label', $row));
+    }
+
+    /**
+     * Stored labels of languages the form does not show, such as a disabled language,
+     * follow their option to its new position.
+     *
+     * @param  Collection<int, array{position?: int|string|null, label: mixed}>  $rows
+     */
+    protected function moveResponseOptionTranslationsNotInForm(Collection $rows): void
+    {
+        if (! $this->exists) {
+            return;
+        }
+
+        $formLocales = array_keys($this->pendingFormTranslations['response_options']['values'] ?? []);
+
+        $this->translate()
+            ->where('key', 'response_options')
+            ->whereNotIn('locale', $formLocales)
+            ->pluck('locale')
+            ->each(function (string $locale) use ($rows) {
+                $stored = $this->getStoredTranslation('response_options', $locale) ?? [];
+
+                $this->pendingFormTranslations['response_options']['values'][$locale] = $rows
+                    ->map(fn (array $row) => is_numeric($row['position'] ?? null) ? ($stored[(int) $row['position']] ?? '') : '')
+                    ->all();
+            });
     }
 
     /**

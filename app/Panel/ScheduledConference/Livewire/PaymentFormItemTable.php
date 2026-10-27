@@ -3,11 +3,11 @@
 namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Filament\Forms\Components\ResponseOptionsRepeater;
 use App\Models\PaymentFormItem;
 use App\Tables\Columns\IndexColumn;
 use Closure;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -145,21 +145,7 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                         }
                     })
                     ->label('Item Type'),
-                MultilanguageComponent::make([
-                    Repeater::make('meta.response_options')
-                        ->label('Response Options')
-                        ->simple(
-                            TextInput::make('text')
-                                ->required(),
-                        )
-                        // Only the primary language starts with an empty option; translations are optional.
-                        ->defaultItems(fn (Repeater $component): int => ($component->getMeta('primary') ?? true) ? 1 : 0)
-                        ->reorderable()
-                        ->required()
-                        ->validationMessages([
-                            'required' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
-                        ]),
-                ])
+                ResponseOptionsRepeater::make('meta.response_options')
                     ->visible(fn (Get $get) => in_array($get('type'), $choiceTypes)),
             ]);
     }
