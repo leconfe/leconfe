@@ -33,7 +33,7 @@ class NewDiscussionTopicMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'New discussion topic';
+        return __('mail_templates.new_discussion_topic.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -43,19 +43,6 @@ class NewDiscussionTopicMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-         <p> You've been added to a new discussion. Here are the details:</p>
-         <table>
-                <tr>
-                    <td style="width:100px;">Submission</td>
-                    <td>: {{ Submission Title }}</td>
-                </tr>
-                <tr>
-                    <td style="width:100px;">Topic</td>
-                    <td>: {{ Topic Name }}</td>
-                </tr>
-            </table>
-            <p><a href="{{ Submission URL }}" target="_blank">Click here</a> to access the discussion.</p>
-        HTML;
+        return __('mail_templates.new_discussion_topic.body');
     }
 }

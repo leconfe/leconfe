@@ -30,15 +30,12 @@ class NewAnnouncementMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return '{{ Announcement Title }}';
+        return __('mail_templates.new_announcement.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-        {{{  Announcement Summary  }}}
-        <p>Click <a href="{{ Announcement URL }}">here</a> to read the full announcement.</p>
-        HTML;
+        return __('mail_templates.new_announcement.body');
     }
 
     public static function getDefaultDescription(): string

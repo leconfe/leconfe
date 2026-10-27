@@ -61,17 +61,12 @@ class ResetPasswordMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Password Reset Confirmation';
+        return __('mail_templates.reset_password.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear User,</p>
-            <p>We have received a request to reset your password for {{ siteName }} website. Please click the link below to reset your password:</p>
-            <a href="{{ verificationUrl }}">Reset Password</a>
-            <p>If you did not request a password reset, please ignore this email.</p>
-        HTML;
+        return __('mail_templates.reset_password.body');
     }
 
     public static function getDefaultDescription(): string

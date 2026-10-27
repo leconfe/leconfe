@@ -41,7 +41,7 @@ class ReviewRoundStartedMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Your submission {{ Submission Title }} has been sent for another review round';
+        return __('mail_templates.review_round_started.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -51,11 +51,6 @@ class ReviewRoundStartedMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>Your submission "{{ Submission Title }}" has been sent for {{ Review Round Name }}.</p>
-            <p>The editorial team will notify you when this review round progresses.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a>.</p>
-        HTML;
+        return __('mail_templates.review_round_started.body');
     }
 }

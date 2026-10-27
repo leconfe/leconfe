@@ -44,7 +44,7 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You have been assigned as a participant';
+        return __('mail_templates.participant_assigned.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -54,11 +54,6 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Participant Name }},</p>
-            <p>You have been assigned as {{ Participant Role }} for "{{ Submission Title }}" on {{ Conference Title }}.</p>
-            <p>Please guide the submission through the editorial process.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.participant_assigned.body');
     }
 }

@@ -49,7 +49,7 @@ class UserRoleInvitationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You are invited to join as {{ Role Name }}';
+        return __('mail_templates.user_role_invitation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -59,17 +59,6 @@ class UserRoleInvitationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Hello,</p>
-
-            <p>You have been invited to join <b>{{ Conference Title }}</b> as <b>{{ Role Name }}</b>.</p>
-
-            <p>
-                Use this link to accept the invitation:
-                <a href="{{ Invitation URL }}" target="_blank" rel="noopener noreferrer">{{ Invitation URL }}</a>
-            </p>
-
-            <p>This invitation expires on {{ Invitation Expiration Date }}.</p>
-        HTML;
+        return __('mail_templates.user_role_invitation.body');
     }
 }

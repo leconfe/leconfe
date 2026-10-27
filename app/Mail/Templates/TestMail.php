@@ -6,14 +6,12 @@ class TestMail extends TemplateMailable
 {
     public static function getDefaultSubject(): string
     {
-        return 'Test Mail';
+        return __('mail_templates.test.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-        This is a test mail from Leconfe
-        HTML;
+        return __('mail_templates.test.body');
     }
 
     public static function getDefaultDescription(): string
