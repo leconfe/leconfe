@@ -5,6 +5,8 @@
     $total = count($translationStatePaths);
     $hasTranslationErrors = collect($translationStatePaths)->contains(fn (string $path) => $errors->has($path));
     $translationsId = $getTranslationsId();
+    $translationStatuses = $getTranslationStatuses();
+    $primaryLanguage = $getPrimaryLanguage();
 @endphp
 
 <div
@@ -12,6 +14,7 @@
     x-data="{
         open: @js($hasTranslationErrors),
         paths: @js($translationStatePaths),
+        primaryPath: @js($getPrimaryStatePath()),
         isFilled(value) {
             if (value === null || value === undefined) {
                 return false;
@@ -28,8 +31,14 @@
         get filled() {
             return this.paths.filter((path) => this.isFilled(this.$wire.get(path))).length;
         },
+        status(path) {
+            if (this.isFilled(this.$wire.get(path))) {
+                return 'complete';
+            }
+
+            return this.isFilled(this.$wire.get(this.primaryPath)) ? 'fallback' : 'missing';
+        },
     }"
-    x-on:focusin="if ($event.target.closest('[data-multilanguage-primary]') && ! $event.target.closest('[data-multilanguage-toggle]')) open = true"
 >
     @if ($primaryContainer)
         <div data-multilanguage-primary>
@@ -38,6 +47,29 @@
     @endif
 
     @if ($total > 0)
+        <ul
+            class="flex flex-wrap gap-x-4 gap-y-1 text-xs"
+            aria-label="{{ __('general.translation_status') }}"
+            data-multilanguage-status
+        >
+            @foreach ($translationStatuses as $translation)
+                <li class="inline-flex items-center gap-x-1.5">
+                    <span class="font-medium text-gray-700 dark:text-gray-200">{{ $translation['language'] }}</span>
+                    @foreach (\App\Support\Multilingual\TranslationStatus::cases() as $status)
+                        <span
+                            class="inline-flex items-center gap-x-0.5 {{ $status->textClasses() }}"
+                            data-status="{{ $status->value }}"
+                            x-show="status(@js($translation['path'])) === @js($status->value)"
+                            @if ($status !== $translation['status']) style="display: none" @endif
+                        >
+                            <x-filament::icon :icon="$status->icon()" class="h-4 w-4" />
+                            {{ $status->label($primaryLanguage) }}
+                        </span>
+                    @endforeach
+                </li>
+            @endforeach
+        </ul>
+
         <div
             id="{{ $translationsId }}"
             class="grid gap-y-4 rounded-xl bg-gray-50 p-4 dark:bg-white/5"
