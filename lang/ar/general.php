@@ -1240,7 +1240,7 @@ return [
     'language_readiness_paper_language' => 'لغة الورقة: :language.',
     'language_readiness_paper_language_differs' => 'لغة المؤتمر هي :conference. لا يزال من الممكن نشر الأوراق المكتوبة بلغات أخرى.',
     'language_readiness_complete' => ':language: جميع البيانات الوصفية مترجمة.',
-    'language_readiness_fallback' => ':language: لا توجد ترجمة لـ :fields. يرى القراء النص بلغة :fallback.',
+    'language_readiness_fallback' => ':language: لا توجد ترجمة لحقل :fields. يرى القراء النص باللغة :fallback.',
     'language_readiness_papers_complete' => ':language: جميع الأوراق تحتوي على بيانات وصفية مترجمة.',
     'language_readiness_papers_incomplete' => '{1} :language: ورقة واحدة في هذه المداولات تحتوي على بيانات وصفية غير مترجمة. يراها القراء بلغة الورقة.|[2,*] :language: عدد الأوراق في هذه المداولات التي تحتوي على بيانات وصفية غير مترجمة: :incomplete. يراها القراء بلغة كل ورقة.',
     'language_readiness_email' => 'بريد الإشعار الإلكتروني إلى المؤلف: :language.',

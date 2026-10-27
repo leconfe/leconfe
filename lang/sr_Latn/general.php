@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: svi metapodaci su prevedeni.',
     'language_readiness_fallback' => ':language: nema prevoda za :fields. Čitaoci vide tekst na jeziku :fallback.',
     'language_readiness_papers_complete' => ':language: svi radovi imaju prevedene metapodatke.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 rad u ovom zborniku ima metapodatke bez prevoda. Čitaoci ga vide na jeziku rada.|[2,4] :language: :incomplete rada u ovom zborniku imaju metapodatke bez prevoda. Čitaoci ih vide na jeziku rada.|[5,*] :language: :incomplete radova u ovom zborniku ima metapodatke bez prevoda. Čitaoci ih vide na jeziku rada.',
+    'language_readiness_papers_incomplete' => ':language: :incomplete rad u ovom zborniku ima metapodatke bez prevoda. Čitaoci ga vide na jeziku rada.|:language: :incomplete rada u ovom zborniku imaju metapodatke bez prevoda. Čitaoci ih vide na jeziku rada.|:language: :incomplete radova u ovom zborniku ima metapodatke bez prevoda. Čitaoci ih vide na jeziku rada.',
     'language_readiness_email' => 'Imejl obaveštenje autoru: :language.',
     'language_readiness_email_fallback' => 'Šablon imejla nema prevod na ovaj jezik: koristi se tekst na jeziku :fallback.',
     'full_paper' => 'Ceo rad',

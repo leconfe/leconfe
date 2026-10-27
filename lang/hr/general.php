@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: svi su metapodaci prevedeni.',
     'language_readiness_fallback' => ':language: nema prijevoda za :fields. Čitatelji vide tekst na jeziku :fallback.',
     'language_readiness_papers_complete' => ':language: svi rukopisi imaju prevedene metapodatke.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 rukopis u ovom zborniku ima metapodatke bez prijevoda. Čitatelji ga vide na jeziku rukopisa.|[2,4] :language: :incomplete rukopisa u ovom zborniku imaju metapodatke bez prijevoda. Čitatelji ih vide na jeziku rukopisa.|[5,*] :language: :incomplete rukopisa u ovom zborniku ima metapodatke bez prijevoda. Čitatelji ih vide na jeziku rukopisa.',
+    'language_readiness_papers_incomplete' => ':language: :incomplete rukopis u ovom zborniku ima metapodatke bez prijevoda. Čitatelji ga vide na jeziku rukopisa.|:language: :incomplete rukopisa u ovom zborniku imaju metapodatke bez prijevoda. Čitatelji ih vide na jeziku rukopisa.|:language: :incomplete rukopisa u ovom zborniku ima metapodatke bez prijevoda. Čitatelji ih vide na jeziku rukopisa.',
     'language_readiness_email' => 'E-poruka s obavijesti autoru: :language.',
     'language_readiness_email_fallback' => 'Predložak e-poruke nema prijevod na ovaj jezik: koristi se tekst na jeziku :fallback.',
     'full_paper' => 'Cjeloviti rad',

@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: vsi metapodatki so prevedeni.',
     'language_readiness_fallback' => ':language: ni prevoda za :fields. Bralci vidijo besedilo v jeziku :fallback.',
     'language_readiness_papers_complete' => ':language: vsi prispevki imajo prevedene metapodatke.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 prispevek v tem zborniku ima neprevedene metapodatke. Bralci ga vidijo v jeziku prispevka.|{2} :language: :incomplete prispevka v tem zborniku imata neprevedene metapodatke. Bralci ju vidijo v jeziku prispevka.|[3,4] :language: :incomplete prispevki v tem zborniku imajo neprevedene metapodatke. Bralci jih vidijo v jeziku prispevka.|[5,*] :language: :incomplete prispevkov v tem zborniku ima neprevedene metapodatke. Bralci jih vidijo v jeziku prispevka.',
+    'language_readiness_papers_incomplete' => ':language: :incomplete prispevek v tem zborniku ima neprevedene metapodatke. Bralci ga vidijo v jeziku prispevka.|:language: :incomplete prispevka v tem zborniku imata neprevedene metapodatke. Bralci ju vidijo v jeziku prispevka.|:language: :incomplete prispevki v tem zborniku imajo neprevedene metapodatke. Bralci jih vidijo v jeziku prispevka.|:language: :incomplete prispevkov v tem zborniku ima neprevedene metapodatke. Bralci jih vidijo v jeziku prispevka.',
     'language_readiness_email' => 'Obvestilo avtorju po e-pošti: :language.',
     'language_readiness_email_fallback' => 'Predloga e-poštnega sporočila v tem jeziku nima prevoda: uporabljeno je besedilo v jeziku :fallback.',
     'full_paper' => 'Celoten prispevek',

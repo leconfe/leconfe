@@ -80,6 +80,7 @@ class TranslationCompletenessTest extends TestCase
                 $nonString = [];
                 $empty = [];
                 $placeholderMismatch = [];
+                $branchPlaceholderMismatch = [];
 
                 foreach ($english as $key => $value) {
                     if (! array_key_exists($key, $translations)) {
@@ -101,12 +102,23 @@ class TranslationCompletenessTest extends TestCase
                     if ($this->placeholders($value) !== $this->placeholders($translations[$key])) {
                         $placeholderMismatch[] = $key;
                     }
+
+                    $englishBranches = array_map($this->placeholders(...), $this->pluralBranches($value));
+
+                    foreach ($this->pluralBranches($translations[$key]) as $branch) {
+                        if (! in_array($this->placeholders($branch), $englishBranches, true)) {
+                            $branchPlaceholderMismatch[] = $key;
+
+                            break;
+                        }
+                    }
                 }
 
                 $this->assertSame([], $missing, "{$locale}/{$group} is missing keys: ".implode(', ', $missing));
                 $this->assertSame([], $nonString, "{$locale}/{$group} has non-string keys: ".implode(', ', $nonString));
                 $this->assertSame([], $empty, "{$locale}/{$group} has empty keys: ".implode(', ', $empty));
                 $this->assertSame([], $placeholderMismatch, "{$locale}/{$group} changed placeholders in: ".implode(', ', $placeholderMismatch));
+                $this->assertSame([], $branchPlaceholderMismatch, "{$locale}/{$group} has a plural form whose placeholders match no English form in: ".implode(', ', $branchPlaceholderMismatch));
             }
         }
     }
@@ -182,6 +194,14 @@ class TranslationCompletenessTest extends TestCase
         sort($placeholders);
 
         return $placeholders;
+    }
+
+    private function pluralBranches(string $value): array
+    {
+        return array_map(
+            static fn (string $branch): string => preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', trim($branch)),
+            explode('|', $value)
+        );
     }
 
     private function markupTags(string $value): array

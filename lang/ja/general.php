@@ -1218,7 +1218,7 @@ return [
     'track_editor' => 'テーマ別セクション編集者',
 
     'recommendation_accept' => '採択',
-    'recommendation_decline' => '辞退',
+    'recommendation_decline' => '不採択',
     'revision_required' => '修正が必要',
     'read_review' => '査読を読む',
     'read_review_confirm_instructions' => 'この査読を読んだら、「確認」を押して査読プロセスを進めてよいことを示してください。査読者が別の方法で査読を提出した場合は、下にファイルをアップロードしてから「確認」を押して進めてください。',

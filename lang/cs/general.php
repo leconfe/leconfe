@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: všechna metadata jsou přeložena.',
     'language_readiness_fallback' => ':language: chybí překlad pro :fields. Čtenáři uvidí text v jazyce :fallback.',
     'language_readiness_papers_complete' => ':language: všechny rukopisy mají přeložená metadata.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 rukopis v tomto sborníku má metadata bez překladu. Čtenáři jej uvidí v jazyce rukopisu.|[2,4] :language: :incomplete rukopisy v tomto sborníku mají metadata bez překladu. Čtenáři je uvidí v jazyce rukopisu.|[5,*] :language: :incomplete rukopisů v tomto sborníku má metadata bez překladu. Čtenáři je uvidí v jazyce rukopisu.',
+    'language_readiness_papers_incomplete' => ':language: 1 rukopis v tomto sborníku má metadata bez překladu. Čtenáři jej uvidí v jazyce rukopisu.|:language: :incomplete rukopisy v tomto sborníku mají metadata bez překladu. Čtenáři je uvidí v jazyce rukopisu.|:language: :incomplete rukopisů v tomto sborníku má metadata bez překladu. Čtenáři je uvidí v jazyce rukopisu.',
     'language_readiness_email' => 'Oznamovací e-mail autorovi: :language.',
     'language_readiness_email_fallback' => 'Šablona e-mailu nemá překlad v tomto jazyce: použije se text v jazyce :fallback.',
     'full_paper' => 'Plný text rukopisu',

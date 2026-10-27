@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: сви метаподаци су преведени.',
     'language_readiness_fallback' => ':language: нема превода за :fields. Читаоци виде текст на језику :fallback.',
     'language_readiness_papers_complete' => ':language: сви радови имају преведене метаподатке.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 рад у овом зборнику има метаподатке без превода. Читаоци га виде на језику рада.|[2,4] :language: :incomplete рада у овом зборнику имају метаподатке без превода. Читаоци их виде на језику рада.|[5,*] :language: :incomplete радова у овом зборнику има метаподатке без превода. Читаоци их виде на језику рада.',
+    'language_readiness_papers_incomplete' => ':language: :incomplete рад у овом зборнику има метаподатке без превода. Читаоци га виде на језику рада.|:language: :incomplete рада у овом зборнику имају метаподатке без превода. Читаоци их виде на језику рада.|:language: :incomplete радова у овом зборнику има метаподатке без превода. Читаоци их виде на језику рада.',
     'language_readiness_email' => 'Имејл обавештење аутору: :language.',
     'language_readiness_email_fallback' => 'Шаблон имејла нема превод на овај језик: користи се текст на језику :fallback.',
     'full_paper' => 'Цео рад',

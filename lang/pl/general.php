@@ -1164,7 +1164,7 @@ return [
     'language_readiness_complete' => ':language: wszystkie metadane są przetłumaczone.',
     'language_readiness_fallback' => ':language: brak tłumaczenia dla :fields. Czytelnicy widzą tekst w wersji :fallback.',
     'language_readiness_papers_complete' => ':language: wszystkie rękopisy mają przetłumaczone metadane.',
-    'language_readiness_papers_incomplete' => '{1} :language: 1 rękopis w tym tomie ma metadane bez tłumaczenia. Czytelnicy widzą go w języku rękopisu.|[2,4] :language: :incomplete rękopisy w tym tomie mają metadane bez tłumaczenia. Czytelnicy widzą je w języku rękopisu.|[5,*] :language: :incomplete rękopisów w tym tomie ma metadane bez tłumaczenia. Czytelnicy widzą je w języku rękopisu.',
+    'language_readiness_papers_incomplete' => ':language: 1 rękopis w tym tomie ma metadane bez tłumaczenia. Czytelnicy widzą go w języku rękopisu.|:language: :incomplete rękopisy w tym tomie mają metadane bez tłumaczenia. Czytelnicy widzą je w języku rękopisu.|:language: :incomplete rękopisów w tym tomie ma metadane bez tłumaczenia. Czytelnicy widzą je w języku rękopisu.',
     'language_readiness_email' => 'Powiadomienie e-mail do autora: :language.',
     'language_readiness_email_fallback' => 'Szablon wiadomości e-mail nie ma tłumaczenia w tym języku: używany jest tekst w wersji :fallback.',
     'full_paper' => 'Pełny rękopis',
