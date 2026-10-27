@@ -46,12 +46,12 @@ class UserRoleTable extends Component implements HasForms, HasTable
         if (app()->isOnScheduledConference()) {
             $permissionLevelOptions = collect(UserRole::scheduledConferenceRoles())
                 ->map(fn($role) => $role instanceof \BackedEnum ? $role->value : $role)
-                ->mapWithKeys(fn($role) => [$role => $role])
+                ->mapWithKeys(fn($role) => [$role => UserRole::displayLabel($role)])
                 ->toArray();
         } else {
             $permissionLevelOptions = collect(UserRole::conferenceRoles())
                 ->map(fn($role) => $role instanceof \BackedEnum ? $role->value : $role)
-                ->mapWithKeys(fn($role) => [$role => $role])
+                ->mapWithKeys(fn($role) => [$role => UserRole::displayLabel($role)])
                 ->toArray();
         }
 
@@ -60,9 +60,11 @@ class UserRoleTable extends Component implements HasForms, HasTable
             ->heading(__('general.roles'))
             ->columns([
                 TextColumn::make('name')
+                    ->formatStateUsing(fn (Role $record) => $record->display_name)
                     ->label(__('general.name'))
                     ->searchable(),
                 TextColumn::make('meta.permission_level')
+                    ->formatStateUsing(fn (string $state) => UserRole::displayLabel($state))
                     ->label(__('general.permission_level'))
                     ->getStateUsing(fn(Role $record) => $record->getMeta('permission_level') ?? $record->name)
                     ->searchable(false),

@@ -278,7 +278,7 @@ class CreateSubmission extends Page implements HasForms
                         $managerUserGroupAssignments = Role::query()->get()->filter(fn ($role) => auth()->user()->hasRole($role) && $role->hasDefaultPermission('Submission:submitAs'));
                         $authorUserGroupAssignments = Role::query()->where('name', UserRole::Author)->get();
 
-                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('name', 'id');
+                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('display_name', 'id');
                     }),
             ])
             ->model(Submission::class)

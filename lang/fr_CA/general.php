@@ -1212,4 +1212,9 @@ return [
     'participant_fees' => 'Frais de participation',
     'invoice' => 'Facture',
     'editors' => 'Éditeurs',
+
+    'admin' => 'Administrateur',
+    'conference_manager' => 'Gestionnaire de conférence',
+    'scheduled_conference_editor' => 'Éditeur de la conférence programmée',
+    'track_editor' => 'Responsable d’axe thématique',
 ];

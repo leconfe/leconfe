@@ -10,7 +10,7 @@
         </div>
 
         <p class="mb-4 text-sm text-gray-700">
-            You were invited as <strong>{{ $invitation->role_name }}</strong> for <strong>{{ $invitationDisplayName }}</strong>.
+            You were invited as <strong>{{ \App\Models\Enums\UserRole::displayLabel($invitation->role_name) }}</strong> for <strong>{{ $invitationDisplayName }}</strong>.
         </p>
 
         <form wire:submit="register" class="space-y-4">

@@ -86,7 +86,8 @@ class ParticipantList extends Component implements HasForms, HasTable
                             ->getStateUsing(fn ($record) => $record->user->getMeta('affiliation'))
                             ->color('gray')
                             ->size('xs'),
-                        TextColumn::make('role.name')
+                        TextColumn::make('role.display_name')
+                            ->label(__('general.role'))
                             ->extraAttributes(['class' => 'mt-2'])
                             ->size('xs'),
                     ]),
@@ -129,7 +130,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                             UserRole::TrackEditor,
                                             UserRole::Author,
                                         ])
-                                            ->pluck('name', 'id');
+                                            ->get()->pluck('display_name', 'id');
                                     })
                                     ->placeholder(__('general.select_role'))
                                     ->columnSpan(1),

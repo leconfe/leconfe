@@ -1273,4 +1273,9 @@ return [
     'participant_fees' => 'Participant Fees',
     'invoice' => 'Invoice',
     'editors' => 'Editors',
+
+    'admin' => 'Admin',
+    'conference_manager' => 'Conference Manager',
+    'scheduled_conference_editor' => 'Scheduled Conference Editor',
+    'track_editor' => 'Track Editor',
 ];
