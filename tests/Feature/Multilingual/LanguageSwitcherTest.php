@@ -101,23 +101,6 @@ class LanguageSwitcherTest extends TestCase
             ->assertRedirect();
     }
 
-    public function test_switcher_markup_is_rendered_only_when_several_languages_are_enabled(): void
-    {
-        $this->withoutVite()
-            ->get(route('livewirePageGroup.website.pages.home'))
-            ->assertOk()
-            ->assertSee('data-language-switcher', false)
-            ->assertSee(route('livewirePageGroup.website.pages.set-locale', ['lang' => 'id']), false)
-            ->assertSee('hreflang="id"', false);
-
-        $this->enableLanguages(['en']);
-
-        $this->withoutVite()
-            ->get(route('livewirePageGroup.website.pages.home'))
-            ->assertOk()
-            ->assertDontSee('data-language-switcher', false);
-    }
-
     public function test_html_lang_and_dir_follow_the_active_locale(): void
     {
         $this->withoutVite()

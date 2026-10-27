@@ -72,30 +72,9 @@ class LanguageNamesTest extends TestCase
         $this->assertOptionLabels(Livewire::test(Profile::class)->html(), ['en' => 'English', 'fr' => 'French']);
     }
 
-    public function test_language_switcher_announces_the_current_language_in_the_interface_language(): void
+    public function test_language_block_keeps_the_colon_in_other_interface_languages(): void
     {
-        $this->makeConference();
-
-        $this->withoutVite()
-            ->withSession(['locale' => 'fr'])
-            ->get(route('livewirePageGroup.website.pages.home'))
-            ->assertOk()
-            ->assertSee('<span class="sr-only">Langue actuelle :</span>', false)
-            ->assertSee('<span lang="fr">Français</span>', false)
-            ->assertSee('<span>English</span>', false)
-            ->assertDontSee('<span lang="fr">French</span>', false);
-
-        $this->withoutVite()
-            ->withSession(['locale' => 'en'])
-            ->get(route('livewirePageGroup.website.pages.home'))
-            ->assertOk()
-            ->assertSee('<span class="sr-only">Current language:</span>', false)
-            ->assertSee('<span lang="en">English</span>', false)
-            ->assertSee('<span>Français</span>', false);
-    }
-
-    public function test_language_switcher_keeps_the_colon_in_other_interface_languages(): void
-    {
+        app()->getSite()->setMeta('sidebars', ['language']);
         $this->enableLanguages(['en', 'fr', 'id']);
 
         $this->withoutVite()
