@@ -31,6 +31,23 @@ class NavigationMenuItem extends Model implements Sortable
     protected array $translatableColumns = ['label'];
 
     /**
+     * Interface text for item types whose default label is built in.
+     *
+     * @var array<string, string>
+     */
+    protected const BUILT_IN_LABELS = [
+        'home' => 'general.home',
+        'about' => 'general.about',
+        'proceedings' => 'general.proceedings',
+        'announcements' => 'general.announcements',
+        'login' => 'general.login',
+        'register' => 'general.register',
+        'dashboard' => 'general.dashboard',
+        'profile' => 'general.profile',
+        'logout' => 'general.logout',
+    ];
+
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void
@@ -102,12 +119,27 @@ class NavigationMenuItem extends Model implements Sortable
     {
         $label = (string) $this->translated('label');
 
+        if ($this->hasBuiltInLabel($label)) {
+            $label = __(static::BUILT_IN_LABELS[$this->type]);
+        }
+
         // replace {$username} with the user's name
         if (auth()->check() && str_contains($label, '{$username}')) {
             $label = str_replace('{$username}', auth()->user()->fullName, $label);
         }
 
         return $label;
+    }
+
+    /**
+     * Whether the label is still the built-in English label of its type and has no
+     * translation for the active language, so the interface text is shown.
+     */
+    protected function hasBuiltInLabel(string $label): bool
+    {
+        return array_key_exists($this->type, static::BUILT_IN_LABELS)
+            && $label === static::getType($this->type)::getLabel()
+            && $this->translatedLocale('label') !== app()->getLocale();
     }
 
     public function isDisplayed(): bool

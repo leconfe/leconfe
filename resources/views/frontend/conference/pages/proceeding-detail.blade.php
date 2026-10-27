@@ -6,8 +6,7 @@
             <div role="alert" class="gap-2.5 alert bg-yellow-200/20 border-yellow-200/40">
                 <x-heroicon-s-eye class="w-5 h-5 my-auto text-amber-600" />
                 <div class="text-amber-900">
-                    <span class="text-amber-500">Preview. </span> This proceeding is not published yet. This is only the
-                    preview of the proceeding.
+                    <span class="text-amber-500">{{ __('general.preview') }}.</span> {{ __('general.proceeding_preview_notice') }}
                 </div>
             </div>
         @endif
@@ -21,7 +20,7 @@
                             class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'home', 'hover:bg-gray-100' : activeTab != 'home'}"
                             aria-current="page">
-                            Home
+                            {{ __('general.home') }}
                         </button>
                     </li>
                     @foreach ($additionalContents as $key => $additionalContent)
@@ -61,7 +60,7 @@
                                         {{ new Illuminate\Support\HtmlString($proceeding->translated('description')) }}
                                     </div>
                                     <div class="text-sm">
-                                        <span class="font-semibold">Published: </span>
+                                        <span class="font-semibold">{{ __('general.published_label') }}</span>
                                         {{ $proceeding->published_at ? $proceeding->published_at->translatedFormat(Setting::get('format_date')) : '-' }}
                                     </div>
                                 </div>
@@ -78,7 +77,7 @@
                                         <x-conference::paper-summary :paper="$paper" :hideAuthor="$track->getMeta('hide_author')" />
                                     @empty
                                         <div class="text-center text-gray-500">
-                                            No paper found.
+                                            {{ __('general.no_paper_found') }}
                                         </div>
                                     @endforelse
                                 </div>

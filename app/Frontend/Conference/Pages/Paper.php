@@ -147,13 +147,13 @@ class Paper extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            route(Home::getRouteName()) => 'Home',
-            route(Proceedings::getRouteName()) => 'Proceedings',
+            route(Home::getRouteName()) => __('general.home'),
+            route(Proceedings::getRouteName()) => __('general.proceedings'),
             route(ProceedingDetail::getRouteName(), [$this->paper->proceeding->id]) => Str::limit(
                 $this->paper->proceeding->seriesTitle(),
                 70
             ),
-            'Paper',
+            __('general.paper'),
         ];
     }
 

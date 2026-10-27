@@ -3,5 +3,5 @@
 @php
     $code = '402';
     $title = 'Payment Required';
-    $message = 'Requests cannot be processed unless payment has been made';
+    $message = __('general.error_402_message');
 @endphp
