@@ -141,8 +141,10 @@ class PublicInterfaceLabelsTest extends TestCase
 
         NavigationMenuItem::query()->where('type', 'proceedings')->get()->each->update(['label' => 'Archive']);
         NavigationMenuItem::query()->where('type', 'about')->get()->each->setTranslation('label', 'fr', 'Le congrès');
+        NavigationMenuItem::query()->where('type', 'announcements')->get()->each->update(['label' => 'News']);
 
         $this->assertSame(['Le congrès'], $this->labelsOf('about'));
+        $this->assertSame(['News'], $this->labelsOf('announcements'));
 
         $french = $this->menuLabels($this->visitPaper($this->conference, $paper, 'fr'));
         $this->assertContains('Archive', $french);
