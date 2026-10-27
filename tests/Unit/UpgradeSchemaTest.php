@@ -62,14 +62,14 @@ class UpgradeSchemaTest extends TestCase
         $schemas['1.5.0-beta.3']->run();
     }
 
-    public function test_upgrade_from_1_5_1_to_1_5_2_runs_upgrade_schema(): void
+    public function test_upgrade_from_1_5_1_to_1_5_3_runs_upgrade_schema(): void
     {
-        $schemas = UpgradeSchema::getSchemasByVersion('1.5.1', '1.5.2');
+        $schemas = UpgradeSchema::getSchemasByVersion('1.5.1', '1.5.3');
 
-        $this->assertArrayHasKey('1.5.2', $schemas);
+        $this->assertArrayHasKey('1.5.3', $schemas);
         $this->assertInstanceOf(
-            'App\\Utils\\UpgradeSchemas\\Upgrade152',
-            $schemas['1.5.2'],
+            'App\\Utils\\UpgradeSchemas\\Upgrade153',
+            $schemas['1.5.3'],
         );
 
         Artisan::shouldReceive('call')
@@ -77,6 +77,13 @@ class UpgradeSchemaTest extends TestCase
             ->with('migrate', ['--force' => true])
             ->andReturn(0);
 
-        $schemas['1.5.2']->run();
+        $schemas['1.5.3']->run();
+    }
+
+    public function test_upgrade_from_1_5_2_to_1_5_3_runs_upgrade_schema(): void
+    {
+        $schemas = UpgradeSchema::getSchemasByVersion('1.5.2', '1.5.3');
+
+        $this->assertArrayHasKey('1.5.3', $schemas);
     }
 }

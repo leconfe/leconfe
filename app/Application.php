@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\File;
 
 class Application extends LaravelApplication
 {
-    public const PHP_MIN_VERSION = '8.1';
+    public const PHP_MIN_VERSION = '8.3';
 
     public const CONTEXT_WEBSITE = 0;
 
