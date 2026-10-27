@@ -35,13 +35,19 @@ use Illuminate\Database\UniqueConstraintViolationException;
 
 class ContributorList extends \Livewire\Component implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable;
+    use InteractsWithForms;
+    use InteractsWithTable {
+        reorderTable as reorderTableRecords;
+    }
 
     public Submission $submission;
 
     public bool $viewOnly = false;
 
-    protected $listeners = ['refreshLivewire' => '$refresh'];
+    protected $listeners = [
+        'refreshLivewire' => '$refresh',
+        'contributorsUpdated' => '$refresh',
+    ];
 
     public function getQuery(bool $submissionRelated = true): Builder
     {
@@ -126,9 +132,11 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             if ($data['primary_contact']) {
                                 $this->submission->setPrimaryContact($record);
                             }
-                        }),
+                        })
+                        ->after(fn () => $this->dispatch('contributorsUpdated')),
                     DeleteAction::make()
-                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
+                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data))
+                        ->after(fn () => $this->dispatch('contributorsUpdated')),
                 ])
                     ->hidden($this->viewOnly),
             ])
@@ -156,6 +164,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
                         return $author;
                     })
+                    ->after(fn () => $this->dispatch('contributorsUpdated'))
                     ->hidden($this->viewOnly),
             ])
             ->columns([
@@ -217,10 +226,19 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             $this->submission->setPrimaryContact($author);
         }
 
+        $this->dispatch('contributorsUpdated');
+
         Notification::make()
             ->title(__('general.contributor_added'))
             ->success()
             ->send();
+    }
+
+    public function reorderTable(array $order): void
+    {
+        $this->reorderTableRecords($order);
+
+        $this->dispatch('contributorsUpdated');
     }
 
     public function canAddMyselfAsContributor(): bool
