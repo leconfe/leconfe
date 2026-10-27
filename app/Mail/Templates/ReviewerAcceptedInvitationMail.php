@@ -28,7 +28,7 @@ class ReviewerAcceptedInvitationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Reviewer Accepted Invitation';
+        return __('mail_templates.reviewer_accepted_invitation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -38,9 +38,6 @@ class ReviewerAcceptedInvitationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Reviewer {{ Reviewer Name }} has accepted the invitation to review the submission {{ Submission Title }}</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.reviewer_accepted_invitation.body');
     }
 }

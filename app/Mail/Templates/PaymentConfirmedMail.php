@@ -33,18 +33,12 @@ class PaymentConfirmedMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Payment Confirmed';
+        return __('mail_templates.payment_confirmed.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Payer Name }},</p>
-            <p>Your payment with id {{ Payment ID }} has been successfully confirmed by the editor.</p>
-            <p>Thank you for completing the payment. You may now proceed with the next steps process through your Leconfe account.</p>
-            <p>If you have any questions, please feel free to contact the conference committee.</p>
-            <p>Click here to <a href="{{ Payment Link }}">View Payment Detail</a></p>
-        HTML;
+        return __('mail_templates.payment_confirmed.body');
     }
 
     public static function getDefaultDescription(): string

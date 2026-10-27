@@ -40,8 +40,7 @@ class AcceptPaperMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Your submission {{ Submission Title }} on {{ Conference Title }} is accepted.';
-
+        return __('mail_templates.accept_paper.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -51,11 +50,6 @@ class AcceptPaperMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>We have reached a decision regarding your submission with title "{{ Submission Title }}"  to {{ Conference Title }}</p>
-            <p>Our decision is to <b>accept the submission</b>.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-    HTML;
+        return __('mail_templates.accept_paper.body');
     }
 }

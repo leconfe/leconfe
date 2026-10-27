@@ -9,12 +9,13 @@ use App\Models\Scopes\ConferenceScope;
 use App\Support\Multilingual\ContentLocales;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Traits\Localizable;
 use Spatie\MailTemplates\Interfaces\MailTemplateInterface;
 use Spatie\MailTemplates\Models\MailTemplate as BaseMailTemplate;
 
 class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
 {
-    use BelongsToConference, HasTranslatableContent;
+    use BelongsToConference, HasTranslatableContent, Localizable;
 
     /**
      * Columns whose content can be translated.
@@ -132,10 +133,10 @@ class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
             ->first();
 
         if (! $template) {
-            return [
+            return (new static)->withLocale($locale, fn () => [
                 'subject' => $mailable::getDefaultSubject(),
                 'html_template' => $mailable::getDefaultHtmlTemplate(),
-            ];
+            ]);
         }
 
         return [
@@ -151,10 +152,6 @@ class MailTemplate extends BaseMailTemplate implements MailTemplateInterface
 
     public static function getDefaultFooter(): string
     {
-        return <<<'HTML'
-            <p>________________________________________________________________________</p>
-            <pre>{{ conferenceName }}</pre>
-            <p style="font-size: 10px;color: gray;">Easily manage conference platform using <a href="https://leconfe.com">Leconfe</a></p>
-        HTML;
+        return __('mail_templates.footer');
     }
 }

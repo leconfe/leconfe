@@ -175,7 +175,7 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
 
     /**
      * The edit form state of a template: the conference's customized template with
-     * its translations, or the built-in default in the default language.
+     * its translations, or the built-in default in each language.
      */
     protected function getTemplateFormState(DefaultMailTemplate $record): array
     {
@@ -191,20 +191,20 @@ class EmailSetting extends Component implements HasForms, HasInfolists, HasTable
             );
         }
 
-        $state = [
-            'subject' => $record->mailable::getDefaultSubject(),
-            'html_template' => $record->mailable::getDefaultHtmlTemplate(),
-        ];
-
         $locales = app(ContentLocales::class);
+        $default = MailTemplate::contentFor($record->mailable);
 
         if (! $locales->isMultilingual()) {
-            return $state;
+            return $default;
         }
 
-        return collect($state)
-            ->map(fn (string $value) => collect($locales->ordered())
-                ->mapWithKeys(fn (string $locale) => [$locale => $locale === $locales->default() ? $value : null])
+        $translations = collect($locales->ordered())
+            ->mapWithKeys(fn (string $locale) => [$locale => MailTemplate::contentFor($record->mailable, $locale)]);
+
+        // A language without built-in text of its own falls back to the default text; leave it empty.
+        return collect($default)
+            ->map(fn (string $value, string $field) => $translations
+                ->map(fn (array $content, string $locale) => $locale === $locales->default() || $content[$field] !== $value ? $content[$field] : null)
                 ->all())
             ->all();
     }

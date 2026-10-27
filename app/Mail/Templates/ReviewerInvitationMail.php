@@ -50,7 +50,7 @@ class ReviewerInvitationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You have been assigned as a reviewer';
+        return __('mail_templates.reviewer_invitation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -60,16 +60,6 @@ class ReviewerInvitationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Reviewer Name }},</p>
-
-            <p>We would like to invite you to review the paper "{{ Submission Title }}," which has been submitted to {{ Conference Title }}.</p>
-
-            <p>Please log into the conference website by {{ Response Due Date }} to indicate whether you are able to undertake the review. Through the site, you can access the submission, record your review, and provide your recommendation: <a href="{{ Submission Invitation URL }}">{{ Submission Invitation URL }}</a></p>
-
-            <p>The completed review is due by {{ Review Due Date }}.</p>
-
-            <p>Thank you very much for considering this request.</p>
-        HTML;
+        return __('mail_templates.reviewer_invitation.body');
     }
 }

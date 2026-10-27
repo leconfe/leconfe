@@ -34,27 +34,12 @@ class SubmissionPaymentMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Submission Payment for: {{ Submission Title }} on {{ Conference Title }}';
+        return __('mail_templates.submission_payment.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>We would like to inform you that a payment requirement has been added to your submission for {{ Conference Title }}.</p>
-            <p>Submission Details:</p>
-            <ul>
-                <li>Title : <b>{{ Submission Title }}</b></li>
-                <li>Reference ID : <b>{{ Submission ID }}</b></li>
-                <li>Amount Due : <b>{{ Payment Amount }}</b></li>
-            </ul>
-            <p>To proceed, please complete your payment by visiting the link below:</p>
-            <a href="{{ Payment Link }}">{{ Payment Link }}</a>
-            <p>
-                If you have already made the payment, kindly disregard this notice.
-            </p>
-            <p>Thank you for your participation, and we look forward to your contribution to {{ Conference Title }}.</p>
-        HTML;
+        return __('mail_templates.submission_payment.body');
     }
 
     public static function getDefaultDescription(): string

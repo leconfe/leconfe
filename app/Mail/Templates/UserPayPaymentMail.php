@@ -32,17 +32,12 @@ class UserPayPaymentMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Payment Proof Submitted by {{ Payer Name }}';
+        return __('mail_templates.user_pay_payment.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear Editor,</p>
-            <p>We would like to inform you that {{ Payer Name }} has submitted a payment proof for the <b>{{ Conference Title }}</b></p>
-            <p>You can review the payment details at the link below:</p>
-            <a href="{{ Payment Link }}">{{ Payment Link }}</a>
-        HTML;
+        return __('mail_templates.user_pay_payment.body');
     }
 
     public static function getDefaultDescription(): string

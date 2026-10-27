@@ -39,7 +39,7 @@ class PublishSubmissionMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Submission Published';
+        return __('mail_templates.publish_submission.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -49,10 +49,6 @@ class PublishSubmissionMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>Your submission "{{ Submission Title }}" has been published on {{ Conference Title }}</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.publish_submission.body');
     }
 }

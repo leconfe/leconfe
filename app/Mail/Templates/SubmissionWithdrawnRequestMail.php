@@ -30,7 +30,7 @@ class SubmissionWithdrawnRequestMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Submission Withdraw Request';
+        return __('mail_templates.submission_withdrawn_request.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -40,9 +40,6 @@ class SubmissionWithdrawnRequestMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>We wanted to inform you that the submission "{{ Submission Title }}" has been requested to be withdrawn.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.submission_withdrawn_request.body');
     }
 }

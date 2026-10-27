@@ -42,7 +42,7 @@ class NewReviewFileUploadedMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'New review file uploaded for {{ Submission Title }}';
+        return __('mail_templates.new_review_file_uploaded.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -52,38 +52,7 @@ class NewReviewFileUploadedMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear Editors,</p>
-            <p>A review file has been uploaded for the submission "{{ Submission Title }}" in {{ Conference Title }}.</p>
-            <table>
-                <tr>
-                    <td style="width:140px;">Submission ID</td>
-                    <td>: {{ Submission ID }}</td>
-                </tr>
-                <tr>
-                    <td style="width:140px;">Author</td>
-                    <td>: {{ Submission Author }}</td>
-                </tr>
-                <tr>
-                    <td style="width:140px;">Uploaded by</td>
-                    <td>: {{ Uploaded By }}</td>
-                </tr>
-                <tr>
-                    <td style="width:140px;">File</td>
-                    <td>: {{ File Name }}</td>
-                </tr>
-                <tr>
-                    <td style="width:140px;">File type</td>
-                    <td>: {{ File Type }}</td>
-                </tr>
-                <tr>
-                    <td style="width:140px;">Review round</td>
-                    <td>: {{ Review Round Name }}</td>
-                </tr>
-            </table>
-            <p>Please review the uploaded file and continue the editorial workflow from the submission page.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a>.</p>
-        HTML;
+        return __('mail_templates.new_review_file_uploaded.body');
     }
 
     protected function resolveFileName(SubmissionFile $submissionFile): string
