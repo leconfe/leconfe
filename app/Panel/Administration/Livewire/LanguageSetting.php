@@ -49,14 +49,16 @@ class LanguageSetting extends Component implements HasForms
                     ->schema([
                         Select::make('default_language')
                             ->label(__('general.default_language'))
-                            ->options(fn (Get $get): array => Arr::only(config('app.locales'), $this->selectedLanguages($get('languages'))))
+                            ->options(fn (Get $get): array => Arr::only($this->languageOptions(), $this->selectedLanguages($get('languages'))))
                             ->searchable()
                             ->selectablePlaceholder(false)
                             ->helperText(__('general.languages_english_fallback')),
                         CheckboxList::make('languages')
                             ->label(__('general.content_languages'))
-                            ->options(config('app.locales'))
+                            ->options(fn (): array => $this->languageOptions())
+                            ->descriptions(fn (): array => $this->englishNames())
                             ->searchable()
+                            ->searchPrompt(__('general.search'))
                             ->bulkToggleable()
                             ->live()
                             ->afterStateUpdated(function (Get $get, Set $set, ?array $state) {
@@ -88,6 +90,35 @@ class LanguageSetting extends Component implements HasForms
 
             ])
             ->statePath('formData');
+    }
+
+    /**
+     * Language autonyms keyed by locale, enabled languages first with the default on top.
+     *
+     * @return array<string, string>
+     */
+    private function languageOptions(): array
+    {
+        $locales = app(ContentLocales::class);
+
+        return collect([...$locales->ordered(), ...array_keys(config('app.locales'))])
+            ->unique()
+            ->mapWithKeys(fn (string $locale) => [$locale => $locales->autonym($locale)])
+            ->all();
+    }
+
+    /**
+     * English names keyed by locale, excluding names identical to their autonyms.
+     *
+     * @return array<string, string>
+     */
+    private function englishNames(): array
+    {
+        $locales = app(ContentLocales::class);
+
+        return collect(config('app.locales'))
+            ->reject(fn (string $name, string $locale) => $name === $locales->autonym($locale))
+            ->all();
     }
 
     /**
