@@ -31,6 +31,19 @@ class NavigationMenuItem extends Model implements Sortable
     protected array $translatableColumns = ['label'];
 
     /**
+     * Interface text for the items of the built-in user account menu.
+     *
+     * @var array<string, string>
+     */
+    protected const ACCOUNT_LABELS = [
+        'login' => 'general.login',
+        'register' => 'general.register',
+        'dashboard' => 'general.dashboard',
+        'profile' => 'general.profile',
+        'logout' => 'general.logout',
+    ];
+
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void
@@ -102,12 +115,27 @@ class NavigationMenuItem extends Model implements Sortable
     {
         $label = (string) $this->translated('label');
 
+        if ($this->hasBuiltInAccountLabel($label)) {
+            $label = __(static::ACCOUNT_LABELS[$this->type]);
+        }
+
         // replace {$username} with the user's name
         if (auth()->check() && str_contains($label, '{$username}')) {
             $label = str_replace('{$username}', auth()->user()->fullName, $label);
         }
 
         return $label;
+    }
+
+    /**
+     * Whether the label is still the built-in English label of an account item and
+     * has no translation for the active language, so the interface text is shown.
+     */
+    protected function hasBuiltInAccountLabel(string $label): bool
+    {
+        return array_key_exists($this->type, static::ACCOUNT_LABELS)
+            && $label === static::getType($this->type)::getLabel()
+            && $this->translatedLocale('label') !== app()->getLocale();
     }
 
     public function isDisplayed(): bool

@@ -3,6 +3,6 @@
 @php
     $code = '429';
     $title = 'Too Many Request';
-    $message = 'The request was rejected because too many requests were made';
+    $message = __('general.error_429_message');
 @endphp
 

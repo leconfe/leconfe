@@ -28,8 +28,8 @@ class Proceedings extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            route(Home::getRouteName()) => 'Home',
-            'Proceedings',
+            route(Home::getRouteName()) => __('general.home'),
+            __('general.proceedings'),
         ];
     }
 

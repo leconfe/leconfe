@@ -3,5 +3,5 @@
 @php
     $code = '403';
     $title = 'Forbidden';
-    $message = $exception->getMessage() ?: 'Access denied, you do not have permission to access this page';
+    $message = $exception->getMessage() ?: __('general.error_403_message');
 @endphp
