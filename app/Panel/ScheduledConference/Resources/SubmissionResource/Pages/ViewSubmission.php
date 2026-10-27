@@ -74,6 +74,10 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
 
     protected static string $view = 'panel.conference.resources.submission-resource.pages.view-submission';
 
+    protected $listeners = [
+        'refreshSubmission' => '$refresh',
+    ];
+
     public function mount($record): void
     {
         static::authorizeResourceAccess();
