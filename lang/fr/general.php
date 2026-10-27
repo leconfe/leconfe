@@ -365,7 +365,7 @@ return [
     'not_uploaded' => 'Non téléversé',
     'include_any_necessary_files' => 'Veuillez inclure tous les fichiers nécessaires à l\'évaluation de votre soumission par notre équipe éditoriale. Outre le document principal, vous pouvez également choisir de soumettre des fichiers complémentaires tels que des jeux de données, des déclarations de conflits d\'intérêts ou tout autre document pertinent susceptible d\'aider nos éditeurs.',
     'filename' => 'Nom du fichier',
-    'uploaded_at' => 'Date de téléchargement',
+    'uploaded_at' => 'Date de téléversement',
     'rename' => 'Renommer',
     'new_filename' => 'Nouveau nom de fichier',
     'file_renamed_successfully' => 'Fichier renommé avec succès',
