@@ -137,8 +137,7 @@ class SubmissionResource extends Resource
                             })
                             ->searchable(query: function (Builder $query, string $search): Builder {
                                 return $query->where(fn (Builder $query) => $query
-                                    ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('translate', fn (Builder $query) => $query->where('key', 'title')->where('value', 'like', "%{$search}%"))
+                                    ->whereTranslatableLike('title', $search)
                                     ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%")));
                             }),
                         Split::make([

@@ -65,7 +65,7 @@ class CommitteeRoleResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (CommitteeRole $record) => $record->translated('name'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('committees_count')
                     ->label(__('general.committees'))

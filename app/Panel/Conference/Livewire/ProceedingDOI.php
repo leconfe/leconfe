@@ -18,6 +18,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class ProceedingDOI extends Component implements HasForms, HasTable
@@ -35,7 +36,7 @@ class ProceedingDOI extends Component implements HasForms, HasTable
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('doi.doi')
                     ->searchable()
                     ->label('DOI'),

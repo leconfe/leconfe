@@ -80,7 +80,7 @@ class AnnouncementResource extends Resource
                 TextColumn::make('title')
                     ->label(__('general.title'))
                     ->formatStateUsing(fn (Announcement $record) => $record->translated('title'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->sortable(),
                 TextColumn::make('expires_at')
                     ->label(__('general.expires_at'))

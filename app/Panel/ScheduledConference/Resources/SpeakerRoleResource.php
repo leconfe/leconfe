@@ -60,7 +60,7 @@ class SpeakerRoleResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (SpeakerRole $record) => $record->translated('name'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('speakers_count')
                     ->label(__('general.speakers'))

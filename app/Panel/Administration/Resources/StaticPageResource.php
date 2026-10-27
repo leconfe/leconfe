@@ -92,7 +92,7 @@ class StaticPageResource extends Resource
                 TextColumn::make('title')
                     ->label(__('general.title'))
                     ->formatStateUsing(fn (StaticPage $record) => $record->translated('title'))
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('slug')
                     ->label(__('general.slug'))
                     ->searchable()

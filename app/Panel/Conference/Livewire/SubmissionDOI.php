@@ -46,10 +46,7 @@ class SubmissionDOI extends Component implements HasForms, HasTable
                 TextColumn::make('title')
                     ->wrap()
                     ->getStateUsing(fn (Submission $record) => $record->translated('title'))
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->whereMeta('title', 'like', "%{$search}%");
-                    }),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('doi.doi')
                     ->searchable()
                     ->label('DOI'),

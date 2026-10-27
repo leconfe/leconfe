@@ -68,7 +68,7 @@ class AuthorRoleResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (AuthorRole $record) => $record->translated('name'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('authors_count')
                     ->label(__('general.authors'))

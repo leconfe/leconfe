@@ -19,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class TopicTable extends Component implements HasForms, HasTable
@@ -40,7 +41,7 @@ class TopicTable extends Component implements HasForms, HasTable
                 TextColumn::make('name')
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (Topic $record) => $record->translated('name'))
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search)),
             ])
             ->headerActions([
                 CreateAction::make('createtopic')
