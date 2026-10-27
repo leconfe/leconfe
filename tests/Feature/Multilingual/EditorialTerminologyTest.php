@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Multilingual;
 
+use App\Actions\Submissions\StartSubmissionReviewRoundAction;
 use App\Frontend\Conference\Pages\ProceedingDetail;
 use App\Models\Conference;
 use App\Models\Enums\SubmissionStage;
@@ -11,13 +12,16 @@ use App\Models\Submission;
 use App\Models\Track;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\DraftFiles;
+use App\Panel\ScheduledConference\Livewire\Submissions\Components\Files\RevisionFiles;
 use App\Panel\ScheduledConference\Livewire\Wizards\SubmissionWizard;
 use App\Panel\ScheduledConference\Pages\WorkflowSetting;
 use App\Providers\PanelProvider;
 use DOMDocument;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Livewire;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
 use Tests\Feature\Multilingual\Concerns\MakesPapers;
@@ -66,8 +70,18 @@ class EditorialTerminologyTest extends TestCase
             ->assertDontSee('Évaluation');
     }
 
-    public function test_file_upload_date_column_uses_televersement_in_french(): void
+    public static function frenchLocales(): array
     {
+        return [['fr'], ['fr_CA']];
+    }
+
+    /**
+     * @dataProvider frenchLocales
+     */
+    public function test_file_upload_date_column_uses_televersement(string $locale): void
+    {
+        app()->setLocale($locale);
+
         $label = Livewire::test(DraftFiles::class, ['submission' => $this->makeSubmission()])
             ->instance()
             ->getTable()
@@ -75,6 +89,35 @@ class EditorialTerminologyTest extends TestCase
             ->getLabel();
 
         $this->assertSame('Date de téléversement', $label);
+    }
+
+    /**
+     * @dataProvider frenchLocales
+     */
+    public function test_revision_upload_notice_uses_televerses(string $locale): void
+    {
+        app()->setLocale($locale);
+
+        $submission = $this->makeSubmission(SubmissionStage::PeerReview, SubmissionStatus::OnReview);
+        StartSubmissionReviewRoundAction::run($submission);
+
+        Livewire::test(RevisionFiles::class, ['submission' => $submission->refresh()])
+            ->mountTableAction('upload')
+            ->assertSee('Une fois les fichiers téléversés')
+            ->assertDontSee('téléchargés');
+    }
+
+    /**
+     * @dataProvider frenchLocales
+     */
+    public function test_failed_upload_validation_message_uses_televersement(string $locale): void
+    {
+        app()->setLocale($locale);
+
+        $file = new UploadedFile(__FILE__, 'paper.pdf', 'application/pdf', UPLOAD_ERR_PARTIAL, true);
+        $message = Validator::make(['paper' => $file], ['paper' => 'file'])->errors()->first('paper');
+
+        $this->assertSame('Le téléversement de paper a échoué.', $message);
     }
 
     public function test_only_the_active_proceeding_tab_is_marked_current(): void
@@ -117,7 +160,7 @@ class EditorialTerminologyTest extends TestCase
             ->assertOk();
     }
 
-    protected function makeSubmission(): Submission
+    protected function makeSubmission(SubmissionStage $stage = SubmissionStage::Wizard, SubmissionStatus $status = SubmissionStatus::Incomplete): Submission
     {
         $track = Track::query()->firstOrCreate(['abbreviation' => 'GEN'], ['title' => 'General']);
 
@@ -126,8 +169,8 @@ class EditorialTerminologyTest extends TestCase
             'conference_id' => $this->conference->getKey(),
             'scheduled_conference_id' => $this->scheduledConference->getKey(),
             'track_id' => $track->getKey(),
-            'stage' => SubmissionStage::Wizard,
-            'status' => SubmissionStatus::Incomplete,
+            'stage' => $stage,
+            'status' => $status,
         ]);
         $submission->setManyMeta(['title' => 'A paper about water', 'abstract' => '<p>Water research</p>']);
 
