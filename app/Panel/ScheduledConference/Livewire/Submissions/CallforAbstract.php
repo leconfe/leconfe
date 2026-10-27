@@ -208,7 +208,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                     ->helperText(__('general.review_round_name_helper'))
                     ->maxLength(255),
                 CheckboxList::make('papers')
-                    ->label('Select files below to send them to the review stage')
+                    ->label(__('general.select_files_to_send_to_review'))
                     ->hidden(
                         ! $this->submission->getMedia(SubmissionFileCategory::ABSTRACT_FILES)->count()
                     )

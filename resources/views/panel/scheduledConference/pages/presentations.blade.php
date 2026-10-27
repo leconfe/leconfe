@@ -59,7 +59,7 @@
                                     icon="heroicon-m-arrow-right"
                                     size="xs"
                                 >
-                                    Read More
+                                    {{ __('general.read_more') }}
                                 </x-filament::button>
                             </div>
                         </div>
@@ -72,8 +72,8 @@
         <x-filament::section>
             <div class="flex flex-col items-center justify-center gap-3 py-8 text-center">
                 <x-heroicon-m-magnifying-glass class="w-8 h-8 text-gray-400" />
-                <div class="text-sm font-medium text-gray-700">No presentations found</div>
-                <div class="text-xs text-gray-500">Try adjusting your filters or search terms.</div>
+                <div class="text-sm font-medium text-gray-700">{{ __('general.no_presentations_found') }}</div>
+                <div class="text-xs text-gray-500">{{ __('general.adjust_presentation_filters') }}</div>
             </div>
         </x-filament::section>
     @endif

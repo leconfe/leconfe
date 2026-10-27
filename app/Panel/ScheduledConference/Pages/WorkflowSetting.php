@@ -134,7 +134,7 @@ class WorkflowSetting extends Page
                                     ]),
                             ]),
                         Tabs\Tab::make('Presentations')
-                            ->label('Presentations')
+                            ->label(__('general.presentations'))
                             ->schema([
                                 Livewire::make(PresentationSetting::class),
                             ]),

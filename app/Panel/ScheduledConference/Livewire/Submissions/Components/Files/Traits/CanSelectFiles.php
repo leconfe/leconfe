@@ -23,14 +23,14 @@ trait CanSelectFiles
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->icon('iconpark-check')
-                ->label('Select Files')
+                ->label(__('general.select_files'))
                 ->extraAttributes([
                     'x-on:close-select-files.window' => new HtmlString('$wire.unmountTableAction(\'select-files\')'),
                 ])
                 ->infolist([
                     ShoutEntry::make('information')
                         ->color('info')
-                        ->content('Choose the files to create duplicates.'),
+                        ->content(__('general.choose_files_to_duplicate')),
                     Livewire::make(
                         SelectFiles::class,
                         [
@@ -44,7 +44,7 @@ trait CanSelectFiles
                 ]),
             Action::make('upload')
                 ->icon('iconpark-upload')
-                ->label('Upload Files')
+                ->label(__('general.upload_files'))
                 ->hidden(
                     fn (): bool => $this->submission->isDeclined() ?: $this->isViewOnly()
                 )
@@ -52,8 +52,8 @@ trait CanSelectFiles
                 ->form(
                     $this->uploadFormSchema()
                 )
-                ->successNotificationTitle('Files added successfully')
-                ->failureNotificationTitle('There was a problem adding the files')
+                ->successNotificationTitle(__('general.files_added_successfully'))
+                ->failureNotificationTitle(__('general.problem_adding_files'))
                 ->action(
                     fn (array $data, Action $action) => $this->handleUploadAction($data, $action)
                 ),

@@ -29,7 +29,18 @@ enum SubmissionStatus: string implements HasColor, HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return __('general.'.match ($this) {
+            self::Incomplete => 'incomplete',
+            self::Queued => 'queued',
+            self::OnReview => 'on_review',
+            self::OnPayment => 'on_payment',
+            self::OnPresentation => 'on_presentation',
+            self::Editing => 'editing',
+            self::Published => 'published',
+            self::PaymentDeclined => 'payment_declined',
+            self::Declined => 'declined',
+            self::Withdrawn => 'withdrawn',
+        });
     }
 
     public function getOrder(): int

@@ -30,7 +30,7 @@ class ReviewerAssignedFiles extends \Livewire\Component implements HasForms, Has
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Assigned Files')
+            ->heading(__('general.assigned_files'))
             ->query(
                 fn (): Builder => $this->record->assignedFiles()->getQuery()
             )

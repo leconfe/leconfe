@@ -52,6 +52,7 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('general.form_item'))
             ->query($this->getTableQuery())
             ->reorderable('order_column')
             ->columns([
@@ -129,22 +130,22 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                 MultilanguageComponent::make([
                     TextInput::make('meta.name')
                         ->required()
-                        ->label('Item Name'),
+                        ->label(__('general.item_name')),
                     Textarea::make('meta.description')
-                        ->label('Description and Instructions'),
+                        ->label(__('general.description_and_instructions')),
                 ]),
                 Checkbox::make('required')
-                    ->label('Indicates required item'),
+                    ->label(__('general.indicates_required_item')),
                 Select::make('type')
                     ->required()
                     ->reactive()
                     ->options(fn () => PaymentFormItem::getOptions())
                     ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) {
                         if (! array_key_exists($value, PaymentFormItem::getOptions())) {
-                            $fail('Option unavailable');
+                            $fail(__('general.option_unavailable'));
                         }
                     })
-                    ->label('Item Type'),
+                    ->label(__('general.item_type')),
                 ResponseOptionsRepeater::make('meta.response_options')
                     ->visible(fn (Get $get) => in_array($get('type'), $choiceTypes)),
             ]);

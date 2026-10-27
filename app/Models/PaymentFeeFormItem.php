@@ -77,12 +77,12 @@ class PaymentFeeFormItem extends Model implements Sortable
     public static function getOptions(): array
     {
         return [
-            static::TYPE_TEXT => 'Single text box',
-            static::TYPE_TEXTAREA => 'Extended text box',
-            static::TYPE_CHECKBOX => 'Checkboxes (you can choose one or more)',
-            static::TYPE_RADIO => 'Radio button (you can only choose one)',
-            static::TYPE_SELECT => 'Drop down box',
-            static::TYPE_UPLOAD => 'Upload File',
+            static::TYPE_TEXT => __('general.item_type_text'),
+            static::TYPE_TEXTAREA => __('general.item_type_textarea'),
+            static::TYPE_CHECKBOX => __('general.item_type_checkbox'),
+            static::TYPE_RADIO => __('general.item_type_radio'),
+            static::TYPE_SELECT => __('general.item_type_select'),
+            static::TYPE_UPLOAD => __('general.item_type_upload'),
         ];
     }
 

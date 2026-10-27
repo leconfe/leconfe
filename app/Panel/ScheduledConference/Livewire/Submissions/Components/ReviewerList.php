@@ -368,7 +368,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 fn ($action) => $action
                                     ->getStateUsing(function (Review $record, \stdClass $rowLoop) {
                                         if ($record->getMeta('review_mode') != Review::MODE_OPEN) {
-                                            return 'Reviewer '.$rowLoop->iteration;
+                                            return __('general.reviewer_number', ['number' => $rowLoop->iteration]);
                                         }
 
                                         return $record->user->fullName;
@@ -377,6 +377,13 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                             ),
                         TextColumn::make('status')
                             ->extraAttributes(['class' => 'mt-2'])
+                            ->formatStateUsing(fn (string $state) => match ($state) {
+                                ReviewerStatus::ACCEPTED => __('general.accepted'),
+                                ReviewerStatus::DECLINED => __('general.declined'),
+                                ReviewerStatus::PENDING => __('general.pending'),
+                                ReviewerStatus::CANCELED => __('general.cancelled'),
+                                default => $state,
+                            })
                             ->color(function ($state) {
                                 return match ($state) {
                                     ReviewerStatus::PENDING => 'warning',
@@ -395,7 +402,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 return '';
                             }
 
-                            return __('general.recommend').$state;
+                            return SubmissionStatusRecommendation::label($state);
                         })
                         ->color(
                             fn (Review $record): string => match ($record->recommendation) {
@@ -409,10 +416,11 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
             ])
             ->actions([
                 Action::make('read-review')
+                    ->label(__('general.read_review'))
                     ->visible(fn (Review $record): bool => $record->reviewSubmitted())
                     ->modalWidth('2xl')
-                    ->modalSubmitActionLabel('Confirm')
-                    ->modalHeading(fn () => 'Review: '.$this->record->translated('title'))
+                    ->modalSubmitActionLabel(__('general.confirm'))
+                    ->modalHeading(fn () => __('general.review_submission_heading', ['title' => $this->record->translated('title')]))
                     ->icon('lineawesome-eye')
                     ->disabledForm()
                     ->when(
@@ -459,9 +467,9 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                         $this->record->isParticipantAuthor(auth()->user()),
                                         fn ($component) => $component->hidden(),
                                     )
-                                    ->content('Once this review has been read, press "Confirm" to indicate that the review process may proceed. If the reviewer has submitted their review elsewhere, you may upload the file below and then press "Confirm" to proceed.'),
+                                    ->content(__('general.read_review_confirm_instructions')),
                                 Shout::make('completed')
-                                    ->content(fn (Review $record) => 'Completed : '.$record->date_completed),
+                                    ->content(fn (Review $record) => __('general.review_completed_on', ['date' => $record->date_completed])),
                                 Shout::make('recommendation')
                                     ->color(
                                         fn (): string => match ($record->recommendation) {
@@ -470,26 +478,27 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                             default => 'warning'
                                         }
                                     )
-                                    ->content(fn (Review $record) => 'Recommendation : '.$record->recommendation),
+                                    ->content(fn (Review $record) => __('general.recommendation_value', ['recommendation' => SubmissionStatusRecommendation::label($record->recommendation)])),
                                 Placeholder::make('reviewer')
+                                    ->label(__('general.reviewer'))
                                     ->when(
                                         $this->record->isParticipantAuthor(auth()->user()),
                                         fn ($component) => $component->visible(fn (Review $record) => $record->getMeta('review_mode') == Review::MODE_OPEN),
                                     )
                                     ->content(fn (Review $record) => $record->user->fullName.' ('.$record->user->email.')'),
                                 Placeholder::make('score')
-                                    ->label('Paper Score')
+                                    ->label(__('general.paper_score'))
                                     ->hidden(fn (Review $record) => ! $record->score)
                                     ->content(fn (Review $record) => $record->score),
                                 ...ReviewFormItem::with('translate')->ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField()->disabled())->toArray(),
-                                Section::make('Reviewer Comments')
+                                Section::make(__('general.reviewer_comments'))
                                     ->schema([
                                         Placeholder::make('for_author_and_editor')
-                                            ->label('For Author and Editor')
+                                            ->label(__('general.for_author_and_editor'))
                                             ->extraAttributes(['class' => 'prose'])
                                             ->content(fn ($record) => $record->getMeta('review_for_author_editor') ? new HtmlString($record->getMeta('review_for_author_editor')) : '-'),
                                         Placeholder::make('for_editor')
-                                            ->label('For Editor')
+                                            ->label(__('general.for_editor'))
                                             ->visible(fn () => auth()->user()->can('actAsEditor', $this->record))
                                             ->extraAttributes(['class' => 'prose'])
                                             ->content(fn ($record) => $record->getMeta('review_for_editor') ? new HtmlString($record->getMeta('review_for_editor')) : '-'),
@@ -499,20 +508,21 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                     'viewOnly' => (bool) $record->date_acknowledged || ! auth()->user()->can('actAsEditor', $this->record),
                                 ])->lazy(),
                                 Select::make('recommendation')
+                                    ->label(__('general.recommendation'))
                                     ->required()
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))
-                                    ->helperText('Set or adjust the reviewer recommendation.')
+                                    ->helperText(__('general.adjust_reviewer_recommendation'))
                                     ->options(SubmissionStatusRecommendation::list()),
                                 Select::make('quality')
                                     ->required()
                                     ->hidden(! auth()->user()->can('actAsEditor', $this->record))
                                     ->native(false)
-                                    ->label('Reviewer Rating')
-                                    ->helperText('Rate the quality of the review provided. This rating is not shared with the reviewer.')
+                                    ->label(__('general.reviewer_rating'))
+                                    ->helperText(__('general.reviewer_rating_helper'))
                                     ->options(
                                         collect([1, 2, 3, 4, 5])
                                             ->mapWithKeys(fn ($count) => [$count => view('components.star', ['count' => $count])->render()])
-                                            ->prepend('No Rating', 0)
+                                            ->prepend(__('general.no_rating'), 0)
                                             ->toArray()
                                     )
                                     ->allowHtml(),
@@ -578,7 +588,7 @@ class ReviewerList extends Component implements HasActions, HasForms, HasTable
                                 ->minHeight(300)
                                 ->profile('email'),
                         ])
-                        ->successNotificationTitle('Email has been sent.')
+                        ->successNotificationTitle(__('general.email_has_been_sent'))
                         ->action(function (Action $action, Review $record, array $data) {
                             Mail::send([], [], function (Message $message) use ($record, $data) {
                                 $message->to($record->user->email)

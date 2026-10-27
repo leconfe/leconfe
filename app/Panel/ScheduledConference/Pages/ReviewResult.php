@@ -128,18 +128,20 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ])
                     ->grow(false),
                 TextColumn::make('title')
+                    ->label(__('general.title'))
                     ->getStateUsing(fn ($record) => $record->translated('title'))
                     ->color('primary')
                     ->openUrlInNewTab()
                     ->url(fn ($record) => SubmissionResource::getUrl('view', ['record' => $record]))
                     ->wrap(),
                 TextColumn::make('status')
+                    ->label(__('general.status'))
                     ->extraAttributes([
                         'class' => 'mt-2',
                     ])
                     ->badge()
                     ->formatStateUsing(
-                        fn (Submission $record) => $record->status?->value
+                        fn (Submission $record) => $record->status?->getLabel()
                     ),
 
             ])

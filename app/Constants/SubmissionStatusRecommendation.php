@@ -13,9 +13,19 @@ final class SubmissionStatusRecommendation
     public static function list()
     {
         return [
-            self::ACCEPT => self::ACCEPT,
-            self::DECLINE => self::DECLINE,
-            self::REVISION_REQUIRED => self::REVISION_REQUIRED,
+            self::ACCEPT => self::label(self::ACCEPT),
+            self::DECLINE => self::label(self::DECLINE),
+            self::REVISION_REQUIRED => self::label(self::REVISION_REQUIRED),
         ];
+    }
+
+    public static function label(?string $recommendation): ?string
+    {
+        return match ($recommendation) {
+            self::ACCEPT => __('general.recommendation_accept'),
+            self::DECLINE => __('general.recommendation_decline'),
+            self::REVISION_REQUIRED => __('general.revision_required'),
+            default => $recommendation,
+        };
     }
 }
