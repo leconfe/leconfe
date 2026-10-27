@@ -21,6 +21,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewProceeding extends Page implements HasForms, HasTable
@@ -126,7 +127,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
                     ->label(__('general.title'))
                     ->getStateUsing(fn (Submission $record) => $record->translated('title'))
                     ->url(fn (Submission $record) => route('filament.scheduledConference.resources.submissions.view', ['record' => $record->id, 'serie' => $record->scheduledConference]))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->color('primary'),
                 TextColumn::make('pages')
                     ->getStateUsing(fn (Submission $record) => $record->getMeta('article_pages')),

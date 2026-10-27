@@ -103,7 +103,7 @@ class ReviewResult extends Page implements HasForms, HasTable
                     ])
                     ->sortable()
                     ->label('Score')
-                    ->searchable(query: fn ($query, $search) => $query->whereMeta('title', 'like', "%$search%"))
+                    ->searchable(query: fn ($query, $search) => $query->whereTranslatableLike('title', $search))
                     ->numeric(maxDecimalPlaces: 2),
                 TextColumn::make('reviews')
                     ->extraCellAttributes([

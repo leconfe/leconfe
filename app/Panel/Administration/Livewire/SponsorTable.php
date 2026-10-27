@@ -25,6 +25,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SponsorTable extends Component implements HasForms, HasTable
@@ -63,7 +64,7 @@ class SponsorTable extends Component implements HasForms, HasTable
                     ->label(__('general.level'))
                     ->formatStateUsing(fn (Stakeholder $record) => $record->level?->translated('name'))
                     ->badge()
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereHas('level', fn (Builder $query) => $query->whereTranslatableLike('name', $search))),
                 ToggleColumn::make('is_shown')
                     ->label(__('general.shown')),
             ])

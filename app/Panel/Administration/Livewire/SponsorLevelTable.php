@@ -23,6 +23,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SponsorLevelTable extends Component implements HasForms, HasTable
@@ -47,7 +48,7 @@ class SponsorLevelTable extends Component implements HasForms, HasTable
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (StakeholderLevel $record) => $record->translated('name'))
                     ->description(fn (StakeholderLevel $record) => $record->translated('description'))
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search)),
                 ToggleColumn::make('is_shown')
                     ->label(__('general.shown')),
             ])

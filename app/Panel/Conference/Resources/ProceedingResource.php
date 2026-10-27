@@ -120,7 +120,7 @@ class ProceedingResource extends Resource
                 TextColumn::make('title')
                     ->label(__('general.title'))
                     ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->sortable(),
                 TextColumn::make('submissions_count')
                     ->label(__('general.submissions'))

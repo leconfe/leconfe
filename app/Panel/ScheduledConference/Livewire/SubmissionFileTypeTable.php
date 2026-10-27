@@ -19,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SubmissionFileTypeTable extends Component implements HasForms, HasTable
@@ -42,7 +43,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 TextColumn::make('name')
                     ->label(__('general.name'))
                     ->formatStateUsing(fn (SubmissionFileType $record) => $record->translated('name'))
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search)),
                 IconColumn::make('required')
                     ->label(__('general.required'))
                     ->boolean(),

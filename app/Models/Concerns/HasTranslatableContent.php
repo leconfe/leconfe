@@ -138,6 +138,25 @@ trait HasTranslatableContent
         return $query->with('translate');
     }
 
+    public function scopeWhereTranslatableLike(Builder $query, string $key, string $search): Builder
+    {
+        $this->guardAgainstNonTranslatableAttribute($key);
+
+        $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+        $term = "%{$search}%";
+        $matches = fn (Builder $query) => $query->where('key', $key)->where('value', $operator, $term);
+        $translatedIds = $matches(Translate::query()->select('translatable_id')->where('translatable_type', $this->getMorphClass()))->toBase();
+
+        return $query->where(fn (Builder $query) => $query
+            ->when(
+                $this->isTranslatableColumn($key),
+                fn (Builder $query) => $query->where($query->qualifyColumn($key), $operator, $term),
+                fn (Builder $query) => $query->whereHas('meta', $matches),
+            )
+            // A raw clause, because laravel-model-caching cannot build a cache key for a whereIn subquery with bindings.
+            ->orWhereRaw($query->getGrammar()->wrap($this->getQualifiedKeyName()).' in ('.$translatedIds->toSql().')', $translatedIds->getBindings()));
+    }
+
     /**
      * The value for a locale, falling back to the primary language and then to the
      * value stored in the original column or meta.

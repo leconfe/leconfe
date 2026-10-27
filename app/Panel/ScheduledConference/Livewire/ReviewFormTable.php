@@ -27,6 +27,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -51,7 +52,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                     ->label(__('scheduled_conference.label'))
                     ->formatStateUsing(fn (ReviewFormItem $record) => $record->translated('label'))
                     ->wrap()
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('label', $search)),
                 TextColumn::make('weight')
                     ->label(__('scheduled_conference.weight'))
                     ->getStateUsing(fn (ReviewFormItem $record) => $record->isEnableScoring() ? $record->weight : '-')
