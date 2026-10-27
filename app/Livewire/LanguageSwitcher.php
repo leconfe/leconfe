@@ -34,7 +34,7 @@ class LanguageSwitcher extends Component
         $locales = app(ContentLocales::class);
 
         $languages = collect($locales->enabled())
-            ->mapWithKeys(fn (string $locale) => [$locale => $locales->label($locale)])
+            ->mapWithKeys(fn (string $locale) => [$locale => $locales->autonym($locale)])
             ->all();
 
         return view('livewire.language-switcher', [

@@ -1173,7 +1173,7 @@ return [
 
     'language' => 'Language',
     'switch_language' => 'Change interface language',
-    'current_language' => 'Current language',
+    'current_language' => 'Current language:',
     'translations' => 'Translations',
     'show_translations' => 'Show translations',
     'hide_translations' => 'Hide translations',
