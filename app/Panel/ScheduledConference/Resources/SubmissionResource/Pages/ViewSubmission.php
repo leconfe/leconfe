@@ -38,6 +38,7 @@ use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\SubmissionBillingNotifier;
 use App\Services\Notifications\OperationalNotificationRecipients;
 use App\Support\Multilingual\ContentLocales;
+use App\Support\Multilingual\LanguageReadiness;
 use App\Support\Multilingual\RecipientLocale;
 use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Actions\Action;
@@ -243,6 +244,7 @@ class ViewSubmission extends Page implements HasForms, HasInfolists
                 )
                 ->authorize('publish', $this->record)
                 ->successNotificationTitle(__('general.submission_published_successfully'))
+                ->modalContent(fn () => LanguageReadiness::forPaper($this->record)->render())
                 ->mountUsing(function (Form $form) {
                     $mailTemplate = MailTemplate::contentFor(PublishSubmissionMail::class, RecipientLocale::for($this->record->user));
                     $form->fill([
