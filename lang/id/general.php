@@ -1151,7 +1151,7 @@ return [
     'submission_file_deleted_activity' => 'File dengan nama ":name" dan id :id dihapus.',
 
     'language' => 'Bahasa',
-    'switch_language' => 'Ganti bahasa',
+    'switch_language' => 'Ganti bahasa antarmuka',
     'current_language' => 'Bahasa saat ini:',
     'translations' => 'Terjemahan',
     'show_translations' => 'Tampilkan terjemahan',
@@ -1169,7 +1169,7 @@ return [
     'view_your_submissions' => 'Lihat naskah Anda yang sedang diproses',
     'track_policies' => 'Kebijakan Track',
     'preferred_language' => 'Bahasa pilihan',
-    'preferred_language_helper' => 'Email dikirim kepada Anda dalam bahasa ini.',
+    'preferred_language_helper' => 'Email dikirim dalam bahasa ini jika terjemahannya tersedia, dan antarmuka beralih ke bahasa ini saat masuk. Memilih bahasa dari menu bahasa antarmuka juga memperbarui pengaturan ini. Pengaturan ini tidak menerjemahkan konten.',
     'paper_language' => 'Bahasa makalah',
     'paper_language_helper' => 'Bahasa yang digunakan dalam makalah. Metadata dalam bahasa ini wajib diisi dan digunakan untuk sitasi dan pengindeksan.',
     'interface_language' => 'Bahasa antarmuka',
