@@ -140,7 +140,7 @@ return [
     'url' => 'Das :attribute muss eine gültige URL sein.',
     'ulid' => 'Das :attribute muss eine gültige ULID sein.',
     'uuid' => 'Das :attribute muss eine gültige UUID sein.',
-    'weight_over' => 'Bitte beachten Sie, das die gesmate Gewichtung 100% nicht überschreiten darf. Derzeit sind es :attribute%.',
+    'weight_over' => 'Bitte beachten Sie, dass die gesamte Gewichtung 100% nicht überschreiten darf. Derzeit sind es :attribute%.',
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
