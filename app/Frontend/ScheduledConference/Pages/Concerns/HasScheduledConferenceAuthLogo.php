@@ -21,7 +21,7 @@ trait HasScheduledConferenceAuthLogo
 
     public function getAuthLogoAltText(): string
     {
-        return app()->getCurrentScheduledConference()?->title ?? config('app.name', 'Leconfe');
+        return app()->getCurrentScheduledConference()?->translated('title') ?? config('app.name', 'Leconfe');
     }
 
     public function getAuthLogoHomeUrl(): string

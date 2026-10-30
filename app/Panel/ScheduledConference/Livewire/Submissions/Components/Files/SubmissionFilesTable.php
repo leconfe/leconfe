@@ -83,11 +83,11 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
 
                     return response()->download($record->media->getPath(), $name.'.'.$record->media->extension);
                 })
-                ->description(fn (SubmissionFile $record) => $record->type->name),
+                ->description(fn (SubmissionFile $record) => $record->type->translated('name')),
             TextColumn::make('created_at')
                 ->visibleFrom('md')
                 ->label(__('general.uploaded_at'))
-                ->formatStateUsing(fn ($state) => $state?->format(Setting::get('format_date').' '.Setting::get('format_time')))
+                ->formatStateUsing(fn ($state) => $state?->translatedFormat(Setting::get('format_date').' '.Setting::get('format_time')))
                 ->sortable(),
         ];
     }
@@ -127,6 +127,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
                 ->options(fn () => $this->submissionFileTypeOptions())
                 ->searchable(),
             SpatieMediaLibraryFileUpload::make('files')
+                ->label(__('general.files'))
                 ->required()
                 ->previewable(false)
                 ->downloadable()
@@ -322,7 +323,7 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     {
         $query = $this->submission
             ->submissionFiles()
-            ->with(['media', 'submission'])
+            ->with(['media', 'submission', 'type.translate'])
             ->where('category', $this->category)
             ->getQuery();
 
@@ -364,8 +365,10 @@ abstract class SubmissionFilesTable extends \Livewire\Component implements HasFo
     protected function submissionFileTypeOptions(): array
     {
         return $this->submissionFileTypeQuery()
+            ->with('translate')
             ->ordered()
-            ->pluck('name', 'id')
+            ->get()
+            ->mapWithKeys(fn (SubmissionFileType $type) => [$type->getKey() => $type->translated('name')])
             ->toArray();
     }
 

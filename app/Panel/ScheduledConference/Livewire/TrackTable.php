@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Actions\Tracks\TrackCreateAction;
 use App\Actions\Tracks\TrackUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Enums\UserRole;
 use App\Models\Track;
@@ -39,14 +40,16 @@ class TrackTable extends Component implements HasForms, HasTable
     {
         return $table
             ->deferLoading()
-            ->query(Track::with(['meta'])->orderBy('order_column'))
+            ->query(Track::with(['meta', 'translate'])->orderBy('order_column'))
             ->heading(__('general.track'))
             ->columns([
                 IndexColumn::make('no')
                     ->label('No.'),
                 TextColumn::make('title')
-                    ->label(__('general.title')),
+                    ->label(__('general.title'))
+                    ->formatStateUsing(fn (Track $record) => $record->translated('title')),
                 TextColumn::make('editors')
+                    ->label(__('general.editors'))
                     ->wrap()
                     ->bulleted()
                     ->listWithLineBreaks()
@@ -67,9 +70,9 @@ class TrackTable extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::ThreeExtraLarge)
                     ->form(fn (Form $form) => $this->form($form))
                     ->mutateRecordDataUsing(function (array $data, Track $record) {
-                        $data['meta'] = $record->getAllMeta();
+                        $data['meta'] = $record->getAllMeta()->all();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, ['title', 'meta.policy']);
                     })
                     ->action(fn (Track $record, array $data) => TrackUpdateAction::run($record, $data)),
                 DeleteAction::make()
@@ -95,17 +98,21 @@ class TrackTable extends Component implements HasForms, HasTable
             ->schema([
                 Grid::make()
                     ->schema([
-                        TextInput::make('title')
-                            ->label(__('general.track_title'))
-                            ->required(),
+                        MultilanguageComponent::make([
+                            TextInput::make('title')
+                                ->label(__('general.track_title'))
+                                ->required(),
+                        ]),
                         TextInput::make('abbreviation')
                             ->label(__('general.abbreviation'))
                             ->alpha()
                             ->required(),
                     ]),
-                TinyEditor::make('meta.policy')
-                    ->label(__('general.track_policy'))
-                    ->profile('basic'),
+                MultilanguageComponent::make([
+                    TinyEditor::make('meta.policy')
+                        ->label(__('general.track_policy'))
+                        ->profile('basic'),
+                ]),
                 TextInput::make('meta.abstract_word_count')
                     ->label(__('general.track_abstract_word_count'))
                     ->helperText(__('general.track_abstract_word_count_helper'))

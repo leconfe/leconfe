@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
+use App\Models\Concerns\HasBuiltinLabel;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,15 +14,28 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class AuthorRole extends Model implements Sortable
 {
-    use BelongsToConference, Cachable, HasFactory, SortableTrait;
+    use BelongsToConference, Cachable, HasBuiltinLabel, HasFactory, SortableTrait;
 
     protected $table = 'author_roles';
+
+    public static function builtinNames(): array
+    {
+        return [
+            'author' => 'Author',
+            'translator' => 'Translator',
+        ];
+    }
 
     protected $fillable = [
         'conference_id',
         'parent_id',
         'name',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name'];
 
     public function authors(): HasMany
     {

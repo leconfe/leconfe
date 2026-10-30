@@ -4,6 +4,8 @@ namespace App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 
 use App\Actions\Submissions\SubmissionCreateAction;
 use App\Facades\Hook;
+use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Frontend\ScheduledConference\Pages\Submissions;
 use App\Managers\PaymentManager;
 use App\Models\Enums\UserRole;
 use App\Models\PaymentFee;
@@ -13,18 +15,22 @@ use App\Models\Submission;
 use App\Models\SubmissionFormItem;
 use App\Models\Timeline;
 use App\Models\Track;
+use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\ContentLocales;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -35,17 +41,56 @@ class CreateSubmission extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $title = 'Make a Submission';
-
     protected static string $resource = SubmissionResource::class;
 
     protected static string $view = 'panel.conference.resources.submission-resource.pages.create-submission';
 
     public $data;
 
+    public function getTitle(): string
+    {
+        return __('general.make_a_submission');
+    }
+
     public function mount(): void
     {
-        $this->form->fill([]);
+        $this->form->fill([
+            'meta' => ['language' => app(ContentLocales::class)->default()],
+        ]);
+    }
+
+    /**
+     * The chosen paper language when it is enabled, else the site default language.
+     */
+    protected function paperLanguage(): string
+    {
+        $language = data_get($this->data, 'meta.language');
+        $contentLocales = app(ContentLocales::class);
+
+        return $contentLocales->isEnabled($language) ? $language : $contentLocales->default();
+    }
+
+    /**
+     * Moves a title typed for the previous paper language to the new one when the new
+     * language has no title yet, so changing the language does not lose input.
+     */
+    protected function moveTitleToPaperLanguage(Get $get, Set $set, ?string $old, ?string $new): void
+    {
+        if (! $old || ! $new || $old === $new) {
+            return;
+        }
+
+        $titles = $get('meta.title');
+
+        if (! is_array($titles) || array_is_list($titles)) {
+            return;
+        }
+
+        if (ContentLocales::isBlank($titles[$new] ?? null) && ! ContentLocales::isBlank($titles[$old] ?? null)) {
+            $titles[$new] = $titles[$old];
+            $titles[$old] = null;
+            $set('meta.title', $titles);
+        }
     }
 
     public function getHeading(): string|Htmlable
@@ -53,18 +98,29 @@ class CreateSubmission extends Page implements HasForms
         return '';
     }
 
+    /**
+     * Whether the current scheduled conference accepts submissions from the user: the
+     * submission timeline is open and at least one active track is available to them.
+     */
+    public static function isAcceptingSubmissions(?User $user = null): bool
+    {
+        $isEditor = $user?->hasAnyRole([
+            UserRole::Admin,
+            UserRole::ConferenceManager,
+            UserRole::ScheduledConferenceEditor,
+            UserRole::TrackEditor,
+        ]) ?? false;
+
+        return Timeline::isSubmissionOpen() && Track::query()
+            ->active()
+            ->when(! $isEditor, fn ($query) => $query->whereMeta('submit_only_for_editors', false))
+            ->exists();
+    }
+
     protected function getViewData(): array
     {
-        $isOpen = Timeline::isSubmissionOpen() && Track::query()
-            ->active()
-            ->when(! auth()->user()->hasAnyRole([
-                UserRole::Admin,
-                UserRole::ConferenceManager,
-                UserRole::ScheduledConferenceEditor,
-                UserRole::TrackEditor,
-            ]), fn ($query) => $query->whereMeta('submit_only_for_editors', false))
-            ->count();
-        $closedMessage = 'This conference is not accepting submissions at this time.';
+        $isOpen = static::isAcceptingSubmissions(auth()->user());
+        $closedMessage = __('general.not_accepting_submissions');
 
         Hook::call('Panel::ScheduledConference::SubmissionCreate::availability', [&$isOpen, &$closedMessage, $this]);
 
@@ -81,10 +137,34 @@ class CreateSubmission extends Page implements HasForms
                 Placeholder::make('before_you_begin')
                     ->label(__('general.before_you_begin'))
                     ->extraAttributes(['class' => 'prose prose-sm max-w-none'])
-                    ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('before_you_begin') !== null)
-                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('before_you_begin'))),
-                TextInput::make('meta.title')
-                    ->required(),
+                    ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('before_you_begin')))
+                    ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->translated('before_you_begin'))),
+                Placeholder::make('author_guidelines_link')
+                    ->hiddenLabel()
+                    ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('author_guidelines')))
+                    ->content(fn () => new HtmlString(sprintf(
+                        '<a href="%s" target="_blank" rel="noopener" class="text-primary-600 hover:underline">%s</a>',
+                        e(route(Submissions::getRouteName('scheduledConference'))),
+                        e(__('general.read_author_guidelines')),
+                    ))),
+                Select::make('meta.language')
+                    ->label(__('general.paper_language'))
+                    ->helperText(__('general.paper_language_helper'))
+                    ->options(fn (): array => app(ContentLocales::class)->options())
+                    ->in(fn (): array => array_keys(app(ContentLocales::class)->options()))
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->default(fn (): string => app(ContentLocales::class)->default())
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Set $set, ?string $old, ?string $state) => $this->moveTitleToPaperLanguage($get, $set, $old, $state))
+                    ->visible(fn (): bool => app(ContentLocales::class)->isMultilingual()),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.title')
+                        ->label(__('general.title'))
+                        ->required(),
+                ])
+                    ->primaryLocale(fn (): string => $this->paperLanguage())
+                    ->locales(fn (): array => [$this->paperLanguage(), ...app(ContentLocales::class)->ordered()]),
                 Grid::make(1)
                     ->visible(SubmissionFormItem::exists())
                     ->schema([
@@ -94,14 +174,15 @@ class CreateSubmission extends Page implements HasForms
                     ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_payment'))
                     ->schema([
                         Radio::make('payment_fee_id')
-                            ->label('Payment Fee')
+                            ->label(__('general.payment_fee'))
                             ->required()
                             ->live()
                             ->options(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
+                                    ->with('translate')
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                             )
                             ->descriptions(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
@@ -109,14 +190,14 @@ class CreateSubmission extends Page implements HasForms
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
-                        \Filament\Forms\Components\Fieldset::make('Add-on Items')
+                        \Filament\Forms\Components\Fieldset::make(__('general.add_on_items'))
                             ->schema(function (Get $get) {
                                 $paymentFee = PaymentFee::find($get('payment_fee_id'));
                                 if (! $paymentFee) {
                                     return [];
                                 }
 
-                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                return collect($paymentFee->getTranslatedAdditionalItems())->map(function ($item) use ($paymentFee) {
                                     $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
 
                                     return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
@@ -147,8 +228,9 @@ class CreateSubmission extends Page implements HasForms
                                 UserRole::ScheduledConferenceEditor,
                                 UserRole::TrackEditor,
                             ]))
+                            ->with('translate')
                             ->get()
-                            ->pluck('title', 'id')
+                            ->mapWithKeys(fn (Track $track) => [$track->getKey() => $track->translated('title')])
                     )
                     ->reactive(),
                 Placeholder::make('track_policy')
@@ -159,28 +241,26 @@ class CreateSubmission extends Page implements HasForms
                         }
 
                         $track = Track::find($get('track_id'));
-                        if ($track->getMeta('policy') === null) {
-                            return false;
-                        }
 
-                        return true;
+                        return $track && ! ContentLocales::isBlank($track->translated('policy'));
                     })
                     ->label(function (Get $get) {
                         if (! $get('track_id')) {
                             return '';
                         }
 
-                        return Track::find($get('track_id'))->title;
+                        return Track::find($get('track_id'))?->translated('title') ?? '';
                     })
-                    ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))->getMeta('policy')) : ''),
+                    ->content(fn (Get $get) => $get('track_id') ? new HtmlString(Track::find($get('track_id'))?->translated('policy') ?? '') : ''),
                 Fieldset::make(__('general.submission_checklist'))
                     ->columns(1)
                     ->schema([
                         Placeholder::make('submission_checklist')
+                            ->label(__('general.submission_checklist'))
                             ->hiddenLabel()
                             ->extraAttributes(['class' => 'prose prose-sm'])
-                            ->visible(fn () => app()->getCurrentScheduledConference()->getMeta('submission_checklist') !== null)
-                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->getMeta('submission_checklist'))),
+                            ->visible(fn () => ! ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('submission_checklist')))
+                            ->content(fn () => new HtmlString(app()->getCurrentScheduledConference()->translated('submission_checklist'))),
                         Checkbox::make('submissionRequirements')
                             ->required()
                             ->label(__('general.submission_meets_all_of_requirements')),
@@ -199,7 +279,7 @@ class CreateSubmission extends Page implements HasForms
                         $managerUserGroupAssignments = Role::query()->get()->filter(fn ($role) => auth()->user()->hasRole($role) && $role->hasDefaultPermission('Submission:submitAs'));
                         $authorUserGroupAssignments = Role::query()->where('name', UserRole::Author)->get();
 
-                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('name', 'id');
+                        return $managerUserGroupAssignments->merge($authorUserGroupAssignments)->pluck('display_name', 'id');
                     }),
             ])
             ->model(Submission::class)
@@ -261,7 +341,7 @@ class CreateSubmission extends Page implements HasForms
                     $paymentFee,
                     $submission->user,
                     PaymentManager::TYPE_SUBMISSION_FEE,
-                    $submission->getMeta('title'),
+                    $submission->translated('title', $submission->getPrimaryContentLocale()),
                     SubmissionResource::getUrl('view', ['record' => $submission]),
                     $paymentFee->getMeta('description'),
                     $totalAmount,

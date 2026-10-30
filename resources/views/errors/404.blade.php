@@ -3,5 +3,5 @@
 @php
     $code = '404';
     $title = 'Not Found';
-    $message = 'The URL you are looking for was not found';
+    $message = __('general.error_404_message');
 @endphp

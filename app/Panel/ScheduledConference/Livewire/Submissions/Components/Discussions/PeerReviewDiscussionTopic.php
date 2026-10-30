@@ -152,7 +152,7 @@ class PeerReviewDiscussionTopic extends \Livewire\Component implements HasForms,
 
                                 return true;
                             })
-                            ->mapWithKeys(fn ($participant) => [$participant->user->getKey() => $participant->user->fullName.' ('.$participant->role->name.')']);
+                            ->mapWithKeys(fn ($participant) => [$participant->user->getKey() => $participant->user->fullName.' ('.$participant->role->display_name.')']);
 
                         $users = $users->union($participantUsers);
 

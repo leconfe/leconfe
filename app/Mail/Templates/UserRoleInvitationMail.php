@@ -4,6 +4,8 @@ namespace App\Mail\Templates;
 
 use App\Classes\Log;
 use App\Mail\Templates\Traits\CanCustomizeTemplate;
+use App\Models\Enums\UserRole;
+use App\Models\ScheduledConference;
 use App\Models\UserInvitation;
 use Carbon\Carbon;
 
@@ -25,12 +27,19 @@ class UserRoleInvitationMail extends TemplateMailable
 
         $this->setAdditionalData([
             'Invitation Email' => $invitation->email,
-            'Role Name' => $invitation->role_name,
+            'Role Name' => UserRole::displayLabel($invitation->role_name),
             'Conference Title' => $conferenceTitle,
             'Scheduled Conference Title' => $scheduledConferenceTitle ?: '-',
             'Invitation URL' => $invitation->getAcceptUrl(),
-            'Invitation Expiration Date' => Carbon::parse($invitation->expires_at)->format('d F Y H:i'),
         ]);
+        $this->setDateData('Invitation Expiration Date', Carbon::parse($invitation->expires_at), 'd F Y H:i');
+
+        $titleSource = $invitation->scheduledConference
+            ?? $invitation->conference
+            ?? app()->getCurrentConference()
+            ?? app()->getSite();
+        $this->setTranslatableData('Conference Title', $titleSource, $titleSource instanceof ScheduledConference ? 'title' : 'name');
+        $this->setTranslatableData('Scheduled Conference Title', $invitation->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -41,7 +50,7 @@ class UserRoleInvitationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You are invited to join as {{ Role Name }}';
+        return __('mail_templates.user_role_invitation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -51,17 +60,6 @@ class UserRoleInvitationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Hello,</p>
-
-            <p>You have been invited to join <b>{{ Conference Title }}</b> as <b>{{ Role Name }}</b>.</p>
-
-            <p>
-                Use this link to accept the invitation:
-                <a href="{{ Invitation URL }}" target="_blank" rel="noopener noreferrer">{{ Invitation URL }}</a>
-            </p>
-
-            <p>This invitation expires on {{ Invitation Expiration Date }}.</p>
-        HTML;
+        return __('mail_templates.user_role_invitation.body');
     }
 }

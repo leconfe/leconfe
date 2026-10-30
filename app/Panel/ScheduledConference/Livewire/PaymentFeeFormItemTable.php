@@ -2,6 +2,8 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Filament\Forms\Components\ResponseOptionsRepeater;
 use App\Forms\Form;
 use App\Models\PaymentFee;
 use App\Models\PaymentFeeFormItem;
@@ -9,7 +11,6 @@ use App\Tables\Columns\IndexColumn;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -46,31 +47,27 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('meta.name')
-                    ->required()
-                    ->label('Item Name'),
-                Textarea::make('meta.description')
-                    ->label('Description and Instructions'),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
+                        ->required()
+                        ->label(__('general.item_name')),
+                    Textarea::make('meta.description')
+                        ->label(__('general.description_and_instructions')),
+                ]),
                 Checkbox::make('required')
-                    ->label('Indicates required item'),
+                    ->label(__('general.indicates_required_item')),
                 Select::make('type')
                     ->required()
                     ->reactive()
                     ->options(fn () => PaymentFeeFormItem::getOptions())
                     ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) {
                         if (! array_key_exists($value, PaymentFeeFormItem::getOptions())) {
-                            $fail('Option unavailable');
+                            $fail(__('general.option_unavailable'));
                         }
                     })
-                    ->label('Item Type'),
-                TagsInput::make('meta.response_options')
-                    ->placeholder('New Option')
-                    ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX]))
-                    ->reorderable()
-                    ->requiredIf('type', [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])
-                    ->validationMessages([
-                        'required_if' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
-                    ]),
+                    ->label(__('general.item_type')),
+                ResponseOptionsRepeater::make('meta.response_options')
+                    ->visible(fn (Get $get) => in_array($get('type'), [PaymentFeeFormItem::TYPE_SELECT, PaymentFeeFormItem::TYPE_RADIO, PaymentFeeFormItem::TYPE_CHECKBOX])),
 
             ]);
     }
@@ -78,11 +75,12 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('general.form_item'))
             ->deferLoading()
-            ->heading('Payment Fee Form Items')
+            ->heading(__('general.payment_fee_form_items'))
             ->query(
                 $this->record->formItems()->getQuery()
-                    ->with(['meta'])
+                    ->with(['meta', 'translate'])
                     ->ordered()
             )
             ->reorderable('order_column')
@@ -90,7 +88,7 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
             ->columns([
                 IndexColumn::make('#'),
                 TextColumn::make('name')
-                    ->getStateUsing(fn ($record) => $record->getMeta('name')),
+                    ->getStateUsing(fn ($record) => $record->translated('name')),
             ])
             ->filters([
                 // ...
@@ -103,11 +101,15 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                         try {
                             DB::beginTransaction();
 
-                            $item = $this->record->formItems()->create($data);
+                            $item = $this->record->formItems()->make();
+                            $data = $item->syncTranslatableState($data);
+                            $item->fill($data)->save();
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                                 $item->setManyMeta($data['meta']);
                             }
+
+                            $item->persistTranslatableState();
 
                             DB::commit();
 
@@ -128,20 +130,23 @@ class PaymentFeeFormItemTable extends Component implements HasForms, HasTable
                 EditAction::make()
                     ->hidden(fn () => $this->record->payments->count())
                     ->mutateRecordDataUsing(function (PaymentFeeFormItem $record, array $data): array {
-                        $data['meta'] = $record->getAllMeta();
+                        $data['meta'] = $record->getAllMeta()->all();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, ['meta.name', 'meta.description', 'meta.response_options']);
                     })
                     ->form(fn ($form) => $this->form($form))
                     ->using(function (array $data, PaymentFeeFormItem $record, EditAction $action) {
                         try {
                             DB::beginTransaction();
 
+                            $data = $record->syncTranslatableState($data);
                             $record->update($data);
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                                 $record->setManyMeta($data['meta']);
                             }
+
+                            $record->persistTranslatableState();
 
                             DB::commit();
 

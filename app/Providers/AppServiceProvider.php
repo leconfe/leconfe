@@ -8,6 +8,7 @@ use App\Classes\Setting;
 use App\Console\Kernel as ConsoleKernel;
 use App\Events\UserLoggedIn;
 use App\Forms\Form;
+use App\Frontend\Website\Sidebars\LanguageSidebar;
 use App\Http\Kernel as HttpKernel;
 use App\Infolists\Infolist;
 use App\Listeners\SubmissionEventSubscriber;
@@ -16,6 +17,8 @@ use App\Managers\SidebarManager;
 use App\Models\Conference;
 use App\Models\ScheduledConference;
 use App\Routing\CustomUrlGenerator;
+use App\Support\Multilingual\PluralSelector;
+use App\Support\Queue\QueuedConferenceContext;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Infolists\Infolist as FilamentInfolist;
 use Illuminate\Database\Eloquent\Model;
@@ -44,8 +47,13 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(SidebarManager::class, function () {
-            return new SidebarManager;
+            $sidebars = new SidebarManager;
+            $sidebars->register(new LanguageSidebar);
+
+            return $sidebars;
         });
+
+        $this->app->extend('translator', fn ($translator) => tap($translator)->setSelector(new PluralSelector));
 
         $this->app->scoped('metatag', function () {
             return new MetaTagManager;
@@ -133,6 +141,8 @@ class AppServiceProvider extends ServiceProvider
             }
         }));
         Event::subscribe(SubmissionEventSubscriber::class);
+
+        QueuedConferenceContext::register($this->app['events']);
     }
 
     protected function extendBlade(): void

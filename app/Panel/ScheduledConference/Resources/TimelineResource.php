@@ -2,6 +2,8 @@
 
 namespace App\Panel\ScheduledConference\Resources;
 
+use App\Actions\Timelines\TimelineUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\Timeline;
 use App\Panel\ScheduledConference\Resources\TimelineResource\Pages;
 use Filament\Forms\Components\DatePicker;
@@ -40,12 +42,14 @@ class TimelineResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('general.name'))
-                    ->required(),
-                Textarea::make('description')
-                    ->label(__('general.description'))
-                    ->maxLength(255),
+                MultilanguageComponent::make([
+                    TextInput::make('name')
+                        ->label(__('general.name'))
+                        ->required(),
+                    Textarea::make('description')
+                        ->label(__('general.description'))
+                        ->maxLength(255),
+                ]),
                 Grid::make()
                     ->schema([
                         DatePicker::make('date')
@@ -71,7 +75,7 @@ class TimelineResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Timeline::query())
+            ->query(Timeline::query()->with('translate'))
             ->heading(__('general.timeline'))
             ->defaultSort('date')
             ->columns([
@@ -79,7 +83,8 @@ class TimelineResource extends Resource
                     ->label(__('general.date'))
                     ->sortable(),
                 TextColumn::make('name')
-                    ->label(__('general.name')),
+                    ->label(__('general.name'))
+                    ->formatStateUsing(fn (Timeline $record) => $record->translated('name')),
                 ToggleColumn::make('hide')
                     ->label(__('general.hidden')),
             ])
@@ -88,7 +93,9 @@ class TimelineResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->modalWidth(MaxWidth::ExtraLarge),
+                    ->modalWidth(MaxWidth::ExtraLarge)
+                    ->mutateRecordDataUsing(fn (Timeline $record, array $data) => $record->fillTranslatableFormState($data, ['name', 'description']))
+                    ->using(fn (Timeline $record, array $data) => TimelineUpdateAction::run($record, $data)),
                 ActionGroup::make([
                     DeleteAction::make(),
                 ]),

@@ -3,5 +3,5 @@
 @php
     $code = '500';
     $title = 'Server Error';
-    $message = 'A server error occurred. Please try again later';
+    $message = __('general.error_500_message');
 @endphp

@@ -2,10 +2,13 @@
 
 namespace App\Panel\Conference\Resources;
 
+use App\Actions\Proceedings\ProceedingUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Proceeding;
 use App\Panel\Conference\Resources\ProceedingResource\Pages;
+use App\Support\Multilingual\LanguageReadiness;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Fieldset;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -44,6 +47,7 @@ class ProceedingResource extends Resource
     {
         return static::getModel()::query()
             ->ordered()
+            ->with('translate')
             ->withCount('submissions');
     }
 
@@ -77,14 +81,16 @@ class ProceedingResource extends Resource
                             ->numeric()
                             ->minValue(0),
                     ]),
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                TinyEditor::make('description')
-                    ->label(__('general.description'))
-                    ->profile('basic')
-                    ->minHeight(300)
-                    ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                MultilanguageComponent::make([
+                    TextInput::make('title')
+                        ->label(__('general.title'))
+                        ->required(),
+                    TinyEditor::make('description')
+                        ->label(__('general.description'))
+                        ->profile('basic')
+                        ->minHeight(300)
+                        ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                ]),
                 Repeater::make('meta.additional_content')
                     ->label(__('general.additional_content'))
                     ->addActionAlignment(Alignment::Start)
@@ -114,7 +120,8 @@ class ProceedingResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
-                    ->searchable()
+                    ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->sortable(),
                 TextColumn::make('submissions_count')
                     ->label(__('general.submissions'))
@@ -136,7 +143,13 @@ class ProceedingResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()
-                        ->modalWidth('xl'),
+                        ->modalWidth('xl')
+                        ->mutateRecordDataUsing(function (Proceeding $record, array $data) {
+                            $data['meta'] = $record->getAllMeta()->toArray();
+
+                            return $record->fillTranslatableFormState($data, ['title', 'description']);
+                        })
+                        ->using(fn (Proceeding $record, array $data) => ProceedingUpdateAction::run($record, $data)),
                     Tables\Actions\Action::make('preview')
                         ->label(__('general.preview'))
                         ->icon('heroicon-o-eye')
@@ -148,6 +161,7 @@ class ProceedingResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-arrow-up-tray')
                         ->hidden(fn (Proceeding $record) => $record->published)
+                        ->modalContent(fn (Proceeding $record) => LanguageReadiness::forProceeding($record)->render())
                         ->action(fn (Proceeding $record) => $record->publish()),
                     Tables\Actions\Action::make('unpublish')
                         ->label(__('general.unpublish'))

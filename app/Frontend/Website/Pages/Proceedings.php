@@ -21,7 +21,7 @@ class Proceedings extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            route(Home::getRouteName()) => 'Home',
+            route(Home::getRouteName()) => __('general.home'),
             $this->getTitle(),
         ];
     }
@@ -31,7 +31,8 @@ class Proceedings extends Page
         return [
             'proceedings' => Proceeding::query()
                 ->with([
-                    'conference'
+                    'conference',
+                    'translate',
                 ])
                 ->withoutGlobalScopes()
                 ->published()

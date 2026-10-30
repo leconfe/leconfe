@@ -21,6 +21,11 @@ class Role extends Model
 
     public static array $defaultPermissions = [];
 
+    public function getDisplayNameAttribute(): string
+    {
+        return UserRole::displayLabel($this->name);
+    }
+
     /**
      * The "booted" method of the model.
      */

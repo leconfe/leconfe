@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Resources;
 
 use App\Actions\StaticPages\StaticPageUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\StaticPage;
 use App\Panel\Administration\Resources\StaticPageResource\Pages;
@@ -41,7 +42,7 @@ class StaticPageResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = static::getModel()::query();
+        $query = static::getModel()::query()->with('translate');
 
         if (! app()->getCurrentScheduledConferenceId()) {
             $query->where('scheduled_conference_id', 0);
@@ -54,9 +55,11 @@ class StaticPageResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
+                MultilanguageComponent::make([
+                    TextInput::make('title')
+                        ->label(__('general.title'))
+                        ->required(),
+                ]),
                 TextInput::make('slug')
                     ->label(__('general.slug'))
                     ->alphaDash()
@@ -67,13 +70,16 @@ class StaticPageResource extends Resource
                             ->where('conference_id', app()->getCurrentConference()?->getKey() ?? 0)
                             ->where('scheduled_conference_id', app()->getCurrentScheduledConference()?->getKey() ?? 0);
                     }),
-                TinyEditor::make('meta.content')
-                    ->label(__('general.content'))
-                    ->minHeight(400)
-                    ->columnSpanFull()
-                    ->plugins('advlist autoresize codesample directionality emoticons fullscreen hr image imagetools link lists media table toc wordcount code')
-                    ->toolbar('undo redo removeformat | formatselect fontsizeselect | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist | forecolor backcolor | blockquote table hr | image link code')
-                    ->helperText(__('general.the_complete_page_content')),
+                MultilanguageComponent::make([
+                    TinyEditor::make('meta.content')
+                        ->label(__('general.content'))
+                        ->minHeight(400)
+                        ->columnSpanFull()
+                        ->plugins('advlist autoresize codesample directionality emoticons fullscreen hr image imagetools link lists media table toc wordcount code')
+                        ->toolbar('undo redo removeformat | formatselect fontsizeselect | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist | forecolor backcolor | blockquote table hr | image link code')
+                        ->helperText(__('general.the_complete_page_content')),
+                ])
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -85,7 +91,8 @@ class StaticPageResource extends Resource
                     ->label('No.'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
-                    ->searchable(),
+                    ->formatStateUsing(fn (StaticPage $record) => $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('slug')
                     ->label(__('general.slug'))
                     ->searchable()
@@ -101,7 +108,7 @@ class StaticPageResource extends Resource
                     ->mutateRecordDataUsing(function (StaticPage $record, array $data) {
                         $data['meta'] = $record->getAllMeta()->toArray();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, ['title', 'meta.content']);
                     })
                     ->using(fn (StaticPage $record, array $data) => StaticPageUpdateAction::run($record, $data)),
                 DeleteAction::make(),

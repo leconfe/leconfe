@@ -19,6 +19,8 @@ class NewSubmissionMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -29,27 +31,12 @@ class NewSubmissionMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'New Submission: {{ Submission Title }} from {{ Conference Title }}.';
+        return __('mail_templates.new_submission.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p> A new article has been submitted and requires an editor assignment.</p>
-            <table>
-                <tr>
-                    <td style="width:100px;">Title</td>
-                    <td>:</td>
-                    <td>{{ Submission Title }}</td>
-                </tr>
-                <tr>
-                    <td style="width:100px;">Author</td>
-                    <td>:</td>
-                    <td>{{ Submission Author }}</td>
-                </tr>
-            </table>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.new_submission.body');
     }
 
     public static function getDefaultDescription(): string

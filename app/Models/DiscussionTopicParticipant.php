@@ -24,10 +24,10 @@ class DiscussionTopicParticipant extends Model
         }
 
         if ($participant) {
-            return $participant->role->name;
+            return $participant->role->display_name;
         }
 
-        return 'Unassigned';
+        return __('general.unassigned');
     }
 
     public function topic()

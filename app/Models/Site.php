@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
@@ -11,9 +12,16 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Site extends Model implements HasMedia
 {
-    use Cachable, InteractsWithMedia, Metable;
+    use Cachable, HasTranslatableContent, InteractsWithMedia, Metable;
 
     protected $table = 'site';
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['name', 'description'];
 
     public static function getSite()
     {
@@ -52,7 +60,7 @@ class Site extends Model implements HasMedia
         ];
     }
 
-    public function getContextString() : string
+    public function getContextString(): string
     {
         return 'site';
     }

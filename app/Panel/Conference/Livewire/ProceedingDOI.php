@@ -18,6 +18,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class ProceedingDOI extends Component implements HasForms, HasTable
@@ -30,11 +31,12 @@ class ProceedingDOI extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Proceeding::query()->with('doi'))
+            ->query(Proceeding::query()->with(['doi', 'translate']))
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
-                    ->searchable(),
+                    ->formatStateUsing(fn (Proceeding $record) => $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('doi.doi')
                     ->searchable()
                     ->label('DOI'),
@@ -61,7 +63,7 @@ class ProceedingDOI extends Component implements HasForms, HasTable
                         ];
                     })
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->modalHeading(fn ($record) => $record->title)
+                    ->modalHeading(fn (Proceeding $record) => $record->translated('title'))
                     ->form([
                         TextInput::make('doi')
                             ->label('DOI')

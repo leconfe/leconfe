@@ -21,6 +21,8 @@ class ParticipantPaymentMail extends TemplateMailable
             'Payment Link' => $participant->payment->getPaymentDetailUrl(),
             'Payment Fee Name' => $participant->payment->fee->name,
         ]);
+        $this->setTranslatableData('Payment Fee Name', $participant->payment->fee, 'name');
+        $this->setTranslatableData('Conference Title', $participant->payment->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -31,26 +33,12 @@ class ParticipantPaymentMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Participant Payment for: {{ Payment Fee Name }} on {{ Conference Title }}';
+        return __('mail_templates.participant_payment.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Participant Name }},</p>
-            <p>We would like to inform you that a payment requirement has been added to your participant registration for {{ Conference Title }}.</p>
-            <p>Participant Payment Details:</p>
-            <ul>
-                <li>Registration Type : <b>{{ Payment Fee Name }}</b></li>
-                <li>Amount Due : <b>{{ Payment Amount }}</b></li>
-            </ul>
-            <p>To proceed, please complete your payment by visiting the link below:</p>
-            <a href="{{ Payment Link }}">{{ Payment Link }}</a>
-            <p>
-                If you have already made the payment, kindly disregard this notice.
-            </p>
-            <p>Thank you for your participation, and we look forward to your contribution to {{ Conference Title }}.</p>
-        HTML;
+        return __('mail_templates.participant_payment.body');
     }
 
     public static function getDefaultDescription(): string

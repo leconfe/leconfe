@@ -6,14 +6,15 @@ use App\Actions\Submissions\SubmissionAssignParticipant;
 use App\Classes\Log;
 use App\Forms\Components\TinyEditor;
 use App\Mail\Templates\ParticipantAssignedMail;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Enums\UserRole;
+use App\Models\MailTemplate;
 use App\Models\Role;
 use App\Models\Submission;
 use App\Models\SubmissionParticipant;
 use App\Models\User;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\PrefilledEmail;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -23,6 +24,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
@@ -58,6 +60,7 @@ class ParticipantList extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('general.participant'))
             ->query(
                 fn (): Builder => $this->submission->participants()->with(['role'])->getQuery()
             )
@@ -84,7 +87,8 @@ class ParticipantList extends Component implements HasForms, HasTable
                             ->getStateUsing(fn ($record) => $record->user->getMeta('affiliation'))
                             ->color('gray')
                             ->size('xs'),
-                        TextColumn::make('role.name')
+                        TextColumn::make('role.display_name')
+                            ->label(__('general.role'))
                             ->extraAttributes(['class' => 'mt-2'])
                             ->size('xs'),
                     ]),
@@ -108,18 +112,18 @@ class ParticipantList extends Component implements HasForms, HasTable
                     ->modalSubmitActionLabel(__('general.assign'))
                     ->modalWidth('2xl')
                     ->mountUsing(function (Form $form): void {
-                        $mailTemplate = DefaultMailTemplate::where('mailable', ParticipantAssignedMail::class)->first();
+                        $mailTemplate = MailTemplate::contentFor(ParticipantAssignedMail::class);
 
                         $form->fill([
-                            'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                            'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            'subject' => $mailTemplate['subject'],
+                            'message' => $mailTemplate['html_template'],
                         ]);
                     })
                     ->form([
                         Grid::make(3)
                             ->schema([
                                 Select::make('role_id')
-                                    ->label('Role')
+                                    ->label(__('general.role'))
                                     ->options(function () {
                                         return app()->getCurrentConference()->roles()->whereIn('name', [
                                             UserRole::ConferenceManager,
@@ -127,7 +131,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                             UserRole::TrackEditor,
                                             UserRole::Author,
                                         ])
-                                            ->pluck('name', 'id');
+                                            ->get()->pluck('display_name', 'id');
                                     })
                                     ->placeholder(__('general.select_role'))
                                     ->columnSpan(1),
@@ -138,6 +142,7 @@ class ParticipantList extends Component implements HasForms, HasTable
                                     ->reactive()
                                     ->preload()
                                     ->reactive()
+                                    ->afterStateUpdated(fn (Get $get, Set $set, $old, $state) => PrefilledEmail::refill(ParticipantAssignedMail::class, $get, $set, $old, $state))
                                     ->options(
                                         fn (Get $get): array => User::with('roles')
                                             ->where(fn (Builder $query) => $this->matchingAssignableRoleQuery($query, $get('role_id')))

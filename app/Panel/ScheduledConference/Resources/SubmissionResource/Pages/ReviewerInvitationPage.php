@@ -13,6 +13,7 @@ use App\Models\Submission;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\ReviewerAssignedFiles;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -65,10 +66,15 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
         return $this->review = $review;
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.reviewer_invitation_page');
+    }
+
     public function getHeading(): string|Htmlable
     {
         return __('general.reviewer_request_heading', [
-            'title' => $this->record->getMeta('title'),
+            'title' => $this->record->translated('title'),
         ]);
     }
 
@@ -76,7 +82,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
     {
         if ($this->review->status == ReviewerStatus::DECLINED) {
             return new HtmlString(
-                BladeCompiler::render("<x-filament::badge color='danger' class='w-fit'>".ReviewerStatus::DECLINED.'</x-filament::badge>')
+                BladeCompiler::render("<x-filament::badge color='danger' class='w-fit'>".e(__('general.declined')).'</x-filament::badge>')
             );
         }
 
@@ -119,7 +125,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                         subject: $this->record,
                         description: __('general.submission_review_assign_accepted', [
                             'submissionId' => $this->record->getKey(),
-                            'submissionName' => $this->record->getMeta('title'),
+                            'submissionName' => $this->record->translated('title'),
                             'name' => $review->user->full_name,
                         ]),
                     )
@@ -134,10 +140,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     $editors = User::whereIn('id', $editorsId)->get();
                     if ($editors->count()) {
                         try {
-                            Mail::to($editors)
-                                ->send(
-                                    new ReviewerAcceptedInvitationMail($review)
-                                );
+                            RecipientLocale::send($editors, fn () => new ReviewerAcceptedInvitationMail($review));
                         } catch (\Exception $e) {
                             $action->failureNotificationTitle(__('general.failed_send_notification_to_author'));
                             $action->failure();
@@ -192,7 +195,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     subject: $this->record,
                     description: __('general.submission_review_assign_declined', [
                         'submissionId' => $this->record->getKey(),
-                        'submissionName' => $this->record->getMeta('title'),
+                        'submissionName' => $this->record->translated('title'),
                         'name' => $review->user->full_name,
                     ]),
                 )
@@ -200,7 +203,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                     ->save();
 
                 try {
-                    Mail::to($review->user->email)
+                    Mail::to($review->user)
                         ->send(
                             new ReviewerDeclinedInvitationMail($review)
                         );
@@ -228,7 +231,7 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('title')
                                     ->label(__('general.title'))
                                     ->color('gray')
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('title')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('title')),
                                 TextEntry::make('author')
                                     ->label(__('general.author'))
                                     ->color('gray')
@@ -238,12 +241,12 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                     ->label(__('general.keywords'))
                                     ->color('gray')
                                     ->badge()
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('keywords') ?: '-'),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('keywords') ?: '-'),
                                 TextEntry::make('abstract')
                                     ->label(__('general.abstract'))
                                     ->color('gray')
                                     ->html()
-                                    ->getStateUsing(fn (Submission $submission) => $submission->getMeta('abstract')),
+                                    ->getStateUsing(fn (Submission $submission) => $submission->translated('abstract')),
                                 TextEntry::make('review_mode')
                                     ->label(__('general.review_mode'))
                                     ->color('gray')
@@ -262,17 +265,17 @@ class ReviewerInvitationPage extends Page implements HasActions, HasInfolists
                                 TextEntry::make('editor_request')
                                     ->label(__('general.editor_request'))
                                     ->getStateUsing(
-                                        fn (): ?string => $this->review?->date_assigned?->format(Setting::get('format_date'))
+                                        fn (): ?string => $this->review?->date_assigned?->translatedFormat(Setting::get('format_date'))
                                     ),
                                 TextEntry::make('response_due_date')
                                     ->label(__('general.response_due_date'))
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->format(Setting::get('format_date'))
+                                        fn (): string => Carbon::parse($this->review?->getMeta('response_due_date'))?->translatedFormat(Setting::get('format_date'))
                                     ),
                                 TextEntry::make('review_due_date')
                                     ->label(__('general.review_due_date'))
                                     ->getStateUsing(
-                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->format(Setting::get('format_date'))
+                                        fn (): string => Carbon::parse($this->review?->getMeta('review_due_date'))?->translatedFormat(Setting::get('format_date'))
                                     ),
                             ]),
                     ]),

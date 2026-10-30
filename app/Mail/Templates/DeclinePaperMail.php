@@ -22,6 +22,8 @@ class DeclinePaperMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -32,7 +34,7 @@ class DeclinePaperMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Your submission {{ Submission Title }} on {{ Conference Title }} is declined.';
+        return __('mail_templates.decline_paper.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -42,11 +44,6 @@ class DeclinePaperMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>We have reached a decision regarding your submission with title "{{ Submission Title }}"  to {{ Conference Title }}</p>
-            <p>Our decision is to <b>decline the submission</b>.</p>
-            <p>Thank you for considering {{ Conference Title }} as a venue for your work.</p>
-    HTML;
+        return __('mail_templates.decline_paper.body');
     }
 }

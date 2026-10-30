@@ -36,8 +36,8 @@ class ProceedingDetail extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            route(Home::getRouteName()) => 'Home',
-            route(PagesProceedings::getRouteName()) => 'Proceedings',
+            route(Home::getRouteName()) => __('general.home'),
+            route(PagesProceedings::getRouteName()) => __('general.proceedings'),
             Str::limit($this->proceeding->seriesTitle(), 120),
         ];
     }
@@ -57,11 +57,12 @@ class ProceedingDetail extends Page
         $tracks = Track::query()
             ->ordered()
             ->with([
+                'translate',
                 'submissions' => fn ($query) => $query
                     ->ordered()
                     ->where('proceeding_id', $this->proceeding->id)
                     ->where('status', SubmissionStatus::Published)
-                    ->with(['authors.meta', 'doi', 'galleys.file.media', 'meta']),
+                    ->with(['authors.meta', 'doi', 'galleys.file.media', 'meta', 'translate']),
             ])
             ->whereHas(
                 'submissions',

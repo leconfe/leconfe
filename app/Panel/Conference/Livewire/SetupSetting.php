@@ -3,13 +3,14 @@
 namespace App\Panel\Conference\Livewire;
 
 use App\Actions\Conferences\ConferenceUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Forms\Components\TinyEditor;
 use App\Models\ScheduledConference;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -26,10 +27,10 @@ class SetupSetting extends Component implements HasForms
     {
         $conference = app()->getCurrentConference();
 
-        $this->form->fill([
+        $this->form->fill($conference->fillTranslatableFormState([
             ...$conference->attributesToArray(),
-            'meta' => $conference->getAllMeta(),
-        ]);
+            'meta' => $conference->getAllMeta()->all(),
+        ], ['meta.page_footer']));
     }
 
     public function render()
@@ -66,11 +67,13 @@ class SetupSetting extends Component implements HasForms
                             ->helperText(__('general.image_representation_of_the_serie_will_uses'))
                             ->image()
                             ->conversion('thumb'),
-                        TinyEditor::make('meta.page_footer')
-                            ->label(__('general.page_footer'))
-                            ->profile('advanced')
-                            ->minHeight(300)
-                            ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        MultilanguageComponent::make([
+                            TinyEditor::make('meta.page_footer')
+                                ->label(__('general.page_footer'))
+                                ->profile('advanced')
+                                ->minHeight(300)
+                                ->dehydrateStateUsing(fn (?string $state) => Purify::clean($state)),
+                        ]),
                     ]),
 
                 Actions::make([
@@ -79,8 +82,10 @@ class SetupSetting extends Component implements HasForms
                         ->successNotificationTitle(__('general.saved'))
                         ->failureNotificationTitle(__('general.data_could_not_saved.'))
                         ->action(function (Action $action) {
+                            $formData = $this->form->getState();
+
                             try {
-                                ConferenceUpdateAction::run($this->form->getRecord(), $this->form->getState());
+                                ConferenceUpdateAction::run($this->form->getRecord(), $formData);
                                 $action->sendSuccessNotification();
                             } catch (\Throwable $th) {
                                 $action->sendFailureNotification();

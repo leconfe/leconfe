@@ -6,8 +6,7 @@
             <div role="alert" class="gap-2.5 alert bg-yellow-200/20 border-yellow-200/40">
                 <x-heroicon-s-eye class="w-5 h-5 my-auto text-amber-600" />
                 <div class="text-amber-900">
-                    <span class="text-amber-500">Preview. </span> This proceeding is not published yet. This is only the
-                    preview of the proceeding.
+                    <span class="text-amber-500">{{ __('general.preview') }}.</span> {{ __('general.proceeding_preview_notice') }}
                 </div>
             </div>
         @endif
@@ -20,8 +19,9 @@
                             x-on:click="activeTab='home'"
                             class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'home', 'hover:bg-gray-100' : activeTab != 'home'}"
-                            aria-current="page">
-                            Home
+                            aria-current="true"
+                            x-bind:aria-current="activeTab == 'home' ? 'true' : null">
+                            {{ __('general.home') }}
                         </button>
                     </li>
                     @foreach ($additionalContents as $key => $additionalContent)
@@ -31,7 +31,7 @@
                             x-bind:class="{ 'text-white bg-primary' : activeTab == 'tab-{{ $key }}', 'hover:bg-gray-100' : activeTab != 'tab-{{ $key }}'}"
                             type="button"
                             class="rounded-md text-left inline-flex items-center px-4 py-2.5 rounded-base w-full"
-                            aria-current="page">
+                            x-bind:aria-current="activeTab == 'tab-{{ $key }}' ? 'true' : null">
                             {{ $additionalContent['title'] }}
                         </button>
                     </li>
@@ -58,11 +58,11 @@
                             <div class="flex-1">
                                 <div class="space-y-4">
                                     <div class="user-content">
-                                        {{ new Illuminate\Support\HtmlString($proceeding->description) }}
+                                        {{ new Illuminate\Support\HtmlString($proceeding->translated('description')) }}
                                     </div>
                                     <div class="text-sm">
-                                        <span class="font-semibold">Published: </span>
-                                        {{ $proceeding->published_at ? $proceeding->published_at->format(Setting::get('format_date')) : '-' }}
+                                        <span class="font-semibold">{{ __('general.published_label') }}</span>
+                                        {{ $proceeding->published_at ? $proceeding->published_at->translatedFormat(Setting::get('format_date')) : '-' }}
                                     </div>
                                 </div>
                             </div>
@@ -72,13 +72,13 @@
                     <div class="tracks space-y-12">
                         @foreach ($tracks as $track)
                             <div class="track space-y-4">
-                                <x-website::heading-title :title="$track->title" class="track-title" />
+                                <x-website::heading-title :title="$track->translated('title')" class="track-title" />
                                 <div class="paper-summaries space-y-4">
                                     @forelse($track->submissions as $paper)
                                         <x-conference::paper-summary :paper="$paper" :hideAuthor="$track->getMeta('hide_author')" />
                                     @empty
                                         <div class="text-center text-gray-500">
-                                            No paper found.
+                                            {{ __('general.no_paper_found') }}
                                         </div>
                                     @endforelse
                                 </div>

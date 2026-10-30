@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Models\Concerns\HasTranslatableFormItem;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -18,7 +19,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class PaymentFeeFormItem extends Model implements Sortable
 {
-    use Cachable, Metable, SortableTrait;
+    use Cachable, HasTranslatableFormItem, Metable, SortableTrait;
 
     public const TYPE_TEXT = 1;
 
@@ -54,6 +55,16 @@ class PaymentFeeFormItem extends Model implements Sortable
     ];
 
     /**
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['name', 'description', 'response_options'];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableListMeta = ['response_options'];
+
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void {}
@@ -66,12 +77,12 @@ class PaymentFeeFormItem extends Model implements Sortable
     public static function getOptions(): array
     {
         return [
-            static::TYPE_TEXT => 'Single text box',
-            static::TYPE_TEXTAREA => 'Extended text box',
-            static::TYPE_CHECKBOX => 'Checkboxes (you can choose one or more)',
-            static::TYPE_RADIO => 'Radio button (you can only choose one)',
-            static::TYPE_SELECT => 'Drop down box',
-            static::TYPE_UPLOAD => 'Upload File',
+            static::TYPE_TEXT => __('general.item_type_text'),
+            static::TYPE_TEXTAREA => __('general.item_type_textarea'),
+            static::TYPE_CHECKBOX => __('general.item_type_checkbox'),
+            static::TYPE_RADIO => __('general.item_type_radio'),
+            static::TYPE_SELECT => __('general.item_type_select'),
+            static::TYPE_UPLOAD => __('general.item_type_upload'),
         ];
     }
 
@@ -95,53 +106,53 @@ class PaymentFeeFormItem extends Model implements Sortable
     protected function fieldText(): TextInput
     {
         return TextInput::make($this->getFieldId())
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
-            ->label($this->getMeta('name'));
+            ->label($this->translated('name'));
     }
 
     protected function fieldTextarea(): Textarea
     {
         return Textarea::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required);
     }
 
     protected function fieldCheckbox(): CheckboxList
     {
         return CheckboxList::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
-            ->options($this->getMeta('response_options') ?? []);
+            ->options($this->getResponseOptions());
     }
 
     protected function fieldRadio(): Radio
     {
         return Radio::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->required($this->required)
-            ->options($this->getMeta('response_options') ?? []);
+            ->options($this->getResponseOptions());
     }
 
     protected function fieldSelect(): Select
     {
         return Select::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->native(false)
             ->searchable()
             ->required($this->required)
-            ->options($this->getMeta('response_options') ?? []);
+            ->options($this->getResponseOptions());
     }
 
     protected function fieldUpload(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make($this->getFieldId())
-            ->label($this->getMeta('name'))
-            ->helperText(new HtmlString($this->getMeta('description')))
+            ->label($this->translated('name'))
+            ->helperText(new HtmlString($this->translated('description')))
             ->downloadable()
             ->required($this->required)
             ->collection($this->getMeta('name'));

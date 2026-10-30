@@ -23,12 +23,12 @@
 
                         <div class="p-6 flex flex-col gap-4 flex-1">
                             <div class="inline-flex w-fit items-center border text-xs font-medium px-1.5 py-0.5 rounded-sm">
-                                {{ $presentation->submission->track->title }}
+                                {{ $presentation->submission->track->translated('title') }}
                             </div>
 
                             <h3
                                 class="text-sm font-semibold tracking-tight text-gray-700 group-hover:text-black line-clamp-3">
-                                {{ $presentation->submission->getMeta('title') }}
+                                {{ $presentation->submission->translated('title') }}
                             </h3>
 
                             @php
@@ -59,7 +59,7 @@
                                     icon="heroicon-m-arrow-right"
                                     size="xs"
                                 >
-                                    Read More
+                                    {{ __('general.read_more') }}
                                 </x-filament::button>
                             </div>
                         </div>
@@ -72,8 +72,8 @@
         <x-filament::section>
             <div class="flex flex-col items-center justify-center gap-3 py-8 text-center">
                 <x-heroicon-m-magnifying-glass class="w-8 h-8 text-gray-400" />
-                <div class="text-sm font-medium text-gray-700">No presentations found</div>
-                <div class="text-xs text-gray-500">Try adjusting your filters or search terms.</div>
+                <div class="text-sm font-medium text-gray-700">{{ __('general.no_presentations_found') }}</div>
+                <div class="text-xs text-gray-500">{{ __('general.adjust_presentation_filters') }}</div>
             </div>
         </x-filament::section>
     @endif

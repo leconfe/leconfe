@@ -96,8 +96,8 @@ class ResetPasswordConfirmation extends Page implements HasActions, HasForms
 
     public function getAuthLogoAltText(): string
     {
-        return app()->getCurrentScheduledConference()?->title
-            ?? app()->getCurrentConference()?->name
+        return app()->getCurrentScheduledConference()?->translated('title')
+            ?? app()->getCurrentConference()?->translated('name')
             ?? config('app.name', 'Leconfe');
     }
 

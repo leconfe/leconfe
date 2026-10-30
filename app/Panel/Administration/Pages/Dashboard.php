@@ -161,7 +161,7 @@ class Dashboard extends Page implements HasInfolists
         $roles = Role::query()
             ->withoutGlobalScopes()
             ->whereIn('id', $assignedRoles->pluck('role_id')->unique()->all())
-            ->pluck('name', 'id');
+            ->get()->pluck('display_name', 'id');
 
         $directRolesByScheduledConference = $assignedRoles
             ->where('scheduled_conference_id', '>', 0)

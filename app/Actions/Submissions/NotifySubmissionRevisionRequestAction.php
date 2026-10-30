@@ -37,7 +37,7 @@ class NotifySubmissionRevisionRequestAction
             return;
         }
 
-        Mail::to($submission->user->email)
+        Mail::to($submission->user)
             ->send(
                 (new RevisionRequestMail($submission))
                     ->subjectUsing($subject)

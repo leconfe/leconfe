@@ -16,20 +16,32 @@ class AuthorRolePopulateDefaultDataAction
         try {
             DB::beginTransaction();
 
-            $author = AuthorRole::firstOrCreate([
-                'name' => 'Author',
-                'conference_id' => $conference->getKey(),
-            ]);
+            foreach (['author' => 'authors', 'translator' => 'translators'] as $code => $citationGroup) {
+                $role = AuthorRole::where('conference_id', $conference->getKey())
+                    ->where('builtin_code', $code)->first();
 
-            $translator = AuthorRole::firstOrCreate([
-                'name' => 'Translator',
-                'conference_id' => $conference->getKey(),
-            ]);
+                if (! $role) {
+                    $role = AuthorRole::firstOrCreate([
+                        'name' => AuthorRole::builtinNames()[$code],
+                        'conference_id' => $conference->getKey(),
+                    ]);
 
-            $conference->setManyMeta([
-                'citation_contributor_authors' => [$author->getKey()],
-                'citation_contributor_translators' => [$translator->getKey()],
-            ]);
+                    if ($role->wasRecentlyCreated) {
+                        $role->forceFill(['builtin_code' => $code])->save();
+                    }
+                }
+
+                $metaKey = 'citation_contributor_'.$citationGroup;
+                $citedRoleIds = $conference->getMeta($metaKey);
+                $citesAnotherConference = AuthorRole::withoutGlobalScopes()
+                    ->whereKey($citedRoleIds ?? [])
+                    ->where('conference_id', '!=', $conference->getKey())
+                    ->exists();
+
+                if ($citedRoleIds === null || $citesAnotherConference) {
+                    $conference->setMeta($metaKey, [$role->getKey()]);
+                }
+            }
 
             DB::commit();
         } catch (\Throwable $th) {

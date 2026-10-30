@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\ReviewFormItem;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -26,12 +27,15 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class ReviewFormTable extends Component implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
+
+    protected const TRANSLATABLE_FORM_KEYS = ['label', 'meta.description', 'meta.checkbox_options', 'meta.radio_options'];
 
     public function render()
     {
@@ -41,13 +45,14 @@ class ReviewFormTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(ReviewFormItem::query()->ordered())
+            ->query(ReviewFormItem::query()->with('translate')->ordered())
             ->reorderable('order_column')
             ->columns([
                 TextColumn::make('label')
                     ->label(__('scheduled_conference.label'))
+                    ->formatStateUsing(fn (ReviewFormItem $record) => $record->translated('label'))
                     ->wrap()
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('label', $search)),
                 TextColumn::make('weight')
                     ->label(__('scheduled_conference.weight'))
                     ->getStateUsing(fn (ReviewFormItem $record) => $record->isEnableScoring() ? $record->weight : '-')
@@ -60,7 +65,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::TwoExtraLarge)
                     ->closeModalByClickingAway()
                     ->form(function (Form $form) {
-                        return $form->schema(ReviewFormItem::ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray());
+                        return $form->schema(ReviewFormItem::with('translate')->ordered()->lazy()->map(fn (ReviewFormItem $item) => $item->getFormField())->toArray());
                     }),
                 CreateAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
@@ -69,10 +74,7 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                         try {
                             DB::beginTransaction();
 
-                            $record = ReviewFormItem::create($data);
-                            if (data_get($data, 'meta')) {
-                                $record->setManyMeta(data_get($data, 'meta'));
-                            }
+                            $record = $this->createRecord($data);
 
                             DB::commit();
                         } catch (\Throwable $th) {
@@ -91,17 +93,20 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                     ->mutateRecordDataUsing(function (ReviewFormItem $record, array $data) {
                         $data['meta'] = $record->getAllMeta()->toArray();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, static::TRANSLATABLE_FORM_KEYS);
                     })
                     ->using(function (ReviewFormItem $record, array $data) {
                         try {
                             DB::beginTransaction();
+
+                            $data = $record->syncTranslatableState($data);
 
                             if (data_get($data, 'meta')) {
                                 $record->setManyMeta(data_get($data, 'meta'));
                             }
                             $record->fill($data);
                             $record->save();
+                            $record->persistTranslatableState();
 
                             DB::commit();
                         } catch (\Throwable $th) {
@@ -119,18 +124,15 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                         ->icon('heroicon-m-clipboard-document-check')
                         ->color('warning')
                         ->form(fn (Form $form) => $this->form($form)->model(null))
-                        ->fillForm(fn ($record) => [
+                        ->fillForm(fn (ReviewFormItem $record) => $record->fillTranslatableFormState([
                             ...$record->attributesToArray(),
                             'meta' => $record->getAllMeta()->toArray(),
-                        ])
+                        ], static::TRANSLATABLE_FORM_KEYS))
                         ->action(function (array $data) {
                             try {
                                 DB::beginTransaction();
 
-                                $record = ReviewFormItem::create($data);
-                                if (data_get($data, 'meta')) {
-                                    $record->setManyMeta(data_get($data, 'meta'));
-                                }
+                                $record = $this->createRecord($data);
 
                                 DB::commit();
                             } catch (\Throwable $th) {
@@ -149,16 +151,34 @@ class ReviewFormTable extends Component implements HasForms, HasTable
             ]);
     }
 
+    protected function createRecord(array $data): ReviewFormItem
+    {
+        $record = new ReviewFormItem;
+        $data = $record->syncTranslatableState($data);
+        $record->fill($data);
+        $record->save();
+
+        if (data_get($data, 'meta')) {
+            $record->setManyMeta(data_get($data, 'meta'));
+        }
+
+        $record->persistTranslatableState();
+
+        return $record;
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('label')
-                    ->label(__('scheduled_conference.label'))
-                    ->required(),
-                Textarea::make('meta.description')
-                    ->label(__('scheduled_conference.description'))
-                    ->autosize(),
+                MultilanguageComponent::make([
+                    TextInput::make('label')
+                        ->label(__('scheduled_conference.label'))
+                        ->required(),
+                    Textarea::make('meta.description')
+                        ->label(__('scheduled_conference.description'))
+                        ->autosize(),
+                ]),
                 Checkbox::make('meta.required')
                     ->label(__('scheduled_conference.review_form_item.reviewer_required_input_label')),
                 Select::make('type')
@@ -216,9 +236,11 @@ class ReviewFormTable extends Component implements HasForms, HasTable
                             ->maxValue(10)
                             ->required()
                             ->distinct(),
-                        TextInput::make('label')
-                            ->label(__('scheduled_conference.label'))
-                            ->required()
+                        MultilanguageComponent::make([
+                            TextInput::make('label')
+                                ->label(__('scheduled_conference.label'))
+                                ->required(),
+                        ])
                             ->columnSpan([
                                 'lg' => 3,
                             ]),
@@ -232,13 +254,10 @@ class ReviewFormTable extends Component implements HasForms, HasTable
         return Grid::make(1)
             ->visible(fn (Get $get) => $get('type') == ReviewFormItem::TYPE_CHECKBOX)
             ->schema([
-                Repeater::make('meta.checkbox_options')
-                    ->label(__('scheduled_conference.review_form_item.checkbox_options_input_label'))
-                    ->simple(
-                        TextInput::make('option')
-                            ->required()
-                            ->label(__('scheduled_conference.option'))
-                    ),
+                MultilanguageComponent::make([
+                    $this->getOptionsRepeater('meta.checkbox_options')
+                        ->label(__('scheduled_conference.review_form_item.checkbox_options_input_label')),
+                ]),
             ]);
     }
 
@@ -247,13 +266,21 @@ class ReviewFormTable extends Component implements HasForms, HasTable
         return Grid::make(1)
             ->visible(fn (Get $get) => $get('type') == ReviewFormItem::TYPE_RADIO)
             ->schema([
-                Repeater::make('meta.radio_options')
-                    ->label(__('scheduled_conference.review_form_item.radio_options_input_label'))
-                    ->simple(
-                        TextInput::make('option')
-                            ->required()
-                            ->label(__('scheduled_conference.option'))
-                    ),
+                MultilanguageComponent::make([
+                    $this->getOptionsRepeater('meta.radio_options')
+                        ->label(__('scheduled_conference.review_form_item.radio_options_input_label')),
+                ]),
             ]);
+    }
+
+    protected function getOptionsRepeater(string $name): Repeater
+    {
+        return Repeater::make($name)
+            ->simple(
+                TextInput::make('option')
+                    ->required()
+                    ->label(__('scheduled_conference.option'))
+            )
+            ->defaultItems(fn (Repeater $component): int => ($component->getMeta('primary') ?? true) ? 1 : 0);
     }
 }

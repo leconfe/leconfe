@@ -5,6 +5,7 @@ namespace App\Actions\UserInvitation;
 use App\Mail\Templates\UserRoleInvitationMail;
 use App\Models\Role;
 use App\Models\UserInvitation;
+use App\Support\Multilingual\RecipientLocale;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -75,6 +76,7 @@ class InviteUserAction
         });
 
         Mail::to($invitation->email)
+            ->locale(RecipientLocale::for($invitation->email))
             ->send(new UserRoleInvitationMail($invitation));
 
         return $invitation;

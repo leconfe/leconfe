@@ -58,16 +58,12 @@ class VerifyUserEmail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Verify Email Address';
+        return __('mail_templates.verify_user_email.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-        <p>Please click the button below to verify your email address.</p>
-        <p><a href="{{ verificationUrl }}">Verify Email Address</a>.</p>
-        <p>If you did not create an account, no further action is required.</p>
-        HTML;
+        return __('mail_templates.verify_user_email.body');
     }
 
     public static function getDefaultDescription(): string

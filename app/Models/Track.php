@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasBuiltinLabel;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,13 +13,34 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class Track extends Model implements Sortable
 {
-    use BelongsToScheduledConference, Cachable, Metable, SortableTrait;
+    use BelongsToScheduledConference, Cachable, HasBuiltinLabel, Metable, SortableTrait;
+
+    public static function builtinNames(): array
+    {
+        return [
+            'general_track' => 'General Track',
+        ];
+    }
 
     protected $fillable = [
         'title',
         'abbreviation',
         'scheduled_conference_id',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['title'];
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['policy'];
 
     protected static function booted(): void
     {
@@ -27,6 +49,11 @@ class Track extends Model implements Sortable
                 throw new \Exception('Before this track can be deleted, you must move paper submitted to it into other track');
             }
         });
+    }
+
+    protected function builtinNameAttribute(): string
+    {
+        return 'title';
     }
 
     public function buildSortQuery()

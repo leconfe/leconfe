@@ -18,8 +18,10 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewProceeding extends Page implements HasForms, HasTable
@@ -39,10 +41,10 @@ class ViewProceeding extends Page implements HasForms, HasTable
         $this->record = $this->resolveRecord($record);
 
         $this->authorizeAccess();
-        $this->form->fill([
+        $this->form->fill($this->record->fillTranslatableFormState([
             ...$this->record->attributesToArray(),
             'meta' => $this->record->getAllMeta()->toArray(),
-        ]);
+        ], ['title', 'description']));
     }
 
     protected function getHeaderActions(): array
@@ -73,7 +75,7 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
     public function getTitle(): string|Htmlable
     {
-        return $this->record->title;
+        return (string) $this->record->translated('title');
     }
 
     public function form(Form $form): Form
@@ -95,10 +97,10 @@ class ViewProceeding extends Page implements HasForms, HasTable
 
         $this->form->saveRelationships();
 
-         Notification::make()
-                ->success()
-                ->title(__('general.saved'))
-                ->send();
+        Notification::make()
+            ->success()
+            ->title(__('general.saved'))
+            ->send();
     }
 
     public function table(Table $table): Table
@@ -107,13 +109,15 @@ class ViewProceeding extends Page implements HasForms, HasTable
             ->query(
                 Submission::query()
                     ->where('proceeding_id', $this->record->id)
-                    ->with(['scheduledConference', 'meta'])
+                    ->with(['scheduledConference', 'meta', 'translate', 'track.translate'])
                     ->ordered()
             )
             ->defaultGroup('track.title')
             ->groupingSettingsHidden()
             ->groups([
-                'track.title',
+                Group::make('track.title')
+                    ->label(__('general.track'))
+                    ->getTitleFromRecordUsing(fn (Submission $record) => $record->track?->translated('title')),
             ])
             ->reorderable('proceeding_order_column')
             ->columns([
@@ -122,9 +126,9 @@ class ViewProceeding extends Page implements HasForms, HasTable
                 TextColumn::make('title')
                     ->wrap()
                     ->label(__('general.title'))
-                    ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                    ->getStateUsing(fn (Submission $record) => $record->translated('title'))
                     ->url(fn (Submission $record) => route('filament.scheduledConference.resources.submissions.view', ['record' => $record->id, 'serie' => $record->scheduledConference]))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->color('primary'),
                 TextColumn::make('pages')
                     ->getStateUsing(fn (Submission $record) => $record->getMeta('article_pages')),

@@ -9,7 +9,7 @@ class AboutSystem extends Page
     public function getViewData(): array
     {
         return [
-            'name' => app()->getCurrentConference()->name,
+            'name' => app()->getCurrentConference()->translated('name'),
             'version' => app()->getInstalledVersion(),
         ];
     }

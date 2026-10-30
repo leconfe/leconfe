@@ -17,6 +17,7 @@ class ReviewerDeclinedInvitationMail extends TemplateMailable
             'Submission Title' => $review->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $review->submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $review->submission, 'title');
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
@@ -26,7 +27,7 @@ class ReviewerDeclinedInvitationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Reviewer Declined Invitation';
+        return __('mail_templates.reviewer_declined_invitation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -36,9 +37,6 @@ class ReviewerDeclinedInvitationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Reviewer {{ Reviewer Name }} has <b>declined</b> the invitation to review the submission {{ Submission Title }}</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.reviewer_declined_invitation.body');
     }
 }

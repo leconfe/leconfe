@@ -3,6 +3,7 @@
 namespace App\Panel\Administration\Livewire;
 
 use App\Facades\Setting;
+use App\Support\Multilingual\ContentLocales;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -11,6 +12,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Arr;
 use Livewire\Component;
 
 class LanguageSetting extends Component implements HasForms
@@ -21,7 +25,13 @@ class LanguageSetting extends Component implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill($this->supportedLanguageSettings(Setting::all()));
+        $locales = app(ContentLocales::class);
+
+        $this->form->fill($this->supportedLanguageSettings([
+            ...Setting::all(),
+            'languages' => $locales->enabled(),
+            'default_language' => $locales->default(),
+        ]));
     }
 
     public function render()
@@ -35,18 +45,30 @@ class LanguageSetting extends Component implements HasForms
             ->model(app()->getCurrentConference())
             ->schema([
                 Section::make()
+                    ->description(__('general.content_languages_helper'))
                     ->schema([
-                        CheckboxList::make('languages')
-                            ->label(__('general.languages'))
-                            ->options(config('app.locales'))
-                            ->searchable()
-                            ->bulkToggleable()
-                            ->required(),
                         Select::make('default_language')
-                            ->options(config('app.locales'))
-                            ->searchable()
                             ->label(__('general.default_language'))
-                            ->required(),
+                            ->options(fn (Get $get): array => Arr::only($this->languageOptions(), $this->selectedLanguages($get('languages'))))
+                            ->searchable()
+                            ->searchPrompt(__('general.search'))
+                            ->selectablePlaceholder(false)
+                            ->helperText(__('general.languages_english_fallback')),
+                        CheckboxList::make('languages')
+                            ->label(__('general.content_languages'))
+                            ->options(fn (): array => $this->languageOptions())
+                            ->descriptions(fn (): array => $this->englishNames())
+                            ->searchable()
+                            ->searchPrompt(__('general.search'))
+                            ->bulkToggleable()
+                            ->live()
+                            ->afterStateUpdated(function (Get $get, Set $set, ?array $state) {
+                                $languages = $this->selectedLanguages($state);
+
+                                if (! in_array($get('default_language'), $languages, true)) {
+                                    $set('default_language', $languages[0]);
+                                }
+                            }),
                     ]),
                 Actions::make([
                     Action::make('save')
@@ -63,20 +85,59 @@ class LanguageSetting extends Component implements HasForms
                                 $action->sendFailureNotification();
                             }
                         }),
-                ])->alignLeft(),
+                ])
+                    ->key('saveAction')
+                    ->alignLeft(),
 
             ])
             ->statePath('formData');
     }
 
-    private function supportedLanguageSettings(array $settings): array
+    /**
+     * Language autonyms keyed by locale, enabled languages first with the default on top.
+     *
+     * @return array<string, string>
+     */
+    private function languageOptions(): array
+    {
+        $locales = app(ContentLocales::class);
+
+        return collect([...$locales->ordered(), ...array_keys(config('app.locales'))])
+            ->unique()
+            ->mapWithKeys(fn (string $locale) => [$locale => $locales->autonym($locale)])
+            ->all();
+    }
+
+    /**
+     * English names keyed by locale, excluding names identical to their autonyms.
+     *
+     * @return array<string, string>
+     */
+    private function englishNames(): array
+    {
+        $locales = app(ContentLocales::class);
+
+        return collect(config('app.locales'))
+            ->reject(fn (string $name, string $locale) => $name === $locales->autonym($locale))
+            ->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function selectedLanguages(?array $languages): array
     {
         $languages = array_values(array_intersect(
-            $settings['languages'] ?? ['en'],
+            $languages ?? [],
             array_keys(config('app.locales'))
         ));
 
-        $settings['languages'] = $languages ?: ['en'];
+        return $languages ?: ['en'];
+    }
+
+    private function supportedLanguageSettings(array $settings): array
+    {
+        $settings['languages'] = $this->selectedLanguages($settings['languages'] ?? null);
 
         if (! in_array($settings['default_language'] ?? null, $settings['languages'], true)) {
             $settings['default_language'] = $settings['languages'][0];

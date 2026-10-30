@@ -4,6 +4,7 @@ namespace App\Panel\ScheduledConference\Resources;
 
 use App\Actions\Announcements\AnnouncementUpdateAction;
 use App\Facades\Setting;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Forms\Components\TinyEditor;
 use App\Models\Announcement;
 use App\Panel\ScheduledConference\Resources\AnnouncementResource\Pages;
@@ -41,23 +42,25 @@ class AnnouncementResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery();
+        return parent::getEloquentQuery()->with('translate');
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('title')
-                    ->label(__('general.title'))
-                    ->required(),
-                Textarea::make('meta.summary')
-                    ->label(__('general.summary'))
-                    ->autosize(),
-                TinyEditor::make('meta.content')
-                    ->label(__('general.announcement'))
-                    ->profile('basic')
-                    ->helperText(__('general.complete_announcement_content')),
+                MultilanguageComponent::make([
+                    TextInput::make('title')
+                        ->label(__('general.title'))
+                        ->required(),
+                    Textarea::make('meta.summary')
+                        ->label(__('general.summary'))
+                        ->autosize(),
+                    TinyEditor::make('meta.content')
+                        ->label(__('general.announcement'))
+                        ->profile('basic')
+                        ->helperText(__('general.complete_announcement_content')),
+                ]),
                 DatePicker::make('expires_at')
                     ->label(__('general.expires_at'))
                     ->minDate(today()->addDay()),
@@ -76,7 +79,8 @@ class AnnouncementResource extends Resource
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->label(__('general.title'))
-                    ->searchable()
+                    ->formatStateUsing(fn (Announcement $record) => $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search))
                     ->sortable(),
                 TextColumn::make('expires_at')
                     ->label(__('general.expires_at'))
@@ -98,7 +102,7 @@ class AnnouncementResource extends Resource
                     ->mutateRecordDataUsing(function (Announcement $record, array $data) {
                         $data['meta'] = $record->getAllMeta()->toArray();
 
-                        return $data;
+                        return $record->fillTranslatableFormState($data, ['title', 'meta.summary', 'meta.content']);
                     })
                     ->using(fn (Announcement $record, array $data) => AnnouncementUpdateAction::run($record, $data)),
                 DeleteAction::make(),

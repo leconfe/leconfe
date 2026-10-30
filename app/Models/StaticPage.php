@@ -4,17 +4,32 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Metable\Metable;
 
 class StaticPage extends Model
 {
-    use BelongsToConference, BelongsToScheduledConference, Metable;
+    use BelongsToConference, BelongsToScheduledConference, HasTranslatableContent, Metable;
 
     protected $fillable = [
         'title',
         'slug',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['title'];
+
+    /**
+     * Meta keys whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['content'];
 
     protected static function booted(): void
     {

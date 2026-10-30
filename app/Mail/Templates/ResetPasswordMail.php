@@ -3,6 +3,7 @@
 namespace App\Mail\Templates;
 
 use App\Classes\Log;
+use App\Models\ScheduledConference;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -21,7 +22,11 @@ class ResetPasswordMail extends TemplateMailable
      */
     public function __construct(User $user)
     {
-        $this->siteName = app()->getCurrentScheduledConference()?->title ?? app()->getCurrentConference()?->name ?? app()->getSite()->getMeta('name');
+        $siteModel = app()->getCurrentScheduledConference() ?? app()->getCurrentConference() ?? app()->getSite();
+        $siteAttribute = $siteModel instanceof ScheduledConference ? 'title' : 'name';
+
+        $this->siteName = (string) $siteModel->translated($siteAttribute);
+        $this->setTranslatableData('siteName', $siteModel, $siteAttribute);
 
         $this->verificationUrl = $this->verificationUrl($user);
 
@@ -56,17 +61,12 @@ class ResetPasswordMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Password Reset Confirmation';
+        return __('mail_templates.reset_password.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear User,</p>
-            <p>We have received a request to reset your password for {{ siteName }} website. Please click the link below to reset your password:</p>
-            <a href="{{ verificationUrl }}">Reset Password</a>
-            <p>If you did not request a password reset, please ignore this email.</p>
-        HTML;
+        return __('mail_templates.reset_password.body');
     }
 
     public static function getDefaultDescription(): string

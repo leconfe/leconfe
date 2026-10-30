@@ -15,10 +15,14 @@ class CreateNavigationMenuItemAction
         try {
             DB::beginTransaction();
 
-            $navigationMenuItem = NavigationMenuItem::create($data);
+            $navigationMenuItem = new NavigationMenuItem;
+            $data = $navigationMenuItem->syncTranslatableState($data);
+            $navigationMenuItem->fill($data)->save();
             if (data_get($data, 'meta')) {
                 $navigationMenuItem->setManyMeta(data_get($data, 'meta'));
             }
+
+            $navigationMenuItem->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

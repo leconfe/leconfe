@@ -3,8 +3,10 @@
 namespace App\Mail\Templates;
 
 use App\Models\MailTemplate;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -13,7 +15,10 @@ use Spatie\MailTemplates\TemplateMailable as BaseTemplateMailable;
 
 abstract class TemplateMailable extends BaseTemplateMailable implements Interfaces\HasDefaultMailVariable, ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels {
+        __serialize as serializeModels;
+    }
 
     protected static $templateModelClass = MailTemplate::class;
 
@@ -24,9 +29,64 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
      */
     public $tries = 5;
 
+    /**
+     * Variables whose value is a translated model attribute, resolved when the email
+     * is rendered so it follows the recipient's language.
+     *
+     * @var array<string, array{0: class-string<Model>, 1: mixed, 2: string}>
+     */
+    protected array $translatableData = [];
+
+    /**
+     * Variables whose value is a date, formatted when the email is rendered so month
+     * and day names follow the recipient's language.
+     *
+     * @var array<string, array{0: CarbonInterface, 1: string}>
+     */
+    protected array $dateData = [];
+
+    /**
+     * The conference context the email was created in, kept when the email is queued so
+     * a queue worker renders it for the same conference.
+     *
+     * @var array{0: int, 1: int|null}|null
+     */
+    protected ?array $conferenceContext = null;
+
+    public function __serialize(): array
+    {
+        $this->conferenceContext ??= [app()->getCurrentConferenceId(), app()->getCurrentScheduledConferenceId()];
+
+        return $this->serializeModels();
+    }
+
+    public function send($mailer)
+    {
+        return $this->withinConferenceContext(fn () => parent::send($mailer));
+    }
+
+    public function render()
+    {
+        return $this->withinConferenceContext(fn () => parent::render());
+    }
+
+    /**
+     * Run a callback in the conference context the email was queued from.
+     */
+    protected function withinConferenceContext(callable $callback): mixed
+    {
+        if (! $this->conferenceContext) {
+            return $callback();
+        }
+
+        [$conferenceId, $scheduledConferenceId] = $this->conferenceContext;
+
+        return app()->withConferenceContext($conferenceId, $scheduledConferenceId, $callback);
+    }
+
     public static function getDefaultTextTemplate(): string
     {
-        return preg_replace("/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags(static::getDefaultHtmlTemplate()))));
+        return MailTemplate::textFromHtml(static::getDefaultHtmlTemplate());
     }
 
     public static function getVariables(): array
@@ -36,7 +96,57 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
 
     public function buildViewData(): array
     {
-        return array_merge(static::getConferenceViewData(), parent::buildViewData());
+        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData(), $this->resolveDateData());
+    }
+
+    /**
+     * Use the translated value of a model attribute for a template variable.
+     */
+    public function setTranslatableData(string $variable, ?Model $model, string $attribute): static
+    {
+        if ($model && method_exists($model, 'translated')) {
+            $this->translatableData[$variable] = [$model::class, $model->getKey(), $attribute];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use a date formatted in the recipient's language for a template variable.
+     */
+    public function setDateData(string $variable, CarbonInterface $date, string $format): static
+    {
+        $this->dateData[$variable] = [$date, $format];
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function resolveDateData(): array
+    {
+        return collect($this->dateData)
+            ->map(fn (array $date) => $date[0]->translatedFormat($date[1]))
+            ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function resolveTranslatableData(): array
+    {
+        $data = [];
+
+        foreach ($this->translatableData as $variable => [$class, $key, $attribute]) {
+            $value = $class::query()->withoutGlobalScopes()->find($key)?->translated($attribute);
+
+            if (filled($value)) {
+                $data[$variable] = $value;
+            }
+        }
+
+        return $data;
     }
 
     public static function getConferenceViewData()
@@ -47,11 +157,13 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
             $logo = $scheduledConference->getFirstMedia('logo')
                 ?? $scheduledConference->conference?->getFirstMedia('logo');
 
+            $title = $scheduledConference->translated('title');
+
             return [
-                'conferenceName' => $scheduledConference->title,
+                'conferenceName' => $title,
                 'conferenceLink' => $scheduledConference->getHomeUrl(),
                 'conferenceLogoUrl' => $logo?->getAvailableUrl(['thumb', 'thumb-xl']),
-                'conferenceLogoAltText' => $scheduledConference->title,
+                'conferenceLogoAltText' => $title,
             ];
         }
 
@@ -61,11 +173,13 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
             return [];
         }
 
+        $name = $conference->translated('name');
+
         return [
-            'conferenceName' => $conference->name,
+            'conferenceName' => $name,
             'conferenceLink' => $conference->getHomeUrl(),
             'conferenceLogoUrl' => $conference->getFirstMedia('logo')?->getAvailableUrl(['thumb', 'thumb-xl']),
-            'conferenceLogoAltText' => $conference->name,
+            'conferenceLogoAltText' => $name,
         ];
     }
 
@@ -74,9 +188,9 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
         return new Envelope(
             from: new Address(
                 config('mail.from.address'),
-                app()->getCurrentScheduledConference()?->title
-                    ?? app()->getCurrentConference()?->name
-                    ?? app()->getSite()->getMeta('name')
+                app()->getCurrentScheduledConference()?->translated('title')
+                    ?? app()->getCurrentConference()?->translated('name')
+                    ?? app()->getSite()->translated('name')
             ),
         );
     }

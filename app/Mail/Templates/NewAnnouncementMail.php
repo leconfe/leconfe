@@ -19,6 +19,8 @@ class NewAnnouncementMail extends TemplateMailable
             'Announcement Summary' => $announcement->getMeta('summary'),
             'Announcement URL' => $announcement->getUrl(),
         ]);
+        $this->setTranslatableData('Announcement Title', $announcement, 'title');
+        $this->setTranslatableData('Announcement Summary', $announcement, 'summary');
         $this->log = Log::make(
             name: 'email',
             subject: $announcement,
@@ -28,15 +30,12 @@ class NewAnnouncementMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return '{{ Announcement Title }}';
+        return __('mail_templates.new_announcement.subject');
     }
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-        {{{  Announcement Summary  }}}
-        <p>Click <a href="{{ Announcement URL }}">here</a> to read the full announcement.</p>
-        HTML;
+        return __('mail_templates.new_announcement.body');
     }
 
     public static function getDefaultDescription(): string

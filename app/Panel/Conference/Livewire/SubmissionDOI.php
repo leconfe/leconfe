@@ -39,17 +39,14 @@ class SubmissionDOI extends Component implements HasForms, HasTable
             ->query(
                 Submission::query()
                     ->whereIn('status', [SubmissionStatus::Published, SubmissionStatus::Editing])
-                    ->with('doi')
+                    ->with(['doi', 'translate'])
             )
             ->columns([
                 IndexColumn::make('no'),
                 TextColumn::make('title')
                     ->wrap()
-                    ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->whereMeta('title', 'like', "%{$search}%");
-                    }),
+                    ->getStateUsing(fn (Submission $record) => $record->translated('title'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('title', $search)),
                 TextColumn::make('doi.doi')
                     ->searchable()
                     ->label('DOI'),

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app(\App\Support\Multilingual\ContentLocales::class)->direction() }}">
 
 <head>
     <meta charset="UTF-8">
     <title>
-        Invoice - {{ $record->invoice }} - {{ $scheduledConference->title }}
+        {{ __('general.invoice_document') }} - {{ $record->invoice }} - {{ $scheduledConference->title }}
     </title>
 
     @vite(['resources/panel/css/panel.css'])
@@ -66,11 +66,11 @@
             {!! $scheduledConference->getMeta('invoice_sender_information') !!}
         </div>
         <div class="bg-gray-200 p-2 mt-4">
-            <p class="text-xl font-bold">Invoice No.: {{ $record->invoice }}</p>
-            <p>Registration Date: {{ $record->created_at->format('jS M Y, h:i:sa') }} </p>
+            <p class="text-xl font-bold">{{ __('general.invoice_number_value', ['number' => $record->invoice]) }}</p>
+            <p>{{ __('general.document_registration_date', ['date' => $record->created_at->locale(app()->getLocale())->isoFormat('LL LT')]) }}</p>
         </div>
         <div class="mt-4">
-            <p class="font-bold text-base">Invoiced To</p>
+            <p class="font-bold text-base">{{ __('general.invoiced_to') }}</p>
             <p>{{ $user_fullname }}</p>
             <p>{{ $user_affiliation }}</p>
             <p>{{ $user_address_line }}</p>
@@ -81,17 +81,17 @@
             <table class="w-full border border-collapse border-gray-400">
                 <thead>
                     <tr class="bg-gray-200">
-                        <th class="border p-2 border-gray-400 w-[50%]">Description</th>
-                        <th class="border p-2 border-gray-400">Unit Price</th>
-                        <th class="border p-2 border-gray-400">Total</th>
+                        <th class="border p-2 border-gray-400 w-[50%]">{{ __('general.description') }}</th>
+                        <th class="border p-2 border-gray-400">{{ __('general.unit_price') }}</th>
+                        <th class="border p-2 border-gray-400">{{ __('general.invoice_total') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="border p-2 border-gray-400 align-middle">
-                            <p>{{ $record->fee->name }}</p>
+                            <p>{{ $record->fee->translated('name') }}</p>
                             @if($submissionTitle)
-                            <p class="text-xs text-gray-600">Submission Title: {{ $submissionTitle }}</p>
+                            <p class="text-xs text-gray-600">{{ __('general.document_submission_title_label') }} {{ $submissionTitle }}</p>
                             @endif
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
@@ -109,7 +109,7 @@
                             <p class="text-xs text-gray-600">{{ data_get($item, 'description') }}</p>
                             @endif
                             @if(data_get($item, 'quantity', 1) > 1)
-                            <p class="text-xs text-gray-600">Quantity: {{ data_get($item, 'quantity') }}</p>
+                            <p class="text-xs text-gray-600">{{ __('general.document_quantity', ['quantity' => data_get($item, 'quantity')]) }}</p>
                             @endif
                         </td>
                         <td class="border p-2 border-gray-400 align-top text-center">
@@ -123,7 +123,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="bg-gray-200">
-                        <td class="border p-2 border-gray-400 font-bold text-right" colspan="2">Total</td>
+                        <td class="border p-2 border-gray-400 font-bold text-right" colspan="2">{{ __('general.invoice_total') }}</td>
                         <td class="border p-2 border-gray-400 font-bold text-center">{{ $record->getFormattedFee() }}</td>
                     </tr>
                 </tfoot>

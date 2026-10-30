@@ -65,7 +65,7 @@
                 <h2 class="text-lg font-bold">
                     {{ __('general.review_guidelines') }}
                 </h2>
-                {!! $currentScheduledConference->getMeta('review_guidelines') !!}
+                {!! $currentScheduledConference->translated('review_guidelines') !!}
             </div>
             @endif
             @if($hasCompetingInterests)
@@ -73,7 +73,7 @@
                 <h2 class="text-lg font-bold">
                     {{ __('general.competing_interests') }}
                 </h2>
-                {!! $currentScheduledConference->getMeta('competing_interests') !!}
+                {!! $currentScheduledConference->translated('competing_interests') !!}
             </div>
             @endif
 

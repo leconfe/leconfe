@@ -89,7 +89,7 @@
                             <div class="relative ml-4 flex-1 sm:ml-5">
                                 <h3
                                     class="text-lg font-bold text-gray-900 transition-colors dark:text-white {{ $titleHoverClass }}">
-                                    {{ $role['name'] }}
+                                    {{ $role['label'] }}
                                 </h3>
 
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">

@@ -5,9 +5,8 @@ namespace App\Providers;
 use App\Facades\Plugin;
 use App\Http\Middleware\IdentifyConference;
 use App\Http\Middleware\IdentifyScheduledConference;
-use App\Http\Middleware\RedirectToConference;
-use App\Http\Middleware\RedirectToScheduledConference;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\ShareLocalizedContextData;
 use App\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Illuminate\Support\Facades\Blade;
@@ -37,6 +36,7 @@ class FrontendServiceProvider extends ServiceProvider
             Livewire::addPersistentMiddleware([
                 'web',
                 SetLocale::class,
+                ShareLocalizedContextData::class,
             ]);
 
         });

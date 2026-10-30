@@ -5,19 +5,27 @@ namespace App\Models;
 use App\Managers\PaymentManager;
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
+use App\Support\Multilingual\ContentLocales;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 use Plank\Metable\Metable;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 class PaymentFee extends Model implements Sortable
 {
-    use BelongsToConference, BelongsToScheduledConference, HasFactory, Metable, SortableTrait;
+    use BelongsToConference, BelongsToScheduledConference, HasFactory, HasTranslatableContent, Metable, SortableTrait;
+
+    /**
+     * Translated fields of each add-on item.
+     */
+    public const ADDITIONAL_ITEM_TRANSLATABLE_FIELDS = ['name', 'description'];
 
     protected $fillable = [
         'name',
@@ -40,6 +48,24 @@ class PaymentFee extends Model implements Sortable
         'opened_at' => 'date',
         'closed_at' => 'date',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name'];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableMeta = ['description'];
+
+    /**
+     * Add-on item translations collected from form state, in the order of the items,
+     * written by persistAdditionalItemTranslations().
+     *
+     * @var array<int, array{translations: array<string, array<string, mixed>>, copyFrom: ?string}>|null
+     */
+    protected ?array $pendingAdditionalItemTranslations = null;
 
     /**
      * The "booted" method of the model.
@@ -106,6 +132,28 @@ class PaymentFee extends Model implements Sortable
         ];
     }
 
+    /**
+     * The key of an add-on item, derived from its name, amount and description, or
+     * null when the item is not valid. Payments refer to selected items by this key.
+     */
+    public static function additionalItemKey(mixed $item): ?string
+    {
+        if (! is_array($item)) {
+            return null;
+        }
+
+        $name = trim((string) data_get($item, 'name', ''));
+        $amount = (float) data_get($item, 'amount', 0);
+
+        if ($name === '' || $amount < 0) {
+            return null;
+        }
+
+        $description = data_get($item, 'description');
+
+        return 'addon_'.md5($name.'|'.$amount.'|'.(string) $description);
+    }
+
     public function getAdditionalItems(): array
     {
         $additionalItems = $this->getMeta('additional_items', []);
@@ -117,25 +165,17 @@ class PaymentFee extends Model implements Sortable
         return collect($additionalItems)
             ->values()
             ->map(function ($item) {
-                if (! is_array($item)) {
+                $key = static::additionalItemKey($item);
+
+                if ($key === null) {
                     return null;
                 }
-
-                $name = trim((string) data_get($item, 'name', ''));
-                $amount = (float) data_get($item, 'amount', 0);
-
-                if ($name === '' || $amount < 0) {
-                    return null;
-                }
-
-                $description = data_get($item, 'description');
-                $normalizedKey = md5($name.'|'.$amount.'|'.(string) $description);
 
                 return [
-                    'key' => 'addon_'.$normalizedKey,
-                    'name' => $name,
-                    'description' => $description,
-                    'amount' => $amount,
+                    'key' => $key,
+                    'name' => trim((string) data_get($item, 'name', '')),
+                    'description' => data_get($item, 'description'),
+                    'amount' => (float) data_get($item, 'amount', 0),
                 ];
             })
             ->filter()
@@ -143,9 +183,254 @@ class PaymentFee extends Model implements Sortable
             ->all();
     }
 
-    public function getAdditionalItemOptions(): array
+    /**
+     * Add-on items with their name and description in the given language, or the
+     * current language.
+     */
+    public function getTranslatedAdditionalItems(?string $locale = null): array
     {
         return collect($this->getAdditionalItems())
+            ->map(fn (array $item) => $this->translatedAdditionalItem($item, $locale))
+            ->all();
+    }
+
+    /**
+     * An add-on item with its name and description in the given language, falling back
+     * to the primary language and then to the stored item.
+     */
+    public function translatedAdditionalItem(array $item, ?string $locale = null): array
+    {
+        $key = $item['key'] ?? static::additionalItemKey($item);
+
+        if (! is_string($key)) {
+            return $item;
+        }
+
+        foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
+            $value = $this->translatedAdditionalItemField($key, $field, $locale);
+
+            if ($value !== null) {
+                $item[$field] = $value;
+            }
+        }
+
+        return $item;
+    }
+
+    /**
+     * Localize the add-on items stored on a payment. Items whose key no longer matches
+     * an add-on of this fee keep the stored text.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, array<string, mixed>>
+     */
+    public function localizeAdditionalItems(array $items, ?string $locale = null): array
+    {
+        return collect($items)
+            ->map(function (mixed $item) use ($locale) {
+                if (! is_array($item) || ! is_string($item['key'] ?? null)) {
+                    return $item;
+                }
+
+                foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
+                    $value = $this->translatedAdditionalItemField($item['key'], $field, $locale);
+
+                    if ($value !== null) {
+                        $item[$field] = $value;
+                    }
+                }
+
+                return $item;
+            })
+            ->all();
+    }
+
+    public static function additionalItemTranslationKey(string $itemKey, string $field): string
+    {
+        return "additional_items.{$itemKey}.{$field}";
+    }
+
+    protected function translatedAdditionalItemField(string $itemKey, string $field, ?string $locale = null): ?string
+    {
+        $locales = array_unique([$locale ?? app()->getLocale(), $this->getPrimaryContentLocale()]);
+
+        foreach ($locales as $candidate) {
+            $value = $this->getStoredTranslation(static::additionalItemTranslationKey($itemKey, $field), $candidate);
+
+            if (! static::isBlankContent($value)) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Prepare the add-on items of form state for editing: each item remembers its key,
+     * and with more than one language its name and description hold a value per locale.
+     */
+    public function fillAdditionalItemFormState(array $data): array
+    {
+        $items = data_get($data, 'meta.additional_items');
+
+        if (! is_array($items)) {
+            return $data;
+        }
+
+        $locales = $this->getContentLocalesForForm();
+        $primary = $this->getPrimaryContentLocale();
+
+        $items = collect($items)
+            ->map(function (mixed $item) use ($locales, $primary) {
+                if (! is_array($item)) {
+                    return $item;
+                }
+
+                $key = static::additionalItemKey($item);
+                $item['original_key'] = $key;
+
+                if (count($locales) < 2) {
+                    return $item;
+                }
+
+                foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
+                    $item[$field] = collect($locales)
+                        ->mapWithKeys(function (string $locale) use ($item, $key, $field, $primary) {
+                            $value = $key ? $this->getStoredTranslation(static::additionalItemTranslationKey($key, $field), $locale) : null;
+
+                            if ($locale === $primary && static::isBlankContent($value)) {
+                                $value = $item[$field] ?? null;
+                            }
+
+                            return [$locale => $value];
+                        })
+                        ->all();
+                }
+
+                return $item;
+            })
+            ->all();
+
+        Arr::set($data, 'meta.additional_items', $items);
+
+        return $data;
+    }
+
+    /**
+     * Put the primary-language name and description of each add-on item back in place
+     * and remember the other languages for persistAdditionalItemTranslations().
+     */
+    public function syncAdditionalItemState(array $data): array
+    {
+        $items = data_get($data, 'meta.additional_items');
+
+        if (! is_array($items)) {
+            return $data;
+        }
+
+        $primary = $this->getPrimaryContentLocale();
+        $enabled = array_values(array_unique([$primary, ...app(ContentLocales::class)->enabled()]));
+        $pending = [];
+        $synced = [];
+
+        foreach (array_values($items) as $item) {
+            if (! is_array($item)) {
+                $synced[] = $item;
+                $pending[] = ['translations' => [], 'copyFrom' => null];
+
+                continue;
+            }
+
+            $copyFrom = $item['original_key'] ?? null;
+            unset($item['original_key']);
+
+            $translations = [];
+
+            foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
+                $value = $item[$field] ?? null;
+
+                if (is_array($value)) {
+                    $translations[$field] = Arr::only($value, $enabled);
+                    $item[$field] = $value[$primary] ?? null;
+                }
+            }
+
+            $synced[] = $item;
+            $pending[] = ['translations' => $translations, 'copyFrom' => is_string($copyFrom) ? $copyFrom : null];
+        }
+
+        Arr::set($data, 'meta.additional_items', $synced);
+        $this->pendingAdditionalItemTranslations = $pending;
+
+        return $data;
+    }
+
+    /**
+     * Write the add-on item translations under each item's current key. An item whose
+     * key changed keeps the translations of the key it had before it was edited, so
+     * languages that were not in the form are not lost; the submitted languages then
+     * replace them. Translations of items that no longer exist are removed.
+     */
+    public function persistAdditionalItemTranslations(): void
+    {
+        if ($this->pendingAdditionalItemTranslations === null || ! ContentLocales::hasTranslationStorage()) {
+            return;
+        }
+
+        $items = $this->getMeta('additional_items', []);
+        $items = is_array($items) ? array_values($items) : [];
+        $primary = $this->getPrimaryContentLocale();
+        $keep = [];
+        $existing = $this->translate()
+            ->where('key', 'like', 'additional_items.%')
+            ->get()
+            ->groupBy('key');
+
+        foreach ($items as $index => $item) {
+            $key = static::additionalItemKey($item);
+
+            if ($key === null) {
+                continue;
+            }
+
+            $keep[] = $key;
+            $pending = $this->pendingAdditionalItemTranslations[$index] ?? ['translations' => [], 'copyFrom' => null];
+
+            foreach (static::ADDITIONAL_ITEM_TRANSLATABLE_FIELDS as $field) {
+                $translationKey = static::additionalItemTranslationKey($key, $field);
+                $submitted = $pending['translations'][$field] ?? [];
+
+                if ($pending['copyFrom'] !== null && $pending['copyFrom'] !== $key) {
+                    $existing->get(static::additionalItemTranslationKey($pending['copyFrom'], $field), collect())
+                        ->reject(fn ($translation) => array_key_exists($translation->locale, $submitted))
+                        ->each(fn ($translation) => $this->writeTranslation(
+                            $translationKey,
+                            $translation->locale,
+                            $translation->locale === $primary ? ($item[$field] ?? null) : $translation->value,
+                        ));
+                }
+
+                foreach ($submitted as $locale => $value) {
+                    $this->writeTranslation($translationKey, $locale, is_scalar($value) ? $value : null);
+                }
+            }
+        }
+
+        $this->translate()
+            ->where('key', 'like', 'additional_items.%')
+            ->get()
+            ->filter(fn ($translation) => str_starts_with($translation->key, 'additional_items.'))
+            ->reject(fn ($translation) => in_array(explode('.', $translation->key)[1] ?? null, $keep, true))
+            ->each
+            ->delete();
+
+        $this->pendingAdditionalItemTranslations = null;
+        $this->refreshTranslationCache();
+    }
+
+    public function getAdditionalItemOptions(): array
+    {
+        return collect($this->getTranslatedAdditionalItems())
             ->mapWithKeys(function (array $item) {
                 $formattedAmount = money($item['amount'], $this->currency, true)->formatWithoutZeroes();
 
@@ -220,7 +505,7 @@ class PaymentFee extends Model implements Sortable
 
     public function getAdditionalItemFormSchema(): array
     {
-        $items = $this->getAdditionalItems();
+        $items = $this->getTranslatedAdditionalItems();
         $currency = $this->currency;
 
         if (empty($items)) {

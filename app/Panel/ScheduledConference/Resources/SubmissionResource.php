@@ -6,6 +6,8 @@ use App\Constants\ReviewerStatus;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
 use App\Models\Submission;
+use App\Models\Topic;
+use App\Models\Track;
 use App\Panel\ScheduledConference\Resources\SubmissionResource\Pages;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -28,7 +30,7 @@ class SubmissionResource extends Resource
 
     public static function getRecordTitle(?Model $record): string|Htmlable|null
     {
-        return $record?->getMeta('title') ?? static::getModelLabel();
+        return $record?->translated('title') ?? static::getModelLabel();
     }
 
     public static function getNavigationLabel(): string
@@ -56,6 +58,7 @@ class SubmissionResource extends Resource
             ])
             ->with([
                 'meta',
+                'translate',
                 'user' => ['meta'],
                 'participants',
                 'editors',
@@ -123,7 +126,7 @@ class SubmissionResource extends Resource
                         ]),
                     Stack::make([
                         Tables\Columns\TextColumn::make('title')
-                            ->getStateUsing(fn (Submission $record) => $record->getMeta('title'))
+                            ->getStateUsing(fn (Submission $record) => $record->translated('title'))
                             ->description(function (Submission $record) {
                                 $review = $record->getReviewForUserInActiveRound(auth()->user());
                                 if ($review) {
@@ -133,15 +136,15 @@ class SubmissionResource extends Resource
                                 return $record->user->fullName;
                             })
                             ->searchable(query: function (Builder $query, string $search): Builder {
-                                return $query
-                                    ->whereMeta('title', 'like', "%{$search}%")
-                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%"));
+                                return $query->where(fn (Builder $query) => $query
+                                    ->whereTranslatableLike('title', $search)
+                                    ->orWhereHas('user', fn ($query) => $query->whereMeta('public_name', 'like', "%{$search}%")->orWhere('given_name', 'like', "%{$search}%")->orWhere('family_name', 'like', "%{$search}%")));
                             }),
                         Split::make([
                             Tables\Columns\TextColumn::make('status')
                                 ->grow(false)
                                 ->badge()
-                                ->getStateUsing(fn (Submission $record) => $record->status?->value),
+                                ->getStateUsing(fn (Submission $record) => $record->status?->getLabel()),
                             Tables\Columns\TextColumn::make('latest-review-round')
                                 ->grow(false)
                                 ->badge()
@@ -256,12 +259,14 @@ class SubmissionResource extends Resource
                     )
                     ->searchable(),
                 SelectFilter::make('track')
-                    ->relationship('track', 'title')
+                    ->relationship('track', 'title', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Track $record) => $record->translated('title'))
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('topic')
-                    ->relationship('topics', 'name')
+                    ->relationship('topics', 'name', fn ($query) => $query->with('translate'))
+                    ->getOptionLabelFromRecordUsing(fn (Topic $record) => $record->translated('name'))
                     ->multiple()
                     ->searchable()
                     ->preload(),

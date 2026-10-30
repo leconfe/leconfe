@@ -80,6 +80,7 @@ class TranslationCompletenessTest extends TestCase
                 $nonString = [];
                 $empty = [];
                 $placeholderMismatch = [];
+                $branchPlaceholderMismatch = [];
 
                 foreach ($english as $key => $value) {
                     if (! array_key_exists($key, $translations)) {
@@ -101,12 +102,23 @@ class TranslationCompletenessTest extends TestCase
                     if ($this->placeholders($value) !== $this->placeholders($translations[$key])) {
                         $placeholderMismatch[] = $key;
                     }
+
+                    $englishBranches = array_map($this->placeholders(...), $this->pluralBranches($value));
+
+                    foreach ($this->pluralBranches($translations[$key]) as $branch) {
+                        if (! in_array($this->placeholders($branch), $englishBranches, true)) {
+                            $branchPlaceholderMismatch[] = $key;
+
+                            break;
+                        }
+                    }
                 }
 
                 $this->assertSame([], $missing, "{$locale}/{$group} is missing keys: ".implode(', ', $missing));
                 $this->assertSame([], $nonString, "{$locale}/{$group} has non-string keys: ".implode(', ', $nonString));
                 $this->assertSame([], $empty, "{$locale}/{$group} has empty keys: ".implode(', ', $empty));
                 $this->assertSame([], $placeholderMismatch, "{$locale}/{$group} changed placeholders in: ".implode(', ', $placeholderMismatch));
+                $this->assertSame([], $branchPlaceholderMismatch, "{$locale}/{$group} has a plural form whose placeholders match no English form in: ".implode(', ', $branchPlaceholderMismatch));
             }
         }
     }
@@ -145,6 +157,18 @@ class TranslationCompletenessTest extends TestCase
         }
     }
 
+    public function test_catalogs_use_real_line_breaks(): void
+    {
+        foreach (glob(lang_path('*/*.php')) ?: [] as $file) {
+            $literal = array_keys(array_filter(
+                $this->flattenTranslations(require $file),
+                fn ($value) => is_string($value) && str_contains($value, '\\n'),
+            ));
+
+            $this->assertSame([], $literal, basename(dirname($file)).'/'.basename($file).' has a literal \\n in: '.implode(', ', $literal));
+        }
+    }
+
     private function flattenTranslations(array $translations, string $prefix = ''): array
     {
         $flattened = [];
@@ -166,10 +190,18 @@ class TranslationCompletenessTest extends TestCase
     {
         preg_match_all('/(?<![A-Za-z0-9_]):[A-Za-z][A-Za-z0-9_]*/', $value, $matches);
 
-        $placeholders = $matches[0];
+        $placeholders = array_values(array_unique($matches[0]));
         sort($placeholders);
 
         return $placeholders;
+    }
+
+    private function pluralBranches(string $value): array
+    {
+        return array_map(
+            static fn (string $branch): string => preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', trim($branch)),
+            explode('|', $value)
+        );
     }
 
     private function markupTags(string $value): array

@@ -48,7 +48,7 @@ class NewSubmission extends Notification implements ShouldQueue
             ->icon('lineawesome-exclamation-circle-solid')
             ->iconColor('primary')
             ->title('New Submission')
-            ->body("Title: {$this->submission->getMeta('title')}")
+            ->body("Title: {$this->submission->translated('title')}")
             ->actions([
                 Action::make('new-submission')
                     ->url(SubmissionResource::getUrl('view', ['record' => $this->submission, 'tenant' => $this->submission->conference]))

@@ -21,17 +21,19 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public function __construct(SubmissionParticipant $participant)
     {
-        $this->submissionTitle = $participant->submission->getMeta('title');
+        $this->submissionTitle = (string) $participant->submission->translated('title');
         $this->name = $participant->user->fullName;
-        $this->position = $participant->role->name;
+        $this->position = $participant->role->display_name;
 
         $this->setAdditionalData([
             'Participant Name' => $participant->user->fullName,
-            'Participant Role' => $participant->role->name,
+            'Participant Role' => $participant->role->display_name,
             'Conference Title' => $participant->submission->scheduledConference->title,
             'Submission Title' => $participant->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $participant->submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $participant->submission, 'title');
+        $this->setTranslatableData('Conference Title', $participant->submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -42,7 +44,7 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You have been assigned as a participant';
+        return __('mail_templates.participant_assigned.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -52,11 +54,6 @@ class ParticipantAssignedMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Participant Name }},</p>
-            <p>You have been assigned as {{ Participant Role }} for "{{ Submission Title }}" on {{ Conference Title }}.</p>
-            <p>Please guide the submission through the editorial process.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-        HTML;
+        return __('mail_templates.participant_assigned.body');
     }
 }

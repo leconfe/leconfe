@@ -66,7 +66,7 @@ class DiscussionTopic extends \Livewire\Component implements HasForms, HasTable
                     $submissionParticipant = $this->submission->participants()
                         ->with(['user', 'role'])
                         ->get()
-                        ->mapWithKeys(fn($participant) => [$participant->user->getKey() => $participant->user->fullName . ' (' . $participant->role->name . ')'])
+                        ->mapWithKeys(fn($participant) => [$participant->user->getKey() => $participant->user->fullName . ' (' . $participant->role->display_name . ')'])
                         ->toArray();
 
                     if (! isset($submissionParticipant[Auth::id()])) {

@@ -4,8 +4,10 @@ namespace App\Panel\Conference\Livewire;
 
 use App\Actions\UserInvitation\InviteUserAction;
 use App\Mail\Templates\UserRoleInvitationMail;
+use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\UserInvitation;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -45,6 +47,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('role_name')
+                    ->formatStateUsing(fn (string $state) => UserRole::displayLabel($state))
                     ->label(__('general.role'))
                     ->badge(),
                 TextColumn::make('status')
@@ -165,7 +168,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
                                 'expires_at' => now()->addDays(7),
                             ]);
 
-                            Mail::to($record->email)->send(new UserRoleInvitationMail($record->fresh()));
+                            Mail::to($record->email)->locale(RecipientLocale::for($record->email))->send(new UserRoleInvitationMail($record->fresh()));
 
                             Notification::make()
                                 ->title('Invitation resent.')
@@ -212,7 +215,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->withoutGlobalScopes()
             ->availableRolesByContext()
             ->orderBy('name')
-            ->pluck('name', 'id')
+            ->get()->pluck('display_name', 'id')
             ->toArray();
     }
 
@@ -222,7 +225,7 @@ class UserInvitationTable extends Component implements HasForms, HasTable
             ->withoutGlobalScopes()
             ->availableRolesByContext()
             ->orderBy('name')
-            ->pluck('name', 'name')
+            ->get()->pluck('display_name', 'name')
             ->toArray();
     }
 

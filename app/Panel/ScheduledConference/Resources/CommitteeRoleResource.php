@@ -2,6 +2,9 @@
 
 namespace App\Panel\ScheduledConference\Resources;
 
+use App\Actions\Committees\CommitteeRoleCreateAction;
+use App\Actions\Committees\CommitteeRoleUpdateAction;
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\CommitteeRole;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\TextInput;
@@ -10,7 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\Rules\Unique;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class CommitteeRoleResource extends Resource
 {
@@ -30,6 +34,7 @@ class CommitteeRoleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()
+            ->with('translate')
             ->orderBy('order_column');
     }
 
@@ -37,13 +42,17 @@ class CommitteeRoleResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('general.name'))
-                    ->required()
-                    ->unique(modifyRuleUsing: function (Unique $rule) {
-                        return $rule
-                            ->where('scheduled_conference_id', app()->getCurrentScheduledConference()->getKey());
-                    }, ignoreRecord: true),
+                MultilanguageComponent::make([
+                    TextInput::make('name')
+                        ->label(__('general.name'))
+                        ->required()
+                        ->rule(
+                            fn (?Model $record) => Rule::unique(CommitteeRole::class, 'name')
+                                ->where('scheduled_conference_id', app()->getCurrentScheduledConference()->getKey())
+                                ->ignore($record),
+                            fn (TextInput $component): bool => ($component->getMeta('primary') ?? true),
+                        ),
+                ]),
             ]);
     }
 
@@ -55,7 +64,8 @@ class CommitteeRoleResource extends Resource
                 IndexColumn::make('no'),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('general.name'))
-                    ->searchable()
+                    ->formatStateUsing(fn (CommitteeRole $record) => $record->translated('name'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('committees_count')
                     ->label(__('general.committees'))
@@ -68,13 +78,15 @@ class CommitteeRoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->mutateRecordDataUsing(fn (CommitteeRole $record, array $data) => $record->fillTranslatableFormState($data, ['name']))
+                    ->using(fn (CommitteeRole $record, array $data) => CommitteeRoleUpdateAction::run($record, $data)),
                 Tables\Actions\DeleteAction::make()
                     ->using(function (CommitteeRole $record, Tables\Actions\DeleteAction $action) {
                         try {
                             $speakerCount = $record->committees()->count();
                             if ($speakerCount > 0) {
-                                throw new \Exception(__('general.cannot_delete_role_commites', ['name' => $record->name, 'roleType' => static::$roleType]));
+                                throw new \Exception(__('general.cannot_delete_role_commites', ['name' => $record->translated('name'), 'roleType' => static::$roleType]));
                             }
 
                             return $record->delete();
@@ -94,9 +106,7 @@ class CommitteeRoleResource extends Resource
             ->heading(__('general.committee_roles_table'))
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        return $data;
-                    })
+                    ->using(fn (array $data) => CommitteeRoleCreateAction::run($data))
                     ->label(__('general.new_committee_role'))
                     ->modalHeading(__('general.new_committee_role')),
             ]);

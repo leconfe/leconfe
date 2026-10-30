@@ -9,15 +9,16 @@ use App\Mail\Templates\AcceptPaperMail;
 use App\Mail\Templates\DeclineAbstractMail;
 use App\Mail\Templates\SendForReviewMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStage;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\MailTemplate;
 use App\Models\PaymentFee;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Notifications\AbstractDeclined;
 use App\Notifications\SubmissionSentForReview;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
+use App\Support\Multilingual\RecipientLocale;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -49,6 +50,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
     public function declineAction()
     {
         return Action::make('decline')
+            ->label(__('general.decline'))
             ->outlined()
             ->color('danger')
             ->authorize('actAsEditor', $this->submission)
@@ -58,10 +60,10 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel(__('general.decline'))
             ->extraAttributes(['class' => 'w-full'], true)
             ->mountUsing(function (Form $form): void {
-                $mailTempalte = DefaultMailTemplate::where('mailable', DeclineAbstractMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(DeclineAbstractMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
-                    'subject' => $mailTempalte ? $mailTempalte->subject : '',
-                    'message' => $mailTempalte ? $mailTempalte->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -92,7 +94,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
                 if (! data_get($data, 'no-notification', false)) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new DeclineAbstractMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -126,11 +128,11 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->color('gray')
             ->outlined()
             ->mountUsing(function (Form $form) {
-                $mailTemplate = DefaultMailTemplate::where('mailable', AcceptPaperMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(AcceptPaperMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
                     'email' => $this->submission->user->email,
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -161,7 +163,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
 
                 if (! $data['do-not-notify-author']) {
                     try {
-                        Mail::to($this->submission->user->email)
+                        Mail::to($this->submission->user)
                             ->send(
                                 (new AcceptPaperMail($this->submission))
                                     ->subjectUsing($data['subject'])
@@ -194,10 +196,10 @@ class CallforAbstract extends Component implements HasActions, HasForms
             ->extraAttributes(['class' => 'w-full'])
             ->icon('lineawesome-check-circle-solid')
             ->mountUsing(function (Form $form): void {
-                $mailTemplate = DefaultMailTemplate::where('mailable', SendForReviewMail::class)->first();
+                $mailTemplate = MailTemplate::contentFor(SendForReviewMail::class, RecipientLocale::for($this->submission->user));
                 $form->fill([
-                    'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                    'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                    'subject' => $mailTemplate['subject'],
+                    'message' => $mailTemplate['html_template'],
                 ]);
             })
             ->form([
@@ -207,7 +209,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                     ->helperText(__('general.review_round_name_helper'))
                     ->maxLength(255),
                 CheckboxList::make('papers')
-                    ->label('Select files below to send them to the review stage')
+                    ->label(__('general.select_files_to_send_to_review'))
                     ->hidden(
                         ! $this->submission->getMedia(SubmissionFileCategory::ABSTRACT_FILES)->count()
                     )
@@ -235,7 +237,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             ->where('category', SubmissionFileCategory::ABSTRACT_FILES)
                             ->get()
                             ->mapWithKeys(function (SubmissionFile $paper) {
-                                return [$paper->getKey() => $paper->type->name];
+                                return [$paper->getKey() => $paper->type->translated('name')];
                             });
                     }),
                 Grid::make()
@@ -248,8 +250,9 @@ class CallforAbstract extends Component implements HasActions, HasForms
                             ->options(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->active()
+                                    ->with('translate')
                                     ->get()
-                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->name])
+                                    ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                             )
                             ->descriptions(
                                 fn () => PaymentFee::type(PaymentManager::TYPE_SUBMISSION_FEE)
@@ -264,7 +267,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                     return [];
                                 }
 
-                                return collect($paymentFee->getAdditionalItems())->map(function ($item) use ($paymentFee) {
+                                return collect($paymentFee->getTranslatedAdditionalItems())->map(function ($item) use ($paymentFee) {
                                     $formattedAmount = money($item['amount'], $paymentFee->currency, true)->formatWithoutZeroes();
 
                                     return \App\Forms\Components\AddOnItemCounter::make("additional_items.{$item['key']}")
@@ -393,7 +396,7 @@ class CallforAbstract extends Component implements HasActions, HasForms
                                 $paymentFee,
                                 $this->submission->user,
                                 PaymentManager::TYPE_SUBMISSION_FEE,
-                                $this->submission->getMeta('title'),
+                                $this->submission->translated('title', $this->submission->getPrimaryContentLocale()),
                                 SubmissionResource::getUrl('view', ['record' => $this->submission]),
                                 $paymentFee->getMeta('description'),
                                 $totalAmount,

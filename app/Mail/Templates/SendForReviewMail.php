@@ -22,6 +22,8 @@ class SendForReviewMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -32,7 +34,7 @@ class SendForReviewMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Your submission {{ Submission Title }} has been sent for review';
+        return __('mail_templates.send_for_review.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -42,11 +44,6 @@ class SendForReviewMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>Your submission "{{ Submission Title }}" to {{ Conference Title }} has been sent to the review stage.</p>
-            <p>The editorial team will notify you when the review process progresses.</p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a></p>
-    HTML;
+        return __('mail_templates.send_for_review.body');
     }
 }

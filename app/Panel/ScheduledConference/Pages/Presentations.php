@@ -46,6 +46,16 @@ class Presentations extends Page implements HasForms
         return static::canAccess();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('general.presentations');
+    }
+
+    public function getTitle(): string
+    {
+        return __('general.presentations');
+    }
+
     public function mount(): void
     {
         $this->form->fill([]);
@@ -64,34 +74,38 @@ class Presentations extends Page implements HasForms
                     ->columns(4)
                     ->schema([
                         TextInput::make('search')
-                            ->label('Search Title')
-                            ->placeholder('Search by title')
+                            ->label(__('general.search_title'))
+                            ->placeholder(__('general.search_by_title'))
                             ->suffixIcon('heroicon-m-magnifying-glass')
                             ->debounce(),
                         Select::make('track_id')
-                            ->label('Track')
-                            ->placeholder('All tracks')
+                            ->label(__('general.track'))
+                            ->placeholder(__('general.all_tracks'))
                             ->searchable()
                             ->live()
-                            ->options(fn() => Track::query()
+                            ->options(fn () => Track::query()
                                 ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
-                                ->pluck('title', 'id')),
+                                ->with('translate')
+                                ->get()
+                                ->mapWithKeys(fn (Track $track) => [$track->getKey() => $track->translated('title')])),
                         Select::make('topic_id')
-                            ->label('Topic')
-                            ->placeholder('All topics')
+                            ->label(__('general.topic'))
+                            ->placeholder(__('general.all_topics'))
                             ->searchable()
                             ->live()
                             ->options(
-                                fn() => Topic::query()
+                                fn () => Topic::query()
                                     ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
-                                    ->pluck('name', 'id')
+                                    ->with('translate')
+                                    ->get()
+                                    ->mapWithKeys(fn (Topic $topic) => [$topic->getKey() => $topic->translated('name')])
                             )
                             ->visible(
-                                fn($component) => count($component->getOptions()) > 0
+                                fn ($component) => count($component->getOptions()) > 0
                             ),
                         TextInput::make('keyword')
-                            ->label('Keyword')
-                            ->placeholder('Search by keyword')
+                            ->label(__('general.keyword'))
+                            ->placeholder(__('general.search_by_keyword'))
                             ->suffixIcon('heroicon-m-tag')
                             ->debounce(),
                     ]),
@@ -108,12 +122,12 @@ class Presentations extends Page implements HasForms
         $trackId = data_get($this->formData, 'track_id');
         $topicId = data_get($this->formData, 'topic_id');
         $keyword = trim((string) data_get($this->formData, 'keyword'));
-        
+
         $presentations = Presentation::query()
             ->with([
                 'meta',
                 'media',
-                'submission' => ['meta', 'track', 'authors'],
+                'submission' => ['meta', 'translate', 'track.translate', 'authors'],
             ])
             ->isFinal()
             ->orderBy(
@@ -125,7 +139,7 @@ class Presentations extends Page implements HasForms
                 $query->whereHas('submission.meta', function ($metaQuery) use ($search) {
                     $metaQuery
                         ->where('key', 'title')
-                        ->where('value', 'like', '%' . $search . '%');
+                        ->where('value', 'like', '%'.$search.'%');
                 });
             })
             ->when($trackId, function ($query) use ($trackId) {
@@ -142,13 +156,13 @@ class Presentations extends Page implements HasForms
                 $query->whereHas('submission.meta', function ($metaQuery) use ($keyword) {
                     $metaQuery
                         ->where('key', 'keywords')
-                        ->where('value', 'like', '%' . $keyword . '%');
+                        ->where('value', 'like', '%'.$keyword.'%');
                 });
             })
             ->paginate(6);
 
         return [
-            'presentations' => $presentations
+            'presentations' => $presentations,
         ];
     }
 }

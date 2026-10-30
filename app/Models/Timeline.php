@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\Setting;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Timeline extends Model
 {
-    use BelongsToScheduledConference, Cachable, HasFactory;
+    use BelongsToScheduledConference, Cachable, HasFactory, HasTranslatableContent;
 
     public const TYPE_SUBMISSION_OPEN = 1;
 
@@ -35,6 +36,13 @@ class Timeline extends Model
         'hide',
         'require_attendance',
     ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name', 'description'];
 
     protected $casts = [
         'date' => 'datetime',

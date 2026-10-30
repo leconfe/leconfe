@@ -15,7 +15,11 @@ class TopicCreateAction
         try {
             DB::beginTransaction();
 
-            $topic = Topic::create($data);
+            $topic = new Topic;
+            $data = $topic->syncTranslatableState($data);
+            $topic->fill($data)->save();
+
+            $topic->persistTranslatableState();
 
             DB::commit();
         } catch (\Throwable $th) {

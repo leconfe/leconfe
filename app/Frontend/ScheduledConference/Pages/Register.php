@@ -339,6 +339,7 @@ class Register extends Page implements HasActions, HasForms
             $user = UserCreateAction::run([
                 ...Arr::only($data, ['given_name', 'family_name', 'email', 'password']),
                 'meta' => Arr::only($data, ['affiliation', 'country', 'phone', 'public_name']),
+                'locale' => app()->getLocale(),
             ]);
 
             DB::commit();

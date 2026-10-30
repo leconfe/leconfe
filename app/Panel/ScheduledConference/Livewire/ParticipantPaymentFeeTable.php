@@ -4,12 +4,13 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Mail\Templates\ParticipantPaymentMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
+use App\Models\MailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Notifications\ParticipantPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Services\Billing\InvoicePaymentContextResolver;
+use App\Support\Multilingual\RecipientLocale;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -89,6 +90,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
+                    ->formatStateUsing(fn (Payment $record, $state) => $record->fee?->translated('name') ?? $state)
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')
@@ -153,11 +155,15 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ])
             ->bulkActions([
                 BulkAction::make('send-email')
-                    ->mountUsing(function (Form $form): void {
-                        $mailTemplate = DefaultMailTemplate::where('mailable', ParticipantPaymentMail::class)->first();
+                    ->mountUsing(function (Form $form, Collection $records): void {
+                        // A single recipient gets the template in their language, several get the site default language.
+                        $recipient = $records->count() === 1
+                            ? rescue(fn () => app(InvoicePaymentContextResolver::class)->participant($records->first()->getKey()), report: false)
+                            : null;
+                        $mailTemplate = MailTemplate::contentFor(ParticipantPaymentMail::class, $recipient ? RecipientLocale::for($recipient) : null);
                         $form->fill([
-                            'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                            'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            'subject' => $mailTemplate['subject'],
+                            'message' => $mailTemplate['html_template'],
                         ]);
                     })
                     ->form([
@@ -181,7 +187,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                             $mailTemplate = new ParticipantPaymentMail($participant);
                             $mailTemplate->subjectUsing($data['subject']);
                             $mailTemplate->contentUsing($data['message']);
-                            Mail::to($participant->email)->send($mailTemplate);
+                            Mail::to($participant->email)->locale(RecipientLocale::for($participant))->send($mailTemplate);
                             $record->markInvoiceAsSent();
                         });
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToConference;
 use App\Models\Concerns\BelongsToScheduledConference;
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class StakeholderLevel extends Model implements HasMedia, Sortable
 {
-    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, InteractsWithMedia, SortableTrait;
+    use BelongsToConference, BelongsToScheduledConference, Cachable, HasFactory, HasTranslatableContent, InteractsWithMedia, SortableTrait;
 
     public const TYPE_SPONSOR = 1;
 
@@ -32,6 +33,11 @@ class StakeholderLevel extends Model implements HasMedia, Sortable
     protected $casts = [
         'type' => 'integer',
     ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['name', 'description'];
 
     protected static function booted(): void
     {

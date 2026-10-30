@@ -34,6 +34,11 @@ class Payments extends Page
         return __('general.payments');
     }
 
+    public function getTitle(): string
+    {
+        return __('general.payments');
+    }
+
     public function getHeading(): string|Htmlable
     {
         return __('general.payments');
@@ -68,33 +73,40 @@ class Payments extends Page
                     ->contained(false)
                     ->tabs([
                         Tabs\Tab::make('Submission Payment')
+                            ->label(__('general.submission_payment'))
                             ->schema([
                                 Livewire::make(SubmissionPaymentTable::class),
                             ]),
                         Tabs\Tab::make('Participant Payment')
+                            ->label(__('general.participant_payment'))
                             ->schema([
                                 Livewire::make(ParticipantPaymentFeeTable::class),
                             ]),
                         Tabs\Tab::make('Settings')
+                            ->label(__('general.settings'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->schema([
                                         InfolistsVerticalTabs\Tab::make('General')
+                                            ->label(__('general.general'))
                                             ->schema([
                                                 Livewire::make(PaymentSetting::class)
                                                     ->key('payment_settings'),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Submission Fees')
+                                            ->label(__('general.submission_fees'))
                                             ->schema([
                                                 Tabs::make()
                                                     ->contained(false)
                                                     ->tabs([
                                                         Tabs\Tab::make('Fees')
+                                                            ->label(__('general.fees'))
                                                             ->schema([
                                                                 Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
                                                                     ->key('submission_payment_fees'),
                                                             ]),
                                                         Tabs\Tab::make('Form')
+                                                            ->label(__('general.form'))
                                                             ->schema([
                                                                 Livewire::make(PaymentFormItemTable::class, ['paymentType' => PaymentManager::TYPE_SUBMISSION_FEE])
                                                                     ->key('submission_payment_form_item'),
@@ -103,16 +115,19 @@ class Payments extends Page
                                                     ])
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Participant Fees')
+                                            ->label(__('general.participant_fees'))
                                             ->schema([
                                                 Tabs::make()
                                                     ->contained(false)
                                                     ->tabs([
                                                         Tabs\Tab::make('Fees')
+                                                            ->label(__('general.fees'))
                                                             ->schema([
                                                                 Livewire::make(PaymentFeeTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
                                                                     ->key('participant_payment_fees'),
                                                             ]),
                                                         Tabs\Tab::make('Form')
+                                                            ->label(__('general.form'))
                                                             ->schema([
                                                                 Livewire::make(PaymentFormItemTable::class, ['paymentType' => PaymentManager::TYPE_PARTICIPANT_FEE])
                                                                     ->key('participant_payment_form_item'),
@@ -121,12 +136,14 @@ class Payments extends Page
                                                     ]),
                                             ]),
                                         InfolistsVerticalTabs\Tab::make('Invoice')
+                                            ->label(__('general.invoice'))
                                             ->schema([
                                                 Livewire::make(InvoiceSetting::class)->key('invoice'),
                                             ]),
                                     ]),
                             ]),
                         Tabs\Tab::make('Payment Method')
+                            ->label(__('general.payment_method'))
                             ->schema([
                                 InfolistsVerticalTabs\Tabs::make()
                                     ->schema($paymentMethodTabs),

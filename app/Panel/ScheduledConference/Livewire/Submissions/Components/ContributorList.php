@@ -35,19 +35,25 @@ use Illuminate\Database\UniqueConstraintViolationException;
 
 class ContributorList extends \Livewire\Component implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable;
+    use InteractsWithForms;
+    use InteractsWithTable {
+        reorderTable as reorderTableRecords;
+    }
 
     public Submission $submission;
 
     public bool $viewOnly = false;
 
-    protected $listeners = ['refreshLivewire' => '$refresh'];
+    protected $listeners = [
+        'refreshLivewire' => '$refresh',
+        'contributorsUpdated' => '$refresh',
+    ];
 
     public function getQuery(bool $submissionRelated = true): Builder
     {
         return Author::query()
             ->whereSubmissionId($this->submission->getKey())
-            ->with(['role', 'media', 'meta'])
+            ->with(['role.translate', 'media', 'meta'])
             ->orderBy('order_column');
     }
 
@@ -86,7 +92,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                         ->relationship(
                             name: 'role',
                             titleAttribute: 'name',
+                            modifyQueryUsing: fn (Builder $query) => $query->with('translate'),
                         )
+                        ->getOptionLabelFromRecordUsing(fn (AuthorRole $record) => $record->translated('name'))
                         ->required()
                         ->columnSpanFull(),
                     ...ContributorForm::additionalFormField(),
@@ -124,9 +132,11 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                             if ($data['primary_contact']) {
                                 $this->submission->setPrimaryContact($record);
                             }
-                        }),
+                        })
+                        ->after(fn () => $this->dispatch('contributorsUpdated')),
                     DeleteAction::make()
-                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data)),
+                        ->using(fn (array $data, Model $record) => AuthorDeleteAction::run($record, $data))
+                        ->after(fn () => $this->dispatch('contributorsUpdated')),
                 ])
                     ->hidden($this->viewOnly),
             ])
@@ -154,6 +164,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
 
                         return $author;
                     })
+                    ->after(fn () => $this->dispatch('contributorsUpdated'))
                     ->hidden($this->viewOnly),
             ])
             ->columns([
@@ -164,6 +175,7 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
                     ->color('gray')
                     ->alignStart(),
                 TextColumn::make('role.name')
+                    ->formatStateUsing(fn (Author $record) => $record->role?->translated('name'))
                     ->badge(),
                 IconColumn::make('primary_contact')
                     ->getStateUsing(fn ($record) => $record->isPrimaryContact($this->submission))
@@ -214,10 +226,19 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
             $this->submission->setPrimaryContact($author);
         }
 
+        $this->dispatch('contributorsUpdated');
+
         Notification::make()
             ->title(__('general.contributor_added'))
             ->success()
             ->send();
+    }
+
+    public function reorderTable(array $order): void
+    {
+        $this->reorderTableRecords($order);
+
+        $this->dispatch('contributorsUpdated');
     }
 
     public function canAddMyselfAsContributor(): bool
@@ -250,7 +271,9 @@ class ContributorList extends \Livewire\Component implements HasForms, HasTable
     {
         return AuthorRole::withoutGlobalScopes()
             ->where('conference_id', $this->submission->conference_id)
-            ->where('name', 'Author')
+            ->where(fn ($query) => $query->where('builtin_code', 'author')
+                ->orWhere(fn ($query) => $query->whereNull('builtin_code')->where('name', 'Author')))
+            ->orderByRaw('builtin_code IS NULL')
             ->first();
     }
 

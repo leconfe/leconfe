@@ -1,6 +1,6 @@
 <x-website::layouts.main>
     <div class="space-y-8">
-        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->getMeta('about')||$currentScheduledConference->getMeta('additional_content'))
+        @if ($currentScheduledConference->hasMedia('cover')||$currentScheduledConference->translated('about')||$currentScheduledConference->getMeta('additional_content'))
             <section id="highlight" class="space-y-4">
                 <div class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 gap-4">
                     <div class="flex flex-col gap-4 flex-1">
@@ -8,12 +8,12 @@
                             <div class="cf-cover">
                                 <img class="h-full"
                                     src="{{ $currentScheduledConference->getFirstMedia('cover')->getAvailableUrl(['thumb', 'thumb-xl']) }}"
-                                    alt="{{ $currentScheduledConference->title }}" />
+                                    alt="{{ $currentScheduledConference->translated('title') }}" />
                             </div>
                         @endif
-                        @if ($currentScheduledConference->getMeta('about'))
+                        @if ($currentScheduledConference->translated('about'))
                             <div class="user-content">
-                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->getMeta('about')) }}
+                                {{ new Illuminate\Support\HtmlString($currentScheduledConference->translated('about')) }}
                             </div>
                         @endif
                         @if ($currentScheduledConference->getMeta('additional_content'))
@@ -32,7 +32,7 @@
                     @foreach ($currentScheduledConference->speakerRoles as $role)
                         @if ($role->speakers->isNotEmpty())
                             <div class="space-y-4">
-                                <h3 class="text-lg">{{ $role->name }}</h3>
+                                <h3 class="text-lg">{{ $role->translated('name') }}</h3>
                                 <div class="cf-speaker-list grid gap-2 sm:grid-cols-2">
                                     @foreach ($role->speakers as $speaker)
                                         <div class="cf-speaker flex items-center h-full gap-2">
@@ -77,7 +77,7 @@
                     @endif
                     @foreach ($sponsorLevels as $sponsorLevel)
                         <div class="conference-sponsor-level">
-                            <h3 class="text-lg mb-4">{{ $sponsorLevel->name }}</h3>
+                            <h3 class="text-lg mb-4">{{ $sponsorLevel->translated('name') }}</h3>
                             <div class="conference-sponsors flex flex-wrap items-center gap-4">
                                 @foreach($sponsorLevel->stakeholders as $sponsor)
                                     @if(!$sponsor->getFirstMedia('logo'))

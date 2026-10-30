@@ -37,6 +37,7 @@ class CitationSetting extends Component implements HasForms
     public function form(Form $form): Form
     {
         $citationStyleOptions = collect(Citation::getCitationStyles())->mapWithKeys(fn ($style) => [$style['id'] => $style['title']]);
+        $authorRoleOptions = AuthorRole::with('translate')->get()->mapWithKeys(fn (AuthorRole $role) => [$role->getKey() => $role->translated('name')])->all();
         $citationDownloadOptions = collect(Citation::getCitationDownloads())->mapWithKeys(fn ($style) => [$style['id'] => $style['title']]);
 
         return $form
@@ -62,11 +63,11 @@ class CitationSetting extends Component implements HasForms
                                 CheckboxList::make('meta.citation_contributor_authors')
                                     ->label(__('general.authors'))
                                     ->helperText(__('general.citation_contributor_authors_helper'))
-                                    ->options(AuthorRole::pluck('name', 'id')->toArray()),
+                                    ->options($authorRoleOptions),
                                 CheckboxList::make('meta.citation_contributor_translators')
                                     ->label(__('general.translators'))
                                     ->helperText(__('general.citation_contributor_translator_helper'))
-                                    ->options(AuthorRole::pluck('name', 'id')->toArray()),
+                                    ->options($authorRoleOptions),
 
                             ]),
                     ]),

@@ -16,14 +16,14 @@
                 href="{{ $paper->getPublicUrl() }}" 
                 class="font-semibold text-gray-700 hover:text-primary flex items-center"
                 >
-                {{ $paper->getMeta('title') }}
+                <span @if($titleLang = $paper->getTranslatedLanguageTag('title')) lang="{{ $titleLang }}" @endif>{{ $paper->translated('title') }}</span>
                 @if($paper->isPublishedOnExternal())
                     <x-lineawesome-external-link-alt-solid class="w-4 h-4 ml-1" />
                 @endif
             </a>
         </h3>
-        @if($paper->getMeta('subtitle'))
-            <div class="text-xs text-gray-500">{{ $paper->getMeta('subtitle') }}</div>
+        @if(filled($paper->translated('subtitle')))
+            <div class="text-xs text-gray-500" @if($subtitleLang = $paper->getTranslatedLanguageTag('subtitle')) lang="{{ $subtitleLang }}" @endif>{{ $paper->translated('subtitle') }}</div>
         @endif
         <div class="meta space-y-2">
             <div class="flex-1 flex gap-y-2 flex-wrap items-center justify-between">

@@ -50,12 +50,12 @@
                                 </li>
                                 <li class="w-full p-4 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.title') }}</div>
-                                    <div class="text-gray-500">{{ $this->record->getMeta('title') }}</div>
+                                    <div class="text-gray-500">{{ $this->record->translated('title') }}</div>
                                 </li>
                                 <li class="w-full p-4 space-y-2 border-b border-gray-200 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.keywords') }}</div>
                                     <div class="flex flex-wrap items-center gap-1 text-gray-500">
-                                        @forelse ($this->record->getMeta('keywords') ?? [] as $keyword)
+                                        @forelse ($this->record->translated('keywords') as $keyword)
                                             <span @class([
                                                 'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm tracking-tight rounded-xl text-primary-700 bg-primary-500/10 whitespace-normal',
                                                 'dark:text-primary-500' => config('tables.dark_mode'),
@@ -70,7 +70,7 @@
                                 <li class="w-full p-4 border-gray-800 sm:px-6 dark:border-gray-800">
                                     <div class="font-medium">{{ __('general.abstract') }}</div>
                                     <div class="text-gray-500">
-                                        {!! $this->record->getMeta('abstract') !!}
+                                        {!! $this->record->translated('abstract') !!}
                                     </div>
                                 </li>
                             </ul>
@@ -116,7 +116,7 @@
                 Submit
             </x-filament::modal.heading>
         </x-slot>
-        You are about to submit the <b>{{ $this->record->getMeta('title') }}</b> to
+        You are about to submit the <b>{{ $this->record->translated('title') }}</b> to
         <b>{{ setting('conference.title') }}</b> for editorial
         review. Are you sure you want
         to proceed with this submission?

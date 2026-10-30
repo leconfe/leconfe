@@ -1,7 +1,7 @@
 <x-filament::page
     x-on:show-editor-guidance.window="$dispatch('open-modal', { id: 'editor-guidance' })"
     x-data="{
-        shouldAutoShowEditorGuidance: {{ $this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')) ? 'true' : 'false' }},
+        shouldAutoShowEditorGuidance: {{ $this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && ! \App\Support\Multilingual\ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('editor_guidelines')) ? 'true' : 'false' }},
         autoShowEditorGuidanceEnabled() {
             return localStorage.getItem('autoShowEditorGuidance') != 0;
         },
@@ -23,7 +23,7 @@
         {{ $this->infolist }}
     @endif
 
-    @if ($this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && filled(app()->getCurrentScheduledConference()->getMeta('editor_guidelines')))
+    @if ($this->record->stage !== App\Models\Enums\SubmissionStage::Wizard && $this->record->isParticipantEditor(auth()->user()) && ! \App\Support\Multilingual\ContentLocales::isBlank(app()->getCurrentScheduledConference()->translated('editor_guidelines')))
         <x-filament::modal id="editor-guidance" width="3xl" :close-by-clicking-away="false">
             <x-slot name="heading">
                 {{ __('general.editor_guidance') }}
@@ -41,13 +41,13 @@
                 }"
             >
                 <div class="prose max-w-none dark:prose-invert">
-                    {!! app()->getCurrentScheduledConference()->getMeta('editor_guidelines') !!}
+                    {!! app()->getCurrentScheduledConference()->translated('editor_guidelines') !!}
                 </div>
 
                 <div class="flex items-center">
                     <input id="editor-guidance-checkbox" type="checkbox" value="" class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" :checked="!autoShowEditorGuidanceEnabled()" x-on:change="toggleAutoShowEditorGuidance()">
                     <label for="editor-guidance-checkbox" class="ms-2 text-sm text-gray-900 dark:text-gray-300">
-                        Understood editor guidance. Don't show this again
+                        {{ __('general.editor_guidance_understood') }}
                     </label>
                 </div>
             </div>

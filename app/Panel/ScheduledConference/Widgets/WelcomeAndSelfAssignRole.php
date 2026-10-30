@@ -59,6 +59,7 @@ class WelcomeAndSelfAssignRole extends Widget
             ->map(function ($role) use ($colorMap, $descriptions) {
                 return [
                     'name' => $role,
+                    'label' => UserRole::displayLabel($role),
                     'description' => $descriptions[$role]
                         ?? 'Select this role to continue with your conference activities.',
                     'icon' => $this->getRoleIcon($role),

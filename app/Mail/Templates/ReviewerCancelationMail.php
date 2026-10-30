@@ -21,6 +21,8 @@ class ReviewerCancelationMail extends TemplateMailable
             'Submission Title' => $review->submission->getMeta('title'),
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $review->submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $review->submission, 'title');
+        $this->setTranslatableData('Conference Title', $review->submission->scheduledConference, 'title');
         $this->log = Log::make(
             name: 'email',
             subject: $review->submission,
@@ -30,7 +32,7 @@ class ReviewerCancelationMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'You have been cancelled as a reviewer';
+        return __('mail_templates.reviewer_cancelation.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -40,10 +42,6 @@ class ReviewerCancelationMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Reviewer Name }},</p>
-            <p>We have decided to withdraw our request for you to review the submission, "{{ Submission Title }}," for {{ Conference Title }}.</p>
-            <p>We apologize for any inconvenience and truly hope to have the opportunity to invite you to assist with the review process of future conferences.</p>
-        HTML;
+        return __('mail_templates.reviewer_cancelation.body');
     }
 }

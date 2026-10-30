@@ -2,7 +2,7 @@
     <x-website::layouts.main :show-sidebar="false">
         <section class="mx-auto max-w-3xl space-y-4 py-16 text-center">
             <h1 class="text-3xl font-semibold text-gray-950">
-                {{ $scheduledConference->title }}
+                {{ $scheduledConference->translated('title') }}
             </h1>
             <p class="text-base text-gray-700">
                 {{ __('scheduled_conference.unpublished_description') }}

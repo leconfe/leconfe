@@ -17,14 +17,14 @@ class StaticPage extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return $this->staticPage->title;
+        return $this->staticPage->translated('title');
     }
 
     protected function getViewData(): array
     {
         return [
-            'title' => $this->staticPage->title,
-            'content' => $this->staticPage->getMeta('content'),
+            'title' => $this->staticPage->translated('title'),
+            'content' => $this->staticPage->translated('content'),
         ];
     }
 
@@ -32,7 +32,7 @@ class StaticPage extends Page
     {
         return [
             route(Home::getRouteName()) => 'Home',
-            $this->staticPage->title,
+            $this->staticPage->translated('title'),
         ];
     }
 

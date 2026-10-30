@@ -22,6 +22,8 @@ class RevisionRequestMail extends TemplateMailable
             'Submission Author' => $submission->user->fullName,
             'Submission URL' => SubmissionResource::getUrl('view', ['record' => $submission]),
         ]);
+        $this->setTranslatableData('Submission Title', $submission, 'title');
+        $this->setTranslatableData('Conference Title', $submission->scheduledConference, 'title');
 
         $this->log = Log::make(
             name: 'email',
@@ -32,7 +34,7 @@ class RevisionRequestMail extends TemplateMailable
 
     public static function getDefaultSubject(): string
     {
-        return 'Revision Requested for {{ Submission Title }}';
+        return __('mail_templates.revision_request.subject');
     }
 
     public static function getDefaultDescription(): string
@@ -42,10 +44,6 @@ class RevisionRequestMail extends TemplateMailable
 
     public static function getDefaultHtmlTemplate(): string
     {
-        return <<<'HTML'
-            <p>Dear {{ Submission Author }},</p>
-            <p>Your submission with title "{{ Submission Title }}" on  has been requested to be <b>Revised</b></p>
-            <p>Click here to <a href="{{ Submission URL }}">View Submission</a> and upload your submission revision.</p>
-        HTML;
+        return __('mail_templates.revision_request.body');
     }
 }

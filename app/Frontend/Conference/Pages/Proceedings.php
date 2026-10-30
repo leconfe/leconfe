@@ -19,7 +19,7 @@ class Proceedings extends Page
     public function mount()
     {
         $this->proceedings = Proceeding::query()
-            ->with(['conference'])
+            ->with(['conference', 'translate'])
             ->published()
             ->ordered()
             ->get();
@@ -28,8 +28,8 @@ class Proceedings extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            route(Home::getRouteName()) => 'Home',
-            'Proceedings',
+            route(Home::getRouteName()) => __('general.home'),
+            __('general.proceedings'),
         ];
     }
 

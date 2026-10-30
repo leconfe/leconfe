@@ -3,12 +3,12 @@
 namespace App\Panel\Conference\Resources\UserResource\Pages;
 
 use App\Forms\Components\TinyEditor;
+use App\Mail\MailUser;
 use App\Models\Enums\UserRole;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserInvitation;
 use App\Panel\Conference\Resources\UserResource;
-use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -17,13 +17,13 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MailUser;
 
 class ListUsers extends ListRecords implements HasForms
 {
     use InteractsWithForms;
 
     protected static string $resource = UserResource::class;
+
     protected static string $view = 'panel.conference.resources.user-resource.pages.list-users';
 
     public ?array $notifyFormData = [];
@@ -40,6 +40,7 @@ class ListUsers extends ListRecords implements HasForms
         if (app()->isOnSite()) {
             return static::$view;
         }
+
         return 'panel.conference.resources.user-resource.pages.list-users';
     }
 
@@ -77,7 +78,7 @@ class ListUsers extends ListRecords implements HasForms
                     ->label(__('general.roles'))
                     ->options(
                         Role::where('name', '!=', UserRole::Admin)
-                            ->pluck('name', 'id')
+                            ->get()->pluck('display_name', 'id')
                     )
                     ->multiple()
                     ->required()
@@ -122,13 +123,13 @@ class ListUsers extends ListRecords implements HasForms
                     ->sendToDatabase($user);
 
                 try {
-                    if (!empty($user->email)) {
-                        Mail::to($user->email)
+                    if (! empty($user->email)) {
+                        Mail::to($user)
                             ->send((new MailUser($subject, $message))->from(config('mail.from.address'), $fromName));
                     }
                 } catch (\Throwable $e) {
                     // ignore individual mail failures
-                    \Illuminate\Support\Facades\Log::error("Failed to send email to user {$user->id}: " . $e->getMessage());
+                    \Illuminate\Support\Facades\Log::error("Failed to send email to user {$user->id}: ".$e->getMessage());
                 }
             }
 

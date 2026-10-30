@@ -2,26 +2,19 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
-use App\Facades\Setting;
-use App\Managers\PaymentManager;
-use App\Models\PaymentFee;
+use App\Filament\Forms\Components\MultilanguageComponent;
+use App\Filament\Forms\Components\ResponseOptionsRepeater;
 use App\Models\PaymentFormItem;
 use App\Tables\Columns\IndexColumn;
-use BladeUI\Icons\Components\Icon;
 use Closure;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\Livewire;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -30,7 +23,6 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -60,12 +52,13 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('general.form_item'))
             ->query($this->getTableQuery())
             ->reorderable('order_column')
             ->columns([
                 IndexColumn::make('#'),
                 TextColumn::make('name')
-                    ->getStateUsing(fn($record) => $record->getMeta('name')),
+                    ->getStateUsing(fn ($record) => $record->translated('name')),
                 IconColumn::make('required')
                     ->boolean(),
             ])
@@ -76,17 +69,18 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                     ->color('gray')
                     ->visible(PaymentFormItem::paymentType($this->paymentType)->exists())
                     ->modalSubmitAction(false)
-                    ->form(function(Form $form){
+                    ->form(function (Form $form) {
                         return $form->schema([
                             ...PaymentFormItem::buildFormSchema($this->paymentType),
                         ]);
                     }),
                 CreateAction::make()
-                    ->label('New Item')
+                    ->label(__('general.new_item'))
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn(Form $form) => $this->form($form))
+                    ->form(fn (Form $form) => $this->form($form))
                     ->using(function ($data) {
                         $record = new PaymentFormItem;
+                        $data = $record->syncTranslatableState($data);
                         $record->fill($data);
                         $record->payment_type = $this->paymentType;
                         $record->save();
@@ -94,6 +88,8 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                         if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                             $record->setManyMeta($data['meta']);
                         }
+
+                        $record->persistTranslatableState();
 
                         return $record;
                     }),
@@ -105,15 +101,18 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
                         ->mutateRecordDataUsing(function (PaymentFormItem $record, array $data): array {
                             $data['meta'] = $record->getAllMeta()->toArray();
 
-                            return $data;
+                            return $record->fillTranslatableFormState($data, ['meta.name', 'meta.description', 'meta.response_options']);
                         })
-                        ->form(fn(Form $form) => $this->form($form))
+                        ->form(fn (Form $form) => $this->form($form))
                         ->using(function (PaymentFormItem $record, array $data) {
+                            $data = $record->syncTranslatableState($data);
                             $record->update($data);
 
                             if (array_key_exists('meta', $data) && is_array($data['meta'])) {
                                 $record->setManyMeta($data['meta']);
                             }
+
+                            $record->persistTranslatableState();
 
                             return $record;
                         }),
@@ -124,37 +123,31 @@ class PaymentFormItemTable extends Component implements HasForms, HasTable
 
     public function form(Form $form): Form
     {
+        $choiceTypes = [PaymentFormItem::TYPE_SELECT, PaymentFormItem::TYPE_RADIO, PaymentFormItem::TYPE_CHECKBOX];
+
         return $form
             ->schema([
-                TextInput::make('meta.name')
-                    ->required()
-                    ->label('Item Name'),
-                Textarea::make('meta.description')
-                    ->label('Description and Instructions'),
+                MultilanguageComponent::make([
+                    TextInput::make('meta.name')
+                        ->required()
+                        ->label(__('general.item_name')),
+                    Textarea::make('meta.description')
+                        ->label(__('general.description_and_instructions')),
+                ]),
                 Checkbox::make('required')
-                    ->label('Indicates required item'),
+                    ->label(__('general.indicates_required_item')),
                 Select::make('type')
                     ->required()
                     ->reactive()
-                    ->options(fn() => PaymentFormItem::getOptions())
-                    ->rule(fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                    ->options(fn () => PaymentFormItem::getOptions())
+                    ->rule(fn (): Closure => function (string $attribute, $value, Closure $fail) {
                         if (! array_key_exists($value, PaymentFormItem::getOptions())) {
-                            $fail('Option unavailable');
+                            $fail(__('general.option_unavailable'));
                         }
                     })
-                    ->label('Item Type'),
-                Repeater::make('meta.response_options')
-                    ->simple(
-                        TextInput::make('text')
-                            ->required(),
-                    )
-                    // ->placeholder('New Option')
-                    ->visible(fn(Get $get) => in_array($get('type'), [PaymentFormItem::TYPE_SELECT, PaymentFormItem::TYPE_RADIO, PaymentFormItem::TYPE_CHECKBOX]))
-                    ->reorderable()
-                    ->requiredIf('type', [PaymentFormItem::TYPE_SELECT, PaymentFormItem::TYPE_RADIO, PaymentFormItem::TYPE_CHECKBOX])
-                    ->validationMessages([
-                        'required_if' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
-                    ])
+                    ->label(__('general.item_type')),
+                ResponseOptionsRepeater::make('meta.response_options')
+                    ->visible(fn (Get $get) => in_array($get('type'), $choiceTypes)),
             ]);
     }
 }

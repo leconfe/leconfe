@@ -73,7 +73,7 @@ class GalleyList extends \Livewire\Component implements HasForms, HasTable
                 ->label(__('general.type'))
                 ->required()
                 ->options(
-                    fn () => SubmissionFileType::all()->pluck('name', 'id')->toArray()
+                    fn () => SubmissionFileType::with('translate')->get()->mapWithKeys(fn (SubmissionFileType $type) => [$type->getKey() => $type->translated('name')])->toArray()
                 )
                 ->searchable()
                 ->createOptionForm([

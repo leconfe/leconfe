@@ -4,8 +4,8 @@ namespace App\Panel\ScheduledConference\Livewire;
 
 use App\Mail\Templates\SubmissionPaymentMail;
 use App\Managers\PaymentManager;
-use App\Models\DefaultMailTemplate;
 use App\Models\Enums\SubmissionStatus;
+use App\Models\MailTemplate;
 use App\Models\Payment;
 use App\Models\PaymentFee;
 use App\Models\Submission;
@@ -13,6 +13,7 @@ use App\Notifications\SubmissionPayment;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
 use App\Panel\ScheduledConference\Resources\SubmissionResource;
 use App\Services\Billing\InvoicePaymentContextResolver;
+use App\Support\Multilingual\RecipientLocale;
 use App\Tables\Columns\IndexColumn;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -95,7 +96,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                 [Submission::class],
                 fn (Builder $query) => $query->whereIn('status', static::getValidSubmissionStatusValues()),
             )
-            ->with(['model.conference', 'model.latestReviewRound', 'user', 'scheduledConference']);
+            ->with(['model.conference', 'model.latestReviewRound', 'model.translate', 'user', 'scheduledConference']);
     }
 
     public function table(Table $table): Table
@@ -118,7 +119,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                 TextColumn::make('title')
                     ->label('Submission Title')
-                    ->state(fn (Payment $record) => $record->model?->getMeta('title') ?? '-')
+                    ->state(fn (Payment $record) => ($record->model instanceof Submission ? $record->model->translated('title') : $record->model?->getMeta('title')) ?? '-')
                     ->description(fn (Payment $record) => $record->user->full_name)
                     ->wrap(),
                 TextColumn::make('submission_status')
@@ -129,6 +130,7 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
                     ->color(fn (string $state): string => static::getSubmissionStatusBadgeColor($state))
                     ->wrap(),
                 TextColumn::make('fee.name')
+                    ->formatStateUsing(fn (Payment $record, $state) => $record->fee?->translated('name') ?? $state)
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
                 TextColumn::make('created_at')
@@ -200,11 +202,15 @@ class SubmissionPaymentTable extends Component implements HasForms, HasTable
             ])
             ->bulkActions([
                 BulkAction::make('send-email')
-                    ->mountUsing(function (Form $form): void {
-                        $mailTemplate = DefaultMailTemplate::where('mailable', SubmissionPaymentMail::class)->first();
+                    ->mountUsing(function (Form $form, Collection $records): void {
+                        // A single recipient gets the template in their language, several get the site default language.
+                        $recipient = $records->count() === 1
+                            ? rescue(fn () => app(InvoicePaymentContextResolver::class)->submission($records->first()->getKey())->user, report: false)
+                            : null;
+                        $mailTemplate = MailTemplate::contentFor(SubmissionPaymentMail::class, $recipient ? RecipientLocale::for($recipient) : null);
                         $form->fill([
-                            'subject' => $mailTemplate ? $mailTemplate->subject : '',
-                            'message' => $mailTemplate ? $mailTemplate->html_template : '',
+                            'subject' => $mailTemplate['subject'],
+                            'message' => $mailTemplate['html_template'],
                         ]);
                     })
                     ->form([

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableContent;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,13 +14,37 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class NavigationMenuItem extends Model implements Sortable
 {
-    use Cachable, HasFactory, Metable, SortableTrait;
+    use Cachable, HasFactory, HasTranslatableContent, Metable, SortableTrait;
 
     protected $fillable = [
         'label',
         'type',
         'navigation_menu_id',
         'parent_id',
+    ];
+
+    /**
+     * Columns whose content can be translated.
+     *
+     * @var array<int, string>
+     */
+    protected array $translatableColumns = ['label'];
+
+    /**
+     * Interface text for item types whose default label is built in.
+     *
+     * @var array<string, string>
+     */
+    protected const BUILT_IN_LABELS = [
+        'home' => 'general.home',
+        'about' => 'general.about',
+        'proceedings' => 'general.proceedings',
+        'announcements' => 'general.announcements',
+        'login' => 'general.login',
+        'register' => 'general.register',
+        'dashboard' => 'general.dashboard',
+        'profile' => 'general.profile',
+        'logout' => 'general.logout',
     ];
 
     /**
@@ -69,6 +94,7 @@ class NavigationMenuItem extends Model implements Sortable
             'profile' => NavigationItemType\Profile::class,
             'register' => NavigationItemType\Register::class,
             'search' => NavigationItemType\Search::class,
+            'submissions' => NavigationItemType\Submissions::class,
         ];
     }
 
@@ -91,12 +117,29 @@ class NavigationMenuItem extends Model implements Sortable
 
     public function getLabel(): string
     {
-        // replace {$username} with the user's name
-        if (auth()->check() && strpos($this->label, '{$username}') !== false) {
-            $this->label = str_replace('{$username}', auth()->user()->fullName, $this->label);
+        $label = (string) $this->translated('label');
+
+        if ($this->hasBuiltInLabel($label)) {
+            $label = __(static::BUILT_IN_LABELS[$this->type]);
         }
 
-        return $this->label;
+        // replace {$username} with the user's name
+        if (auth()->check() && str_contains($label, '{$username}')) {
+            $label = str_replace('{$username}', auth()->user()->fullName, $label);
+        }
+
+        return $label;
+    }
+
+    /**
+     * Whether the label is still the built-in English label of its type and has no
+     * translation for the active language, so the interface text is shown.
+     */
+    protected function hasBuiltInLabel(string $label): bool
+    {
+        return array_key_exists($this->type, static::BUILT_IN_LABELS)
+            && $label === static::getType($this->type)::getLabel()
+            && $this->translatedLocale('label') !== app()->getLocale();
     }
 
     public function isDisplayed(): bool

@@ -53,31 +53,31 @@
     </x-filament::section> --}}
 
     <div class="space-y-4">
-        <h2 class="text-xl font-medium">Current Version</h2>
+        <h2 class="text-xl font-medium">{{ __('general.current_version') }}</h2>
         <p class="font-medium">
-            {{ $currentVersion->version }} ({{ $currentVersion->created_at }}) - <a class="text-primary-600 hover:text-primary-800" href="https://github.com/OpenSynergic/leconfe/releases" target="_blank">See Changelog</a>
+            {{ $currentVersion->version }} ({{ $currentVersion->created_at }}) - <a class="text-primary-600 hover:text-primary-800" href="https://github.com/OpenSynergic/leconfe/releases" target="_blank">{{ __('general.see_changelog') }}</a>
         </p>
     </div>
     <div class="space-y-4">
-        <h2 class="text-xl font-medium">Version History</h2>
+        <h2 class="text-xl font-medium">{{ __('general.version_history') }}</h2>
         <div class="relative overflow-x-auto border" >
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Version
+                            {{ __('general.version') }}
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Major
+                            {{ __('general.major') }}
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Minor
+                            {{ __('general.minor') }}
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Patch
+                            {{ __('general.patch') }}
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Date Installed
+                            {{ __('general.date_installed') }}
                         </th>
                     </tr>
                 </thead>

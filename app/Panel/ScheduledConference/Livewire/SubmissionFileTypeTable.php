@@ -2,6 +2,7 @@
 
 namespace App\Panel\ScheduledConference\Livewire;
 
+use App\Filament\Forms\Components\MultilanguageComponent;
 use App\Models\SubmissionFileType;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
@@ -18,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SubmissionFileTypeTable extends Component implements HasForms, HasTable
@@ -32,7 +34,7 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(SubmissionFileType::withCount(['files']))
+            ->query(SubmissionFileType::with('translate')->withCount(['files']))
             ->defaultPaginationPageOption(10)
             ->heading(__('general.file_types'))
             ->reorderable('order_column')
@@ -40,7 +42,8 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name')
                     ->label(__('general.name'))
-                    ->searchable(),
+                    ->formatStateUsing(fn (SubmissionFileType $record) => $record->translated('name'))
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereTranslatableLike('name', $search)),
                 IconColumn::make('required')
                     ->label(__('general.required'))
                     ->boolean(),
@@ -51,12 +54,30 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->label(__('general.add_a_component'))
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn (Form $form) => $this->form($form)),
+                    ->form(fn (Form $form) => $this->form($form))
+                    ->using(function (array $data) {
+                        $record = new SubmissionFileType;
+                        $data = $record->syncTranslatableState($data);
+                        $record->fill($data)->save();
+
+                        $record->persistTranslatableState();
+
+                        return $record;
+                    }),
             ])
             ->actions([
                 EditAction::make()
                     ->modalWidth(MaxWidth::ExtraLarge)
-                    ->form(fn (Form $form) => $this->form($form)),
+                    ->form(fn (Form $form) => $this->form($form))
+                    ->mutateRecordDataUsing(fn (SubmissionFileType $record, array $data) => $record->fillTranslatableFormState($data, ['name']))
+                    ->using(function (SubmissionFileType $record, array $data) {
+                        $data = $record->syncTranslatableState($data);
+                        $record->update($data);
+
+                        $record->persistTranslatableState();
+
+                        return $record;
+                    }),
                 DeleteAction::make()
                     ->hidden(fn (SubmissionFileType $record) => $record->files_count > 0),
             ])
@@ -69,9 +90,11 @@ class SubmissionFileTypeTable extends Component implements HasForms, HasTable
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('general.name'))
-                    ->required(),
+                MultilanguageComponent::make([
+                    TextInput::make('name')
+                        ->label(__('general.name'))
+                        ->required(),
+                ]),
                 Checkbox::make('required')
                     ->label(__('general.required_upload'))
                     ->helperText(__('general.required_upload_helper')),
