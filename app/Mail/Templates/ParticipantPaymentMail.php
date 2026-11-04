@@ -19,7 +19,7 @@ class ParticipantPaymentMail extends TemplateMailable
             'Participant Name' => $participant->full_name,
             'Payment Amount' => $participant->payment->getFormattedFee(),
             'Payment Link' => $participant->payment->getPaymentDetailUrl(),
-            'Payment Fee Name' => $participant->payment->fee?->name ?? __('participant_registration.free'),
+            'Payment Fee Name' => $participant->payment->fee?->name ?? $participant->payment->getMeta('title'),
         ]);
         $this->setTranslatableData('Payment Fee Name', $participant->payment->fee, 'name');
         $this->setTranslatableData('Conference Title', $participant->payment->scheduledConference, 'title');
