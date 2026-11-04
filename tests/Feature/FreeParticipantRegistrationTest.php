@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Hook;
 use App\Mail\Templates\ParticipantPaymentMail;
+use App\Mail\Templates\ParticipantRegisteredMail;
 use App\Managers\PaymentManager;
 use App\Models\Conference;
 use App\Models\Enums\UserRole;
@@ -305,5 +307,33 @@ class FreeParticipantRegistrationTest extends TestCase
             Payment::type(PaymentManager::TYPE_PARTICIPANT_FEE)->withoutFreeRegistration()->pluck('id')->all(),
         );
         $this->assertNotContains($free->id, Payment::paid(false)->pluck('id')->all());
+    }
+
+    public function test_manager_email_names_a_free_registration_in_the_recipient_language(): void
+    {
+        app()->setLocale('fr');
+        Livewire::test(ParticipantRegistration::class)->call('submit')->assertHasNoFormErrors();
+        $mail = new ParticipantRegisteredMail(Participant::firstOrFail());
+
+        app()->setLocale('en');
+        $data = $mail->buildViewData();
+
+        $this->assertSame('Free registration', $data['Payment Fee Name']);
+        $this->assertSame('Free registration', $data['Payment Amount']);
+    }
+
+    public function test_availability_hook_sees_unavailable_fees_and_can_override_the_message(): void
+    {
+        $this->fee(['is_active' => false]);
+        $seen = null;
+        Hook::add('Panel::ScheduledConference::ParticipantRegistration::availability', function ($hookName, &$isOpen, &$closedMessage) use (&$seen): void {
+            $seen = [$isOpen, $closedMessage];
+            $closedMessage = 'Registration opens soon.';
+        });
+
+        Livewire::test(ParticipantRegistration::class)
+            ->assertViewHas('isOpen', false)
+            ->assertViewHas('closedMessage', 'Registration opens soon.');
+        $this->assertSame([false, __('participant_registration.fees_unavailable')], $seen);
     }
 }

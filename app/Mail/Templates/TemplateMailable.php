@@ -46,6 +46,14 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
     protected array $dateData = [];
 
     /**
+     * Variables whose value is a translation key, translated when the email is rendered
+     * so it follows the recipient's language.
+     *
+     * @var array<string, string>
+     */
+    protected array $translationKeyData = [];
+
+    /**
      * The conference context the email was created in, kept when the email is queued so
      * a queue worker renders it for the same conference.
      *
@@ -96,7 +104,7 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
 
     public function buildViewData(): array
     {
-        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData(), $this->resolveDateData());
+        return array_merge(static::getConferenceViewData(), parent::buildViewData(), $this->resolveTranslatableData(), $this->resolveDateData(), $this->resolveTranslationKeyData());
     }
 
     /**
@@ -119,6 +127,26 @@ abstract class TemplateMailable extends BaseTemplateMailable implements Interfac
         $this->dateData[$variable] = [$date, $format];
 
         return $this;
+    }
+
+    /**
+     * Use a translation in the recipient's language for a template variable.
+     */
+    public function setTranslationKeyData(string $variable, string $key): static
+    {
+        $this->translationKeyData[$variable] = $key;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function resolveTranslationKeyData(): array
+    {
+        return collect($this->translationKeyData)
+            ->map(fn (string $key) => __($key))
+            ->all();
     }
 
     /**

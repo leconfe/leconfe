@@ -70,12 +70,13 @@ class ParticipantRegistration extends Page implements HasForms
         $isOpen = true;
         $closedMessage = __('general.registration_closed');
 
-        Hook::call('Panel::ScheduledConference::ParticipantRegistration::availability', [&$isOpen, &$closedMessage, $this]);
-
         if ($this->hasConfiguredParticipantFees() && ! $this->hasAvailableParticipantFees()) {
             $isOpen = false;
             $closedMessage = __('participant_registration.fees_unavailable');
         }
+
+        // Plugins get the final say on availability, including when no fee is available.
+        Hook::call('Panel::ScheduledConference::ParticipantRegistration::availability', [&$isOpen, &$closedMessage, $this]);
 
         return [
             'coverImageUrl' => app()->getCurrentScheduledConference()->getFirstMediaUrl('registration_cover'),
