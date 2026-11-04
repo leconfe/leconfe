@@ -42,6 +42,11 @@ class ParticipantRegistration extends Page implements HasForms
 
     public ?array $formData = [];
 
+    // Cached per request; protected properties are not persisted by Livewire.
+    protected ?bool $availableParticipantFeesExist = null;
+
+    protected ?bool $configuredParticipantFeesExist = null;
+
     public function mount(): void
     {
         $this->form->fill([
@@ -67,7 +72,7 @@ class ParticipantRegistration extends Page implements HasForms
 
         Hook::call('Panel::ScheduledConference::ParticipantRegistration::availability', [&$isOpen, &$closedMessage, $this]);
 
-        if ($this->hasConfiguredParticipantFees() && ! $this->availableParticipantFees()->exists()) {
+        if ($this->hasConfiguredParticipantFees() && ! $this->hasAvailableParticipantFees()) {
             $isOpen = false;
             $closedMessage = __('participant_registration.fees_unavailable');
         }
@@ -119,22 +124,20 @@ class ParticipantRegistration extends Page implements HasForms
                             ->content(fn () => $this->hasConfiguredParticipantFees()
                                 ? __('participant_registration.fees_unavailable')
                                 : __('participant_registration.free_notice'))
-                            ->visible(fn () => ! $this->availableParticipantFees()->exists()),
+                            ->visible(fn () => ! $this->hasAvailableParticipantFees()),
                         Radio::make('payment_fee_id')
                             ->label(__('participant_registration.payment_fee'))
                             ->required(fn () => $this->hasConfiguredParticipantFees())
-                            ->visible(fn () => $this->availableParticipantFees()->exists())
+                            ->visible(fn () => $this->hasAvailableParticipantFees())
                             ->live()
                             ->options(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
-                                    ->active()
+                                fn () => $this->availableParticipantFees()
                                     ->with('translate')
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => $paymentFee->translated('name')])
                             )
                             ->descriptions(
-                                fn () => PaymentFee::type(PaymentManager::TYPE_PARTICIPANT_FEE)
-                                    ->active()
+                                fn () => $this->availableParticipantFees()
                                     ->get()
                                     ->mapWithKeys(fn (PaymentFee $paymentFee) => [$paymentFee->getKey() => '('.$paymentFee->getFormattedFee().')'])
                             ),
@@ -179,6 +182,8 @@ class ParticipantRegistration extends Page implements HasForms
             return null;
         }
 
+        // Read before getState(): the fee field is hidden once no fee is available, which drops its value.
+        $paymentFeeId = data_get($this->formData, 'payment_fee_id');
         $data = $this->form->getState();
         $paymentFormResponses = PaymentFormItem::filterOutUploadResponses(data_get($data, 'form_responses'));
 
@@ -201,8 +206,9 @@ class ParticipantRegistration extends Page implements HasForms
             $participant->setManyMeta($meta);
             $currentUser->setManyMeta($meta);
 
-            $paymentFee = $this->availableParticipantFees()->find($data['payment_fee_id'] ?? null);
-            if (! $paymentFee && $this->hasConfiguredParticipantFees()) {
+            $paymentFee = $this->availableParticipantFees()->find($paymentFeeId);
+            // A fee that was selected but disappeared must never fall back to a free registration.
+            if (! $paymentFee && (filled($paymentFeeId) || $this->hasConfiguredParticipantFees())) {
                 throw ValidationException::withMessages([
                     'formData.payment_fee_id' => __('participant_registration.fee_changed'),
                 ]);
@@ -263,10 +269,13 @@ class ParticipantRegistration extends Page implements HasForms
 
             DB::commit();
         } catch (\Throwable $th) {
-            Notification::make()
-                ->danger()
-                ->title($th->getMessage())
-                ->send();
+            // Validation errors are already shown on the form field.
+            if (! $th instanceof ValidationException) {
+                Notification::make()
+                    ->danger()
+                    ->title($th->getMessage())
+                    ->send();
+            }
 
             DB::rollBack();
             throw $th;
@@ -287,9 +296,14 @@ class ParticipantRegistration extends Page implements HasForms
             ->type(PaymentManager::TYPE_PARTICIPANT_FEE)->active();
     }
 
+    protected function hasAvailableParticipantFees(): bool
+    {
+        return $this->availableParticipantFeesExist ??= $this->availableParticipantFees()->exists();
+    }
+
     protected function hasConfiguredParticipantFees(): bool
     {
-        return PaymentFee::query()
+        return $this->configuredParticipantFeesExist ??= PaymentFee::query()
             ->where('scheduled_conference_id', app()->getCurrentScheduledConferenceId())
             ->type(PaymentManager::TYPE_PARTICIPANT_FEE)->exists();
     }

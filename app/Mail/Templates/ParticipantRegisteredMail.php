@@ -18,7 +18,7 @@ class ParticipantRegisteredMail extends TemplateMailable
             'Participant Email' => $participant->email,
             'Payment Amount' => $participant->payment->getFormattedFee(),
             'Payment Link' => PaymentDetail::getUrl(['record' => $participant->payment]),
-            'Payment Fee Name' => $participant->payment->fee->name,
+            'Payment Fee Name' => $participant->payment->fee?->name ?? __('participant_registration.free'),
         ]);
         $this->setTranslatableData('Payment Fee Name', $participant->payment->fee, 'name');
         $this->setTranslatableData('Conference Title', $participant->payment->scheduledConference, 'title');

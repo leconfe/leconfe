@@ -156,7 +156,13 @@ class Payment extends Model implements HasMedia
                 ->orWhere(fn (Builder $query) => $query->freeRegistration()));
         }
 
-        return $query->whereNull('paid_at')->where(fn (Builder $query) => $query
+        return $query->whereNull('paid_at')->withoutFreeRegistration();
+    }
+
+    public function scopeWithoutFreeRegistration(Builder $query): Builder
+    {
+        // payment_method is nullable, and NOT (NULL = 'free_registration') would drop those rows.
+        return $query->where(fn (Builder $query) => $query
             ->whereNull('payment_method')
             ->orWhereNot(fn (Builder $query) => $query->freeRegistration()));
     }

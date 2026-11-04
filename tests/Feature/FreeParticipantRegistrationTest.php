@@ -14,6 +14,7 @@ use App\Models\Role;
 use App\Models\ScheduledConference;
 use App\Models\User;
 use App\Notifications\ParticipantPayment;
+use App\Notifications\ParticipantRegistered;
 use App\Panel\ScheduledConference\Livewire\ParticipantPaymentFeeTable;
 use App\Panel\ScheduledConference\Pages\ParticipantRegistration;
 use App\Panel\ScheduledConference\Pages\PaymentDetail;
@@ -266,5 +267,43 @@ class FreeParticipantRegistrationTest extends TestCase
                 $this->assertSame(404, $exception->getStatusCode());
             }
         }
+    }
+
+    public function test_manager_registration_email_can_be_built_for_a_free_registration(): void
+    {
+        Livewire::test(ParticipantRegistration::class)->call('submit')->assertHasNoFormErrors();
+        $participant = Participant::firstOrFail();
+
+        $mail = (new ParticipantRegistered($participant))->toMail(auth()->user());
+
+        $this->assertSame(__('participant_registration.free'), $mail->buildViewData()['Payment Fee Name'] ?? null);
+    }
+
+    public function test_a_selected_fee_removed_before_saving_does_not_make_registration_free(): void
+    {
+        $fee = $this->fee();
+        $page = Livewire::test(ParticipantRegistration::class)
+            ->set('formData.given_name', 'Stale fee QA')
+            ->set('formData.payment_fee_id', $fee->id);
+
+        $fee->delete();
+
+        $page->call('submit')->assertHasFormErrors(['payment_fee_id']);
+        $this->assertDatabaseCount('participants', 0);
+        $this->assertDatabaseCount('payments', 0);
+    }
+
+    public function test_free_registration_is_left_out_of_the_participant_payment_overview(): void
+    {
+        Livewire::test(ParticipantRegistration::class)->call('submit')->assertHasNoFormErrors();
+        $free = Payment::firstOrFail();
+        $participant = Participant::create(['given_name' => 'Paid participant', 'email' => 'paid-participant@example.test']);
+        $paid = PaymentManager::get()->queue($participant, $this->fee(), auth()->user(), PaymentManager::TYPE_PARTICIPANT_FEE, 'Paid participant', '/payment');
+
+        $this->assertEqualsCanonicalizing(
+            [$paid->id],
+            Payment::type(PaymentManager::TYPE_PARTICIPANT_FEE)->withoutFreeRegistration()->pluck('id')->all(),
+        );
+        $this->assertNotContains($free->id, Payment::paid(false)->pluck('id')->all());
     }
 }

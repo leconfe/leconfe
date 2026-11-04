@@ -18,7 +18,7 @@ class PaymentConfirmedMail extends TemplateMailable
             'Payer Email' => $payment->email,
             'Payment Amount' => $payment->getFormattedFee(),
             'Payment Link' => PaymentDetail::getUrl(['record' => $payment]),
-            'Payment Fee Name' => $payment->fee->name,
+            'Payment Fee Name' => $payment->fee?->name ?? __('participant_registration.free'),
             'Payment ID' => $payment->getKey(),
         ]);
         $this->setTranslatableData('Payment Fee Name', $payment->fee, 'name');

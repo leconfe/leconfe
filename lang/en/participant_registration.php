@@ -1,5 +1,4 @@
 <?php
-
 return [
     'already_registered' => 'You are already registered for this conference.',
     'free' => 'Free registration',

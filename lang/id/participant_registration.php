@@ -1,5 +1,4 @@
 <?php
-
 return [
     'already_registered' => 'Anda sudah terdaftar pada konferensi ini.',
     'free' => 'Pendaftaran gratis',
