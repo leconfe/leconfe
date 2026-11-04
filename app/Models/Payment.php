@@ -51,7 +51,7 @@ class Payment extends Model implements HasMedia
     {
         static::created(function (Payment $payment) {
             $scheduledConference = $payment->scheduledConference ?: app()->getCurrentScheduledConference();
-            if ($scheduledConference?->isReceiptEnabled()) {
+            if (! $payment->isFreeRegistration() && $scheduledConference?->isReceiptEnabled()) {
                 $receiptNumber = $scheduledConference->getLatestReceiptNumber();
 
                 $payment->update([
@@ -65,6 +65,9 @@ class Payment extends Model implements HasMedia
 
     public function ensureInvoice(): bool
     {
+        if ($this->isFreeRegistration()) {
+            return false;
+        }
         if ($this->invoice) {
             return false;
         }
@@ -149,10 +152,20 @@ class Payment extends Model implements HasMedia
     public function scopePaid(Builder $query, $isPaid = true)
     {
         if ($isPaid) {
-            return $query->whereNotNull('paid_at');
+            return $query->where(fn (Builder $query) => $query->whereNotNull('paid_at')
+                ->orWhere(fn (Builder $query) => $query->freeRegistration()));
         }
 
-        return $query->whereNull('paid_at');
+        return $query->whereNull('paid_at')->where(fn (Builder $query) => $query
+            ->whereNull('payment_method')
+            ->orWhereNot(fn (Builder $query) => $query->freeRegistration()));
+    }
+
+    public function scopeFreeRegistration(Builder $query): Builder
+    {
+        return $query->where('type', PaymentManager::TYPE_PARTICIPANT_FEE)
+            ->whereNull('payment_fee_id')->where('amount', 0)
+            ->where('payment_method', 'free_registration');
     }
 
     public function scopeExpired(Builder $query, $isExpired = true)
@@ -193,6 +206,10 @@ class Payment extends Model implements HasMedia
 
     public function getFormattedFee()
     {
+        if ($this->isFreeRegistration()) {
+            return __('participant_registration.free');
+        }
+
         return money($this->amount, $this->currency, true)->formatWithoutZeroes();
     }
 
@@ -209,7 +226,15 @@ class Payment extends Model implements HasMedia
 
     public function isPaid(): bool
     {
-        return $this->paid_at ? true : false;
+        return $this->isFreeRegistration() || (bool) $this->paid_at;
+    }
+
+    public function isFreeRegistration(): bool
+    {
+        return (int) $this->type === PaymentManager::TYPE_PARTICIPANT_FEE
+            && $this->payment_fee_id === null
+            && (float) $this->amount === 0.0
+            && $this->payment_method === 'free_registration';
     }
 
     public function getFormItemResponse(PaymentFormItem $item)

@@ -72,6 +72,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query($this->getTableQuery())
+            ->checkIfRecordIsSelectableUsing(fn (Payment $record) => ! $record->isFreeRegistration())
             ->queryStringIdentifier('participant_payment_fees')
             ->recordUrl(fn (Payment $record) => PaymentDetail::getUrl(['record' => $record]))
             ->columns([
@@ -84,12 +85,13 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->label(__('general.invoice_email'))
                     ->visible(app()->getCurrentScheduledConference()?->isInvoiceEnabled())
                     ->badge()
-                    ->state(fn (Payment $record) => $record->hasInvoiceBeenSent() ? __('general.sent') : __('general.not_sent'))
+                    ->state(fn (Payment $record) => $record->isFreeRegistration() ? null : ($record->hasInvoiceBeenSent() ? __('general.sent') : __('general.not_sent')))
                     ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                 TextColumn::make('model.full_name')
                     ->label('Name')
                     ->description(fn ($record) => $record->model->email),
                 TextColumn::make('fee.name')
+                    ->state(fn (Payment $record) => $record->isFreeRegistration() ? __('participant_registration.free') : $record->fee?->translated('name'))
                     ->formatStateUsing(fn (Payment $record, $state) => $record->fee?->translated('name') ?? $state)
                     ->description(fn (Payment $record) => $record->amount ? $record->getFormattedFee() : 0)
                     ->wrap(),
@@ -99,6 +101,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ->toggleable()
                     ->date(),
                 TextColumn::make('paid_at')
+                    ->state(fn (Payment $record) => $record->isFreeRegistration() ? null : $record->paid_at)
                     ->date()
                     ->toggleable()
                     ->toggleable(),
@@ -114,7 +117,12 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ),
                 TernaryFilter::make('paid_at')
                     ->label('Paid')
-                    ->nullable(),
+                    ->nullable()
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereNotNull('paid_at'),
+                        false: fn (Builder $query) => $query->paid(false),
+                        blank: fn (Builder $query) => $query,
+                    ),
             ])
             ->actions([
                 ActionGroup::make([
@@ -156,6 +164,7 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
             ->bulkActions([
                 BulkAction::make('send-email')
                     ->mountUsing(function (Form $form, Collection $records): void {
+                        $records = $records->reject(fn (Payment $record) => $record->isFreeRegistration());
                         // A single recipient gets the template in their language, several get the site default language.
                         $recipient = $records->count() === 1
                             ? rescue(fn () => app(InvoicePaymentContextResolver::class)->participant($records->first()->getKey()), report: false)
@@ -177,6 +186,10 @@ class ParticipantPaymentFeeTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function (Collection $records, array $data, BulkAction $action) {
                         $records->each(function ($record) use ($data) {
+                            if ($record->isFreeRegistration()) {
+                                return;
+                            }
+
                             $record->ensureInvoice();
                             $participant = app(InvoicePaymentContextResolver::class)->participant($record->getKey());
 
