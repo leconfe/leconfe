@@ -6,6 +6,8 @@ use App\Mail\Templates\NewAnnouncementMail;
 use App\Models\Announcement;
 use App\Models\Enums\UserRole;
 use App\Models\User;
+use App\Services\EmailPreferences\Categories;
+use App\Services\EmailPreferences\Preferences;
 use Illuminate\Support\Facades\Mail;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -20,9 +22,7 @@ class AnnouncementBroadcastMail
             ->withoutGlobalScopes()
             ->firstOrFail();
 
-        // Filter by users subscribed to announcement emails.
         $users = User::query()
-            ->with('meta')
             ->whereHas('roles', fn ($query) => $query
                 ->withoutGlobalScopes()
                 ->where('roles.conference_id', $scheduledConference->conference_id)
@@ -38,14 +38,20 @@ class AnnouncementBroadcastMail
             ->whereDoesntHave('roles', fn ($query) => $query
                 ->withoutGlobalScopes()
                 ->where('roles.name', UserRole::Admin->value))
-            ->whereMeta('enable_new_announcement_email', true)
             ->notBannedInScope(new \App\Support\UserBanScope($scheduledConference->conference_id, $scheduledConference->getKey()))
             ->lazy();
 
+        $preferences = app(Preferences::class);
+
         // Build the emails for the announcement's conference, also when run outside a request.
-        app()->withConferenceContext($scheduledConference->conference_id, $scheduledConference->getKey(), function () use ($users, $announcement) {
-            foreach ($users as $user) {
-                Mail::to($user)->send(new NewAnnouncementMail($announcement));
+        app()->withConferenceContext($scheduledConference->conference_id, $scheduledConference->getKey(), function () use ($users, $announcement, $preferences, $scheduledConference) {
+            foreach ($users->chunk(500) as $chunk) {
+                // Only users subscribed to announcements for this scheduled conference.
+                $recipients = $preferences->enabledFor(collect($chunk->all()), $scheduledConference->conference_id, $scheduledConference->getKey(), Categories::ANNOUNCEMENT);
+
+                foreach ($recipients as $user) {
+                    Mail::to($user)->send(new NewAnnouncementMail($announcement));
+                }
             }
         });
     }
