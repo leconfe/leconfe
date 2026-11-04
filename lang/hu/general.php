@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Beküldés létrehozva',
     'submission_updated' => 'Az előterjesztés frissítve',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Karok',
     'role_assigned_successfully' => 'A szerepkör sikeresen kiosztva',
     'no_roles_selected' => 'Nincsenek kiválasztva szerepek',
-
     'language' => 'Nyelv',
     'switch_language' => 'Felület nyelvének módosítása',
     'current_language' => 'Jelenlegi nyelv:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Forrásszöveg',
     'translator' => 'Fordító',
     'general_track' => 'Általános tematikus szekció',
-
     'make_a_submission' => 'Beadvány benyújtása',
     'payment_fee' => 'Díj',
     'add_on_items' => 'Kiegészítő tételek',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Részvételi díjak',
     'invoice' => 'Számla',
     'editors' => 'Szerkesztők',
-
     'admin' => 'Adminisztrátor',
     'conference_manager' => 'Konferenciakezelő',
     'scheduled_conference_editor' => 'Ütemezett konferencia szerkesztője',
     'track_editor' => 'Tematikus szekció szerkesztője',
-
     'recommendation_accept' => 'Elfogadás',
     'recommendation_decline' => 'Elutasítás',
     'revision_required' => 'Átdolgozás szükséges',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Mellék',
     'patch' => 'Javítás',
     'date_installed' => 'Telepítés dátuma',
-
     'item_name' => 'Elem neve',
     'description_and_instructions' => 'Leírás és útmutató',
     'indicates_required_item' => 'Kötelező elemet jelöl',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'A(z) :attribute mező kitöltése kötelező, ha az elem típusa Jelölőnégyzet, Választógomb vagy Legördülő lista',
     'new_option' => 'Új lehetőség',
     'payment_fee_form_items' => 'Díjűrlap elemei',
-
     'item_type_text' => 'Egysoros szövegmező',
     'item_type_textarea' => 'Bővített szövegmező',
     'item_type_checkbox' => 'Jelölőnégyzetek (egy vagy több választható)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Legördülő lista',
     'item_type_select_scored' => 'Legördülő lista súlyozott pontozással.',
     'item_type_upload' => 'Fájl feltöltése',
-
     'reviewer_number' => ':number. recenzens',
-
     'form_item' => 'űrlapelem',
-
     'editor_guidance_understood' => 'A szerkesztői útmutatót megértettem. Ne jelenjen meg újra',
-
     'review_submission_page' => 'Beadvány bírálata',
     'reviewer_invitation_page' => 'Felkérés bírálatra',
     'recommend_value' => 'Javaslat: :recommendation',

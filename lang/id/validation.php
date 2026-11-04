@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Baris Bahasa Validasi
@@ -12,7 +10,6 @@ return [
     | aturan ukuran. Jangan ragu untuk menyesuaikan setiap pesan ini di sini.
     |
     */
-
     'accepted' => 'Bidang :attribute harus diterima.',
     'accepted_if' => 'Bidang :attribute harus diterima ketika :other adalah :value.',
     'active_url' => 'Bidang :attribute harus berupa URL yang valid.',
@@ -152,8 +149,9 @@ return [
     'uppercase' => 'Bidang :attribute harus berupa huruf besar.',
     'url' => 'Bidang :attribute harus berupa URL yang valid.',
     'uuid' => 'Bidang :attribute harus berupa UUID yang valid.',
-
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Baris Bahasa Validasi Khusus
     |--------------------------------------------------------------------------
@@ -163,13 +161,9 @@ return [
     | menentukan baris bahasa khusus tertentu untuk aturan atribut yang diberikan.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'pesan-khusus',
         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Atribut Validasi Khusus
@@ -180,8 +174,5 @@ return [
     | pengganti "email". Ini hanya membantu kita membuat pesan kita sedikit lebih bersih.
     |
     */
-
-    'attributes' => [],
-
     'weight_over' => 'Pastikan jumlah bobot tidak melebihi 100%. Saat ini jumlahnya :attribute%.',
 ];

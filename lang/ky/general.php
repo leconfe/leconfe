@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Тапшыруу түзүлдү',
     'submission_updated' => 'Тапшыруу жаңырды',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факультеттер',
     'role_assigned_successfully' => 'Рол ийгиликтүү дайындалды',
     'no_roles_selected' => 'Эч кандай роль тандалган',
-
     'language' => 'Тил',
     'switch_language' => 'Интерфейстин тилин өзгөртүү',
     'current_language' => 'Учурдагы тил:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Баштапкы текст',
     'translator' => 'Котормочу',
     'general_track' => 'Жалпы тематикалык бөлүм',
-
     'make_a_submission' => 'Тапшыруу жасоо',
     'payment_fee' => 'Төлөм',
     'add_on_items' => 'Кошумча элементтер',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Катышуучу төлөмдөрү',
     'invoice' => 'Эсеп-фактура',
     'editors' => 'Редакторлор',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Конференция менеджери',
     'scheduled_conference_editor' => 'Пландалган конференциянын редактору',
     'track_editor' => 'Тематикалык бөлүмдүн редактору',
-
     'recommendation_accept' => 'Кабыл алуу',
     'recommendation_decline' => 'Четке кагуу',
     'revision_required' => 'Оңдоо талап кылынат',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Кичи',
     'patch' => 'Оңдоо',
     'date_installed' => 'Орнотулган күнү',
-
     'item_name' => 'Элементтин аталышы',
     'description_and_instructions' => 'Сүрөттөмө жана нускамалар',
     'indicates_required_item' => 'Милдеттүү элементти билдирет',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Элементтин түрү Белги кутучасы, Радио баскыч же Ачылуучу тизме болгондо :attribute талаасы милдеттүү',
     'new_option' => 'Жаңы вариант',
     'payment_fee_form_items' => 'Төлөм формасынын элементтери',
-
     'item_type_text' => 'Бир саптуу текст талаасы',
     'item_type_textarea' => 'Кеңейтилген текст талаасы',
     'item_type_checkbox' => 'Белги кутучалары (бирин же бир нечесин тандай аласыз)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Ачылуучу тизме',
     'item_type_select_scored' => 'Салмактуу баалоосу бар ачылуучу тизме.',
     'item_type_upload' => 'Файл жүктөө',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'форманын элементи',
-
     'editor_guidance_understood' => 'Редактордун көрсөтмөлөрү түшүнүктүү. Мындан ары көрсөтпөө',
-
     'review_submission_page' => 'Тапшырууну карап чыгуу',
     'reviewer_invitation_page' => 'Рецензентке чакыруу',
     'recommend_value' => 'Сунуш: :recommendation',

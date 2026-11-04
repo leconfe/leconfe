@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute eremua onartu behar da.',
     'accepted_if' => ':attribute eremua onartu behar da :other :value denean.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'mezu pertsonalizatua',
         ],
     ],
-    'attributes' => [],
 ];

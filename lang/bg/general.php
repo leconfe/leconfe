@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Изпращането е създадено',
     'submission_updated' => 'Изпращането е актуализирано',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факултети',
     'role_assigned_successfully' => 'Ролята е присвоена успешно',
     'no_roles_selected' => 'Няма избрани роли',
-
     'language' => 'Език',
     'switch_language' => 'Промяна на езика на интерфейса',
     'current_language' => 'Текущ език:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Изходен текст',
     'translator' => 'Преводач',
     'general_track' => 'Обща тематична секция',
-
     'make_a_submission' => 'Подаване на материал',
     'payment_fee' => 'Такса за плащане',
     'add_on_items' => 'Допълнителни позиции',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Такси за участници',
     'invoice' => 'Фактура',
     'editors' => 'Редактори',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Мениджър на конференцията',
     'scheduled_conference_editor' => 'Редактор на насрочената конференция',
     'track_editor' => 'Редактор на тематична секция',
-
     'recommendation_accept' => 'Приемане',
     'recommendation_decline' => 'Отказ',
     'revision_required' => 'Необходима е преработка',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Второстепенна',
     'patch' => 'Корекция',
     'date_installed' => 'Дата на инсталиране',
-
     'item_name' => 'Име на елемента',
     'description_and_instructions' => 'Описание и инструкции',
     'indicates_required_item' => 'Задължителен елемент',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Полето :attribute е задължително, когато типът на елемента е Квадратче за отметка, Радиобутон или Падащо меню',
     'new_option' => 'Нова опция',
     'payment_fee_form_items' => 'Елементи на формуляра за такса',
-
     'item_type_text' => 'Едноредово текстово поле',
     'item_type_textarea' => 'Разширено текстово поле',
     'item_type_checkbox' => 'Квадратчета за отметка (можете да изберете едно или повече)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Падащо меню',
     'item_type_select_scored' => 'Падащо меню с претеглени оценки.',
     'item_type_upload' => 'Качване на файл',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'елемент от формуляра',
-
     'editor_guidance_understood' => 'Указанията за редактора са ясни. Не показвай отново',
-
     'review_submission_page' => 'Рецензиране на подадения материал',
     'reviewer_invitation_page' => 'Покана за рецензент',
     'recommend_value' => 'Препоръка: :recommendation',

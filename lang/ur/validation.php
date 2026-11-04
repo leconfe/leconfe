@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute فیلڈ کو قبول کرنا ضروری ہے۔',
     'accepted_if' => 'جب :other :value ہے تو :attribute فیلڈ کو قبول کرنا ضروری ہے۔',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'حسب ضرورت پیغام',
         ],
     ],
-    'attributes' => [],
 ];

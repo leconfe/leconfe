@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Жіберу жасалды',
     'submission_updated' => 'Жіберу жаңартылды',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факультеттер',
     'role_assigned_successfully' => 'Рөл сәтті тағайындалды',
     'no_roles_selected' => 'Ешбір рөл таңдалмаған',
-
     'language' => 'Тіл',
     'switch_language' => 'Интерфейс тілін өзгерту',
     'current_language' => 'Ағымдағы тіл:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Бастапқы мәтін',
     'translator' => 'Аудармашы',
     'general_track' => 'Жалпы тақырыптық бөлім',
-
     'make_a_submission' => 'Жіберу жасау',
     'payment_fee' => 'Төлем жарнасы',
     'add_on_items' => 'Қосымша элементтер',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Қатысушы жарналары',
     'invoice' => 'Шот',
     'editors' => 'Редакторлар',
-
     'admin' => 'Әкімші',
     'conference_manager' => 'Конференция менеджері',
     'scheduled_conference_editor' => 'Жоспарланған конференция редакторы',
     'track_editor' => 'Тақырыптық бөлім редакторы',
-
     'recommendation_accept' => 'Қабылдау',
     'recommendation_decline' => 'Бас тарту',
     'revision_required' => 'Түзету қажет',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Кіші',
     'patch' => 'Түзету',
     'date_installed' => 'Орнатылған күні',
-
     'item_name' => 'Элемент атауы',
     'description_and_instructions' => 'Сипаттама және нұсқаулар',
     'indicates_required_item' => 'Міндетті элементті білдіреді',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Элемент түрі Құсбелгі, Радиотүйме немесе Ашылмалы тізім болғанда :attribute өрісі міндетті',
     'new_option' => 'Жаңа нұсқа',
     'payment_fee_form_items' => 'Төлем жарнасы формасының элементтері',
-
     'item_type_text' => 'Бір жолды мәтін өрісі',
     'item_type_textarea' => 'Кеңейтілген мәтін өрісі',
     'item_type_checkbox' => 'Құсбелгілер (бір немесе бірнешеуін таңдауға болады)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Ашылмалы тізім',
     'item_type_select_scored' => 'Салмақты бағалауы бар ашылмалы тізім.',
     'item_type_upload' => 'Файлды жүктеу',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'форма элементі',
-
     'editor_guidance_understood' => 'Редактор нұсқаулары түсінікті. Бұны қайта көрсетпеу',
-
     'review_submission_page' => 'Жіберуді қарау',
     'reviewer_invitation_page' => 'Рецензентке шақыру',
     'recommend_value' => 'Ұсыныс: :recommendation',

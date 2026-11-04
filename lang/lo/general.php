@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'ສ້າງການຍື່ນສະເຫນີ',
     'submission_updated' => 'ອັບເດດການຍື່ນສະເໜີແລ້ວ',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'ຄະນະວິຊາ',
     'role_assigned_successfully' => 'ມອບໝາຍໜ້າທີ່ສຳເລັດແລ້ວ',
     'no_roles_selected' => 'ບໍ່ໄດ້ເລືອກບົດບາດ',
-
     'language' => 'ພາສາ',
     'switch_language' => 'ປ່ຽນພາສາຂອງສ່ວນຕິດຕໍ່',
     'current_language' => 'ພາສາປັດຈຸບັນ:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'ຂໍ້ຄວາມຕົ້ນສະບັບ',
     'translator' => 'ຜູ້ແປ',
     'general_track' => 'ສ່ວນຫົວຂໍ້ທົ່ວໄປ',
-
     'make_a_submission' => 'ຍື່ນສະເຫນີ',
     'payment_fee' => 'ຄ່າທຳນຽມການຊຳລະ',
     'add_on_items' => 'ລາຍການເສີມ',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'ຄ່າທຳນຽມຜູ້ເຂົ້າຮ່ວມ',
     'invoice' => 'ໃບແຈ້ງໜີ້',
     'editors' => 'ບັນນາທິການ',
-
     'admin' => 'ຜູ້ບໍລິຫານລະບົບ',
     'conference_manager' => 'ຜູ້ຈັດການກອງປະຊຸມ',
     'scheduled_conference_editor' => 'ບັນນາທິການກອງປະຊຸມທີ່ກຳນົດເວລາ',
     'track_editor' => 'ບັນນາທິການສ່ວນຫົວຂໍ້',
-
     'recommendation_accept' => 'ຍອມຮັບ',
     'recommendation_decline' => 'ປະຕິເສດ',
     'revision_required' => 'ຕ້ອງແກ້ໄຂ',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'ຍ່ອຍ',
     'patch' => 'ແພັດ',
     'date_installed' => 'ວັນທີຕິດຕັ້ງ',
-
     'item_name' => 'ຊື່ລາຍການ',
     'description_and_instructions' => 'ຄຳອະທິບາຍ ແລະ ຄຳແນະນຳ',
     'indicates_required_item' => 'ໝາຍເຖິງລາຍການທີ່ຈຳເປັນ',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'ຊ່ອງ :attribute ແມ່ນຈຳເປັນເມື່ອປະເພດລາຍການແມ່ນ ກ່ອງໝາຍ, ປຸ່ມວິທະຍຸ ຫຼື ລາຍການແບບເລື່ອນລົງ',
     'new_option' => 'ຕົວເລືອກໃໝ່',
     'payment_fee_form_items' => 'ລາຍການແບບຟອມຄ່າທຳນຽມການຊຳລະ',
-
     'item_type_text' => 'ກ່ອງຂໍ້ຄວາມແຖວດຽວ',
     'item_type_textarea' => 'ກ່ອງຂໍ້ຄວາມແບບຂະຫຍາຍ',
     'item_type_checkbox' => 'ກ່ອງໝາຍ (ເລືອກໄດ້ໜຶ່ງ ຫຼື ຫຼາຍກວ່າ)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ລາຍການແບບເລື່ອນລົງ',
     'item_type_select_scored' => 'ລາຍການແບບເລື່ອນລົງທີ່ມີການໃຫ້ນ້ຳໜັກຄະແນນ.',
     'item_type_upload' => 'ອັບໂຫລດໄຟລ໌',
-
     'reviewer_number' => 'ຜູ້ທົບທວນ :number',
-
     'form_item' => 'ລາຍການແບບຟອມ',
-
     'editor_guidance_understood' => 'ເຂົ້າໃຈຄຳແນະນຳສຳລັບບັນນາທິການແລ້ວ. ບໍ່ຕ້ອງສະແດງອີກ',
-
     'review_submission_page' => 'ທົບທວນການຍື່ນສະເຫນີ',
     'reviewer_invitation_page' => 'ການເຊີນຜູ້ທົບທວນ',
     'recommend_value' => 'ສະເໜີແນະ: :recommendation',

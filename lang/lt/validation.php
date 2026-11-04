@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Laukas :attribute turi būti priimtas.',
     'accepted_if' => 'Laukas :attribute turi būti priimtas, kai :other yra :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'pasirinktinis pranešimas',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute-feltet skal accepteres.',
     'accepted_if' => ':attribute-feltet skal accepteres, når :other er :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'tilpasset besked',
         ],
     ],
-    'attributes' => [],
 ];

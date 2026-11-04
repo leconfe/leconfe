@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Ներկայացումը ստեղծվել է',
     'submission_updated' => 'Ներկայացումը թարմացվել է',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Ֆակուլտետներ',
     'role_assigned_successfully' => 'Դերը հաջողությամբ նշանակվեց',
     'no_roles_selected' => 'Դերեր ընտրված չեն',
-
     'language' => 'Լեզու',
     'switch_language' => 'Փոխել ինտերֆեյսի լեզուն',
     'current_language' => 'Ընթացիկ լեզուն՝',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Սկզբնաղբյուր տեքստ',
     'translator' => 'Թարգմանիչ',
     'general_track' => 'Ընդհանուր թեմատիկ բաժին',
-
     'make_a_submission' => 'Ներկայացնել',
     'payment_fee' => 'Վճար',
     'add_on_items' => 'Լրացուցիչ կետեր',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Մասնակցության վճարներ',
     'invoice' => 'Հաշիվ-ապրանքագիր',
     'editors' => 'Խմբագիրներ',
-
     'admin' => 'Ադմինիստրատոր',
     'conference_manager' => 'Համաժողովի կառավարիչ',
     'scheduled_conference_editor' => 'Պլանավորված համաժողովի խմբագիր',
     'track_editor' => 'Թեմատիկ բաժնի խմբագիր',
-
     'recommendation_accept' => 'Ընդունել',
     'recommendation_decline' => 'Մերժել',
     'revision_required' => 'Պահանջվում է վերամշակում',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Փոքր',
     'patch' => 'Ուղղում',
     'date_installed' => 'Տեղադրման ամսաթիվ',
-
     'item_name' => 'Կետի անվանում',
     'description_and_instructions' => 'Նկարագրություն և հրահանգներ',
     'indicates_required_item' => 'Նշում է պարտադիր կետը',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => ':attribute դաշտը պարտադիր է, երբ կետի տեսակը Նշավանդակ, Ընտրության կոճակ կամ Բացվող ցանկ է',
     'new_option' => 'Նոր տարբերակ',
     'payment_fee_form_items' => 'Վճարի ձևի կետեր',
-
     'item_type_text' => 'Մեկտողանի տեքստային դաշտ',
     'item_type_textarea' => 'Ընդլայնված տեքստային դաշտ',
     'item_type_checkbox' => 'Նշավանդակներ (կարող եք ընտրել մեկ կամ ավելի)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Բացվող ցանկ',
     'item_type_select_scored' => 'Բացվող ցանկ՝ կշռված միավորներով։',
     'item_type_upload' => 'Վերբեռնել ֆայլ',
-
     'reviewer_number' => 'Գրախոս :number',
-
     'form_item' => 'ձևի կետ',
-
     'editor_guidance_understood' => 'Խմբագրի ցուցումները հասկանալի են։ Այլևս չցուցադրել',
-
     'review_submission_page' => 'Գրախոսել ներկայացումը',
     'reviewer_invitation_page' => 'Գրախոսի հրավեր',
     'recommend_value' => 'Առաջարկել՝ :recommendation',

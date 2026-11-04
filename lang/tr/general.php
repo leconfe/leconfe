@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Gönderim oluşturuldu',
     'submission_updated' => 'Gönderim güncellendi',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakülteler',
     'role_assigned_successfully' => 'Rol başarıyla atandı',
     'no_roles_selected' => 'Hiç rol seçilmedi',
-
     'language' => 'Dil',
     'switch_language' => 'Arayüz dilini değiştir',
     'current_language' => 'Geçerli dil:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Kaynak Metin',
     'translator' => 'Çevirmen',
     'general_track' => 'Genel Tematik Bölüm',
-
     'make_a_submission' => 'Gönderi Yap',
     'payment_fee' => 'Ücret',
     'add_on_items' => 'Ek Öğeler',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Katılımcı Ücretleri',
     'invoice' => 'Fatura',
     'editors' => 'Editörler',
-
     'admin' => 'Yönetici',
     'conference_manager' => 'Konferans Yöneticisi',
     'scheduled_conference_editor' => 'Planlanmış Konferans Editörü',
     'track_editor' => 'Tematik Bölüm Editörü',
-
     'recommendation_accept' => 'Kabul Et',
     'recommendation_decline' => 'Reddet',
     'revision_required' => 'Düzeltme Gerekli',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Küçük',
     'patch' => 'Yama',
     'date_installed' => 'Yükleme Tarihi',
-
     'item_name' => 'Öğe Adı',
     'description_and_instructions' => 'Açıklama ve Talimatlar',
     'indicates_required_item' => 'Zorunlu öğeyi belirtir',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Öğe Türü Onay Kutusu, Radyo Düğmesi veya Açılır Liste olduğunda :attribute alanı zorunludur',
     'new_option' => 'Yeni Seçenek',
     'payment_fee_form_items' => 'Ücret Formu Öğeleri',
-
     'item_type_text' => 'Tek satırlık metin kutusu',
     'item_type_textarea' => 'Genişletilmiş metin kutusu',
     'item_type_checkbox' => 'Onay kutuları (bir veya daha fazlasını seçebilirsiniz)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Açılır liste',
     'item_type_select_scored' => 'Ağırlıklı puanlamalı açılır liste.',
     'item_type_upload' => 'Dosya Yükle',
-
     'reviewer_number' => 'Hakem :number',
-
     'form_item' => 'form öğesi',
-
     'editor_guidance_understood' => 'Editör yönergelerini anladım. Bunu bir daha gösterme',
-
     'review_submission_page' => 'Gönderiyi İncele',
     'reviewer_invitation_page' => 'Hakem Daveti',
     'recommend_value' => 'Öner: :recommendation',

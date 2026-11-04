@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Подання створено',
     'submission_updated' => 'Подання оновлено',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факультети',
     'role_assigned_successfully' => 'Роль успішно призначена',
     'no_roles_selected' => 'Ролі не вибрані',
-
     'language' => 'Мова',
     'switch_language' => 'Змінити мову інтерфейсу',
     'current_language' => 'Поточна мова:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Вихідний текст',
     'translator' => 'Перекладач',
     'general_track' => 'Загальний тематичний розділ',
-
     'make_a_submission' => 'Зробити подання',
     'payment_fee' => 'Внесок',
     'add_on_items' => 'Додаткові позиції',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Внески учасників',
     'invoice' => 'Рахунок-фактура',
     'editors' => 'Редактори',
-
     'admin' => 'Адміністратор',
     'conference_manager' => 'Менеджер конференції',
     'scheduled_conference_editor' => 'Редактор запланованої конференції',
     'track_editor' => 'Редактор тематичного розділу',
-
     'recommendation_accept' => 'Прийняти',
     'recommendation_decline' => 'Відхилити',
     'revision_required' => 'Потрібне доопрацювання',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Проміжна',
     'patch' => 'Виправлення',
     'date_installed' => 'Дата встановлення',
-
     'item_name' => 'Назва елемента',
     'description_and_instructions' => 'Опис та інструкції',
     'indicates_required_item' => 'Позначає обов’язковий елемент',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Поле :attribute є обов’язковим, якщо тип елемента — «Прапорець», «Перемикач» або «Розкривний список»',
     'new_option' => 'Новий варіант',
     'payment_fee_form_items' => 'Елементи форми внеску',
-
     'item_type_text' => 'Однорядкове текстове поле',
     'item_type_textarea' => 'Розширене текстове поле',
     'item_type_checkbox' => 'Прапорці (можна вибрати один або кілька)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Розкривний список',
     'item_type_select_scored' => 'Розкривний список із ваговим оцінюванням.',
     'item_type_upload' => 'Завантажити файл',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'елемент форми',
-
     'editor_guidance_understood' => 'Настанови для редактора зрозумілі. Більше не показувати',
-
     'review_submission_page' => 'Рецензувати подання',
     'reviewer_invitation_page' => 'Запрошення до рецензування',
     'recommend_value' => 'Рекомендувати: :recommendation',

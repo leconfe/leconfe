@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute 字段必须被接受。',
     'accepted_if' => '当 :other 为 :value 时，:attribute 字段必须被接受。',
@@ -146,5 +145,4 @@ return [
             'rule-name' => '自定义消息',
         ],
     ],
-    'attributes' => [],
 ];

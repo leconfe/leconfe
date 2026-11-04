@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Medan :attribute mesti diterima.',
     'accepted_if' => 'Medan :attribute mesti diterima apabila :other adalah :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'mesej-tersuai',
         ],
     ],
-    'attributes' => [],
 ];

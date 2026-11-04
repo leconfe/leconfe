@@ -1,5 +1,4 @@
 <?php
-
 return [
     'review_form_item' => [
         'select_options_input_label' => 'Vel alternativ',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'review_form_item' => [
         'select_options_input_label' => 'Variantlarni tanlang',
@@ -33,7 +32,6 @@ return [
     'submit_paper' => 'Maqola yuborish',
     'unpublished_title' => 'Rejalashtirilgan konferensiya hali e’lon qilinmagan',
     'unpublished_description' => 'Ushbu rejalashtirilgan konferensiya sahifasi hozircha ommaga ochiq emas. Iltimos, keyinroq qayta tekshiring. Kutayotganingiz uchun rahmat.',
-
     'welcome_message_submit_paper' => 'Maqolangizni yuborish uchun <span class="text-primary-600">shu yerni bosing</span>.',
     'welcome_message_non_presenter' => 'Taqdimotsiz qatnashchilar uchun roʻyxatdan oʻtish <span class="text-primary-600">shu yerda</span> mavjud.',
     'welcome_message_registered_non_presenter' => 'Siz taqdimotsiz qatnashchi sifatida roʻyxatdan oʻtgansiz. <span class="text-primary-600">Maʼlumotni shu yerda</span> koʻrishingiz mumkin.',

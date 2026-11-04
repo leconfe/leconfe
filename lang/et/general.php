@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Esitamine loodud',
     'submission_updated' => 'Esitamist värskendati',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Teaduskonnad',
     'role_assigned_successfully' => 'Rolli määramine õnnestus',
     'no_roles_selected' => 'Ühtegi rolli pole valitud',
-
     'language' => 'Keel',
     'switch_language' => 'Muuda liidese keelt',
     'current_language' => 'Praegune keel:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Lähtetekst',
     'translator' => 'Tõlkija',
     'general_track' => 'Üldine teemade sektsioon',
-
     'make_a_submission' => 'Esita töö',
     'payment_fee' => 'Tasu',
     'add_on_items' => 'Lisavalikud',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Osalustasud',
     'invoice' => 'Arve',
     'editors' => 'Toimetajad',
-
     'admin' => 'Administraator',
     'conference_manager' => 'Konverentsi haldur',
     'scheduled_conference_editor' => 'Planeeritud konverentsi toimetaja',
     'track_editor' => 'Teemade sektsiooni toimetaja',
-
     'recommendation_accept' => 'Võta vastu',
     'recommendation_decline' => 'Lükka tagasi',
     'revision_required' => 'Vajab parandamist',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Alamversioon',
     'patch' => 'Parandus',
     'date_installed' => 'Paigaldamise kuupäev',
-
     'item_name' => 'Elemendi nimi',
     'description_and_instructions' => 'Kirjeldus ja juhised',
     'indicates_required_item' => 'Tähistab kohustuslikku elementi',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Väli :attribute on kohustuslik, kui elemendi tüüp on Märkeruudud, Raadionupp või Rippmenüü',
     'new_option' => 'Uus valik',
     'payment_fee_form_items' => 'Tasuvormi elemendid',
-
     'item_type_text' => 'Üherealine tekstikast',
     'item_type_textarea' => 'Mitmerealine tekstikast',
     'item_type_checkbox' => 'Märkeruudud (saate valida ühe või mitu)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rippmenüü',
     'item_type_select_scored' => 'Rippmenüü kaalutud punktiarvestusega.',
     'item_type_upload' => 'Laadi fail üles',
-
     'reviewer_number' => 'Ülevaataja :number',
-
     'form_item' => 'vormi element',
-
     'editor_guidance_understood' => 'Toimetaja juhised on loetud. Ära näita seda enam',
-
     'review_submission_page' => 'Esildise ülevaatus',
     'reviewer_invitation_page' => 'Ülevaataja kutse',
     'recommend_value' => 'Soovita :recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => '提交已建立',
     'submission_updated' => '提交已更新',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => '教師群',
     'role_assigned_successfully' => '角色指派成功',
     'no_roles_selected' => '未選擇任何角色',
-
     'language' => '語言',
     'switch_language' => '變更介面語言',
     'current_language' => '目前語言：',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => '原文',
     'translator' => '譯者',
     'general_track' => '綜合專題部分',
-
     'make_a_submission' => '投稿',
     'payment_fee' => '付款費用',
     'add_on_items' => '附加項目',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => '參與者費用',
     'invoice' => '發票',
     'editors' => '編輯',
-
     'admin' => '管理員',
     'conference_manager' => '會議管理員',
     'scheduled_conference_editor' => '已排程會議編輯',
     'track_editor' => '專題部分編輯',
-
     'recommendation_accept' => '接受',
     'recommendation_decline' => '拒絕',
     'revision_required' => '需要修改',
@@ -1251,7 +1246,6 @@ return [
     'minor' => '次要版本',
     'patch' => '修補程式',
     'date_installed' => '安裝日期',
-
     'item_name' => '項目名稱',
     'description_and_instructions' => '說明與指示',
     'indicates_required_item' => '表示必填項目',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => '當項目類型為核取方塊、選項按鈕或下拉式選單時，:attribute 欄位為必填',
     'new_option' => '新選項',
     'payment_fee_form_items' => '付款費用表單項目',
-
     'item_type_text' => '單行文字方塊',
     'item_type_textarea' => '多行文字方塊',
     'item_type_checkbox' => '核取方塊（可選擇一項或多項）',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => '下拉式選單',
     'item_type_select_scored' => '附權重評分的下拉式選單。',
     'item_type_upload' => '上傳檔案',
-
     'reviewer_number' => '審稿人 :number',
-
     'form_item' => '表單項目',
-
     'editor_guidance_understood' => '已了解編輯指南，不再顯示',
-
     'review_submission_page' => '審核投稿',
     'reviewer_invitation_page' => '審稿邀請',
     'recommend_value' => '推薦：:recommendation',

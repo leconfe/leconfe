@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'تم إنشاء التقديم',
     'submission_updated' => 'تم تحديث التقديم',
@@ -28,14 +27,11 @@ return [
     'submission_request_revision' => 'قرر ":name" كمحرر "طلب مراجعة".',
     'review_complete' => ':name أكمل المراجعة',
     'email_sent' => 'تم إرسال البريد الإلكتروني ":name"',
-
     'pagination_previous' => '&laquo; السابق',
     'pagination_next' => 'التالي &raquo;',
-
     'failed_credentials' => 'هذه البيانات لا تتطابق مع سجلاتنا.',
     'throttle_to_many_login_attempts' => 'عدد كبير جدًا من محاولات تسجيل الدخول. يرجى المحاولة مرة أخرى بعد :seconds ثوان.',
     'throttle_please_try_again' => 'يرجى المحاولة مرة أخرى بعد :seconds ثوان.',
-
     'view_conference' => 'عرض المؤتمر',
     'current_event' => 'الحدث الحالي',
     'login' => 'تسجيل الدخول',
@@ -67,7 +63,6 @@ return [
     'edit_my_profile' => 'تعديل ملفي الشخصي',
     'continue_browsing' => 'مواصلة التصفح',
     'no_content_provided' => 'لم يتم تقديم أي محتوى.',
-
     'dashboard' => 'لوحة القيادة',
     'administration' => 'الإدارة',
     'expire_user_session' => 'انتهاء جلسة المستخدم',
@@ -78,7 +73,6 @@ return [
     'data_caches_cleared_successfully' => 'تم مسح ذاكرة التخزين المؤقت للبيانات بنجاح',
     'clear_view_caches' => 'مسح ذاكرة التخزين المؤقت للعرض',
     'view_caches_cleared_successfully' => 'تم مسح ذاكرة التخزين المؤقت للعرض بنجاح',
-
     'conference' => 'المؤتمر',
     'open_conference' => 'فتح المؤتمر',
     'open_scheduled_conference' => 'فتح المؤتمر المجدول',
@@ -88,7 +82,6 @@ return [
     'name' => 'الاسم',
     'path' => 'المسار',
     'url_path' => 'مسار المؤتمر. سيتم استخدامه في عنوان URL للمؤتمر.',
-
     'appearance' => 'المظهر',
     'theme' => 'الثيم',
     'appearance_color' => 'لون المظهر',
@@ -97,7 +90,6 @@ return [
     'saved' => 'تم الحفظ!',
     'failed' => 'فشل!',
     'data_could_not_saved' => 'لم يتم حفظ البيانات.',
-
     'setup' => 'إعداد',
     'site_setup' => 'إعداد الموقع',
     'website_name' => 'اسم الموقع',
@@ -107,17 +99,13 @@ return [
     'short_description_of_the_website' => 'وصف قصير للموقع. سيتم استخدامه لمساعدة محركات البحث على فهم الموقع.',
     'about_site' => 'عن الموقع',
     'page_footer' => 'تذييل الصفحة',
-
     'sidebar' => 'الشريط الجانبي',
     'sidebars_manager' => 'مدير الأشرطة الجانبية',
     'no_sidebars_found' => 'لم يتم العثور على أشرطة جانبية.',
-
     'navigation_menu' => 'قائمة التنقل',
     'languages' => 'اللغات',
-
     'no_navigation_menu_items_found' => 'لم يتم العثور على عناصر قائمة التنقل',
     'no_navigation_menu_found' => 'لم يتم العثور على قائمة تنقل',
-
     'add_navigation_menu' => 'إضافة قائمة تنقل',
     'edit' => 'تعديل',
     'delete' => 'حذف',
@@ -128,12 +116,9 @@ return [
     'edit_navigation_menu_item' => 'تعديل عنصر قائمة التنقل',
     'label' => 'التسمية',
     'type' => 'النوع',
-
     'default_language' => 'اللغة الافتراضية',
-
     'settings' => 'الإعدادات',
     'website_setting' => 'إعدادات الموقع',
-
     'plugin' => 'الملحق',
     'enabled' => 'مفعل',
     'author' => 'المؤلف',
@@ -154,7 +139,6 @@ return [
     'the_complete_page_content' => 'محتوى الصفحة الكامل.',
     'preview' => 'معاينة',
     'switch_conference' => 'تبديل المؤتمر',
-
     'scheduled_conference' => 'المؤتمر المجدول',
     'enter_the_title_of_the_serie' => 'أدخل عنوان السلسلة',
     'start_date' => 'تاريخ البدء',
@@ -174,7 +158,6 @@ return [
     'upcoming' => 'قادم',
     'archived' => 'أرشيفي',
     'trash' => 'سلة المهملات',
-
     'proceeding' => 'المداولات',
     'proceedings' => 'المداولات',
     'identification' => 'الهوية',
@@ -193,7 +176,6 @@ return [
     'proceeding_data' => 'بيانات المداولات',
     'articles' => 'المقالات',
     'remove' => 'إزالة',
-
     'conference_settings' => 'إعدادات المؤتمر',
     'conference_identity' => 'هوية المؤتمر',
     'information_about_scheduled_conference' => 'معلومات عن المؤتمر المجدول',
@@ -216,7 +198,6 @@ return [
     'enter_custom_time_format' => 'أدخل تنسيق الوقت المخصص',
     'time' => 'الوقت',
     'date_and_time_formats' => 'تنسيقات التاريخ والوقت',
-
     'distribution' => 'التوزيع',
     'distribution_settings' => 'إعدادات التوزيع',
     'allow_digital_object_dois' => 'السماح بتعيين معرّفات الكائنات الرقمية (DOIs) للأعمال المنشورة في هذا المؤتمر',
@@ -233,7 +214,6 @@ return [
     'doi_format' => 'تنسيق DOI',
     'automatically_generate_unique_suffix' => 'افتراضي - يتم توليد لاحقة فريدة مكونة من ثمانية أحرف تلقائيًا',
     'not_be_automatically_generate_unique_suffix' => 'لا شيء - يجب إدخال اللواحق يدويًا على صفحة إدارة DOI ولن يتم توليدها تلقائيًا',
-
     'registration' => 'التسجيل',
     'registration_agency' => 'وكالة التسجيل',
     'registration_select_agency_dois' => 'يرجى اختيار وكالة التسجيل التي ترغب في استخدامها عند إيداع DOIs.',
@@ -262,18 +242,15 @@ return [
     'password' => 'كلمة المرور',
     'use_crossref_test_api' => 'استخدم API اختبار Crossref (بيئة اختبار) لإيداع DOI.',
     'username_crossref' => 'اسم المستخدم Crossref الذي سيتم استخدامه لمصادقة الإيداعات الخاصة بك. إذا كنت تستخدم حسابًا شخصيًا، يرجى الاطلاع على النصائح أعلاه.',
-
     'search_indexing' => 'فهرسة البحث',
     'meta_tags' => 'علامات التعريف',
     'add_meta_tags_conference' => 'أضف علامات التعريف إلى رأس كل صفحة في المؤتمر الخاص بك. قبل إضافة أي علامات، استشر مستشارًا تقنيًا للتأكد من أنها متوافقة مع موقعك الإلكتروني ولن تتسبب في أي مشاكل.',
-
     'role' => 'الدور',
     'role_management' => 'إدارة الأدوار',
     'copy_permissions_from' => 'نسخ الأذونات من',
     'advanced_permissions' => 'الأذونات المتقدمة',
     'persist_permissions' => 'الحفاظ على الأذونات',
     'permissions_persisted_successfully' => 'تم الحفاظ على الأذونات بنجاح.',
-
     'user' => 'المستخدم',
     'profile_photo' => 'صورة الملف الشخصي',
     'disabled_at' => 'تعطيل في',
@@ -291,7 +268,6 @@ return [
     'send_email_to' => 'إرسال بريد إلكتروني إلى',
     'reason_for_disabling_user' => 'سبب تعطيل المستخدم',
     'to_disable_permanently_leave_field_empty' => 'لتعطيل المستخدم بشكل دائم، اترك الحقل فارغًا',
-
     'profile_picture' => 'صورة الملف الشخصي',
     'expertise' => 'الخبرة',
     'select_a_country' => 'اختر بلدًا',
@@ -304,7 +280,6 @@ return [
     'phone_format_international' => 'التنسيق الدولي، مثل +6281234567890',
     'roles' => 'الأدوار',
     'hide_users_with_no_roles' => 'إخفاء المستخدمين بدون أدوار في هذا المؤتمر المجدول.',
-
     'permission' => 'الإذن',
     'context' => 'السياق',
     'action' => 'الإجراء',
@@ -319,7 +294,6 @@ return [
     'total_number_of_papers_submitted' => 'إجمالي عدد الأوراق المقدمة',
     'accepted_paper_in_the_last_30_days' => 'الأوراق المقبولة في آخر 30 يومًا',
     'new_authors_in_the_last_30_days' => 'المؤلفون الجدد في آخر 30 يومًا',
-
     'incomplete' => 'غير مكتمل',
     'queued' => 'قيد الانتظار',
     'on_payment' => 'عند الدفع',
@@ -330,7 +304,6 @@ return [
     'scheduled' => 'مجدول',
     'declined' => 'مرفوض',
     'withdrawn' => 'مُنسحب',
-
     'no_editor_assigned' => 'لم يتم تعيين محرر',
     'reviewed' => 'تمت المراجعة',
     'my_queue' => 'قائمتي',
@@ -341,7 +314,6 @@ return [
     'create' => 'إنشاء',
     'pending_withdrawal' => 'قيد الانتظار للسحب',
     'submission_is_not_open' => 'التقديم غير مفتوح',
-
     'before_you_begin' => 'قبل أن تبدأ',
     'before_you_begin_current_scheduled' => '<p>شكرًا لتقديمك لـ :title. ستطلب منك تحميل الملفات، تحديد المؤلفين المشاركين، وتقديم معلومات مثل العنوان والملخص.</p>
     <p>يرجى قراءة إرشادات التقديم إذا لم تقم بذلك بالفعل. عند ملء النماذج، قدم أكبر قدر ممكن من التفاصيل لمساعدة المحررين لدينا في تقييم عملك.</p>
@@ -354,13 +326,11 @@ return [
                             <li>النص مفرد المسافات؛ يستخدم خطًا بحجم 12 نقطة؛ يستخدم المائل بدلاً من التسطير (باستثناء عناوين URL)؛ وجميع الرسوم التوضيحية والأشكال والجداول موضوعة داخل النص في النقاط المناسبة، بدلاً من نهايته.</li>
                             <li>النص يلتزم بالمتطلبات الأسلوبية والببليوغرافية الموضحة في إرشادات المؤلفين.</li>
                         </ul>',
-
     'track' => 'مسار',
     'privacy_consent' => 'موافقة الخصوصية',
     'submission_checklist' => 'قائمة التحقق من التقديم',
     'submission_meets_all_of_requirements' => 'نعم، تقديمي يلبي جميع هذه المتطلبات.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'نعم، أوافق على جمع وتخزين بياناتي وفقًا لبيان الخصوصية.',
-
     'submission_details' => 'تفاصيل التقديم',
     'provide_details_to_help_us' => 'يرجى تقديم التفاصيل التالية لمساعدتنا في إدارة تقديمك في نظامنا.',
     'topic' => 'الموضوع',
@@ -391,7 +361,6 @@ return [
     'provide_information_submission' => 'يرجى تقديم المعلومات لجميع المساهمين المشاركين في هذا التقديم.',
     'no_files_added_to_submission' => 'لم يتم إضافة أي ملفات إلى التقديم',
     'include_any_necessary_files' => 'يرجى تضمين أي ملفات ضرورية لفريق التحرير لدينا لتقييم تقديمك. جنبًا إلى جنب مع العمل الرئيسي، يمكنك أيضًا اختيار تقديم ملفات إضافية مثل مجموعات البيانات، أو بيانات تضارب المصالح، أو مواد أخرى ذات صلة يمكن أن تساعد المحررين لدينا.',
-
     'filename' => 'اسم الملف',
     'uploaded_at' => 'تاريخ الرفع',
     'rename' => 'إعادة تسمية',
@@ -404,7 +373,6 @@ return [
     'nothing_to_download' => 'لا يوجد شيء لتحميله',
     'problem_creating_file_type' => 'حدثت مشكلة في إنشاء نوع الملف',
     'file_type_created_successfulyy' => 'تم إنشاء نوع الملف بنجاح',
-
     'create_author_role' => 'إنشاء دور مؤلف',
     'new_contributor' => 'مساهم جديد',
     'add_myself_as_contributor' => 'إضافة نفسي',
@@ -470,7 +438,6 @@ return [
     'url_must_be_valid' => 'يجب أن يكون الرابط عنوان URL صالح.',
     'editorial_team' => 'فريق التحرير',
     'about_the_scheduled_conference' => 'عن المؤتمر المجدول',
-
     'masthead' => 'رأس الصفحة',
     'contact' => 'اتصال',
     'scheduled_conference_setting' => 'إعداد المؤتمر المجدول',
@@ -478,7 +445,6 @@ return [
     'principal_contact_description' => 'أدخل تفاصيل الاتصال، عادةً لرئيس المؤتمر أو لجنة التنظيم أو فريق الدعم الإداري، والتي يمكن عرضها على موقع المؤتمر المتاح للجمهور.',
     'technical_support_contact' => 'جهة الاتصال بالدعم الفني',
     'a_contact_person_who_can_assist_editors' => 'شخص يمكنه مساعدة المحررين والمؤلفين والمراجعين في أي مشاكل يواجهونها أثناء التقديم أو التحرير أو المراجعة أو النشر.',
-
     'scheduled_conference_thumbnail' => 'صورة مصغرة للمؤتمر المجدول',
     'supports' => 'يدعم',
     'sponsorship_levels' => 'مستويات الرعاية',
@@ -498,7 +464,6 @@ return [
     'privacy_statement' => 'بيان الخصوصية',
     'create_sponsorship_level' => 'أنشئ مستوى الرعاية',
     'add_sponsorship_level' => 'أضف مستوى الرعاية',
-
     'registrations' => 'التسجيلات',
     'participant_quota' => 'حصة المشاركين',
     'registrations_settings' => 'إعدادات التسجيل',
@@ -526,7 +491,6 @@ return [
     'create_a_type_to_get_started' => 'أنشئ نوعًا للبدء.',
     'select_type_opened_date' => 'حدد تاريخ فتح النوع..',
     'select_type_closed_date' => 'حدد تاريخ إغلاق النوع..',
-
     'payments' => 'المدفوعات',
     'payment' => 'دفع',
     'payment_declined' => 'تم رفض الدفع',
@@ -556,16 +520,13 @@ return [
     'editor_guidelines' => 'إرشادات المحرر',
     'brief_explanation' => 'قدم شرحًا مختصرًا لعملية التقديم حتى يعرف المؤلفون ما يمكن توقعه.',
     'guidance_authors_might_need_to_know' => 'قدّم إرشادات حول أي شيء قد يحتاج المؤلفون إلى معرفته، مثل المعايير الببليوغرافية والتنسيق، جنبًا إلى جنب مع أمثلة على تنسيقات الاقتباس الشائعة التي يجب استخدامها. يمكنك أيضًا تقديم تفاصيل حول التنسيق وموضوعات التقديم المفضلة.',
-
     'authors' => 'المؤلفون',
     'new_author_role' => 'دور مؤلف جديد',
     'cannot_delete_role' => 'لا يمكن حذف :variable، هناك مؤلفون لا يزالون مرتبطين بهذا الدور',
-
     'new_track' => 'مسار جديد',
     'track_title' => 'عنوان المسار',
     'abbreviation' => 'الاختصار',
     'track_policy' => 'سياسة المسار',
-
     'review_mode' => 'وضع المراجعة',
     'days' => 'أيام',
     'review_guidelines' => 'إرشادات المراجعة',
@@ -598,11 +559,9 @@ return [
     'default_response_deadline' => 'الموعد النهائي الافتراضي للرد على الدعوات',
     'default_completing_deadline' => 'الموعد النهائي لإكمال المراجعات',
     'deadline_reviewers_invitations' => 'الموعد النهائي للمراجعين للرد على الدعوات',
-
     'anonymous_author' => 'مراجع مجهول/مؤلف مجهول',
     'anonymous_disclosed_author' => 'مراجع مجهول/مؤلف مكشوف',
     'open' => 'مفتوح',
-
     'timeline' => 'الجدول الزمني',
     'key' => 'المفتاح',
     'body' => 'المحتوى',
@@ -624,18 +583,15 @@ return [
     'email_template_restored_to_default_data' => 'تم استعادة قالب البريد الإلكتروني إلى البيانات الافتراضية.',
     'add_new_timeline' => 'أضف جدولًا زمنيًا جديدًا',
     'type_integrates_with_workflow_process' => 'النوع الذي يتكامل مع عملية سير العمل.',
-
     'payment_instruction' => 'تعليمات الدفع',
     'payment_proof' => 'إثبات الدفع',
     'hidden' => 'مخفي',
-
     'announcement' => 'إعلان',
     'summary' => 'ملخص',
     'expires_at' => 'تنتهي صلاحيتها في',
     'view' => 'عرض',
     'send_email_to_subscribed_users' => 'إرسال بريد إلكتروني حول هذا إلى المستخدمين المشتركين',
     'complete_announcement_content' => 'محتوى الإعلان الكامل.',
-
     'committee' => 'اللجنة',
     'committees' => 'اللجان',
     'committee_positions' => 'مناصب اللجنة',
@@ -645,7 +601,6 @@ return [
     'full_name' => 'الاسم الكامل',
     'committee_roles_table' => 'جدول أدوار اللجنة',
     'new_committee_role' => 'دور لجنة جديد',
-
     'subtitle' => 'العنوان الفرعي',
     'speakers' => 'المتحدثون',
     'speaker' => 'المتحدث',
@@ -791,7 +746,6 @@ return [
     'abstract_declined' => 'الملخص مرفوض',
     'new_discussion_topic_created' => 'تم إنشاء موضوع نقاش جديد',
     'cannot_delete_role_commites' => 'لا يمكن حذف :name، هناك :roleType لا يزالون مرتبطين بهذا الدور',
-
     'topic_name' => 'اسم الموضوع',
     'participant' => 'المشارك',
     'participants' => 'المشاركون',
@@ -811,7 +765,6 @@ return [
     'topic_created_successfully' => 'تم إنشاء الموضوع بنجاح',
     'topic_createtion_failed' => 'فشل إنشاء الموضوع',
     'failed_to_send_notification_to_participants' => 'فشل في إرسال الإشعار إلى المشاركين.',
-
     'attachments' => 'المرفقات',
     'papers' => 'الأوراق',
     'after_uploading_your_paper_system_will_send_notification' => 'بعد تحميل ورقتك، سيقوم النظام بإرسال إشعار إلى المحرر.',
@@ -841,12 +794,10 @@ return [
     'revisions' => 'التعديلات',
     'upload_your_reviews_files_here' => 'قم بتحميل ملفات مراجعتك هنا.',
     'after_uploading_files_system_will_send_notification_to_editor' => 'بعد تحميل الملفات، سيقوم النظام بإرسال إشعار إلى المحرر.',
-
     'presentation_files' => 'ملفات العرض',
     'payment_processing' => 'معالجة الدفع',
     'payment_waived' => 'تم إعفاء الدفع',
     'causer_name' => 'بواسطة',
-
     'switch_scheduled_conference' => 'تبديل المؤتمر المجدول',
     'back_to_conference' => 'العودة إلى المؤتمر',
     'select_country' => 'اختر البلد',
@@ -951,7 +902,6 @@ return [
     'consider_registration_process' => 'شكرًا لتقديمك. يرجى النظر في <a class="text-primary-500 hover:underline" href=":route">عملية التسجيل</a> وإكمال الدفع لمواصلة عملية التقديم. تأكد من التسجيل على مستوى المؤلف للاستمرار في عملية التقديم.',
     'we_apologize_registration_currenty_closed' => 'نعتذر، لكن التسجيل مغلق حاليًا.',
     'have_questin_contact_our_technical_support' => 'هل لديك سؤال؟ اتصل بـ <strong>دعمنا الفني</strong>.',
-
     'are_you_sure_registration' => 'هل أنت متأكد أنك تريد التسجيل كـ <strong>:type</strong>؟',
     'heres_your_registration_details' => 'إليك تفاصيل التسجيل الخاصة بك',
     'author_registration' => 'تسجيل المؤلف',
@@ -964,14 +914,12 @@ return [
     'registration_process_guide' => 'يمكنك إجراء عملية التسجيل، بالضغط على نوع التسجيل المفضل لديك أدناه.',
     'submission_not_started_registration' => 'لم تبدأ عملية التسجيل لهذا الطلب بعد.',
     'we_apologize_registration_currenty_closed_agenda' => "نعتذر، لكن التسجيل مغلق حاليًا. يمكنك الاطلاع على <a class='text-primary-500 hover:underline' href=':href'>الأجندة</a> لمعرفة موعد فتح التسجيل.",
-
     'pending_submission_payment' => 'دفع تقديم معلق',
     'total_pending_submission_payment' => 'إجمالي عدد دفع التقديم المعلق',
     'pending_registrations' => 'التسجيلات المعلقة',
     'total_pending_registration' => 'إجمالي عدد التسجيلات المعلقة',
     'finished_registrations' => 'التسجيلات المكتملة',
     'finished_registration_30_days' => 'التسجيلات المكتملة في آخر 30 يومًا',
-
     'you_have_to_register_to_complete_submission_payment' => 'يتعين عليك التسجيل في أحد أنواع التسجيل أدناه لإكمال دفعتك.',
     'unpublished' => 'غير منشور',
     'date_published' => 'تاريخ النشر',
@@ -1004,11 +952,9 @@ return [
     'submission_license_url_helper' => 'سيتم تعيين الترخيص تلقائيًا إلى <a class="text-primary-700 underline" href=\':licenseUrl\' target=\'_blank\'>:licenseName</a> عند النشر.',
     'override' => 'تجاوز',
     'copyright_statement' => 'حقوق النشر (c) :copyrightYear :copyrightHolder',
-
     'apply' => 'تطبيق',
     'search' => 'بحث',
     'filter' => 'تصفية',
-
     'scope' => 'نطاق',
     'coordinator' => 'المنسق',
     'over' => 'أكثر',
@@ -1018,16 +964,12 @@ return [
     'conference_scope_description' => 'نطاق المؤتمر',
     'clear' => 'مسح',
     'coordinator_setting_description' => 'الفرد أو الفريق المسؤول عن تنظيم وإدارة المؤتمر.',
-
     'option_are_empty' => 'الخيار فارغ',
     'reset' => 'إعادة تعيين',
     'reset_all' => 'إعادة تعيين الكل',
     'incoming' => 'وارد',
-
     'conference_list' => 'قائمة المؤتمرات',
-
     'copyright_statement' => 'حقوق النشر (c) :copyrightYear :copyrightHolder',
-
     'forgot_password_question' => 'هل نسيت كلمة المرور؟',
     'reset_password' => 'إعادة تعيين كلمة المرور',
     'please_enter_email_to_reset_password' => 'يرجى إدخال عنوان البريد الإلكتروني المرتبط بحسابك المسجل أدناه. سيتم إرسال بريد إلكتروني إلى هذا العنوان مع تعليمات حول كيفية إعادة تعيين كلمة المرور الخاصة بك.',
@@ -1039,7 +981,6 @@ return [
     'reset_password_mail_sent' => 'تم إرسال تأكيد إلى عنوان بريدك الإلكتروني. يرجى اتباع التعليمات في البريد الإلكتروني لإعادة تعيين كلمة المرور الخاصة بك.',
     'enter_password_to_update' => 'أدخل كلمة المرور الجديدة لتحديث كلمة المرور الخاصة بك.',
     'reset_password_update_success' => 'تم تحديث كلمة المرور بنجاح. يرجى تسجيل الدخول باستخدام كلمة المرور المحدثة.',
-
     'conference_redirect' => 'إعادة توجيه المؤتمر',
     'conference_redirect_hint' => 'يعيد توجيه الطلبات من الموقع الرئيسي إلى المؤتمر المحدد. مفيد لمواقع المؤتمرات الفردية.',
     'scheduled_conference_redirect' => 'إعادة توجيه المؤتمر المجدول',
@@ -1072,7 +1013,6 @@ return [
     'no_roles' => 'لا توجد أدوار',
     'registration_required_fields' => 'الحقول الإلزامية للتسجيل',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'لا يمكن حذف هذا الدور لأنه لا يزال مُعيَّنًا للمستخدمين.',
-
     'categories' => 'الفئات',
     'category' => 'فئة',
     'new_category' => 'فئة جديدة',
@@ -1082,10 +1022,8 @@ return [
     'scheduled_conference_faculties_hint' => 'يُستخدم هذا لتصفية وتجميع المؤتمرات المجدولة حسب الكلية.',
     'faculty' => 'هيئة التدريس',
     'faculties' => 'هيئات التدريس',
-
     'role_assigned_successfully' => 'تم تعيين الدور بنجاح',
     'no_roles_selected' => 'لم يتم اختيار أي أدوار',
-
     'privacy_statement_agree_without_link' => 'أوافق على بيان الخصوصية.',
     'actions' => 'الإجراءات',
     'information_about_conference' => 'معلومات عن المؤتمر الرئيسي',
@@ -1164,7 +1102,6 @@ return [
     'no_user_invitations' => 'لا توجد دعوات بعد',
     'no_user_invitations_description' => 'قم بإنشاء دعوة لتعيين الأدوار للمؤتمر أو المؤتمر المجدول.',
     'failed_to_send' => 'فشل الإرسال',
-
     'language' => 'اللغة',
     'switch_language' => 'تغيير لغة الواجهة',
     'current_language' => 'اللغة الحالية:',
@@ -1257,7 +1194,6 @@ return [
     'source_text' => 'النص المصدر',
     'translator' => 'المترجم',
     'general_track' => 'المسار العام',
-
     'make_a_submission' => 'تقديم مشاركة',
     'payment_fee' => 'رسوم الدفع',
     'add_on_items' => 'العناصر الإضافية',
@@ -1289,12 +1225,10 @@ return [
     'participant_fees' => 'رسوم المشاركين',
     'invoice' => 'الفاتورة',
     'editors' => 'المحررون',
-
     'admin' => 'المسؤول',
     'conference_manager' => 'مدير المؤتمر',
     'scheduled_conference_editor' => 'محرر المؤتمر المجدول',
     'track_editor' => 'محرر المسار',
-
     'recommendation_accept' => 'قبول',
     'recommendation_decline' => 'رفض',
     'revision_required' => 'يتطلب المراجعة والتعديل',
@@ -1329,7 +1263,6 @@ return [
     'minor' => 'ثانوي',
     'patch' => 'تصحيح',
     'date_installed' => 'تاريخ التثبيت',
-
     'item_name' => 'اسم العنصر',
     'description_and_instructions' => 'الوصف والتعليمات',
     'indicates_required_item' => 'يشير إلى عنصر مطلوب',
@@ -1338,7 +1271,6 @@ return [
     'response_options_required' => 'حقل :attribute مطلوب عندما يكون نوع العنصر مربع اختيار أو زر اختيار أو قائمة منسدلة',
     'new_option' => 'خيار جديد',
     'payment_fee_form_items' => 'عناصر نموذج رسوم الدفع',
-
     'item_type_text' => 'مربع نص من سطر واحد',
     'item_type_textarea' => 'مربع نص موسّع',
     'item_type_checkbox' => 'مربعات اختيار (يمكنك اختيار واحد أو أكثر)',
@@ -1346,13 +1278,9 @@ return [
     'item_type_select' => 'قائمة منسدلة',
     'item_type_select_scored' => 'قائمة منسدلة مع ترجيح الدرجات.',
     'item_type_upload' => 'رفع ملف',
-
     'reviewer_number' => 'المراجع :number',
-
     'form_item' => 'عنصر النموذج',
-
     'editor_guidance_understood' => 'تم فهم إرشادات المحرر. لا تعرض هذا مرة أخرى',
-
     'review_submission_page' => 'مراجعة التقديم',
     'reviewer_invitation_page' => 'دعوة المراجع',
     'recommend_value' => 'التوصية بـ :recommendation',

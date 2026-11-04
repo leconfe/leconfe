@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => '必須接受 :attribute 欄位。',
     'accepted_if' => '當 :other 為 :value 時，必須接受 :attribute 欄位。',
@@ -146,5 +145,4 @@ return [
             'rule-name' => '自訂訊息',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Submetiĝo kreita',
     'submission_updated' => 'Submetiĝo ĝisdatigita',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakultatoj',
     'role_assigned_successfully' => 'Rolo asignita sukcese',
     'no_roles_selected' => 'Neniuj roloj elektitaj',
-
     'language' => 'Lingvo',
     'switch_language' => 'Ŝanĝi la lingvon de la interfaco',
     'current_language' => 'Nuna lingvo:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Fonta teksto',
     'translator' => 'Tradukinto',
     'general_track' => 'Ĝenerala tematika sekcio',
-
     'make_a_submission' => 'Fari submetaĵon',
     'payment_fee' => 'Kotizo',
     'add_on_items' => 'Aldonaĵoj',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Partoprenaj kotizoj',
     'invoice' => 'Fakturo',
     'editors' => 'Redaktoroj',
-
     'admin' => 'Administranto',
     'conference_manager' => 'Mastrumanto de konferenco',
     'scheduled_conference_editor' => 'Redaktoro de planita konferenco',
     'track_editor' => 'Redaktoro de tematika sekcio',
-
     'recommendation_accept' => 'Akcepti',
     'recommendation_decline' => 'Malakcepti',
     'revision_required' => 'Necesas reviziado',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Malĉefa',
     'patch' => 'Flikaĵo',
     'date_installed' => 'Dato de instalo',
-
     'item_name' => 'Nomo de la elemento',
     'description_and_instructions' => 'Priskribo kaj instrukcioj',
     'indicates_required_item' => 'Indikas devigan elementon',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'La kampo :attribute estas deviga, kiam la tipo de elemento estas Markobutonoj, Radiobutono aŭ Falmenuo',
     'new_option' => 'Nova opcio',
     'payment_fee_form_items' => 'Elementoj de la kotiza formularo',
-
     'item_type_text' => 'Unulinia tekstujo',
     'item_type_textarea' => 'Plurlinia tekstujo',
     'item_type_checkbox' => 'Markobutonoj (vi povas elekti unu aŭ plurajn)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Falmenuo',
     'item_type_select_scored' => 'Falmenuo kun pezita poentado.',
     'item_type_upload' => 'Alŝuti dosieron',
-
     'reviewer_number' => 'Recenzisto :number',
-
     'form_item' => 'formulara elemento',
-
     'editor_guidance_understood' => 'Mi komprenis la gvidon por redaktoroj. Ne plu montri ĉi tion',
-
     'review_submission_page' => 'Recenzi submetaĵon',
     'reviewer_invitation_page' => 'Invito por recenzi',
     'recommend_value' => 'Rekomendi :recommendation',

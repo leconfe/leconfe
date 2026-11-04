@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Sending búin til',
     'submission_updated' => 'Innsending uppfærð',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Deildir',
     'role_assigned_successfully' => 'Hlutverki úthlutað',
     'no_roles_selected' => 'Engin hlutverk valin',
-
     'language' => 'Tungumál',
     'switch_language' => 'Breyta tungumáli viðmóts',
     'current_language' => 'Núverandi tungumál:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Frumtexti',
     'translator' => 'Þýðandi',
     'general_track' => 'Almennur þema kafli',
-
     'make_a_submission' => 'Senda inn',
     'payment_fee' => 'Greiðslugjald',
     'add_on_items' => 'Viðbætur',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Þátttökugjöld',
     'invoice' => 'Reikningur',
     'editors' => 'Ritstjórar',
-
     'admin' => 'Stjórnandi',
     'conference_manager' => 'Ráðstefnustjóri',
     'scheduled_conference_editor' => 'Ritstjóri áætlaðrar ráðstefnu',
     'track_editor' => 'Ritstjóri þema kafla',
-
     'recommendation_accept' => 'Samþykkja',
     'recommendation_decline' => 'Afneita',
     'revision_required' => 'Endurskoðunar krafist',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Minni',
     'patch' => 'Plástur',
     'date_installed' => 'Uppsetningardagur',
-
     'item_name' => 'Heiti liðar',
     'description_and_instructions' => 'Lýsing og leiðbeiningar',
     'indicates_required_item' => 'Táknar skyldulið',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Reiturinn :attribute er nauðsynlegur þegar tegund liðar er Gátreitur, Valhnappur eða Fellilisti',
     'new_option' => 'Nýr valkostur',
     'payment_fee_form_items' => 'Liðir á eyðublaði greiðslugjalds',
-
     'item_type_text' => 'Einnar línu textareitur',
     'item_type_textarea' => 'Stækkaður textareitur',
     'item_type_checkbox' => 'Gátreitir (þú getur valið einn eða fleiri)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Fellilisti',
     'item_type_select_scored' => 'Fellilisti með vegnum stigum.',
     'item_type_upload' => 'Hlaða upp skrá',
-
     'reviewer_number' => 'Gagnrýnandi :number',
-
     'form_item' => 'liður á eyðublaði',
-
     'editor_guidance_understood' => 'Leiðbeiningar ritstjóra skildar. Ekki sýna þetta aftur',
-
     'review_submission_page' => 'Rýna innsendingu',
     'reviewer_invitation_page' => 'Boð til gagnrýnanda',
     'recommend_value' => 'Mæla með :recommendation',

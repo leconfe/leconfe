@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute फ़ील्ड को स्वीकार किया जाना चाहिए।',
     'accepted_if' => ':other के :value होने पर :attribute फ़ील्ड को स्वीकार किया जाना चाहिए।',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'कस्टम-संदेश',
         ],
     ],
-    'attributes' => [],
 ];

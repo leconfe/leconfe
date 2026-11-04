@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Trimitere creată',
     'submission_updated' => 'Trimitere actualizată',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Facultăți',
     'role_assigned_successfully' => 'Rol atribuit cu succes',
     'no_roles_selected' => 'Nu au fost selectate roluri',
-
     'language' => 'Limbă',
     'switch_language' => 'Schimbă limba interfeței',
     'current_language' => 'Limba curentă:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Text sursă',
     'translator' => 'Traducător',
     'general_track' => 'Secțiune tematică generală',
-
     'make_a_submission' => 'Faceți o trimitere',
     'payment_fee' => 'Taxă de plată',
     'add_on_items' => 'Elemente suplimentare',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Taxe pentru participanți',
     'invoice' => 'Factură',
     'editors' => 'Editori',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Manager al conferinței',
     'scheduled_conference_editor' => 'Editor al conferinței programate',
     'track_editor' => 'Editor de secțiune tematică',
-
     'recommendation_accept' => 'Acceptă',
     'recommendation_decline' => 'Respinge',
     'revision_required' => 'Revizuire necesară',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Minoră',
     'patch' => 'Corecție',
     'date_installed' => 'Data instalării',
-
     'item_name' => 'Numele elementului',
     'description_and_instructions' => 'Descriere și instrucțiuni',
     'indicates_required_item' => 'Indică un element obligatoriu',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Câmpul :attribute este obligatoriu atunci când tipul elementului este Casetă de selectare, Buton radio sau Listă derulantă',
     'new_option' => 'Opțiune nouă',
     'payment_fee_form_items' => 'Elementele formularului pentru taxa de plată',
-
     'item_type_text' => 'Casetă de text pe un rând',
     'item_type_textarea' => 'Casetă de text extinsă',
     'item_type_checkbox' => 'Casete de selectare (puteți alege una sau mai multe)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Listă derulantă',
     'item_type_select_scored' => 'Listă derulantă cu punctaj ponderat.',
     'item_type_upload' => 'Încărcare fișier',
-
     'reviewer_number' => 'Recenzor :number',
-
     'form_item' => 'element de formular',
-
     'editor_guidance_understood' => 'Am înțeles îndrumările pentru editor. Nu mai afișa',
-
     'review_submission_page' => 'Revizuiește trimiterea',
     'reviewer_invitation_page' => 'Invitație pentru recenzor',
     'recommend_value' => 'Recomandă :recommendation',

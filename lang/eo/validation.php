@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'La kampo :attribute devas esti akceptita.',
     'accepted_if' => 'La kampo :attribute devas esti akceptita kiam :other estas :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'kutimo-mesaĝo',
         ],
     ],
-    'attributes' => [],
 ];

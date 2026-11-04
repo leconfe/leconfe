@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'خانەی :attribute دەبێت پەسەند بکرێت.',
     'accepted_if' => 'خانەی :attribute دەبێت قوبووڵ بکرێت کاتێک :other :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'نامەی سازێنراو',
         ],
     ],
-    'attributes' => [],
 ];

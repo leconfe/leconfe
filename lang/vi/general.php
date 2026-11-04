@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Bài nộp đã được tạo',
     'submission_updated' => 'Bài nộp đã được cập nhật',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Các khoa',
     'role_assigned_successfully' => 'Vai trò được gán thành công',
     'no_roles_selected' => 'Chưa chọn vai trò nào',
-
     'language' => 'Ngôn ngữ',
     'switch_language' => 'Thay đổi ngôn ngữ giao diện',
     'current_language' => 'Ngôn ngữ hiện tại:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Văn bản nguồn',
     'translator' => 'Người dịch',
     'general_track' => 'Mục đề tài chung',
-
     'make_a_submission' => 'Nộp bài',
     'payment_fee' => 'Mức phí',
     'add_on_items' => 'Mục bổ sung',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Phí người tham gia',
     'invoice' => 'Hóa đơn',
     'editors' => 'Biên tập viên',
-
     'admin' => 'Quản trị viên',
     'conference_manager' => 'Người quản lý hội nghị',
     'scheduled_conference_editor' => 'Biên tập viên hội nghị theo lịch',
     'track_editor' => 'Biên tập viên mục đề tài',
-
     'recommendation_accept' => 'Chấp nhận',
     'recommendation_decline' => 'Từ chối',
     'revision_required' => 'Cần chỉnh sửa',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Phụ',
     'patch' => 'Bản vá',
     'date_installed' => 'Ngày cài đặt',
-
     'item_name' => 'Tên mục',
     'description_and_instructions' => 'Mô tả và hướng dẫn',
     'indicates_required_item' => 'Biểu thị mục bắt buộc',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Trường :attribute là bắt buộc khi Loại mục là Hộp kiểm, Nút radio hoặc Danh sách thả xuống',
     'new_option' => 'Tùy chọn mới',
     'payment_fee_form_items' => 'Các mục biểu mẫu mức phí',
-
     'item_type_text' => 'Hộp văn bản một dòng',
     'item_type_textarea' => 'Hộp văn bản mở rộng',
     'item_type_checkbox' => 'Hộp kiểm (có thể chọn một hoặc nhiều)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Danh sách thả xuống',
     'item_type_select_scored' => 'Danh sách thả xuống có tính điểm theo trọng số.',
     'item_type_upload' => 'Tải tệp lên',
-
     'reviewer_number' => 'Người đánh giá :number',
-
     'form_item' => 'mục biểu mẫu',
-
     'editor_guidance_understood' => 'Đã hiểu hướng dẫn cho biên tập viên. Không hiển thị lại',
-
     'review_submission_page' => 'Đánh giá bài gửi',
     'reviewer_invitation_page' => 'Lời mời đánh giá',
     'recommend_value' => 'Khuyến nghị :recommendation',

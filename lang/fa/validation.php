@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'فیلد :attribute باید پذیرفته شود.',
     'accepted_if' => 'وقتی :other :value باشد باید فیلد :attribute پذیرفته شود.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'پیام سفارشی',
         ],
     ],
-    'attributes' => [],
 ];

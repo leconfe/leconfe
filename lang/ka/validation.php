@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute ველი უნდა იქნას მიღებული.',
     'accepted_if' => ':attribute ველი უნდა იქნას მიღებული, როდესაც :other არის :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'საბაჟო შეტყობინება',
         ],
     ],
-    'attributes' => [],
 ];

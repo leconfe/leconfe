@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Pateikimas sukurtas',
     'submission_updated' => 'Pateikimas atnaujintas',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakultetai',
     'role_assigned_successfully' => 'Vaidmuo priskirtas sėkmingai',
     'no_roles_selected' => 'Nepasirinkta jokių vaidmenų',
-
     'language' => 'Kalba',
     'switch_language' => 'Keisti sąsajos kalbą',
     'current_language' => 'Dabartinė kalba:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Šaltinio tekstas',
     'translator' => 'Vertėjas',
     'general_track' => 'Bendroji teminė skiltis',
-
     'make_a_submission' => 'Pateikti darbą',
     'payment_fee' => 'Mokestis',
     'add_on_items' => 'Papildomos paslaugos',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Dalyvio mokesčiai',
     'invoice' => 'Sąskaita faktūra',
     'editors' => 'Redaktoriai',
-
     'admin' => 'Administratorius',
     'conference_manager' => 'Konferencijos vadovas',
     'scheduled_conference_editor' => 'Suplanuotos konferencijos redaktorius',
     'track_editor' => 'Teminės skilties redaktorius',
-
     'recommendation_accept' => 'Priimti',
     'recommendation_decline' => 'Atmesti',
     'revision_required' => 'Reikia pataisymų',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Šalutinė',
     'patch' => 'Pataisa',
     'date_installed' => 'Įdiegimo data',
-
     'item_name' => 'Elemento pavadinimas',
     'description_and_instructions' => 'Aprašymas ir instrukcijos',
     'indicates_required_item' => 'Žymi privalomą elementą',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Laukas :attribute yra privalomas, kai elemento tipas yra žymimasis langelis, akutė arba išskleidžiamasis sąrašas',
     'new_option' => 'Nauja parinktis',
     'payment_fee_form_items' => 'Mokesčio formos elementai',
-
     'item_type_text' => 'Vienos eilutės teksto laukas',
     'item_type_textarea' => 'Išplėstinis teksto laukas',
     'item_type_checkbox' => 'Žymimieji langeliai (galite pasirinkti vieną ar daugiau)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Išskleidžiamasis sąrašas',
     'item_type_select_scored' => 'Išskleidžiamasis sąrašas su svertiniu vertinimu.',
     'item_type_upload' => 'Įkelti failą',
-
     'reviewer_number' => 'Recenzentas :number',
-
     'form_item' => 'formos elementas',
-
     'editor_guidance_understood' => 'Redaktoriaus nurodymai suprasti. Daugiau nerodyti',
-
     'review_submission_page' => 'Recenzuoti pateikimą',
     'reviewer_invitation_page' => 'Kvietimas recenzuoti',
     'recommend_value' => 'Rekomenduoti: :recommendation',

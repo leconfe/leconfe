@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'წარდგენა შეიქმნა',
     'submission_updated' => 'წარდგენა განახლებულია',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'ფაკულტეტები',
     'role_assigned_successfully' => 'როლი წარმატებით იქნა მინიჭებული',
     'no_roles_selected' => 'როლები არ არის შერჩეული',
-
     'language' => 'ენა',
     'switch_language' => 'ინტერფეისის ენის შეცვლა',
     'current_language' => 'მიმდინარე ენა:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'საწყისი ტექსტი',
     'translator' => 'მთარგმნელი',
     'general_track' => 'ზოგადი თემატური სექცია',
-
     'make_a_submission' => 'წარდგენა',
     'payment_fee' => 'გადასახადი',
     'add_on_items' => 'დამატებითი ელემენტები',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'მონაწილეობის საფასური',
     'invoice' => 'ინვოისი',
     'editors' => 'რედაქტორები',
-
     'admin' => 'ადმინისტრატორი',
     'conference_manager' => 'კონფერენციის მენეჯერი',
     'scheduled_conference_editor' => 'დაგეგმილი კონფერენციის რედაქტორი',
     'track_editor' => 'თემატური სექციის რედაქტორი',
-
     'recommendation_accept' => 'მიღება',
     'recommendation_decline' => 'უარყოფა',
     'revision_required' => 'საჭიროა გადამუშავება',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'მცირე',
     'patch' => 'პატჩი',
     'date_installed' => 'ინსტალაციის თარიღი',
-
     'item_name' => 'ელემენტის სახელი',
     'description_and_instructions' => 'აღწერა და ინსტრუქციები',
     'indicates_required_item' => 'აღნიშნავს სავალდებულო ელემენტს',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'ველი :attribute სავალდებულოა, როცა ელემენტის ტიპია მოსანიშნი ველი, რადიო ღილაკი ან ჩამოსაშლელი სია',
     'new_option' => 'ახალი ვარიანტი',
     'payment_fee_form_items' => 'გადასახადის ფორმის ელემენტები',
-
     'item_type_text' => 'ერთხაზიანი ტექსტური ველი',
     'item_type_textarea' => 'გაფართოებული ტექსტური ველი',
     'item_type_checkbox' => 'მოსანიშნი ველები (შეგიძლიათ აირჩიოთ ერთი ან მეტი)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ჩამოსაშლელი სია',
     'item_type_select_scored' => 'ჩამოსაშლელი სია შეწონილი ქულებით.',
     'item_type_upload' => 'ფაილის ატვირთვა',
-
     'reviewer_number' => 'რეცენზენტი :number',
-
     'form_item' => 'ფორმის ელემენტი',
-
     'editor_guidance_understood' => 'რედაქტორის მითითებები გასაგებია. აღარ აჩვენო',
-
     'review_submission_page' => 'წარდგენის რეცენზირება',
     'reviewer_invitation_page' => 'რეცენზენტის მოწვევა',
     'recommend_value' => 'რეკომენდაცია: :recommendation',

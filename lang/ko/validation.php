@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute 필드를 승인해야 합니다.',
     'accepted_if' => ':other가 :value인 경우 :attribute 필드를 승인해야 합니다.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => '맞춤 메시지',
         ],
     ],
-    'attributes' => [],
 ];

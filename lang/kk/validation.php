@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute өрісі қабылдануы керек.',
     'accepted_if' => ':attribute өрісі :other :value болғанда қабылдануы керек.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'реттелетін хабарлама',
         ],
     ],
-    'attributes' => [],
 ];

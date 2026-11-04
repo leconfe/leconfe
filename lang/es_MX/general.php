@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Envío creado',
     'submission_updated' => 'Envío actualizado',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'facultades',
     'role_assigned_successfully' => 'Rol asignado exitosamente',
     'no_roles_selected' => 'No hay roles seleccionados',
-
     'language' => 'Idioma',
     'switch_language' => 'Cambiar el idioma de la interfaz',
     'current_language' => 'Idioma actual:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Texto fuente',
     'translator' => 'Traductor',
     'general_track' => 'Sección temática general',
-
     'make_a_submission' => 'Realizar un envío',
     'payment_fee' => 'Tarifa',
     'add_on_items' => 'Elementos adicionales',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Tarifas de participación',
     'invoice' => 'Factura',
     'editors' => 'Editores',
-
     'admin' => 'Administrador',
     'conference_manager' => 'Administrador de la conferencia',
     'scheduled_conference_editor' => 'Editor de la conferencia programada',
     'track_editor' => 'Editor de sección temática',
-
     'recommendation_accept' => 'Aceptar',
     'recommendation_decline' => 'Rechazar',
     'revision_required' => 'Se requieren modificaciones',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Menor',
     'patch' => 'Parche',
     'date_installed' => 'Fecha de instalación',
-
     'item_name' => 'Nombre del elemento',
     'description_and_instructions' => 'Descripción e instrucciones',
     'indicates_required_item' => 'Indica un elemento obligatorio',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'El campo :attribute es obligatorio cuando el tipo de elemento es Casillas de verificación, Botón de opción o Lista desplegable',
     'new_option' => 'Nueva opción',
     'payment_fee_form_items' => 'Elementos del formulario de tarifas',
-
     'item_type_text' => 'Cuadro de texto de una línea',
     'item_type_textarea' => 'Cuadro de texto extendido',
     'item_type_checkbox' => 'Casillas de verificación (puede elegir una o más)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Lista desplegable',
     'item_type_select_scored' => 'Lista desplegable con puntaje ponderado.',
     'item_type_upload' => 'Subir archivo',
-
     'reviewer_number' => 'Revisor :number',
-
     'form_item' => 'elemento del formulario',
-
     'editor_guidance_understood' => 'He leído las indicaciones para editores. No volver a mostrar',
-
     'review_submission_page' => 'Revisar envío',
     'reviewer_invitation_page' => 'Invitación para revisar',
     'recommend_value' => 'Recomendar :recommendation',

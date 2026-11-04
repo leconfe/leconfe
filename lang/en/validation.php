@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +10,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted' => 'The :attribute field must be accepted.',
     'accepted_if' => 'The :attribute field must be accepted when :other is :value.',
     'active_url' => 'The :attribute field must be a valid URL.',
@@ -154,7 +151,9 @@ return [
     'uuid' => 'The :attribute field must be a valid UUID.',
     'phone' => 'The :attribute field must be a valid number.',
     'weight_over' => 'Please ensure the total weight does not exceed 100%. Currently, it is :attribute%.',
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
     |--------------------------------------------------------------------------
@@ -164,24 +163,7 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Attributes
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used to swap our attribute placeholder
-    | with something more reader friendly such as "E-Mail Address" instead
-    | of "email". This simply helps us make our message more expressive.
-    |
-    */
-
-    'attributes' => [],
-
 ];

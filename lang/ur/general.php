@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'جمع کرایا گیا',
     'submission_updated' => 'جمع شدہ تازہ کاری',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'فیکلٹیز',
     'role_assigned_successfully' => 'کردار کامیابی کے ساتھ تفویض ہو گیا',
     'no_roles_selected' => 'کوئی کردار منتخب نہیں کیا گیا',
-
     'language' => 'زبان',
     'switch_language' => 'انٹرفیس کی زبان تبدیل کریں',
     'current_language' => 'موجودہ زبان:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'ماخذ متن',
     'translator' => 'مترجم',
     'general_track' => 'عمومی موضوعاتی سیکشن',
-
     'make_a_submission' => 'مسودہ جمع کرائیں',
     'payment_fee' => 'ادائیگی کی فیس',
     'add_on_items' => 'اضافی اشیاء',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'شرکت کنندہ کی فیس',
     'invoice' => 'انوائس',
     'editors' => 'مدیران',
-
     'admin' => 'منتظم',
     'conference_manager' => 'کانفرنس منیجر',
     'scheduled_conference_editor' => 'طے شدہ کانفرنس کا مدیر',
     'track_editor' => 'موضوعاتی سیکشن کا مدیر',
-
     'recommendation_accept' => 'قبول کریں',
     'recommendation_decline' => 'انکار',
     'revision_required' => 'نظرثانی درکار ہے',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'چھوٹا',
     'patch' => 'پیچ',
     'date_installed' => 'انسٹالیشن کی تاریخ',
-
     'item_name' => 'آئٹم کا نام',
     'description_and_instructions' => 'تفصیل اور ہدایات',
     'indicates_required_item' => 'لازمی آئٹم کی نشاندہی کرتا ہے',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'جب آئٹم کی قسم چیک باکس، ریڈیو بٹن یا ڈراپ ڈاؤن ہو تو :attribute فیلڈ لازمی ہے',
     'new_option' => 'نیا اختیار',
     'payment_fee_form_items' => 'ادائیگی کی فیس کے فارم کے آئٹمز',
-
     'item_type_text' => 'ایک سطری ٹیکسٹ باکس',
     'item_type_textarea' => 'توسیع شدہ ٹیکسٹ باکس',
     'item_type_checkbox' => 'چیک باکسز (آپ ایک یا زیادہ منتخب کر سکتے ہیں)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ڈراپ ڈاؤن باکس',
     'item_type_select_scored' => 'وزنی اسکورنگ کے ساتھ ڈراپ ڈاؤن باکس۔',
     'item_type_upload' => 'فائل اپ لوڈ کریں',
-
     'reviewer_number' => 'جائزہ کار :number',
-
     'form_item' => 'فارم آئٹم',
-
     'editor_guidance_understood' => 'مدیر کی رہنمائی سمجھ لی۔ یہ دوبارہ نہ دکھائیں',
-
     'review_submission_page' => 'جمع کرائے گئے مواد کا جائزہ لیں',
     'reviewer_invitation_page' => 'جائزہ کار کی دعوت',
     'recommend_value' => 'سفارش: :recommendation',

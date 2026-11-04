@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute-kenttä on hyväksyttävä.',
     'accepted_if' => ':attribute-kenttä on hyväksyttävä, kun :other on :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'mukautettu viesti',
         ],
     ],
-    'attributes' => [],
 ];

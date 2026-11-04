@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Das :attribute Feld muss akzeptiert werden.',
     'accepted_if' => 'Das :attribute Feld muss akzeptiert werden, wenn :other ist :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'custom-message',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'A :attribute mezőt el kell fogadni.',
     'accepted_if' => 'A :attribute mezőt el kell fogadni, ha a :other :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'egyéni üzenet',
         ],
     ],
-    'attributes' => [],
 ];

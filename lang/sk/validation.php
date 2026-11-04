@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Pole :attribute musí byť akceptované.',
     'accepted_if' => 'Pole :attribute musí byť akceptované, keď :other je :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'prispôsobená správa',
         ],
     ],
-    'attributes' => [],
 ];

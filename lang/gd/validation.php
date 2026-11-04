@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Feumar gabhail ris an raon :attribute.',
     'accepted_if' => 'Feumar gabhail ris an raon :attribute nuair a tha :other :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'teachdaireachd àbhaisteach',
         ],
     ],
-    'attributes' => [],
 ];

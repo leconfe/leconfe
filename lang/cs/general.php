@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Příspěvek vytvořen',
     'submission_updated' => 'Příspěvek aktualizován',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'fakulty',
     'role_assigned_successfully' => 'Role byla úspěšně přiřazena',
     'no_roles_selected' => 'Nejsou vybrány žádné role',
-
     'language' => 'Jazyk',
     'switch_language' => 'Změnit jazyk rozhraní',
     'current_language' => 'Aktuální jazyk:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Zdrojový text',
     'translator' => 'Překladatel',
     'general_track' => 'Obecná tematická sekce',
-
     'make_a_submission' => 'Vytvořit podání',
     'payment_fee' => 'Poplatek',
     'add_on_items' => 'Doplňkové položky',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Poplatky za účast',
     'invoice' => 'Faktura',
     'editors' => 'Editoři',
-
     'admin' => 'Administrátor',
     'conference_manager' => 'Manažer konference',
     'scheduled_conference_editor' => 'Editor plánované konference',
     'track_editor' => 'Editor tematické sekce',
-
     'recommendation_accept' => 'Přijmout',
     'recommendation_decline' => 'Odmítnout',
     'revision_required' => 'Nutná revize',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Vedlejší',
     'patch' => 'Oprava',
     'date_installed' => 'Datum instalace',
-
     'item_name' => 'Název položky',
     'description_and_instructions' => 'Popis a pokyny',
     'indicates_required_item' => 'Označuje povinnou položku',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Pole :attribute je povinné, pokud je typ položky Zaškrtávací políčko, Přepínač nebo Rozbalovací seznam',
     'new_option' => 'Nová možnost',
     'payment_fee_form_items' => 'Položky formuláře poplatku',
-
     'item_type_text' => 'Jednořádkové textové pole',
     'item_type_textarea' => 'Rozšířené textové pole',
     'item_type_checkbox' => 'Zaškrtávací políčka (lze zvolit jedno nebo více)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rozbalovací seznam',
     'item_type_select_scored' => 'Rozbalovací seznam s váženým bodováním.',
     'item_type_upload' => 'Nahrát soubor',
-
     'reviewer_number' => 'Recenzent :number',
-
     'form_item' => 'položka formuláře',
-
     'editor_guidance_understood' => 'Pokynům pro editory rozumím. Již nezobrazovat',
-
     'review_submission_page' => 'Recenzovat podání',
     'reviewer_invitation_page' => 'Pozvánka k recenzi',
     'recommend_value' => 'Doporučit: :recommendation',

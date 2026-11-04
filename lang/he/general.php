@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'ההגשה נוצרה',
     'submission_updated' => 'ההגשה עודכנה',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'פקולטות',
     'role_assigned_successfully' => 'התפקיד הוקצה בהצלחה',
     'no_roles_selected' => 'לא נבחרו תפקידים',
-
     'language' => 'שפה',
     'switch_language' => 'שינוי שפת הממשק',
     'current_language' => 'השפה הנוכחית:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'טקסט מקור',
     'translator' => 'מתרגם',
     'general_track' => 'חלק תמטי כללי',
-
     'make_a_submission' => 'ביצוע הגשה',
     'payment_fee' => 'דמי תשלום',
     'add_on_items' => 'פריטי תוספת',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'דמי השתתפות',
     'invoice' => 'חשבונית',
     'editors' => 'עורכים',
-
     'admin' => 'מנהל מערכת',
     'conference_manager' => 'מנהל כנס',
     'scheduled_conference_editor' => 'עורך הכנס המתוכנן',
     'track_editor' => 'עורך חלק תמטי',
-
     'recommendation_accept' => 'קבל',
     'recommendation_decline' => 'דחה',
     'revision_required' => 'נדרשים תיקונים',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'משנית',
     'patch' => 'תיקון',
     'date_installed' => 'תאריך התקנה',
-
     'item_name' => 'שם הפריט',
     'description_and_instructions' => 'תיאור והוראות',
     'indicates_required_item' => 'מציין פריט חובה',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'השדה :attribute נדרש כאשר סוג הפריט הוא תיבת סימון, לחצן בחירה או רשימה נפתחת',
     'new_option' => 'אפשרות חדשה',
     'payment_fee_form_items' => 'פריטי טופס דמי התשלום',
-
     'item_type_text' => 'תיבת טקסט בשורה אחת',
     'item_type_textarea' => 'תיבת טקסט מורחבת',
     'item_type_checkbox' => 'תיבות סימון (ניתן לבחור אחת או יותר)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'רשימה נפתחת',
     'item_type_select_scored' => 'רשימה נפתחת עם ניקוד משוקלל.',
     'item_type_upload' => 'העלאת קובץ',
-
     'reviewer_number' => 'סוקר :number',
-
     'form_item' => 'פריט טופס',
-
     'editor_guidance_understood' => 'הבנתי את הנחיות העורך. אל תציג שוב',
-
     'review_submission_page' => 'סקירת ההגשה',
     'reviewer_invitation_page' => 'הזמנה לסקירה',
     'recommend_value' => 'המלץ על :recommendation',

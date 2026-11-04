@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'S\'ha creat l\'enviament',
     'submission_updated' => 'Presentació actualitzada',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Facultats',
     'role_assigned_successfully' => 'Funció assignada correctament',
     'no_roles_selected' => 'No s\'han seleccionat cap rol',
-
     'language' => 'Idioma',
     'switch_language' => 'Canvia l\'idioma de la interfície',
     'current_language' => 'Idioma actual:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Text font',
     'translator' => 'Traductor',
     'general_track' => 'Secció temàtica general',
-
     'make_a_submission' => 'Fes una submissió',
     'payment_fee' => 'Tarifa de pagament',
     'add_on_items' => 'Elements addicionals',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Tarifes de participació',
     'invoice' => 'Factura',
     'editors' => 'Editors',
-
     'admin' => 'Administrador',
     'conference_manager' => 'Gestor de la conferència',
     'scheduled_conference_editor' => 'Editor de la conferència programada',
     'track_editor' => 'Editor de secció temàtica',
-
     'recommendation_accept' => 'Acceptar',
     'recommendation_decline' => 'Declinar',
     'revision_required' => 'Cal revisió',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Menor',
     'patch' => 'Pedaç',
     'date_installed' => 'Data d\'instal·lació',
-
     'item_name' => 'Nom de l\'element',
     'description_and_instructions' => 'Descripció i instruccions',
     'indicates_required_item' => 'Indica un element obligatori',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'El camp :attribute és obligatori quan el tipus d\'element és Casella de selecció, Botó d\'opció o Llista desplegable',
     'new_option' => 'Opció nova',
     'payment_fee_form_items' => 'Elements del formulari de la tarifa de pagament',
-
     'item_type_text' => 'Quadre de text d\'una línia',
     'item_type_textarea' => 'Quadre de text ampliat',
     'item_type_checkbox' => 'Caselles de selecció (en podeu triar una o més)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Llista desplegable',
     'item_type_select_scored' => 'Llista desplegable amb puntuació ponderada.',
     'item_type_upload' => 'Puja un fitxer',
-
     'reviewer_number' => 'Revisor :number',
-
     'form_item' => 'element del formulari',
-
     'editor_guidance_understood' => 'He entès les indicacions per a editors. No ho tornis a mostrar',
-
     'review_submission_page' => 'Revisa la submissió',
     'reviewer_invitation_page' => 'Invitació per revisar',
     'recommend_value' => 'Recomana :recommendation',

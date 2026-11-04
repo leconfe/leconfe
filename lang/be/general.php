@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Прадстаўленне створана',
     'submission_updated' => 'Прадстаўленне абноўлена',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факультэты',
     'role_assigned_successfully' => 'Роля паспяхова прызначана',
     'no_roles_selected' => 'Ролі не выбраны',
-
     'language' => 'Мова',
     'switch_language' => 'Змяніць мову інтэрфейсу',
     'current_language' => 'Бягучая мова:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Зыходны тэкст',
     'translator' => 'Перакладчык',
     'general_track' => 'Агульны тэматычны раздзел',
-
     'make_a_submission' => 'Падаць матэрыял',
     'payment_fee' => 'Плацежны ўзнос',
     'add_on_items' => 'Дадатковыя пазіцыі',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Узносы ўдзельнікаў',
     'invoice' => 'Рахунак',
     'editors' => 'Рэдактары',
-
     'admin' => 'Адміністратар',
     'conference_manager' => 'Менеджар канферэнцыі',
     'scheduled_conference_editor' => 'Рэдактар запланаванай канферэнцыі',
     'track_editor' => 'Рэдактар тэматычнага раздзела',
-
     'recommendation_accept' => 'Прыняць',
     'recommendation_decline' => 'Адхіліць',
     'revision_required' => 'Патрабуецца дапрацоўка',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Дадатковая',
     'patch' => 'Патч',
     'date_installed' => 'Дата ўсталявання',
-
     'item_name' => 'Назва элемента',
     'description_and_instructions' => 'Апісанне і інструкцыі',
     'indicates_required_item' => 'Абавязковы элемент',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Поле :attribute абавязковае, калі тып элемента — сцяжкі, радыёкнопка або выпадальны спіс',
     'new_option' => 'Новы варыянт',
     'payment_fee_form_items' => 'Элементы формы плацежнага ўзносу',
-
     'item_type_text' => 'Аднарадковае тэкставае поле',
     'item_type_textarea' => 'Пашыранае тэкставае поле',
     'item_type_checkbox' => 'Сцяжкі (можна выбраць адзін або некалькі)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Выпадальны спіс',
     'item_type_select_scored' => 'Выпадальны спіс з узважанай ацэнкай.',
     'item_type_upload' => 'Загрузка файла',
-
     'reviewer_number' => 'Рэцэнзент :number',
-
     'form_item' => 'элемент формы',
-
     'editor_guidance_understood' => 'Інструкцыі для рэдактара зразумелыя. Больш не паказваць',
-
     'review_submission_page' => 'Рэцэнзаваць матэрыял',
     'reviewer_invitation_page' => 'Запрашэнне да рэцэнзавання',
     'recommend_value' => 'Рэкамендаваць: :recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Поднесокот е создаден',
     'submission_updated' => 'Поднесокот е ажуриран',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факултети',
     'role_assigned_successfully' => 'Улогата е успешно доделена',
     'no_roles_selected' => 'Нема избрани улоги',
-
     'language' => 'Јазик',
     'switch_language' => 'Промени го јазикот на интерфејсот',
     'current_language' => 'Тековен јазик:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Изворен текст',
     'translator' => 'Преведувач',
     'general_track' => 'Општ тематски дел',
-
     'make_a_submission' => 'Поднеси труд',
     'payment_fee' => 'Надоместок',
     'add_on_items' => 'Дополнителни ставки',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Надоместоци за учесници',
     'invoice' => 'Фактура',
     'editors' => 'Уредници',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Менаџер на конференцијата',
     'scheduled_conference_editor' => 'Уредник на закажаната конференција',
     'track_editor' => 'Уредник на тематски дел',
-
     'recommendation_accept' => 'Прифати',
     'recommendation_decline' => 'Одбиј',
     'revision_required' => 'Потребна е ревизија',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Споредна',
     'patch' => 'Закрпа',
     'date_installed' => 'Датум на инсталирање',
-
     'item_name' => 'Име на ставката',
     'description_and_instructions' => 'Опис и упатства',
     'indicates_required_item' => 'Означува задолжителна ставка',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Полето :attribute е задолжително кога типот на ставката е поле за избор, радио-копче или паѓачко мени',
     'new_option' => 'Нова опција',
     'payment_fee_form_items' => 'Ставки во образецот за надоместок',
-
     'item_type_text' => 'Поле за текст во еден ред',
     'item_type_textarea' => 'Проширено поле за текст',
     'item_type_checkbox' => 'Полиња за избор (можете да изберете едно или повеќе)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Паѓачко мени',
     'item_type_select_scored' => 'Паѓачко мени со пондерирано оценување.',
     'item_type_upload' => 'Прикачи датотека',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'ставка од образецот',
-
     'editor_guidance_understood' => 'Ги разбрав упатствата за уредникот. Не прикажувај повторно',
-
     'review_submission_page' => 'Рецензирај поднесок',
     'reviewer_invitation_page' => 'Покана за рецензирање',
     'recommend_value' => 'Препорачај: :recommendation',

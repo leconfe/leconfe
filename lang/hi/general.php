@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'सबमिशन बनाया गया',
     'submission_updated' => 'सबमिशन अपडेट किया गया',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'संकाय',
     'role_assigned_successfully' => 'भूमिका सफलतापूर्वक सौंपी गई',
     'no_roles_selected' => 'कोई भूमिका चयनित नहीं',
-
     'language' => 'भाषा',
     'switch_language' => 'इंटरफ़ेस की भाषा बदलें',
     'current_language' => 'वर्तमान भाषा:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'स्रोत पाठ',
     'translator' => 'अनुवादक',
     'general_track' => 'सामान्य विषयगत अनुभाग',
-
     'make_a_submission' => 'प्रस्तुति जमा करें',
     'payment_fee' => 'भुगतान शुल्क',
     'add_on_items' => 'अतिरिक्त आइटम',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'प्रतिभागी शुल्क',
     'invoice' => 'चालान',
     'editors' => 'संपादक',
-
     'admin' => 'व्यवस्थापक',
     'conference_manager' => 'सम्मेलन प्रबंधक',
     'scheduled_conference_editor' => 'निर्धारित सम्मेलन संपादक',
     'track_editor' => 'विषयगत अनुभाग संपादक',
-
     'recommendation_accept' => 'स्वीकार करें',
     'recommendation_decline' => 'अस्वीकार करें',
     'revision_required' => 'संशोधन आवश्यक',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'माइनर',
     'patch' => 'पैच',
     'date_installed' => 'इंस्टॉल करने की तिथि',
-
     'item_name' => 'आइटम का नाम',
     'description_and_instructions' => 'विवरण और निर्देश',
     'indicates_required_item' => 'आवश्यक आइटम दर्शाता है',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => ':attribute फ़ील्ड आवश्यक है जब आइटम का प्रकार चेकबॉक्स, रेडियो बटन या ड्रॉप-डाउन हो',
     'new_option' => 'नया विकल्प',
     'payment_fee_form_items' => 'भुगतान शुल्क फ़ॉर्म आइटम',
-
     'item_type_text' => 'एकल टेक्स्ट बॉक्स',
     'item_type_textarea' => 'विस्तारित टेक्स्ट बॉक्स',
     'item_type_checkbox' => 'चेकबॉक्स (आप एक या अधिक चुन सकते हैं)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ड्रॉप-डाउन बॉक्स',
     'item_type_select_scored' => 'भारित स्कोरिंग वाला ड्रॉप-डाउन बॉक्स।',
     'item_type_upload' => 'फ़ाइल अपलोड करें',
-
     'reviewer_number' => 'समीक्षक :number',
-
     'form_item' => 'फ़ॉर्म आइटम',
-
     'editor_guidance_understood' => 'संपादक मार्गदर्शन समझ लिया। इसे फिर से न दिखाएँ',
-
     'review_submission_page' => 'प्रस्तुति की समीक्षा करें',
     'reviewer_invitation_page' => 'समीक्षक आमंत्रण',
     'recommend_value' => 'अनुशंसा करें: :recommendation',

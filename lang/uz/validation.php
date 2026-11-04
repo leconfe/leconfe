@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +10,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted' => ':attribute maydoni qabul qilinishi kerak.',
     'accepted_if' => ':other :value bo‘lsa, :attribute maydoni qabul qilinishi kerak.',
     'active_url' => ':attribute maydoni yaroqli URL bo‘lishi kerak.',
@@ -31,7 +28,6 @@ return [
         'numeric' => ':attribute maydoni :min va :max orasida bo‘lishi kerak.',
         'string' => ':attribute maydoni :min dan :max belgigacha bo‘lishi kerak.',
     ],
-
     'boolean' => ':attribute maydoni faqat true (rost) yoki false (yolg‘on) qiymatga ega bo‘lishi kerak.',
     'can' => ':attribute maydonida ruxsat etilmagan qiymat mavjud.',
     'confirmed' => ':attribute tasdiqlanishi mos kelmadi.',
@@ -153,8 +149,9 @@ return [
     'url' => ':attribute haqiqiy URL bo‘lishi kerak.',
     'ulid' => ':attribute haqiqiy ULID bo‘lishi kerak.',
     'uuid' => ':attribute haqiqiy UUID bo‘lishi kerak.',
-
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
     |--------------------------------------------------------------------------
@@ -164,9 +161,6 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'maxsus xabar',
         ],
     ],
@@ -180,9 +174,5 @@ return [
     | of "email". This simply helps us make our message more expressive.
     |
     */
-
-    'attributes' => [],
-
-
     'weight_over' => 'Iltimos, umumiy og\'irlik 100% dan oshmasligiga ishonch hosil qiling. Hozirda u :attribute%.',
 ];

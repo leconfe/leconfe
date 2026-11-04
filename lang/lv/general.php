@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Iesniegums izveidots',
     'submission_updated' => 'Iesniegums atjaunināts',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakultātes',
     'role_assigned_successfully' => 'Loma veiksmīgi piešķirta',
     'no_roles_selected' => 'Nav izvēlētas lomas',
-
     'language' => 'Valoda',
     'switch_language' => 'Mainīt saskarnes valodu',
     'current_language' => 'Pašreizējā valoda:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Avota teksts',
     'translator' => 'Tulkotājs',
     'general_track' => 'Vispārējā tematiskā sadaļa',
-
     'make_a_submission' => 'Iesniegt darbu',
     'payment_fee' => 'Maksa',
     'add_on_items' => 'Papildpakalpojumi',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Dalībnieku maksas',
     'invoice' => 'Rēķins',
     'editors' => 'Redaktori',
-
     'admin' => 'Administrators',
     'conference_manager' => 'Konferences pārvaldnieks',
     'scheduled_conference_editor' => 'Plānotās konferences redaktors',
     'track_editor' => 'Tematiskās sadaļas redaktors',
-
     'recommendation_accept' => 'Pieņemt',
     'recommendation_decline' => 'Noraidīt',
     'revision_required' => 'Nepieciešami labojumi',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Papildu',
     'patch' => 'Labojums',
     'date_installed' => 'Instalēšanas datums',
-
     'item_name' => 'Vienuma nosaukums',
     'description_and_instructions' => 'Apraksts un norādījumi',
     'indicates_required_item' => 'Norāda obligātu vienumu',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Lauks :attribute ir obligāts, ja vienuma veids ir izvēles rūtiņa, radiopoga vai nolaižamais saraksts',
     'new_option' => 'Jauna opcija',
     'payment_fee_form_items' => 'Maksas veidlapas vienumi',
-
     'item_type_text' => 'Vienas rindas teksta lauks',
     'item_type_textarea' => 'Paplašināts teksta lauks',
     'item_type_checkbox' => 'Izvēles rūtiņas (varat izvēlēties vienu vai vairākas)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Nolaižamais saraksts',
     'item_type_select_scored' => 'Nolaižamais saraksts ar svērto vērtējumu.',
     'item_type_upload' => 'Augšupielādēt failu',
-
     'reviewer_number' => 'Recenzents :number',
-
     'form_item' => 'veidlapas vienums',
-
     'editor_guidance_understood' => 'Redaktora norādījumi saprasti. Vairs nerādīt',
-
     'review_submission_page' => 'Recenzēt iesniegumu',
     'reviewer_invitation_page' => 'Uzaicinājums recenzēt',
     'recommend_value' => 'Ieteikt: :recommendation',

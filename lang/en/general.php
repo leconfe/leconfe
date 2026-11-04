@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Submission created',
     'submission_updated' => 'Submission updated',
@@ -28,14 +27,11 @@ return [
     'submission_request_revision' => '":name" as editor has decided for "Request Revision"',
     'review_complete' => ':name has completed review',
     'email_sent' => 'Email ":name" has been sent',
-
     'pagination_previous' => '&laquo; Previous',
     'pagination_next' => 'Next &raquo;',
-
     'failed_credentials' => 'These credentials do not match our records.',
     'throttle_to_many_login_attempts' => 'Too many login attempts. Please try again in :seconds seconds.',
     'throttle_please_try_again' => 'Please try again in :seconds seconds.',
-
     'view_conference' => 'View Conference',
     'current_event' => 'Current Event',
     'login' => 'Login',
@@ -68,7 +64,6 @@ return [
     'edit_my_profile' => 'Edit My Profile',
     'continue_browsing' => 'Continue Browsing',
     'no_content_provided' => 'No content provided.',
-
     'dashboard' => 'Dashboard',
     'administration' => 'Administration',
     'expire_user_session' => 'Expire User Session',
@@ -79,7 +74,6 @@ return [
     'data_caches_cleared_successfully' => 'Data caches cleared successfully',
     'clear_view_caches' => 'Clear View Caches',
     'view_caches_cleared_successfully' => 'View caches cleared successfully',
-
     'conference' => 'Conference',
     'open_conference' => 'Open Conference',
     'open_scheduled_conference' => 'Open Scheduled Conference',
@@ -89,7 +83,6 @@ return [
     'name' => 'Name',
     'path' => 'Path',
     'url_path' => 'The path of the conference. This will be used in the URL of the conference.',
-
     'appearance' => 'Appearance',
     'theme' => 'Theme',
     'appearance_color' => 'Appearance Color',
@@ -98,7 +91,6 @@ return [
     'saved' => 'Saved!',
     'failed' => 'Failed!',
     'data_could_not_saved' => 'Data could not be saved.',
-
     'setup' => 'Setup',
     'site_setup' => 'Site Setup',
     'website_name' => 'Website Name',
@@ -108,18 +100,14 @@ return [
     'short_description_of_the_website' => 'A short description of the website. This will used to help search engines understand the website.',
     'about_site' => 'About Site',
     'page_footer' => 'Page footer',
-
     'sidebar' => 'Sidebar',
     'sidebars_manager' => 'Sidebars Manager',
     'no_sidebars_found' => 'No sidebars found.',
-
     'navigation_menu' => 'Navigation Menu',
     'languages' => 'Languages',
     'languages_english_fallback' => 'English is used when no language is selected.',
-
     'no_navigation_menu_items_found' => 'No Navigation Menu items found',
     'no_navigation_menu_found' => 'No Navigation Menu found',
-
     'add_navigation_menu' => 'Add Navigation Menu',
     'edit' => 'Edit',
     'delete' => 'Delete',
@@ -130,12 +118,9 @@ return [
     'edit_navigation_menu_item' => 'Edit Navigation Menu Item',
     'label' => 'Label',
     'type' => 'Type',
-
     'default_language' => 'Default Language',
-
     'settings' => 'Settings',
     'website_setting' => 'Website Setting',
-
     'plugin' => 'Plugin',
     'enabled' => 'Enabled',
     'author' => 'Author',
@@ -150,7 +135,6 @@ return [
     'submit' => 'Submit',
     'cancel' => 'Cancel',
     'actions' => 'Actions',
-
     'static_page' => 'Static Page',
     'title' => 'Title',
     'slug' => 'Slug',
@@ -158,7 +142,6 @@ return [
     'the_complete_page_content' => 'The complete page content.',
     'preview' => 'Preview',
     'switch_conference' => 'Switch Conference',
-
     'scheduled_conference' => 'Scheduled Conference',
     'enter_the_title_of_the_serie' => 'Enter the title of the serie',
     'start_date' => 'Start Date',
@@ -168,7 +151,6 @@ return [
     'publish' => 'Publish',
     'set_as_current' => 'Set As Current',
     'set_as_draft' => 'Set as Draft',
-
     'move_to_archive' => 'Move To Archive',
     'move_to_trash' => 'Move To Trash',
     'delete_permanently' => 'Delete Permanently',
@@ -179,7 +161,6 @@ return [
     'upcoming' => 'Upcoming',
     'archived' => 'Archived',
     'trash' => 'Trash',
-
     'proceeding' => 'Proceeding',
     'proceedings' => 'Proceedings',
     'identification' => 'Identification',
@@ -198,7 +179,6 @@ return [
     'proceeding_data' => 'Proceeding Data',
     'articles' => 'Articles',
     'remove' => 'Remove',
-
     'conference_settings' => 'Conference Settings',
     'conference_identity' => 'Conference Identity',
     'information_about_conference' => 'Information about the conference parent',
@@ -210,7 +190,6 @@ return [
     'conference_summary' => 'Conference Summary',
     'include_about_your_conference' => 'Include any information about your conference which may be of interest to readers, authors or reviewers.',
     'about_the_conference' => 'About the Conference',
-
     'website' => 'Website',
     'conference_thumbnail' => 'Conferece Thumbnail',
     'image_representation_of_the_serie_will_uses' => 'An image representation of the serie that will be used in the list of series.',
@@ -223,7 +202,6 @@ return [
     'enter_custom_time_format' => 'Enter a custom time format',
     'time' => 'Time',
     'date_and_time_formats' => 'Date and Time Formats',
-
     'distribution' => 'Distribution',
     'distribution_settings' => 'Distribution Settings',
     'allow_digital_object_dois' => 'Allow Digital Object Identifiers (DOIs) to be assigned to work published in this conference',
@@ -240,7 +218,6 @@ return [
     'doi_format' => 'DOI Format',
     'automatically_generate_unique_suffix' => 'Default - Automatically generates a unique eight-character suffix',
     'not_be_automatically_generate_unique_suffix' => 'None - Suffixes must be entered manually on the DOI management page and will not be generated automatically',
-
     'registration' => 'Registration',
     'registration_agency' => 'Registration Agency',
     'registration_select_agency_dois' => 'Please select the registration agency you would like to use when depositing DOIs.',
@@ -269,18 +246,15 @@ return [
     'password' => 'Password',
     'use_crossref_test_api' => 'Use the Crossref test API (testing environment) for the DOI deposit.',
     'username_crossref' => 'The Crossref username that will be used to authenticate your deposits. If you are using a personal account, please see the advice above.',
-
     'search_indexing' => 'Search Indexing',
     'meta_tags' => 'Meta Tags',
     'add_meta_tags_conference' => 'Add meta tags, to the head of every page on your conference. Before adding any tags, consult with a technical advisor to ensure that they are compatible with your website and will not cause any problems.',
-
     'role' => 'Role',
     'role_management' => 'Role Management',
     'copy_permissions_from' => 'Copy permissions from',
     'advanced_permissions' => 'Advanced Permissions',
     'persist_permissions' => 'Persist Permissions',
     'permissions_persisted_successfully' => 'Permissions persisted successfully.',
-
     'user' => 'User',
     'profile_photo' => 'Profile Photo',
     'disabled_at' => 'Disabled at',
@@ -298,7 +272,6 @@ return [
     'send_email_to' => 'Send Email to',
     'reason_for_disabling_user' => 'Reason for Disabling User',
     'to_disable_permanently_leave_field_empty' => 'To disable permanently, leave field empty',
-
     'profile_picture' => 'Profile Picture',
     'expertise' => 'Expertise',
     'select_a_country' => 'Select a country',
@@ -311,7 +284,6 @@ return [
     'phone_format_international' => 'International format, e.g. +6281234567890',
     'roles' => 'Roles',
     'hide_users_with_no_roles' => 'Hide users with no roles in this scheduled conference.',
-
     'permission' => 'Permission',
     'context' => 'Context',
     'action' => 'Action',
@@ -319,7 +291,6 @@ return [
     'context_must_be_studlycase' => 'Context must be StudlyCase',
     'action_must_be_camelCase' => 'Action must be camelCase',
     'persist_all_permissions_to_storage' => 'This will persist all permissions to storage.',
-
     'my_submissions' => 'My Submissions',
     'submitted_papers' => 'Submitted Papers',
     'accepted_papers' => 'Accepted Papers',
@@ -327,7 +298,6 @@ return [
     'total_number_of_papers_submitted' => 'Total number of papers submitted',
     'accepted_paper_in_the_last_30_days' => 'Accepted paper in the last 30 days',
     'new_authors_in_the_last_30_days' => 'New authors in the last 30 days',
-
     'incomplete' => 'Incomplete',
     'queued' => 'Queued',
     'on_payment' => 'On Payment',
@@ -338,7 +308,6 @@ return [
     'scheduled' => 'Scheduled',
     'declined' => 'Declined',
     'withdrawn' => 'Withdrawn',
-
     'no_editor_assigned' => 'No Editor Assigned',
     'reviewed' => 'Reviewed',
     'my_queue' => 'My Queue',
@@ -349,7 +318,6 @@ return [
     'create' => 'Create',
     'pending_withdrawal' => 'Pending Withdrawal',
     'submission_is_not_open' => 'Submission is not open',
-
     'before_you_begin' => 'Before You Begin',
     'before_you_begin_current_scheduled' => "<p>Thank you for submitting to :title. You will be asked to upload files, identify co-authors, and provide information such as the title and abstract.</p>
     <p>Please read our Submission Guidelines if you haven't already. When filling out the forms, provide as many details as possible to help our editors evaluate your work.</p>
@@ -362,13 +330,11 @@ return [
                         <li>The text is single-spaced; uses a 12-point font; employs italics rather than underlining (except with URL addresses); and all illustrations, figures, and tables are placed within the text at the appropriate points, rather than at the end.</li>
                         <li>The text adheres to the stylistic and bibliographic requirements outlined in the Author Guidelines.</li>
                     </ul>',
-
     'track' => 'Track',
     'privacy_consent' => 'Privacy Consent',
     'submission_checklist' => 'Submission Checklist',
     'submission_meets_all_of_requirements' => 'Yes, my submission meets all of these requirements.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'Yes, I agree to have my data collected and stored according to the privacy statement.',
-
     'submission_details' => 'Submission Details',
     'provide_details_to_help_us' => 'Please provide the following details to help us manage your submission in our system.',
     'topic' => 'Topic',
@@ -409,7 +375,6 @@ return [
     'uploaded' => 'Uploaded',
     'not_uploaded' => 'Not uploaded',
     'include_any_necessary_files' => 'Please include any necessary files for our editorial team to evaluate your submission. Along with the primary work, you may also choose to submit supplementary files such as data sets, conflict of interest statements, or other relevant materials that could assist our editors.',
-
     'filename' => 'Filename',
     'uploaded_at' => 'Uploaded At',
     'rename' => 'Rename',
@@ -424,7 +389,6 @@ return [
     'nothing_to_download' => "There's nothing to download",
     'problem_creating_file_type' => 'There was a problem creating the file type',
     'file_type_created_successfulyy' => 'File type created successfully',
-
     'create_author_role' => 'Create Author Role',
     'new_contributor' => 'New Contributor',
     'add_myself_as_contributor' => 'Add Myself',
@@ -490,7 +454,6 @@ return [
     'url_must_be_valid' => 'The URL must be a valid URL.',
     'editorial_team' => 'Editorial Team',
     'about_the_scheduled_conference' => 'About the Scheduled Conference',
-
     'masthead' => 'Masthead',
     'contact' => 'Contact',
     'scheduled_conference_setting' => 'Scheduled Conference Setting',
@@ -498,7 +461,6 @@ return [
     'principal_contact_description' => 'Enter contact details, typically for a conference chair, organizing committee, or administrative support team, which can be displayed on your publicly accessible conference website.',
     'technical_support_contact' => 'Technical Support Contact',
     'a_contact_person_who_can_assist_editors' => 'A contact person who can assist editors, authors and reviewers with any problems they have submitting, editing, reviewing or publishing material.',
-
     'scheduled_conference_thumbnail' => 'Scheduled Conference Thumbnail',
     'supports' => 'Supports',
     'sponsorship_levels' => 'Sponsorship Levels',
@@ -518,7 +480,6 @@ return [
     'privacy_statement' => 'Privacy Statement',
     'create_sponsorship_level' => 'Create Sponsorship Level',
     'add_sponsorship_level' => 'Add Sponsorship Level',
-
     'registrations' => 'Registrations',
     'participant_quota' => 'Participant Quota',
     'registrations_settings' => 'Registrations Settings',
@@ -546,7 +507,6 @@ return [
     'create_a_type_to_get_started' => 'Create a Type to get started.',
     'select_type_opened_date' => 'Select type opened date..',
     'select_type_closed_date' => 'Select type closed date..',
-
     'payments' => 'Payments',
     'payment' => 'Payment',
     'payment_declined' => 'Payment Declined',
@@ -562,7 +522,6 @@ return [
     'manual_payment_list' => 'Manual Payment List',
     'payment_methods' => 'Payment Methods',
     'payment_policy' => 'Payment policy',
-
     'workflow' => 'Workflow',
     'components' => 'Components',
     'author_guidance' => 'Author Guidance',
@@ -580,16 +539,13 @@ return [
     'editor_guidelines' => 'Editor Guidelines',
     'brief_explanation' => 'Provide a brief explanation of the submission process so that the author knows what to expect.',
     'guidance_authors_might_need_to_know' => 'Provide guidance on anything authors might need to know, such as bibliographic and formatting standards, alongside examples of common citation formats to be used. You may also wish to provide details about the preferred format and subject matter of submissions.',
-
     'authors' => 'Authors',
     'new_author_role' => 'New Author Role',
     'cannot_delete_role' => 'Cannot delete :variable, there are authors who are still associated with this role',
-
     'new_track' => 'New Track',
     'track_title' => 'Track Title',
     'abbreviation' => 'Abbreviation',
     'track_policy' => 'Track Policy',
-
     'review_mode' => 'Review mode',
     'days' => 'Days',
     'review_guidelines' => 'Review Guidelines',
@@ -622,11 +578,9 @@ return [
     'default_response_deadline' => 'Default Response Deadline',
     'default_completing_deadline' => 'Deadline for completing reviews',
     'deadline_reviewers_invitations' => 'Deadline for reviewers to respond to invitations',
-
     'anonymous_author' => 'Anonymous Reviewer/Anonymous Author',
     'anonymous_disclosed_author' => 'Anonymous Reviewer/Disclosed Author',
     'open' => 'Open',
-
     'timeline' => 'Timeline',
     'key' => 'Key',
     'body' => 'Body',
@@ -648,18 +602,15 @@ return [
     'email_template_restored_to_default_data' => 'Email template restored to default data.',
     'add_new_timeline' => 'Add new Timeline',
     'type_integrates_with_workflow_process' => 'Type that integrates with the workflow process.',
-
     'payment_instruction' => 'Payment Instruction',
     'payment_proof' => 'Payment Proof',
     'hidden' => 'Hidden',
-
     'announcement' => 'Announcement',
     'summary' => 'Summary',
     'expires_at' => 'Expires at',
     'view' => 'View',
     'send_email_to_subscribed_users' => 'Send email about this to subscribed users',
     'complete_announcement_content' => 'The complete announcement content.',
-
     'committee' => 'Committee',
     'committees' => 'Committees',
     'committee_positions' => 'Committee Positions',
@@ -669,7 +620,6 @@ return [
     'full_name' => 'Full name',
     'committee_roles_table' => 'Committee Roles Table',
     'new_committee_role' => 'New Committee Role',
-
     'subtitle' => 'Subtitle',
     'speakers' => 'Speakers',
     'speaker' => 'Speaker',
@@ -697,7 +647,6 @@ return [
     'select_registration_paid_date' => 'Select registration paid date..',
     'paid' => 'Paid',
     'unpaid' => 'Unpaid',
-
     'payment_has_been_made' => 'Payment for :variable has been made.',
     'problem_with_configured_payment_method' => "<p>There's a problem with configured payment method. Please contact administrator. <br>Payment method :   :variable   </p>'",
     'payment_success' => 'Payment Success',
@@ -811,7 +760,6 @@ return [
     'no_references' => 'No References',
     'submission_wizard' => 'Submission Wizard',
     'submission' => 'Submission',
-
     'failed_to_save' => 'Failed to save.',
     'enable_email_notification' => 'Enable Email Notification',
     'reviewing_interests' => 'Reviewing interests',
@@ -823,7 +771,6 @@ return [
     'abstract_declined' => 'Abstract Declined',
     'new_discussion_topic_created' => 'New Discussion Topic Created',
     'cannot_delete_role_commites' => 'Cannot delete :name, there are :roleType who are still associated with this role',
-
     'topic_name' => 'Topic Name',
     'participant' => 'Participant',
     'participants' => 'Participants',
@@ -843,7 +790,6 @@ return [
     'topic_created_successfully' => 'Topic created successfully',
     'topic_createtion_failed' => 'Topic creation failed',
     'failed_to_send_notification_to_participants' => 'Failed to send notification to participants.',
-
     'attachments' => 'Attachments',
     'review_files' => 'Review Files',
     'review_file_uploaded' => 'New Review File Uploaded',
@@ -875,19 +821,16 @@ return [
     'revisions' => 'Revisions',
     'upload_your_reviews_files_here' => 'Upload your revision files here.',
     'after_uploading_files_system_will_send_notification_to_editor' => 'After uploading files, system will send notification to the editor.',
-
     'presentation_files' => 'Presentation Files',
     'payment_processing' => 'Payment Processing',
     'payment_waived' => 'Payment Waived',
     'causer_name' => 'By',
-
     'switch_scheduled_conference' => 'Switch Scheduled Conference',
     'back_to_conference' => 'Back to Conference',
     'select_country' => 'Select country',
     'view_current_event' => 'View Current Event',
     'view_event' => 'View Event',
     'no_conferences_were_found' => 'No conferences were found',
-
     'session_name' => 'Session name',
     'detail_that_visible_to_all_user' => 'Detail that visible to all user',
     'detail_that_visible_only_to_participant' => 'Detail that visible only to participant',
@@ -982,7 +925,6 @@ return [
     'submission_license_url_helper' => 'The license will be set automatically to <a class="text-primary-700 underline" href=\':licenseUrl\' target=\'_blank\'>:licenseName</a> when this is published.',
     'override' => 'Override',
     'copyright_statement' => 'Copyright (c) :copyrightYear :copyrightHolder',
-
     'waiting_for_payment' => 'Waiting for payment',
     'this_your_pacticipant_retistration_details' => 'This is your participant registration details.',
     'payment_date' => 'Payment Date',
@@ -1014,7 +956,6 @@ return [
     'registration_page' => 'Registration Page',
     'make_sure_to_register_as_an_author_not_participant' => 'Make sure to register as an author, not an participant.',
     'you_are_not_participant_of_this_conference' => 'You are not participant of this conference, Please start the <a class="text-primary-500 hover:underline" href=":route">registration</a> process, and complete the payment to continue your submission process.',
-
     'thank_you_for_completing_registration_process' => 'Thank you for completing the registration process. Please wait for the editor reviews your submission.',
     'please_finish_your_payment_registration_process' => 'Please complete your payment to finish the registration process. Look at the <a class="text-primary-500 hover:underline" href=":route">registration status</a> to get more info about the payment process or check out the manual payment methods on the side.',
     'registration_currenty_participant_level' => 'Sorry, your registration is currently at the participant level. You need to be at the author level to continue with the submission process.',
@@ -1022,7 +963,6 @@ return [
     'consider_registration_process' => 'Thank you for your submission. Please consider doing the <a class="text-primary-500 hover:underline" href=":route">registration</a> process and finalize payment to continue the submission process. Make sure you register at the author level to proceed with the submission process.',
     'we_apologize_registration_currenty_closed' => 'We apologize, but registration is currently closed.',
     'have_questin_contact_our_technical_support' => 'Have a question? contact our <strong>Technical Support Contact</strong>',
-
     'are_you_sure_registration' => 'Are you sure you want register as <strong>:type</strong>?',
     'heres_your_registration_details' => "Here's your registration details",
     'author_registration' => 'Author Registration',
@@ -1035,14 +975,12 @@ return [
     'registration_process_guide' => 'You can perform the registration process, by clicking on registration type you preferred below.',
     'submission_not_started_registration' => 'This submission has not started the registration process yet.',
     'we_apologize_registration_currenty_closed_agenda' => "We apologize, but registration is currently closed. Look into <a class='text-primary-500 hover:underline' href=':href'>agenda</a> may help you to know when registration open.",
-
     'pending_submission_payment' => 'Pending Submission Payment',
     'total_pending_submission_payment' => 'Total number of pending submission payment',
     'pending_registrations' => 'Pending Registrations',
     'total_pending_registration' => 'Total number of pending registrations',
     'finished_registrations' => 'Finished Registrations',
     'finished_registration_30_days' => 'Finished registrations in the last 30 days',
-
     'you_have_to_register_to_complete_submission_payment' => 'You have to register to one of these registration type below to finish your submission payment.',
     'forgot_password_question' => 'Forgot password?',
     'reset_password' => 'Reset Password',
@@ -1055,11 +993,9 @@ return [
     'reset_password_mail_sent' => 'A confirmation has been sent to your email address. Please follow the instructions in the email to reset your password.',
     'enter_password_to_update' => 'Enter new password to update login password.',
     'reset_password_update_success' => 'Password has been updated successfully. Please login with updated password.',
-
     'apply' => 'Apply',
     'search' => 'Search',
     'filter' => 'Filter',
-
     'scope' => 'Scope',
     'coordinator' => 'Coordinator',
     'over' => 'Over',
@@ -1069,12 +1005,10 @@ return [
     'conference_scope_description' => 'Scope of the conference',
     'clear' => 'Clear',
     'coordinator_setting_description' => 'Individual or team that responsible for organizing and managing the conference.',
-
     'option_are_empty' => 'Option are empty',
     'reset' => 'Reset',
     'reset_all' => 'Reset All',
     'incoming' => 'Incoming',
-
     'conference_list' => 'Conference List',
     'paper_published_on_external' => 'Paper published on external website',
     'paper_external_url' => 'Paper External URL',
@@ -1149,7 +1083,6 @@ return [
     'selected_users' => 'Selected Users',
     'select_users' => 'Select Users',
     'failed_to_send' => 'Failed to send',
-
     'permission_level' => 'Permission Level',
     'new_role' => 'New Role',
     'role_created' => 'Role created',
@@ -1157,7 +1090,6 @@ return [
     'role_deleted' => 'Role deleted',
     'no_roles' => 'No roles',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Cannot delete this role because it is still assigned to users.',
-
     'categories' => 'Categories',
     'category' => 'Category',
     'new_category' => 'New Category',
@@ -1167,10 +1099,8 @@ return [
     'scheduled_conference_faculties_hint' => 'This is used to filter and group scheduled conferences by faculty.',
     'faculty' => 'Faculty',
     'faculties' => 'Faculties',
-
     'role_assigned_successfully' => 'Role assigned successfully',
     'no_roles_selected' => 'No roles selected',
-
     'language' => 'Language',
     'switch_language' => 'Change interface language',
     'current_language' => 'Current language:',
@@ -1262,7 +1192,6 @@ return [
     'source_text' => 'Source Text',
     'translator' => 'Translator',
     'general_track' => 'General Track',
-
     'make_a_submission' => 'Make a Submission',
     'payment_fee' => 'Payment Fee',
     'add_on_items' => 'Add-on Items',
@@ -1294,12 +1223,10 @@ return [
     'participant_fees' => 'Participant Fees',
     'invoice' => 'Invoice',
     'editors' => 'Editors',
-
     'admin' => 'Admin',
     'conference_manager' => 'Conference Manager',
     'scheduled_conference_editor' => 'Scheduled Conference Editor',
     'track_editor' => 'Track Editor',
-
     'recommendation_accept' => 'Accept',
     'recommendation_decline' => 'Decline',
     'revision_required' => 'Revision Required',
@@ -1334,7 +1261,6 @@ return [
     'minor' => 'Minor',
     'patch' => 'Patch',
     'date_installed' => 'Date Installed',
-
     'item_name' => 'Item Name',
     'description_and_instructions' => 'Description and Instructions',
     'indicates_required_item' => 'Indicates required item',
@@ -1343,7 +1269,6 @@ return [
     'response_options_required' => 'The :attribute field is required when Item Type is Checkbox, Radio Button, or Drop down',
     'new_option' => 'New Option',
     'payment_fee_form_items' => 'Payment Fee Form Items',
-
     'item_type_text' => 'Single text box',
     'item_type_textarea' => 'Extended text box',
     'item_type_checkbox' => 'Checkboxes (you can choose one or more)',
@@ -1351,13 +1276,9 @@ return [
     'item_type_select' => 'Drop down box',
     'item_type_select_scored' => 'Drop down box with weight scoring.',
     'item_type_upload' => 'Upload File',
-
     'reviewer_number' => 'Reviewer :number',
-
     'form_item' => 'form item',
-
     'editor_guidance_understood' => 'Understood editor guidance. Don\'t show this again',
-
     'review_submission_page' => 'Review Submission',
     'reviewer_invitation_page' => 'Reviewer Invitation',
     'recommend_value' => 'Recommend :recommendation',

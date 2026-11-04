@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'ต้องยอมรับฟิลด์ :attribute',
     'accepted_if' => 'ต้องยอมรับฟิลด์ :attribute เมื่อ :other เป็น :value',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'ข้อความที่กำหนดเอง',
         ],
     ],
-    'attributes' => [],
 ];

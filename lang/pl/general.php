@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Przesłanie utworzone',
     'submission_updated' => 'Przesłanie zaktualizowane',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Jednostki naukowe',
     'role_assigned_successfully' => 'Rola przypisana pomyślnie',
     'no_roles_selected' => 'Nie wybrano żadnych ról',
-
     'language' => 'Język',
     'switch_language' => 'Zmień język interfejsu',
     'current_language' => 'Bieżący język:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Tekst źródłowy',
     'translator' => 'Tłumacz',
     'general_track' => 'Ogólna sekcja tematyczna',
-
     'make_a_submission' => 'Dokonaj zgłoszenia',
     'payment_fee' => 'Opłata',
     'add_on_items' => 'Pozycje dodatkowe',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Opłaty uczestników',
     'invoice' => 'Faktura',
     'editors' => 'Redaktorzy',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Menedżer konferencji',
     'scheduled_conference_editor' => 'Redaktor zaplanowanej konferencji',
     'track_editor' => 'Redaktor sekcji tematycznej',
-
     'recommendation_accept' => 'Akceptacja',
     'recommendation_decline' => 'Odrzucenie',
     'revision_required' => 'Wymagane poprawki',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Podrzędna',
     'patch' => 'Poprawka',
     'date_installed' => 'Data instalacji',
-
     'item_name' => 'Nazwa pozycji',
     'description_and_instructions' => 'Opis i instrukcje',
     'indicates_required_item' => 'Oznacza pozycję wymaganą',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Pole :attribute jest wymagane, gdy typ pozycji to Pole wyboru, Przycisk opcji lub Lista rozwijana',
     'new_option' => 'Nowa opcja',
     'payment_fee_form_items' => 'Pozycje formularza opłaty',
-
     'item_type_text' => 'Pojedyncze pole tekstowe',
     'item_type_textarea' => 'Rozszerzone pole tekstowe',
     'item_type_checkbox' => 'Pola wyboru (można wybrać jedno lub więcej)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Lista rozwijana',
     'item_type_select_scored' => 'Lista rozwijana z punktacją ważoną.',
     'item_type_upload' => 'Prześlij plik',
-
     'reviewer_number' => 'Recenzent :number',
-
     'form_item' => 'pozycja formularza',
-
     'editor_guidance_understood' => 'Wskazówki dla redaktora przyjęte do wiadomości. Nie pokazuj ponownie',
-
     'review_submission_page' => 'Recenzja zgłoszenia',
     'reviewer_invitation_page' => 'Zaproszenie do recenzji',
     'recommend_value' => 'Rekomendacja: :recommendation',

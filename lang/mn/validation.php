@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute талбарыг зөвшөөрөх шаардлагатай.',
     'accepted_if' => ':other :value байх үед :attribute талбарыг зөвшөөрөх шаардлагатай.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'сонирхолтой зурвас',
         ],
     ],
-    'attributes' => [],
 ];

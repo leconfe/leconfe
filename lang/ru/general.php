@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Материал создан',
     'submission_updated' => 'Материал обновлен',
@@ -24,14 +23,11 @@ return [
     'review_assgined' => ':name назначен рецензентом',
     'review_complete' => ':name завершил рецензию',
     'email_sent' => 'Электронное письмо `:name` отправлено',
-
     'pagination_previous' => 'Предыдущий',
     'pagination_next' => 'Следующий',
-
     'failed_credentials' => 'Эти учетные данные не соответствуют нашим записям',
     'throttle_to_many_login_attempts' => 'Слишком много попыток входа. Попробуйте снова через :seconds секунд',
     'throttle_please_try_again' => 'Попробуйте снова через :seconds секунд',
-
     'view_conference' => 'Просмотр конференции',
     'current_event' => 'Текущее событие',
     'login' => 'Войти',
@@ -63,7 +59,6 @@ return [
     'edit_my_profile' => 'Редактировать мой профиль',
     'continue_browsing' => 'Продолжить просмотр',
     'no_content_provided' => 'Контент не предоставлен.',
-
     'dashboard' => 'Панель управления',
     'administration' => 'Администрирование',
     'expire_user_session' => 'Завершение сеанса пользователя',
@@ -74,7 +69,6 @@ return [
     'data_caches_cleared_successfully' => 'Кэш данных успешно очищен',
     'clear_view_caches' => 'Очистка кэша представлений',
     'view_caches_cleared_successfully' => 'Кэш представлений успешно очищен',
-
     'conference' => 'Конференция',
     'open_conference' => 'Открыть конференцию',
     'open_scheduled_conference' => 'Открыть запланированную конференцию',
@@ -84,7 +78,6 @@ return [
     'name' => 'Название',
     'path' => 'Путь',
     'url_path' => 'Путь конференции. Он будет использоваться в URL-адресе конференции.',
-
     'appearance' => 'Внешний вид',
     'theme' => 'Тема',
     'appearance_color' => 'Цвет оформления',
@@ -93,7 +86,6 @@ return [
     'saved' => 'Сохранено!',
     'failed' => 'Не удалось!',
     'data_could_not_saved' => 'Данные не удалось сохранить.',
-
     'setup' => 'Настройки',
     'site_setup' => 'Настройки сайта',
     'website_name' => 'Название веб-сайта',
@@ -103,17 +95,13 @@ return [
     'short_description_of_the_website' => 'Краткое описание веб-сайта. Это поможет поисковым системам понять сайт.',
     'about_site' => 'О сайте',
     'page_footer' => 'Нижний колонтитул страницы',
-
     'sidebar' => 'Боковая панель',
     'sidebars_manager' => 'Управление боковыми панелями',
     'no_sidebars_found' => 'Боковые панели не найдены.',
-
     'navigation_menu' => 'Меню навигации',
     'languages' => 'Языки',
-
     'no_navigation_menu_items_found' => 'Элементы меню навигации не найдены',
     'no_navigation_menu_found' => 'Меню навигации не найдено',
-
     'add_navigation_menu' => 'Добавить меню навигации',
     'edit' => 'Редактировать',
     'delete' => 'Удалить',
@@ -124,12 +112,9 @@ return [
     'edit_navigation_menu_item' => 'Редактировать элемент меню навигации',
     'label' => 'Метка',
     'type' => 'Тип',
-
     'default_language' => 'Язык по умолчанию',
-
     'settings' => 'Настройки',
     'website_setting' => 'Настройки веб-сайта',
-
     'plugin' => 'Плагин',
     'enabled' => 'Включено',
     'author' => 'Автор',
@@ -143,7 +128,6 @@ return [
     'plugin_installed_successfully' => 'Плагин успешно установлен',
     'submit' => 'Отправить',
     'cancel' => 'Отмена',
-
     'static_page' => 'Статическая страница',
     'title' => 'Заголовок',
     'slug' => 'Слаг',
@@ -151,7 +135,6 @@ return [
     'the_complete_page_content' => 'Полное содержимое страницы.',
     'preview' => 'Предпросмотр',
     'switch_conference' => 'Сменить конференцию',
-
     'scheduled_conference' => 'Запланированная конференция',
     'enter_the_title_of_the_serie' => 'Введите название серии',
     'start_date' => 'Дата начала',
@@ -161,7 +144,6 @@ return [
     'publish' => 'Опубликовать',
     'set_as_current' => 'Установить как текущую',
     'set_as_draft' => 'Сохранить как черновик',
-
     'move_to_archive' => 'Переместить в архив',
     'move_to_trash' => 'Переместить в корзину',
     'delete_permanently' => 'Удалить навсегда',
@@ -172,7 +154,6 @@ return [
     'upcoming' => 'Предстоящий',
     'archived' => 'Архивный',
     'trash' => 'Корзина',
-
     'proceeding' => 'Сборник материалов',
     'proceedings' => 'Сборники материалов',
     'identification' => 'Идентификация',
@@ -189,7 +170,6 @@ return [
     'proceeding_data' => 'Данные сборника',
     'articles' => 'Статьи',
     'remove' => 'Удалить',
-
     'conference_settings' => 'Настройки конференции',
     'conference_identity' => 'Идентификация конференции',
     'information_about_scheduled_conference' => 'Информация о запланированной конференции',
@@ -200,7 +180,6 @@ return [
     'conference_summary' => 'Краткое описание конференции',
     'include_about_your_conference' => 'Включите любую информацию о вашей конференции, которая может заинтересовать читателей, авторов или рецензентов.',
     'about_the_conference' => 'О конференции',
-
     'website' => 'Веб-сайт',
     'conference_thumbnail' => 'Миниатюра конференции',
     'image_representation_of_the_serie_will_uses' => 'Изображение серии, используемое в списке серий.',
@@ -213,7 +192,6 @@ return [
     'enter_custom_time_format' => 'Введите пользовательский формат времени',
     'time' => 'Время',
     'date_and_time_formats' => 'Форматы даты и времени',
-
     'distribution' => 'Распределение',
     'distribution_settings' => 'Настройки распределения',
     'allow_digital_object_dois' => 'Разрешить присвоение цифровых идентификаторов объектов (DOI) для работ, опубликованных на этой конференции',
@@ -230,7 +208,6 @@ return [
     'doi_format' => 'Формат DOI',
     'automatically_generate_unique_suffix' => 'По умолчанию — автоматически генерирует уникальный восьмисимвольный суффикс',
     'not_be_automatically_generate_unique_suffix' => 'Нет — Суффиксы должны быть введены вручную на странице управления DOI и не будут генерироваться автоматически',
-
     'registration' => 'Регистрация',
     'registration_agency' => 'Регистрационное агентство',
     'registration_select_agency_dois' => 'Выберите регистрационное агентство, которое вы хотите использовать для депонирования DOI.',
@@ -246,23 +223,19 @@ return [
     'name_organization_included_with_deposited_meta_data' => 'Название организации, регистрирующей DOI. Оно включается в метаданные депозита и используется для записи информации о подателе депозита.',
     'depositor_email' => 'Электронная почта депонента',
     'email_address_individual_responsible' => 'Электронная почта ответственного лица за регистрацию контента в Crossref. Она включается в метаданные депозита и используется для отправки подтверждения депонирования.',
-
     'username' => 'Имя пользователя',
     'password' => 'Пароль',
     'use_crossref_test_api' => 'Использовать тестовый API Crossref (тестовая среда) для депонирования DOI.',
     'username_crossref' => 'Имя пользователя Crossref, которое будет использоваться для аутентификации ваших депозитов. Если вы используете личный аккаунт, пожалуйста, ознакомьтесь с рекомендациями выше.',
-
     'search_indexing' => 'Индексирование поиска',
     'meta_tags' => 'Мета-теги',
     'add_meta_tags_conference' => 'Добавьте мета-теги в раздел <head> каждой страницы вашей конференции. Перед добавлением тегов проконсультируйтесь с техническим специалистом, чтобы убедиться, что они совместимы с вашим сайтом и не вызовут проблем.',
-
     'role' => 'Роль',
     'role_management' => 'Управление ролями',
     'copy_permissions_from' => 'Скопировать разрешения с',
     'advanced_permissions' => 'Расширенные разрешения',
     'persist_permissions' => 'Сохранить разрешения',
     'permissions_persisted_successfully' => 'Разрешения успешно сохранены.',
-
     'user' => 'Пользователь',
     'profile_photo' => 'Фото профиля',
     'disabled_at' => 'Отключен в',
@@ -280,7 +253,6 @@ return [
     'send_email_to' => 'Отправить письмо',
     'reason_for_disabling_user' => 'Причина отключения пользователя',
     'to_disable_permanently_leave_field_empty' => 'Чтобы отключить навсегда, оставьте поле пустым',
-
     'profile_picture' => 'Фото профиля',
     'expertise' => 'Область знаний',
     'select_a_country' => 'Выберите страну',
@@ -293,7 +265,6 @@ return [
     'phone_format_international' => 'В международном формате, напр. +998901234567',
     'roles' => 'Роли',
     'hide_users_with_no_roles' => 'Скрыть пользователей без ролей на этой конференции',
-
     'permission' => 'Разрешение',
     'context' => 'Контекст',
     'action' => 'Действие',
@@ -301,7 +272,6 @@ return [
     'context_must_be_studlycase' => 'Контекст должен быть в формате StudlyCase',
     'action_must_be_camelCase' => 'Действие должно быть в формате camelCase',
     'persist_all_permissions_to_storage' => 'Это сохранит все разрешения в хранилище.',
-
     'my_submissions' => 'Мои материалы',
     'submitted_papers' => 'Отправленные статьи',
     'accepted_papers' => 'Принятые статьи',
@@ -309,7 +279,6 @@ return [
     'total_number_of_papers_submitted' => 'Общее количество поданных статей',
     'accepted_paper_in_the_last_30_days' => 'Принятые статьи за последние 30 дней',
     'new_authors_in_the_last_30_days' => 'Новые авторы за последние 30 дней',
-
     'incomplete' => 'Незавершено',
     'queued' => 'В очереди',
     'on_payment' => 'На оплате',
@@ -320,7 +289,6 @@ return [
     'scheduled' => 'Запланировано',
     'declined' => 'Отклонено',
     'withdrawn' => 'Отозвано',
-
     'no_editor_assigned' => 'Редактор не назначен',
     'reviewed' => 'Просмотрено',
     'my_queue' => 'Моя очередь',
@@ -339,7 +307,6 @@ return [
     'submission_checklist' => 'Контрольный список подачи',
     'submission_meets_all_of_requirements' => 'Да, моя подача соответствует всем этим требованиям.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'Да, я согласен на сбор и хранение моих данных согласно политике конфиденциальности.',
-
     'submission_details' => 'Подробности подачи',
     'provide_details_to_help_us' => 'Пожалуйста, предоставьте следующую информацию, чтобы помочь нам управлять вашей подачей в системе.',
     'topic' => 'Тема',
@@ -382,7 +349,6 @@ return [
     'nothing_to_download' => 'Нет файлов для загрузки',
     'problem_creating_file_type' => 'Возникла проблема при создании типа файла',
     'file_type_created_successfulyy' => 'Тип файла успешно создан',
-
     'create_author_role' => 'Создать роль автора',
     'new_contributor' => 'Новый участник',
     'add_myself_as_contributor' => 'Добавить себя',
@@ -431,7 +397,6 @@ return [
     'submitted_submission' => 'Вы отправили свою работу, и вам отправлено уведомление. Менеджер проверит её и отправит ещё одно письмо после проверки.',
     'submit_submission' => 'Подтвердить подачу',
     'go_to_submission_page' => 'Перейдите на <a href=":url" class="text-primary-500">страницу подачи</a>, чтобы проверить статус.',
-
     'scheduled_conference_identity' => 'Данные запланированной конференции',
     'information_about_the_scheduled_conference' => 'Информация о запланированной конференции',
     'enter_the_title_of_the_scheduled_conference' => 'Введите название конференции',
@@ -449,7 +414,6 @@ return [
     'url_must_be_valid' => 'Указанный URL должен быть действительным.',
     'editorial_team' => 'Редакционная команда',
     'about_the_scheduled_conference' => 'О запланированной конференции',
-
     'masthead' => 'Титульная страница',
     'contact' => 'Контакт',
     'scheduled_conference_setting' => 'Настройки конференции',
@@ -476,7 +440,6 @@ return [
     'privacy_statement' => 'Политика конфиденциальности',
     'create_sponsorship_level' => 'Создать уровень спонсорства',
     'add_sponsorship_level' => 'Добавить уровень спонсорства',
-
     'registrations' => 'Регистрации',
     'participant_quota' => 'Квота участников',
     'registrations_settings' => 'Настройки регистрации',
@@ -504,7 +467,6 @@ return [
     'create_a_type_to_get_started' => 'Создайте тип, чтобы начать.',
     'select_type_opened_date' => 'Выберите дату открытия типа..',
     'select_type_closed_date' => 'Выберите дату закрытия типа..',
-
     'payments' => 'Платежи',
     'payment' => 'Платёж',
     'payment_declined' => 'Платёж отклонён',
@@ -520,7 +482,6 @@ return [
     'manual_payment_list' => 'Список ручных платежей',
     'payment_methods' => 'Способы оплаты',
     'payment_policy' => 'Политика оплаты',
-
     'workflow' => 'Рабочий процесс',
     'components' => 'Компоненты',
     'author_guidance' => 'Руководство для авторов',
@@ -577,7 +538,6 @@ return [
     'anonymous_author' => 'Анонимный рецензент/Анонимный автор',
     'anonymous_disclosed_author' => 'Анонимный рецензент/Открытый автор',
     'open' => 'Открыто',
-
     'timeline' => 'Хронология',
     'key' => 'Ключ',
     'body' => 'Основной текст',
@@ -617,7 +577,6 @@ return [
     'full_name' => 'Полное имя',
     'committee_roles_table' => 'Таблица ролей комитета',
     'new_committee_role' => 'Новая роль комитета',
-
     'subtitle' => 'Подзаголовок',
     'speakers' => 'Докладчики',
     'speaker' => 'Докладчик',
@@ -645,7 +604,6 @@ return [
     'select_registration_paid_date' => 'Выберите дату оплаты регистрации..',
     'paid' => 'Оплачено',
     'unpaid' => 'Не оплачено',
-
     'payment_has_been_made' => 'Оплата за :variable произведена.',
     'problem_with_configured_payment_method' => "<p>Проблема с настроенным способом оплаты. Пожалуйста, свяжитесь с администратором. <br>Способ оплаты: :variable </p>'",
     'payment_success' => 'Оплата прошла успешно',
@@ -750,7 +708,6 @@ return [
     'no_references' => 'Нет источников',
     'submission_wizard' => 'Мастер подачи',
     'submission' => 'Подача',
-
     'failed_to_save' => 'Не удалось сохранить.',
     'enable_email_notification' => 'Включить уведомление по электронной почте',
     'reviewing_interests' => 'Интересы рецензирования',
@@ -762,7 +719,6 @@ return [
     'abstract_declined' => 'Аннотация отклонена',
     'new_discussion_topic_created' => 'Создана новая тема для обсуждения',
     'cannot_delete_role_commites' => 'Невозможно удалить :name, так как с этой ролью все еще связаны :roleType.',
-
     'topic_name' => 'Название темы',
     'participant' => 'Участник',
     'participants' => 'Участники',
@@ -782,7 +738,6 @@ return [
     'topic_created_successfully' => 'Тема успешно создана',
     'topic_createtion_failed' => 'Ошибка при создании темы',
     'failed_to_send_notification_to_participants' => 'Не удалось отправить уведомление участникам.',
-
     'attachments' => 'Вложения',
     'papers' => 'Статьи',
     'after_uploading_your_paper_system_will_send_notification' => 'После загрузки статьи система отправит уведомление редактору.',
@@ -822,7 +777,6 @@ return [
     'view_current_event' => 'Просмотр текущего события',
     'view_event' => 'Просмотр события',
     'no_conferences_were_found' => 'Конференции не найдены',
-
     'session_name' => 'Название сессии',
     'detail_that_visible_to_all_user' => 'Детали, видимые всем пользователям',
     'detail_that_visible_only_to_participant' => 'Детали, видимые только участникам',
@@ -850,7 +804,6 @@ return [
     'select_valid_timeline' => 'Выберите допустимую хронологию.',
     'input_participant_attendance_time' => 'Введите время посещения участника.',
     'mark_out_day' => 'Отметить уход (день)',
-
     'attendance_required' => 'Посещаемость не требуется',
     'attendance_required_per_day_attendance' => 'Посещаемость не требуется, потому что требуется ежедневная регистрация',
     'attendance_status' => 'Статус посещения',
@@ -885,7 +838,6 @@ return [
     'citation_contributor_translator_helper' => 'Выберите роли, которые следует идентифицировать как переводчиков',
     'citation_contributor_authors_helper' => 'Выберите роли, которые следует идентифицировать как авторов',
     'citation_contributors_description' => 'В некоторых стилях цитирования необходимо различать участников по их ролям. Пожалуйста, укажите соответствующие роли.',
-
     'unpublished' => 'Неопубликовано',
     'date_published' => 'Дата публикации',
     'custom_copyright_holder' => 'Владетель авторских прав (по выбору)',
@@ -957,7 +909,6 @@ return [
     'consider_registration_process' => 'Спасибо за вашу подачу. Пожалуйста, <a class="text-primary-500 hover:underline" href=":route">зарегистрируйтесь</a> и завершите оплату, чтобы продолжить процесс подачи. Убедитесь, что вы зарегистрированы как автор.',
     'we_apologize_registration_currenty_closed' => 'Приносим извинения, регистрация в настоящее время закрыта.',
     'have_questin_contact_our_technical_support' => 'Есть вопрос? Свяжитесь с нашей <strong>технической поддержкой</strong>',
-
     'are_you_sure_registration' => 'Вы уверены, что хотите зарегистрироваться как <strong>:type</strong>?',
     'heres_your_registration_details' => 'Вот ваши регистрационные данные',
     'author_registration' => 'Регистрация автора',
@@ -976,7 +927,6 @@ return [
     'total_pending_registration' => 'Общее количество ожидаемых регистраций',
     'finished_registrations' => 'Завершенные регистрации',
     'finished_registration_30_days' => 'Завершенные регистрации за последние 30 дней',
-
     'you_have_to_register_to_complete_submission_payment' => 'Чтобы завершить оплату подачи, вы должны зарегистрироваться на один из следующих типов регистрации.',
     'forgot_password_question' => 'Забыли пароль?',
     'reset_password' => 'Сбросить пароль',
@@ -989,11 +939,9 @@ return [
     'reset_password_mail_sent' => 'Письмо с подтверждением отправлено на вашу электронную почту. Следуйте инструкциям, чтобы сбросить пароль.',
     'enter_password_to_update' => 'Введите новый пароль для обновления пароля входа.',
     'reset_password_update_success' => 'Пароль успешно обновлен. Пожалуйста, войдите с новым паролем.',
-
     'apply' => 'Применить',
     'search' => 'Поиск',
     'filter' => 'Фильтр',
-
     'scope' => 'Охват',
     'coordinator' => 'Координатор',
     'over' => 'Свыше',
@@ -1003,12 +951,10 @@ return [
     'conference_scope_description' => 'Область проведения конференции',
     'clear' => 'Очистить',
     'coordinator_setting_description' => 'Лицо или команда, ответственные за организацию и управление конференцией.',
-
     'option_are_empty' => 'Опции отсутствуют',
     'reset' => 'Сбросить',
     'reset_all' => 'Сбросить всё',
     'incoming' => 'Входящий',
-
     'conference_list' => 'Список конференций',
     'paper_published_on_external' => 'Статья опубликована на внешнем сайте',
     'paper_external_url' => 'Внешняя ссылка на статью',
@@ -1069,7 +1015,6 @@ return [
     'no_roles' => 'Ролей нет',
     'registration_required_fields' => 'Обязательные поля для регистрации',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Невозможно удалить эту роль, потому что она все еще назначена пользователям.',
-
     'categories' => 'Категории',
     'category' => 'Категория',
     'new_category' => 'Новая категория',
@@ -1079,10 +1024,8 @@ return [
     'scheduled_conference_faculties_hint' => 'Используется для фильтрации и группировки запланированных конференций по факультетам.',
     'faculty' => 'Факультет',
     'faculties' => 'Факультеты',
-
     'role_assigned_successfully' => 'Роль успешно назначена',
     'no_roles_selected' => 'Роли не выбраны',
-
     'submission_review_assigned' => '«:name» назначен для рассмотрения заявки «:submissionName (:submissionId)».',
     'submission_review_assign_accepted' => '«:name» принял к рассмотрению заявку «:submissionName (:submissionId)».',
     'submission_review_assign_declined' => '«:name» отказался рассматривать заявку «:submissionName (:submissionId)».',
@@ -1146,7 +1089,6 @@ return [
     'no_user_invitations' => 'Приглашений пока нет',
     'no_user_invitations_description' => 'Создайте приглашение, чтобы назначить роли для конференции или запланированной конференции.',
     'failed_to_send' => 'Не удалось отправить',
-
     'language' => 'Язык',
     'switch_language' => 'Изменить язык интерфейса',
     'current_language' => 'Текущий язык:',
@@ -1239,7 +1181,6 @@ return [
     'source_text' => 'Исходный текст',
     'translator' => 'Переводчик',
     'general_track' => 'Общий трек',
-
     'make_a_submission' => 'Подать материал',
     'payment_fee' => 'Платёжный взнос',
     'add_on_items' => 'Дополнительные позиции',
@@ -1271,12 +1212,10 @@ return [
     'participant_fees' => 'Взносы участников',
     'invoice' => 'Счёт',
     'editors' => 'Редакторы',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Менеджер конференции',
     'scheduled_conference_editor' => 'Редактор запланированной конференции',
     'track_editor' => 'Редактор трека',
-
     'recommendation_accept' => 'Принять',
     'recommendation_decline' => 'Отклонить',
     'revision_required' => 'Требуется доработка',
@@ -1311,7 +1250,6 @@ return [
     'minor' => 'Минорная',
     'patch' => 'Патч',
     'date_installed' => 'Дата установки',
-
     'item_name' => 'Название элемента',
     'description_and_instructions' => 'Описание и инструкции',
     'indicates_required_item' => 'Обозначает обязательный элемент',
@@ -1320,7 +1258,6 @@ return [
     'response_options_required' => 'Поле :attribute обязательно, если тип элемента — «Флажок», «Переключатель» или «Раскрывающийся список»',
     'new_option' => 'Новый вариант',
     'payment_fee_form_items' => 'Элементы формы платёжного взноса',
-
     'item_type_text' => 'Однострочное текстовое поле',
     'item_type_textarea' => 'Многострочное текстовое поле',
     'item_type_checkbox' => 'Флажки (можно выбрать один или несколько)',
@@ -1328,13 +1265,9 @@ return [
     'item_type_select' => 'Раскрывающийся список',
     'item_type_select_scored' => 'Раскрывающийся список с весовыми баллами.',
     'item_type_upload' => 'Загрузка файла',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'элемент формы',
-
     'editor_guidance_understood' => 'Указания для редактора прочитаны. Больше не показывать',
-
     'review_submission_page' => 'Рецензирование материала',
     'reviewer_invitation_page' => 'Приглашение рецензенту',
     'recommend_value' => 'Рекомендовать: :recommendation',
