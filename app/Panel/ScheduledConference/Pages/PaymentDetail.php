@@ -71,6 +71,10 @@ class PaymentDetail extends Page
 
     public function getTitle(): string|Htmlable
     {
+        if ($this->record->isFreeRegistration()) {
+            return __('participant_registration.free');
+        }
+
         return match ($this->record->type) {
             PaymentManager::TYPE_PARTICIPANT_FEE => 'Participant Payment',
             PaymentManager::TYPE_SUBMISSION_FEE => 'Submission Payment',
@@ -267,7 +271,7 @@ class PaymentDetail extends Page
                     ->requiresConfirmation()
                     ->authorize(fn (Payment $record) => auth()->user()->can('setUnpaid', $record))
                     ->record($this->record)
-                    ->visible(fn (Payment $record) => $record->isPaid())
+                    ->visible(fn (Payment $record) => $record->isPaid() && ! $record->isFreeRegistration())
                     ->action(function (Action $action, Payment $record) {
                         $record->update([
                             'paid_at' => null,
@@ -454,6 +458,11 @@ class PaymentDetail extends Page
                     ->schema([
                         Section::make('Information')
                             ->schema([
+                                ShoutEntry::make('free_registration_notice')
+                                    ->heading(__('participant_registration.free'))
+                                    ->content(__('participant_registration.free_notice'))
+                                    ->type('success')
+                                    ->visible(fn (Payment $record) => $record->isFreeRegistration()),
                                 TextEntry::make('submission')
                                     ->visible(fn (Payment $record) => $record->type == PaymentManager::TYPE_SUBMISSION_FEE)
                                     ->state(fn (Payment $record) => ($record->model instanceof Submission ? $record->model->translated('title') : $record->model?->getMeta('title')) ?? '-')
@@ -481,8 +490,9 @@ class PaymentDetail extends Page
                                     }),
                                 TextEntry::make('fee.name')
                                     ->label('Payment Fee Name')
-                                    ->state(fn (Payment $record) => $record->fee?->translated('name')),
+                                    ->state(fn (Payment $record) => $record->isFreeRegistration() ? __('participant_registration.free') : $record->fee?->translated('name')),
                                 TextEntry::make('base_amount')
+                                    ->visible(fn (Payment $record) => ! $record->isFreeRegistration())
                                     ->label('Base Fee')
                                     ->state(function (Payment $record) {
                                         $baseAmount = (float) $record->getMeta('base_amount', $record->fee?->amount ?? 0);
@@ -546,7 +556,7 @@ class PaymentDetail extends Page
                                     ->openUrlInNewTab(),
                                 TextEntry::make('invoice_email_status')
                                     ->label(__('general.invoice_email'))
-                                    ->visible(fn (Payment $record) => app()->getCurrentScheduledConference()?->isInvoiceEnabled())
+                                    ->visible(fn (Payment $record) => ! $record->isFreeRegistration() && app()->getCurrentScheduledConference()?->isInvoiceEnabled())
                                     ->badge()
                                     ->state(function (Payment $record) {
                                         $sentAt = $record->getInvoiceSentAt();
@@ -559,10 +569,10 @@ class PaymentDetail extends Page
                                     })
                                     ->color(fn (Payment $record) => $record->hasInvoiceBeenSent() ? 'success' : 'gray'),
                                 TextEntry::make('paid_at')
-                                    ->visible(fn (Payment $record) => $record->paid_at)
+                                    ->visible(fn (Payment $record) => $record->paid_at && ! $record->isFreeRegistration())
                                     ->dateTime(Setting::get('format_date').' '.Setting::get('format_time')),
                                 TextEntry::make('payment_method')
-                                    ->visible(fn (Payment $record) => $record->payment_method)
+                                    ->visible(fn (Payment $record) => $record->payment_method && ! $record->isFreeRegistration())
                                     ->getStateUsing(fn ($record) => Str::headline($record->payment_method)),
                                 TextEntry::make('receipt')
                                     ->label(fn (Payment $record) => $record->receipt ? "Receipt No: {$record->receipt}" : 'Receipt')

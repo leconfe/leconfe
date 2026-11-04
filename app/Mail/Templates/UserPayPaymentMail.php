@@ -16,7 +16,7 @@ class UserPayPaymentMail extends TemplateMailable
             'Conference Title' => $payment->scheduledConference->title,
             'Payment Amount' => $payment->getFormattedFee(),
             'Payment Link' => PaymentDetail::getUrl(['record' => $payment]),
-            'Payment Fee Name' => $payment->fee->name,
+            'Payment Fee Name' => $payment->fee?->name ?? $payment->getMeta('title'),
             'Payment ID' => $payment->getKey(),
             'Payer Name' => $payment->user->full_name,
         ]);

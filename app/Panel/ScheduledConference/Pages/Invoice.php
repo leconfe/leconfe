@@ -25,7 +25,7 @@ class Invoice extends Page
 
         $canAccess = $this->record && auth()->user()->can('view', $this->record);
 
-        abort_unless($canAccess, 404);
+        abort_unless($canAccess && ! $this->record->isFreeRegistration(), 404);
 
         app()->setLocale($this->record->documentLocale());
 

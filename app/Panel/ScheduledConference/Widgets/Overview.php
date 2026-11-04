@@ -200,12 +200,15 @@ class Overview extends Widget implements HasForms, HasInfolists
                             ->label(__('general.participant_payment'))
                             ->size(TextEntrySize::Large)
                             ->getStateUsing(function () {
+                                // Free registrations owe nothing, so they are neither paid nor outstanding.
                                 $submissionPaymentCount = Payment::query()
                                     ->type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                    ->withoutFreeRegistration()
                                     ->count();
 
                                 $paidSubmissionPaymentCount = Payment::query()
                                     ->type(PaymentManager::TYPE_PARTICIPANT_FEE)
+                                    ->withoutFreeRegistration()
                                     ->whereNotNull('paid_at')
                                     ->count();
 
