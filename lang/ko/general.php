@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => '제출물이 생성되었습니다.',
     'submission_updated' => '제출물이 업데이트되었습니다.',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => '학부',
     'role_assigned_successfully' => '역할이 할당되었습니다.',
     'no_roles_selected' => '선택한 역할이 없습니다.',
-
     'language' => '언어',
     'switch_language' => '인터페이스 언어 변경',
     'current_language' => '현재 언어:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => '원문',
     'translator' => '번역자',
     'general_track' => '일반 주제별 섹션',
-
     'make_a_submission' => '제출하기',
     'payment_fee' => '결제 요금',
     'add_on_items' => '추가 항목',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => '참가자 요금',
     'invoice' => '청구서',
     'editors' => '편집자',
-
     'admin' => '관리자',
     'conference_manager' => '컨퍼런스 관리자',
     'scheduled_conference_editor' => '예정된 컨퍼런스 편집자',
     'track_editor' => '주제별 섹션 편집자',
-
     'recommendation_accept' => '승인',
     'recommendation_decline' => '거절',
     'revision_required' => '수정 필요',
@@ -1251,7 +1246,6 @@ return [
     'minor' => '부 버전',
     'patch' => '패치',
     'date_installed' => '설치일',
-
     'item_name' => '항목 이름',
     'description_and_instructions' => '설명 및 안내',
     'indicates_required_item' => '필수 항목 표시',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => '항목 유형이 체크박스, 라디오 버튼 또는 드롭다운인 경우 :attribute 필드는 필수입니다',
     'new_option' => '새 옵션',
     'payment_fee_form_items' => '결제 요금 양식 항목',
-
     'item_type_text' => '한 줄 텍스트 상자',
     'item_type_textarea' => '여러 줄 텍스트 상자',
     'item_type_checkbox' => '체크박스 (하나 이상 선택 가능)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => '드롭다운 상자',
     'item_type_select_scored' => '가중치 점수가 있는 드롭다운 상자.',
     'item_type_upload' => '파일 업로드',
-
     'reviewer_number' => '리뷰어 :number',
-
     'form_item' => '양식 항목',
-
     'editor_guidance_understood' => '편집자 안내를 확인했습니다. 다시 표시하지 않음',
-
     'review_submission_page' => '제출물 검토',
     'reviewer_invitation_page' => '리뷰어 초대',
     'recommend_value' => '권고: :recommendation',

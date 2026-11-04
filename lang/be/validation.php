@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Поле :attribute павінна быць прынятым.',
     'accepted_if' => 'Поле :attribute павінна быць прынятым, калі :other роўна :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'карыстацкае паведамленне',
         ],
     ],
-    'attributes' => [],
 ];

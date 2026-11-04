@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Indsendelse oprettet',
     'submission_updated' => 'Indsendelse opdateret',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'fakulteter',
     'role_assigned_successfully' => 'Rolle tildelt',
     'no_roles_selected' => 'Ingen roller valgt',
-
     'language' => 'Sprog',
     'switch_language' => 'Skift grænsefladesprog',
     'current_language' => 'Aktuelt sprog:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Kildetekst',
     'translator' => 'Oversætter',
     'general_track' => 'Generel tematisk sektion',
-
     'make_a_submission' => 'Foretag en indsendelse',
     'payment_fee' => 'Gebyr',
     'add_on_items' => 'Tilvalg',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Deltagergebyrer',
     'invoice' => 'Faktura',
     'editors' => 'Redaktører',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Konferenceansvarlig',
     'scheduled_conference_editor' => 'Redaktør for planlagt konference',
     'track_editor' => 'Redaktør for tematisk sektion',
-
     'recommendation_accept' => 'Accepter',
     'recommendation_decline' => 'Afslå',
     'revision_required' => 'Revision påkrævet',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Mindre',
     'patch' => 'Rettelse',
     'date_installed' => 'Installationsdato',
-
     'item_name' => 'Elementnavn',
     'description_and_instructions' => 'Beskrivelse og instruktioner',
     'indicates_required_item' => 'Angiver påkrævet element',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Feltet :attribute er påkrævet, når elementtypen er Afkrydsningsfelt, Alternativknap eller Rulleliste',
     'new_option' => 'Ny mulighed',
     'payment_fee_form_items' => 'Formularelementer for gebyr',
-
     'item_type_text' => 'Tekstfelt på én linje',
     'item_type_textarea' => 'Udvidet tekstfelt',
     'item_type_checkbox' => 'Afkrydsningsfelter (du kan vælge en eller flere)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rulleliste',
     'item_type_select_scored' => 'Rulleliste med vægtet pointgivning.',
     'item_type_upload' => 'Upload fil',
-
     'reviewer_number' => 'Anmelder :number',
-
     'form_item' => 'formularelement',
-
     'editor_guidance_understood' => 'Redaktørvejledningen er forstået. Vis ikke dette igen',
-
     'review_submission_page' => 'Bedøm indsendelse',
     'reviewer_invitation_page' => 'Invitation til bedømmelse',
     'recommend_value' => 'Anbefal: :recommendation',

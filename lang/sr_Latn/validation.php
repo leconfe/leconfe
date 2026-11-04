@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Polje :attribute mora biti prihvaćeno.',
     'accepted_if' => 'Polje :attribute mora biti prihvaćeno kada je :other :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'prilagođena-poruka',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'สร้างงานส่งแล้ว',
     'submission_updated' => 'งานส่งอัปเดตแล้ว',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'คณะต่างๆ',
     'role_assigned_successfully' => 'กำหนดบทบาทเรียบร้อยแล้ว',
     'no_roles_selected' => 'ไม่ได้เลือกบทบาท',
-
     'language' => 'ภาษา',
     'switch_language' => 'เปลี่ยนภาษาของอินเทอร์เฟซ',
     'current_language' => 'ภาษาปัจจุบัน:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'ข้อความต้นฉบับ',
     'translator' => 'ผู้แปล',
     'general_track' => 'ส่วนเนื้อหาตามหัวข้อทั่วไป',
-
     'make_a_submission' => 'ส่งงาน',
     'payment_fee' => 'ค่าธรรมเนียม',
     'add_on_items' => 'รายการเสริม',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'ค่าธรรมเนียมผู้เข้าร่วม',
     'invoice' => 'ใบแจ้งหนี้',
     'editors' => 'บรรณาธิการ',
-
     'admin' => 'ผู้ดูแลระบบ',
     'conference_manager' => 'ผู้จัดการการประชุม',
     'scheduled_conference_editor' => 'บรรณาธิการการประชุมตามกำหนดการ',
     'track_editor' => 'บรรณาธิการส่วนเนื้อหาตามหัวข้อ',
-
     'recommendation_accept' => 'ยอมรับ',
     'recommendation_decline' => 'ปฏิเสธ',
     'revision_required' => 'ต้องแก้ไข',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'รอง',
     'patch' => 'แพตช์',
     'date_installed' => 'วันที่ติดตั้ง',
-
     'item_name' => 'ชื่อรายการ',
     'description_and_instructions' => 'คำอธิบายและคำแนะนำ',
     'indicates_required_item' => 'ระบุรายการที่จำเป็น',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'ต้องระบุช่อง :attribute เมื่อประเภทรายการเป็นช่องทำเครื่องหมาย ปุ่มตัวเลือก หรือรายการแบบเลื่อนลง',
     'new_option' => 'ตัวเลือกใหม่',
     'payment_fee_form_items' => 'รายการในแบบฟอร์มค่าธรรมเนียม',
-
     'item_type_text' => 'กล่องข้อความบรรทัดเดียว',
     'item_type_textarea' => 'กล่องข้อความแบบขยาย',
     'item_type_checkbox' => 'ช่องทำเครื่องหมาย (เลือกได้หนึ่งรายการขึ้นไป)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'รายการแบบเลื่อนลง',
     'item_type_select_scored' => 'รายการแบบเลื่อนลงพร้อมการให้คะแนนแบบถ่วงน้ำหนัก',
     'item_type_upload' => 'อัปโหลดไฟล์',
-
     'reviewer_number' => 'ผู้ตรวจสอบ :number',
-
     'form_item' => 'รายการในแบบฟอร์ม',
-
     'editor_guidance_understood' => 'เข้าใจคำแนะนำสำหรับบรรณาธิการแล้ว ไม่ต้องแสดงอีก',
-
     'review_submission_page' => 'รีวิวการส่งงาน',
     'reviewer_invitation_page' => 'คำเชิญผู้ตรวจสอบ',
     'recommend_value' => 'เสนอแนะ :recommendation',

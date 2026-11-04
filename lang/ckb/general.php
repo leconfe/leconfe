@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'پێشکەشکردن دروستکراوە',
     'submission_updated' => 'پێشکەشکردن نوێکراوەتەوە',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'فاکولتەکان',
     'role_assigned_successfully' => 'ڕۆڵ دیاری کرا بە سەرکەوتوویی',
     'no_roles_selected' => 'هیچ ڕۆڵێک دیاری نەکراوە',
-
     'language' => 'زمان',
     'switch_language' => 'گۆڕینی زمانی ڕووکار',
     'current_language' => 'زمانی ئێستا:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'دەقی سەرچاوە',
     'translator' => 'وەرگێڕ',
     'general_track' => 'بەشی بابەتی گشتی',
-
     'make_a_submission' => 'پێشکەشکردنێک بکە',
     'payment_fee' => 'کرێی پارەدان',
     'add_on_items' => 'بڕگە زیادەکان',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'کرێی بەشداربووان',
     'invoice' => 'پسوولە',
     'editors' => 'دەستەی نووسەران',
-
     'admin' => 'بەڕێوەبەر',
     'conference_manager' => 'بەڕێوەبەری کۆنفرانس',
     'scheduled_conference_editor' => 'سەرنووسەری کۆنفرانسی خشتەکراو',
     'track_editor' => 'سەرنووسەری بەشی بابەتی',
-
     'recommendation_accept' => 'پەسەندکردن',
     'recommendation_decline' => 'ڕەتکردنەوە',
     'revision_required' => 'پێداچوونەوەی دەستکاری پێویستە',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'لاوەکی',
     'patch' => 'چاککردنەوە',
     'date_installed' => 'بەرواری دامەزراندن',
-
     'item_name' => 'ناوی بڕگە',
     'description_and_instructions' => 'وەسف و ڕێنماییەکان',
     'indicates_required_item' => 'بڕگەی پێویست دیاری دەکات',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'خانەی :attribute پێویستە کاتێک جۆری بڕگە بریتییە لە سندوقی نیشانەکردن، دوگمەی ڕادیۆ یان لیستی داکەوتوو',
     'new_option' => 'هەڵبژاردەی نوێ',
     'payment_fee_form_items' => 'بڕگەکانی فۆرمی کرێی پارەدان',
-
     'item_type_text' => 'سندوقی دەقی یەک دێڕ',
     'item_type_textarea' => 'سندوقی دەقی فراوان',
     'item_type_checkbox' => 'سندوقەکانی نیشانەکردن (دەتوانن یەک یان زیاتر هەڵبژێرن)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'لیستی داکەوتوو',
     'item_type_select_scored' => 'لیستی داکەوتوو لەگەڵ نمرەدانی کێشدار.',
     'item_type_upload' => 'بارکردنی فایل',
-
     'reviewer_number' => 'پێداچوونەوەکار :number',
-
     'form_item' => 'بڕگەی فۆرم',
-
     'editor_guidance_understood' => 'ڕێنمایی سەرنووسەر تێگەیشتم. چیتر ئەمە پیشان مەدە',
-
     'review_submission_page' => 'پێداچوونەوەی پێشکەشکردن',
     'reviewer_invitation_page' => 'بانگهێشتی پێداچوونەوەکار',
     'recommend_value' => 'پێشنیارکردنی :recommendation',

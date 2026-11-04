@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Soumission créée',
     'submission_updated' => 'Soumission mise à jour',
@@ -1052,7 +1051,6 @@ return [
     'faculties' => 'Facultés',
     'role_assigned_successfully' => 'Rôle attribué avec succès',
     'no_roles_selected' => 'Aucun rôle sélectionné',
-
     'submission_sent_for_review' => 'Soumission envoyée pour évaluation.',
     'actions' => 'Actions',
     'research_gate' => 'ResearchGate',
@@ -1087,7 +1085,6 @@ return [
     'sent_for_a_new_round_of_reviews' => 'Envoyé pour un nouveau cycle d\'évaluation.',
     'review_files' => 'Fichiers d\'évaluation',
     'review_file_uploaded' => 'Nouveau fichier d\'évaluation téléversé',
-
     'language' => 'Langue',
     'switch_language' => 'Changer la langue de l\'interface',
     'current_language' => 'Langue actuelle :',
@@ -1180,7 +1177,6 @@ return [
     'source_text' => 'Texte source',
     'translator' => 'Traducteur',
     'general_track' => 'Axe thématique général',
-
     'make_a_submission' => 'Faire une soumission',
     'payment_fee' => 'Tarif',
     'add_on_items' => 'Options supplémentaires',
@@ -1212,12 +1208,10 @@ return [
     'participant_fees' => 'Frais de participation',
     'invoice' => 'Facture',
     'editors' => 'Éditeurs',
-
     'admin' => 'Administrateur',
     'conference_manager' => 'Gestionnaire de conférence',
     'scheduled_conference_editor' => 'Éditeur de la conférence programmée',
     'track_editor' => 'Responsable d’axe thématique',
-
     'recommendation_accept' => 'Accepter',
     'recommendation_decline' => 'Refuser',
     'revision_required' => 'Révisions requises',
@@ -1252,7 +1246,6 @@ return [
     'minor' => 'Mineure',
     'patch' => 'Correctif',
     'date_installed' => 'Date d’installation',
-
     'item_name' => 'Nom de l’élément',
     'description_and_instructions' => 'Description et instructions',
     'indicates_required_item' => 'Élément obligatoire',
@@ -1261,7 +1254,6 @@ return [
     'response_options_required' => 'Le champ :attribute est obligatoire lorsque le type d’élément est Case à cocher, Bouton radio ou Liste déroulante',
     'new_option' => 'Nouvelle option',
     'payment_fee_form_items' => 'Éléments du formulaire de tarif',
-
     'item_type_text' => 'Zone de texte sur une ligne',
     'item_type_textarea' => 'Zone de texte étendue',
     'item_type_checkbox' => 'Cases à cocher (un ou plusieurs choix)',
@@ -1269,13 +1261,9 @@ return [
     'item_type_select' => 'Liste déroulante',
     'item_type_select_scored' => 'Liste déroulante avec pondération des notes.',
     'item_type_upload' => 'Téléversement de fichier',
-
     'reviewer_number' => 'Évaluateur :number',
-
     'form_item' => 'élément de formulaire',
-
     'editor_guidance_understood' => 'Instructions aux éditeurs lues. Ne plus afficher',
-
     'review_submission_page' => 'Évaluer la soumission',
     'reviewer_invitation_page' => 'Invitation à évaluer',
     'recommend_value' => 'Recommandation : :recommendation',

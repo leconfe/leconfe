@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'سپارنه جوړه شوه',
     'submission_updated' => 'سپارنه تازه شوه',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'پوهنځي',
     'role_assigned_successfully' => 'نقش په بریالیتوب سره ورکړل شو',
     'no_roles_selected' => 'هیڅ نقش نه دی ټاکل شوی',
-
     'language' => 'ژبه',
     'switch_language' => 'د انټرفیس ژبه بدله کړئ',
     'current_language' => 'اوسنۍ ژبه:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'سرچینه متن',
     'translator' => 'ژباړونکی',
     'general_track' => 'عمومي تیمايي برخه',
-
     'make_a_submission' => 'سپارنه وکړئ',
     'payment_fee' => 'د تادیې فیس',
     'add_on_items' => 'اضافي توکي',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'د ګډونوالو فیسونه',
     'invoice' => 'بل',
     'editors' => 'مدیران',
-
     'admin' => 'اداره کوونکی',
     'conference_manager' => 'د کنفرانس مدیر',
     'scheduled_conference_editor' => 'د مهالوېش شوي کنفرانس مدیر',
     'track_editor' => 'د تیمايي برخې مدیر',
-
     'recommendation_accept' => 'منل',
     'recommendation_decline' => 'رد',
     'revision_required' => 'بیاکتنه اړینه ده',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'کوچنۍ',
     'patch' => 'سمون',
     'date_installed' => 'د نصب نېټه',
-
     'item_name' => 'د توکي نوم',
     'description_and_instructions' => 'تشریح او لارښوونې',
     'indicates_required_item' => 'اړین توکی په ګوته کوي',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'د :attribute ساحه اړینه ده کله چې د توکي ډول چک باکس، رېډیو تڼۍ یا ښکته کېدونکی لېست وي',
     'new_option' => 'نوی انتخاب',
     'payment_fee_form_items' => 'د تادیې فیس د فورمې توکي',
-
     'item_type_text' => 'یوه کرښه متن بکس',
     'item_type_textarea' => 'پراخ متن بکس',
     'item_type_checkbox' => 'چک باکسونه (تاسو یو یا څو ټاکلی شئ)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ښکته کېدونکی لېست',
     'item_type_select_scored' => 'ښکته کېدونکی لېست د وزن لرونکې نمره ورکونې سره.',
     'item_type_upload' => 'دوتنه پورته کړئ',
-
     'reviewer_number' => 'بیاکتونکی :number',
-
     'form_item' => 'د فورمې توکی',
-
     'editor_guidance_understood' => 'د مدیر لارښوونه مې پوه شوه. دا بیا مه ښایاست',
-
     'review_submission_page' => 'د سپارنې کتنه',
     'reviewer_invitation_page' => 'د بیاکتونکي بلنه',
     'recommend_value' => 'د :recommendation سپارښتنه',

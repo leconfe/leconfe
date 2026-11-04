@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Trường :attribute phải được chấp nhận.',
     'accepted_if' => 'Trường :attribute phải được chấp nhận khi :other là :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'thông điệp-tùy-chỉnh',
         ],
     ],
-    'attributes' => [],
 ];

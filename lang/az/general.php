@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Təqdimat yaradıldı',
     'submission_updated' => 'Təqdimat yeniləndi',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakültələr',
     'role_assigned_successfully' => 'Rol uğurla təyin edildi',
     'no_roles_selected' => 'Heç bir rol seçilməyib',
-
     'language' => 'Dil',
     'switch_language' => 'İnterfeys dilini dəyişin',
     'current_language' => 'Cari dil:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Mənbə mətni',
     'translator' => 'Tərcüməçi',
     'general_track' => 'Ümumi tematik bölmə',
-
     'make_a_submission' => 'Təqdimat göndər',
     'payment_fee' => 'Ödəniş haqqı',
     'add_on_items' => 'Əlavə elementlər',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'İştirakçı haqları',
     'invoice' => 'Hesab-faktura',
     'editors' => 'Redaktorlar',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Konfrans meneceri',
     'scheduled_conference_editor' => 'Planlaşdırılmış konfrans redaktoru',
     'track_editor' => 'Tematik bölmə redaktoru',
-
     'recommendation_accept' => 'Qəbul et',
     'recommendation_decline' => 'Rədd et',
     'revision_required' => 'Düzəliş tələb olunur',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Kiçik',
     'patch' => 'Yamaq',
     'date_installed' => 'Quraşdırılma tarixi',
-
     'item_name' => 'Elementin adı',
     'description_and_instructions' => 'Təsvir və təlimatlar',
     'indicates_required_item' => 'Məcburi elementi bildirir',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Elementin növü Qeyd qutusu, Radio düymə və ya Açılan siyahı olduqda :attribute sahəsi məcburidir',
     'new_option' => 'Yeni seçim',
     'payment_fee_form_items' => 'Ödəniş haqqı formasının elementləri',
-
     'item_type_text' => 'Tək sətirli mətn sahəsi',
     'item_type_textarea' => 'Geniş mətn sahəsi',
     'item_type_checkbox' => 'Qeyd qutuları (bir və ya bir neçəsini seçə bilərsiniz)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Açılan siyahı',
     'item_type_select_scored' => 'Çəkili ballı açılan siyahı.',
     'item_type_upload' => 'Fayl yüklə',
-
     'reviewer_number' => 'Rəyçi :number',
-
     'form_item' => 'forma elementi',
-
     'editor_guidance_understood' => 'Redaktor təlimatı başa düşüldü. Bunu bir daha göstərmə',
-
     'review_submission_page' => 'Təqdimata rəy ver',
     'reviewer_invitation_page' => 'Rəyçi dəvəti',
     'recommend_value' => ':recommendation tövsiyə et',

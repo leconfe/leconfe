@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Câmpul :attribute trebuie acceptat.',
     'accepted_if' => 'Câmpul :attribute trebuie acceptat când :other este :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'mesaj personalizat',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'global' => 'Global',
     'disable_global_description' => 'This account will be disabled across the entire application.',

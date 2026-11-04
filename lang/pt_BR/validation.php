@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'O campo :attribute deve ser aceito.',
     'accepted_if' => 'O campo :attribute deve ser aceito quando :other for :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'mensagem personalizada',
         ],
     ],
-    'attributes' => [],
 ];

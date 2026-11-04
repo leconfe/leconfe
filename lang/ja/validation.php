@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute フィールドは受け入れられる必要があります。',
     'accepted_if' => ':other が :value の場合、:attribute フィールドは受け入れられる必要があります。',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'カスタムメッセージ',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Einsendung erstellt',
     'submission_updated' => 'Einsendung aktualisiert',

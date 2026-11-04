@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => '提交已创建',
     'submission_updated' => '提交已更新',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => '院系列表',
     'role_assigned_successfully' => '角色分配成功',
     'no_roles_selected' => '未选择角色',
-
     'language' => '语言',
     'switch_language' => '更改界面语言',
     'current_language' => '当前语言：',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => '源文本',
     'translator' => '译者',
     'general_track' => '综合专题板块',
-
     'make_a_submission' => '提交稿件',
     'payment_fee' => '付款费用',
     'add_on_items' => '附加项目',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => '参与者费用',
     'invoice' => '发票',
     'editors' => '编辑',
-
     'admin' => '管理员',
     'conference_manager' => '会议管理员',
     'scheduled_conference_editor' => '已排期会议编辑',
     'track_editor' => '专题板块编辑',
-
     'recommendation_accept' => '接受',
     'recommendation_decline' => '拒绝',
     'revision_required' => '需要修改',
@@ -1251,7 +1246,6 @@ return [
     'minor' => '次要版本',
     'patch' => '补丁',
     'date_installed' => '安装日期',
-
     'item_name' => '项目名称',
     'description_and_instructions' => '说明和指示',
     'indicates_required_item' => '表示必填项',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => '当项目类型为复选框、单选按钮或下拉列表时，:attribute 字段为必填项',
     'new_option' => '新选项',
     'payment_fee_form_items' => '付款费用表单项目',
-
     'item_type_text' => '单行文本框',
     'item_type_textarea' => '多行文本框',
     'item_type_checkbox' => '复选框（可选择一项或多项）',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => '下拉列表',
     'item_type_select_scored' => '带权重评分的下拉列表。',
     'item_type_upload' => '上传文件',
-
     'reviewer_number' => '审稿人 :number',
-
     'form_item' => '表单项目',
-
     'editor_guidance_understood' => '已了解编辑指南，不再显示',
-
     'review_submission_page' => '审阅提交',
     'reviewer_invitation_page' => '审稿邀请',
     'recommend_value' => '推荐：:recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Submissão criada',
     'submission_updated' => 'Submissão atualizada',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Faculdades',
     'role_assigned_successfully' => 'Função atribuída com sucesso',
     'no_roles_selected' => 'Nenhuma função selecionada',
-
     'language' => 'Idioma',
     'switch_language' => 'Alterar idioma da interface',
     'current_language' => 'Idioma atual:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Texto original',
     'translator' => 'Tradutor',
     'general_track' => 'Seção temática geral',
-
     'make_a_submission' => 'Fazer uma submissão',
     'payment_fee' => 'Taxa de pagamento',
     'add_on_items' => 'Itens adicionais',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Taxas de participante',
     'invoice' => 'Fatura',
     'editors' => 'Editores',
-
     'admin' => 'Administrador',
     'conference_manager' => 'Gerente da conferência',
     'scheduled_conference_editor' => 'Editor da conferência agendada',
     'track_editor' => 'Editor de seção temática',
-
     'recommendation_accept' => 'Aceitar',
     'recommendation_decline' => 'Recusar',
     'revision_required' => 'Revisão necessária',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Secundária',
     'patch' => 'Correção',
     'date_installed' => 'Data de instalação',
-
     'item_name' => 'Nome do item',
     'description_and_instructions' => 'Descrição e instruções',
     'indicates_required_item' => 'Indica item obrigatório',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'O campo :attribute é obrigatório quando o tipo de item é Caixa de seleção, Botão de opção ou Lista suspensa',
     'new_option' => 'Nova opção',
     'payment_fee_form_items' => 'Itens do formulário de taxa de pagamento',
-
     'item_type_text' => 'Caixa de texto simples',
     'item_type_textarea' => 'Caixa de texto estendida',
     'item_type_checkbox' => 'Caixas de seleção (é possível escolher uma ou mais)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Lista suspensa',
     'item_type_select_scored' => 'Lista suspensa com pontuação ponderada.',
     'item_type_upload' => 'Enviar arquivo',
-
     'reviewer_number' => 'Revisor :number',
-
     'form_item' => 'item do formulário',
-
     'editor_guidance_understood' => 'Orientações ao editor compreendidas. Não mostrar novamente',
-
     'review_submission_page' => 'Avaliar submissão',
     'reviewer_invitation_page' => 'Convite para avaliação',
     'recommend_value' => 'Recomendar :recommendation',

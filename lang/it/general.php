@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Invio creato',
     'submission_updated' => 'Invio aggiornato',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Facoltà',
     'role_assigned_successfully' => 'Ruolo assegnato con successo',
     'no_roles_selected' => 'Nessun ruolo selezionato',
-
     'language' => 'Lingua',
     'switch_language' => 'Cambia lingua dell\'interfaccia',
     'current_language' => 'Lingua corrente:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Testo sorgente',
     'translator' => 'Traduttore',
     'general_track' => 'Sezione tematica generale',
-
     'make_a_submission' => 'Invia una sottomissione',
     'payment_fee' => 'Quota di pagamento',
     'add_on_items' => 'Elementi aggiuntivi',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Quote di partecipazione',
     'invoice' => 'Fattura',
     'editors' => 'Editor',
-
     'admin' => 'Amministratore',
     'conference_manager' => 'Responsabile della conferenza',
     'scheduled_conference_editor' => 'Editor della conferenza programmata',
     'track_editor' => 'Editor di sezione tematica',
-
     'recommendation_accept' => 'Accettare',
     'recommendation_decline' => 'Rifiutare',
     'revision_required' => 'Revisione richiesta',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Secondaria',
     'patch' => 'Correzione',
     'date_installed' => 'Data di installazione',
-
     'item_name' => 'Nome dell\'elemento',
     'description_and_instructions' => 'Descrizione e istruzioni',
     'indicates_required_item' => 'Indica un elemento obbligatorio',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Il campo :attribute è obbligatorio quando il tipo di elemento è Casella di controllo, Pulsante di opzione o Menu a tendina',
     'new_option' => 'Nuova opzione',
     'payment_fee_form_items' => 'Elementi del modulo della quota di pagamento',
-
     'item_type_text' => 'Casella di testo a riga singola',
     'item_type_textarea' => 'Casella di testo estesa',
     'item_type_checkbox' => 'Caselle di controllo (è possibile sceglierne una o più)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Menu a tendina',
     'item_type_select_scored' => 'Menu a tendina con punteggio ponderato.',
     'item_type_upload' => 'Carica file',
-
     'reviewer_number' => 'Revisore :number',
-
     'form_item' => 'elemento del modulo',
-
     'editor_guidance_understood' => 'Indicazioni per l\'editor comprese. Non mostrare più',
-
     'review_submission_page' => 'Revisiona la sottomissione',
     'reviewer_invitation_page' => 'Invito al revisore',
     'recommend_value' => 'Raccomanda :recommendation',

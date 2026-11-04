@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute դաշտը պետք է ընդունվի:',
     'accepted_if' => ':attribute դաշտը պետք է ընդունվի, երբ :other-ն :value է:',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'մաքսային հաղորդագրություն',
         ],
     ],
-    'attributes' => [],
 ];

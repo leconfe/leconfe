@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute क्षेत्र स्वीकारले पाहिजे.',
     'accepted_if' => ':attribute क्षेत्र स्वीकारले पाहिजे जेव्हा :other :value असेल.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'सानुकूल संदेश',
         ],
     ],
-    'attributes' => [],
 ];

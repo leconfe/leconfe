@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Bidalketa sortu da',
     'submission_updated' => 'Bidalketa eguneratu da',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakultateak',
     'role_assigned_successfully' => 'Esleitu da rola',
     'no_roles_selected' => 'Ez dago rolrik hautatu',
-
     'language' => 'Hizkuntza',
     'switch_language' => 'Aldatu interfazearen hizkuntza',
     'current_language' => 'Uneko hizkuntza:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Jatorrizko testua',
     'translator' => 'Itzultzailea',
     'general_track' => 'Gaien atal orokorra',
-
     'make_a_submission' => 'Egin bidalketa bat',
     'payment_fee' => 'Ordainketa-kuota',
     'add_on_items' => 'Elementu gehigarriak',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Parte-hartzaileen kuotak',
     'invoice' => 'Faktura',
     'editors' => 'Editoreak',
-
     'admin' => 'Administratzailea',
     'conference_manager' => 'Jardunaldiaren kudeatzailea',
     'scheduled_conference_editor' => 'Programatutako jardunaldiaren editorea',
     'track_editor' => 'Gaien ataleko editorea',
-
     'recommendation_accept' => 'Onartu',
     'recommendation_decline' => 'Baztertu',
     'revision_required' => 'Zuzenketak behar dira',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Txikia',
     'patch' => 'Adabakia',
     'date_installed' => 'Instalazio-data',
-
     'item_name' => 'Elementuaren izena',
     'description_and_instructions' => 'Deskribapena eta jarraibideak',
     'indicates_required_item' => 'Derrigorrezko elementua adierazten du',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => ':attribute eremua derrigorrezkoa da elementu mota Kontrol-laukia, Aukera-botoia edo Goitibeherako zerrenda denean',
     'new_option' => 'Aukera berria',
     'payment_fee_form_items' => 'Ordainketa-kuotaren inprimakiko elementuak',
-
     'item_type_text' => 'Testu-koadro bakuna',
     'item_type_textarea' => 'Testu-koadro hedatua',
     'item_type_checkbox' => 'Kontrol-laukiak (bat edo gehiago hauta ditzakezu)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Goitibeherako zerrenda',
     'item_type_select_scored' => 'Goitibeherako zerrenda, puntuazio haztatuarekin.',
     'item_type_upload' => 'Igo fitxategia',
-
     'reviewer_number' => 'Berrikuslea :number',
-
     'form_item' => 'inprimakiko elementua',
-
     'editor_guidance_understood' => 'Editorearentzako jarraibideak ulertu ditut. Ez erakutsi berriro',
-
     'review_submission_page' => 'Berrikusi bidalketa',
     'reviewer_invitation_page' => 'Berrikusle-gonbidapena',
     'recommend_value' => 'Gomendatu: :recommendation',

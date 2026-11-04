@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'יש לאשר את השדה :attribute.',
     'accepted_if' => 'יש לקבל את השדה :attribute כאשר :other הוא :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'הודעה מותאמת אישית',
         ],
     ],
-    'attributes' => [],
 ];

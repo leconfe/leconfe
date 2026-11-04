@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +10,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted' => 'يجب قبول حقل :attribute.',
     'accepted_if' => 'يجب قبول حقل :attribute عندما يكون :other هو :value.',
     'active_url' => 'يجب أن يكون حقل :attribute عنوان URL صالح.',
@@ -150,8 +147,9 @@ return [
     'url' => 'يجب أن يكون حقل :attribute عنوان URL صالح.',
     'uuid' => 'يجب أن يكون حقل :attribute UUID صالح.',
     'weight_over' => 'يرجى التأكد من أن الوزن الإجمالي لا يتجاوز 100٪. حاليًا هو :attribute٪.',
-
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
     |--------------------------------------------------------------------------
@@ -161,13 +159,9 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -178,10 +172,6 @@ return [
     | of "email". This helps us make our message more expressive.
     |
     */
-
-    'attributes' => [],
-
-
     'phone' => 'يجب أن يكون الحقل :attribute رقمًا صالحًا.',
     'uppercase' => 'يجب أن يكون الحقل :attribute بأحرف كبيرة.',
     'ulid' => 'يجب أن يكون الحقل :attribute معرف ULID صالحًا.',

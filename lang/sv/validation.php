@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Fältet :attribute måste godtas.',
     'accepted_if' => 'Fältet :attribute måste godtas när :other är :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'custom-message',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'सबमिशन तयार केले',
     'submission_updated' => 'सबमिशन अपडेट केले',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'संकाया',
     'role_assigned_successfully' => 'भूमिका यशस्वीरित्या दिली',
     'no_roles_selected' => 'कोणतीही भूमिका निवडलेली नाही',
-
     'language' => 'भाषा',
     'switch_language' => 'इंटरफेसची भाषा बदला',
     'current_language' => 'सध्याची भाषा:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'मूळ मजकूर',
     'translator' => 'अनुवादक',
     'general_track' => 'सामान्य थीमॅटिक विभाग',
-
     'make_a_submission' => 'सबमिशन करा',
     'payment_fee' => 'शुल्क',
     'add_on_items' => 'अतिरिक्त पर्याय',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'सहभागी शुल्क',
     'invoice' => 'बीजक',
     'editors' => 'संपादक',
-
     'admin' => 'प्रशासक',
     'conference_manager' => 'परिषद व्यवस्थापक',
     'scheduled_conference_editor' => 'नियोजित परिषदेचे संपादक',
     'track_editor' => 'थीमॅटिक विभाग संपादक',
-
     'recommendation_accept' => 'स्वीकारा',
     'recommendation_decline' => 'नाकारणे',
     'revision_required' => 'सुधारणा आवश्यक',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'किरकोळ',
     'patch' => 'पॅच',
     'date_installed' => 'स्थापनेची तारीख',
-
     'item_name' => 'घटकाचे नाव',
     'description_and_instructions' => 'वर्णन आणि सूचना',
     'indicates_required_item' => 'आवश्यक घटक दर्शवते',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'घटकाचा प्रकार चेकबॉक्स, रेडिओ बटण किंवा ड्रॉप-डाउन असताना :attribute फील्ड आवश्यक आहे',
     'new_option' => 'नवीन पर्याय',
     'payment_fee_form_items' => 'शुल्क फॉर्मचे घटक',
-
     'item_type_text' => 'एका ओळीचा मजकूर बॉक्स',
     'item_type_textarea' => 'विस्तारित मजकूर बॉक्स',
     'item_type_checkbox' => 'चेकबॉक्स (तुम्ही एक किंवा अधिक निवडू शकता)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ड्रॉप-डाउन बॉक्स',
     'item_type_select_scored' => 'भारित गुणांकनासह ड्रॉप-डाउन बॉक्स.',
     'item_type_upload' => 'फाइल अपलोड करा',
-
     'reviewer_number' => 'पुनरावलोकक :number',
-
     'form_item' => 'फॉर्म घटक',
-
     'editor_guidance_understood' => 'संपादकांसाठीचे मार्गदर्शन समजले. हे पुन्हा दाखवू नका',
-
     'review_submission_page' => 'सबमिशनचे पुनरावलोकन करा',
     'reviewer_invitation_page' => 'पुनरावलोकनाचे आमंत्रण',
     'recommend_value' => 'शिफारस करा: :recommendation',

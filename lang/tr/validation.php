@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute alanı kabul edilmelidir.',
     'accepted_if' => ':other :value ise :attribute alanı kabul edilmelidir.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'özel-mesaj',
         ],
     ],
-    'attributes' => [],
 ];

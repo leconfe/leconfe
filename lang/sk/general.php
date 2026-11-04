@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Podanie vytvorené',
     'submission_updated' => 'Podanie aktualizované',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakulty',
     'role_assigned_successfully' => 'Rola bola úspešne priradená',
     'no_roles_selected' => 'Nie sú vybrané žiadne role',
-
     'language' => 'Jazyk',
     'switch_language' => 'Zmeniť jazyk rozhrania',
     'current_language' => 'Aktuálny jazyk:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Zdrojový text',
     'translator' => 'Prekladateľ',
     'general_track' => 'Všeobecná tematická sekcia',
-
     'make_a_submission' => 'Podať príspevok',
     'payment_fee' => 'Platobný poplatok',
     'add_on_items' => 'Doplnkové položky',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Poplatky účastníkov',
     'invoice' => 'Faktúra',
     'editors' => 'Editori',
-
     'admin' => 'Administrátor',
     'conference_manager' => 'Manažér konferencie',
     'scheduled_conference_editor' => 'Editor naplánovanej konferencie',
     'track_editor' => 'Editor tematickej sekcie',
-
     'recommendation_accept' => 'Prijať',
     'recommendation_decline' => 'Odmietnuť',
     'revision_required' => 'Vyžaduje sa revízia',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Vedľajšia',
     'patch' => 'Oprava',
     'date_installed' => 'Dátum inštalácie',
-
     'item_name' => 'Názov položky',
     'description_and_instructions' => 'Popis a pokyny',
     'indicates_required_item' => 'Označuje povinnú položku',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Pole :attribute je povinné, ak je typ položky Zaškrtávacie políčko, Prepínač alebo Rozbaľovací zoznam',
     'new_option' => 'Nová možnosť',
     'payment_fee_form_items' => 'Položky formulára platobného poplatku',
-
     'item_type_text' => 'Jednoriadkové textové pole',
     'item_type_textarea' => 'Rozšírené textové pole',
     'item_type_checkbox' => 'Zaškrtávacie políčka (môžete vybrať jednu alebo viac možností)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rozbaľovací zoznam',
     'item_type_select_scored' => 'Rozbaľovací zoznam s váženým bodovaním.',
     'item_type_upload' => 'Nahrať súbor',
-
     'reviewer_number' => 'Recenzent :number',
-
     'form_item' => 'položka formulára',
-
     'editor_guidance_understood' => 'Pokynom pre editora rozumiem. Už nezobrazovať',
-
     'review_submission_page' => 'Recenzovať príspevok',
     'reviewer_invitation_page' => 'Pozvánka na recenziu',
     'recommend_value' => 'Odporučiť: :recommendation',

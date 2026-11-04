@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Илгээлт үүсгэсэн',
     'submission_updated' => 'Өргөдлийг шинэчилсэн',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факультетууд',
     'role_assigned_successfully' => 'Үүрэг амжилттай олгов',
     'no_roles_selected' => 'Үүрэг сонгогдоогүй байна',
-
     'language' => 'Хэл',
     'switch_language' => 'Интерфейсийн хэлийг солих',
     'current_language' => 'Одоогийн хэл:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Эх текст',
     'translator' => 'Орчуулагч',
     'general_track' => 'Ерөнхий сэдэвчилсэн хэсэг',
-
     'make_a_submission' => 'Илгээмж илгээх',
     'payment_fee' => 'Төлбөрийн хураамж',
     'add_on_items' => 'Нэмэлт зүйлс',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Оролцогчийн хураамж',
     'invoice' => 'Нэхэмжлэх',
     'editors' => 'Редакторууд',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Бага хурлын менежер',
     'scheduled_conference_editor' => 'Товлосон бага хурлын редактор',
     'track_editor' => 'Сэдэвчилсэн хэсгийн редактор',
-
     'recommendation_accept' => 'Зөвшөөрөх',
     'recommendation_decline' => 'Татгалзах',
     'revision_required' => 'Засвар шаардлагатай',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Жижиг',
     'patch' => 'Засвар',
     'date_installed' => 'Суулгасан огноо',
-
     'item_name' => 'Зүйлийн нэр',
     'description_and_instructions' => 'Тайлбар ба заавар',
     'indicates_required_item' => 'Заавал бөглөх зүйлийг заана',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Зүйлийн төрөл нь Чекбокс, Радио товч эсвэл Унжих цэс байх үед :attribute талбарыг заавал бөглөнө',
     'new_option' => 'Шинэ сонголт',
     'payment_fee_form_items' => 'Төлбөрийн хураамжийн маягтын зүйлс',
-
     'item_type_text' => 'Нэг мөрт текстийн талбар',
     'item_type_textarea' => 'Өргөтгөсөн текстийн талбар',
     'item_type_checkbox' => 'Чекбоксууд (нэг эсвэл хэд хэдийг сонгож болно)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Унжих цэс',
     'item_type_select_scored' => 'Жинлэсэн оноотой унжих цэс.',
     'item_type_upload' => 'Файл байршуулах',
-
     'reviewer_number' => 'Шүүмжлэгч :number',
-
     'form_item' => 'маягтын зүйл',
-
     'editor_guidance_understood' => 'Редакторын зааврыг ойлголоо. Дахин бүү харуул',
-
     'review_submission_page' => 'Илгээмжийг үнэлэх',
     'reviewer_invitation_page' => 'Үнэлгээ хийх урилга',
     'recommend_value' => 'Зөвлөх: :recommendation',

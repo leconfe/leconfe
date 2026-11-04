@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'ارسال ایجاد شد',
     'submission_updated' => 'ارسال به روز شده است',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'پوهنحی ها',
     'role_assigned_successfully' => 'نقش با موفقیت تعیین شد',
     'no_roles_selected' => 'هیچ نقشی انتخاب نشده است',
-
     'language' => 'زبان',
     'switch_language' => 'تغییر زبان رابط کاربری',
     'current_language' => 'زبان فعلی:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'متن مبدأ',
     'translator' => 'مترجم',
     'general_track' => 'بخش موضوعی عمومی',
-
     'make_a_submission' => 'ارسال جدید',
     'payment_fee' => 'هزینه پرداخت',
     'add_on_items' => 'موارد افزودنی',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'هزینه‌های اشتراک‌کنندگان',
     'invoice' => 'صورتحساب',
     'editors' => 'ویراستاران',
-
     'admin' => 'مدیر',
     'conference_manager' => 'مدیر کنفرانس',
     'scheduled_conference_editor' => 'ویراستار کنفرانس برنامه‌ریزی‌شده',
     'track_editor' => 'ویراستار بخش موضوعی',
-
     'recommendation_accept' => 'پذیرش',
     'recommendation_decline' => 'رد',
     'revision_required' => 'نیاز به بازنگری',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'جزئی',
     'patch' => 'وصله',
     'date_installed' => 'تاریخ نصب',
-
     'item_name' => 'نام مورد',
     'description_and_instructions' => 'توضیحات و دستورالعمل‌ها',
     'indicates_required_item' => 'نشان‌دهنده مورد الزامی',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'وقتی نوع مورد کادر انتخاب، دکمه رادیویی یا فهرست کشویی باشد، فیلد :attribute الزامی است',
     'new_option' => 'گزینه جدید',
     'payment_fee_form_items' => 'موارد فرم هزینه پرداخت',
-
     'item_type_text' => 'کادر متن تک‌خطی',
     'item_type_textarea' => 'کادر متن گسترده',
     'item_type_checkbox' => 'کادرهای انتخاب (می‌توانید یک یا چند مورد را انتخاب کنید)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'فهرست کشویی',
     'item_type_select_scored' => 'فهرست کشویی با امتیازدهی وزنی.',
     'item_type_upload' => 'بارگذاری فایل',
-
     'reviewer_number' => 'بازبین :number',
-
     'form_item' => 'مورد فرم',
-
     'editor_guidance_understood' => 'راهنمای ویراستار را متوجه شدم. دیگر نمایش داده نشود',
-
     'review_submission_page' => 'بازبینی ارسال',
     'reviewer_invitation_page' => 'دعوت‌نامه بازبینی',
     'recommend_value' => 'توصیه به :recommendation',

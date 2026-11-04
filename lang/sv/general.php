@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Inlämning skapad',
     'submission_updated' => 'Inlämning uppdaterad',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakulteter',
     'role_assigned_successfully' => 'Roll tilldelad framgångsrikt',
     'no_roles_selected' => 'Inga roller valda',
-
     'language' => 'Språk',
     'switch_language' => 'Byt gränssnittsspråk',
     'current_language' => 'Aktuellt språk:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Källtext',
     'translator' => 'Översättare',
     'general_track' => 'Allmän tematisk sektion',
-
     'make_a_submission' => 'Gör en insändning',
     'payment_fee' => 'Avgift',
     'add_on_items' => 'Tillval',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Deltagaravgifter',
     'invoice' => 'Faktura',
     'editors' => 'Redaktörer',
-
     'admin' => 'Administratör',
     'conference_manager' => 'Konferensansvarig',
     'scheduled_conference_editor' => 'Redaktör för planerad konferens',
     'track_editor' => 'Redaktör för tematisk sektion',
-
     'recommendation_accept' => 'Acceptera',
     'recommendation_decline' => 'Avslag',
     'revision_required' => 'Revidering krävs',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Mindre',
     'patch' => 'Korrigering',
     'date_installed' => 'Installationsdatum',
-
     'item_name' => 'Objektnamn',
     'description_and_instructions' => 'Beskrivning och instruktioner',
     'indicates_required_item' => 'Anger obligatoriskt objekt',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Fältet :attribute är obligatoriskt när objekttypen är Kryssruta, Alternativknapp eller Rullgardinsmeny',
     'new_option' => 'Nytt alternativ',
     'payment_fee_form_items' => 'Formulärobjekt för avgift',
-
     'item_type_text' => 'Textruta på en rad',
     'item_type_textarea' => 'Utökad textruta',
     'item_type_checkbox' => 'Kryssrutor (du kan välja ett eller flera)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rullgardinsmeny',
     'item_type_select_scored' => 'Rullgardinsmeny med viktad poängsättning.',
     'item_type_upload' => 'Ladda upp fil',
-
     'reviewer_number' => 'Granskare :number',
-
     'form_item' => 'formulärobjekt',
-
     'editor_guidance_understood' => 'Jag har förstått redaktörsvägledningen. Visa inte detta igen',
-
     'review_submission_page' => 'Granska insändning',
     'reviewer_invitation_page' => 'Inbjudan till granskare',
     'recommend_value' => 'Rekommendera :recommendation',

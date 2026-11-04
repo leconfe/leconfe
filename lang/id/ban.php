@@ -1,5 +1,4 @@
 <?php
-
 return [
     'global' => 'Global',
     'disable_global_description' => 'Akun ini akan dinonaktifkan di seluruh aplikasi.',

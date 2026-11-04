@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Innsending oppretta',
     'submission_updated' => 'Innsending oppdatert',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakulteter',
     'role_assigned_successfully' => 'Rolle tildelt vellykka',
     'no_roles_selected' => 'Ingen roller valt',
-
     'language' => 'Språk',
     'switch_language' => 'Endre grensesnittspråk',
     'current_language' => 'Gjeldande språk:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Kjeldetekst',
     'translator' => 'Omsetjar',
     'general_track' => 'Generell tematisk seksjon',
-
     'make_a_submission' => 'Send inn',
     'payment_fee' => 'Betalingsavgift',
     'add_on_items' => 'Tilleggselement',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Deltakaravgifter',
     'invoice' => 'Faktura',
     'editors' => 'Redaktørar',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Konferanseansvarleg',
     'scheduled_conference_editor' => 'Redaktør for planlagd konferanse',
     'track_editor' => 'Redaktør for tematisk seksjon',
-
     'recommendation_accept' => 'Godta',
     'recommendation_decline' => 'Avslå',
     'revision_required' => 'Revisjon påkravd',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Mindre versjon',
     'patch' => 'Retting',
     'date_installed' => 'Installasjonsdato',
-
     'item_name' => 'Namn på element',
     'description_and_instructions' => 'Skildring og instruksjonar',
     'indicates_required_item' => 'Viser eit påkravd element',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Feltet :attribute er påkravd når elementtypen er Avkryssingsboks, Radioknapp eller Nedtrekksliste',
     'new_option' => 'Nytt alternativ',
     'payment_fee_form_items' => 'Skjemaelement for betalingsavgift',
-
     'item_type_text' => 'Enkel tekstboks',
     'item_type_textarea' => 'Utvida tekstboks',
     'item_type_checkbox' => 'Avkryssingsboksar (du kan velje éin eller fleire)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Nedtrekksliste',
     'item_type_select_scored' => 'Nedtrekksliste med vekta poenggjeving.',
     'item_type_upload' => 'Last opp fil',
-
     'reviewer_number' => 'Vurderer :number',
-
     'form_item' => 'skjemaelement',
-
     'editor_guidance_understood' => 'Rettleiinga for redaktørar er forstått. Ikkje vis dette att',
-
     'review_submission_page' => 'Gjennomgå innsending',
     'reviewer_invitation_page' => 'Invitasjon til vurderer',
     'recommend_value' => 'Tilrå :recommendation',

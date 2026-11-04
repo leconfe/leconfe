@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +10,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted' => 'Fusha :attribute duhet të pranohet.',
     'accepted_if' => 'Fusha :attribute duhet të pranohet kur :other është :value.',
     'active_url' => 'Fusha :attribute duhet të jetë një URL e vlefshme.',
@@ -149,8 +146,9 @@ return [
     'uploaded' => 'Fusha :attribute dështoi në ngarkim.',
     'url' => 'Fusha :attribute duhet të jetë një URL e vlefshme.',
     'uuid' => 'Fusha :attribute duhet të jetë një UUID i vlefshëm.',
-
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
     |--------------------------------------------------------------------------
@@ -160,13 +158,9 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'Mesazhi i personalizuar',
         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -177,10 +171,6 @@ return [
     | "email". This simply helps us make our message more expressive.
     |
     */
-
-    'attributes' => [],
-
-
     'phone' => 'Fusha :attribute duhet të jetë një numër i vlefshëm.',
     'uppercase' => 'Fusha :attribute duhet të jetë e madhe.',
     'ulid' => 'Fusha :attribute duhet të jetë një ULID e vlefshme.',

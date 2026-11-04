@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Oddaja ustvarjena',
     'submission_updated' => 'Oddaja posodobljena',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakultete',
     'role_assigned_successfully' => 'Vloga uspešno dodeljena',
     'no_roles_selected' => 'Brez izbranih vlog',
-
     'language' => 'Jezik',
     'switch_language' => 'Spremeni jezik vmesnika',
     'current_language' => 'Trenutni jezik:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Izvorno besedilo',
     'translator' => 'Prevajalec',
     'general_track' => 'Splošni tematski sklop',
-
     'make_a_submission' => 'Oddaj prispevek',
     'payment_fee' => 'Pristojbina',
     'add_on_items' => 'Dodatne postavke',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Kotizacije udeležencev',
     'invoice' => 'Račun',
     'editors' => 'Uredniki',
-
     'admin' => 'Skrbnik',
     'conference_manager' => 'Upravitelj konference',
     'scheduled_conference_editor' => 'Urednik načrtovane konference',
     'track_editor' => 'Urednik tematskega sklopa',
-
     'recommendation_accept' => 'Sprejmi',
     'recommendation_decline' => 'Zavrni',
     'revision_required' => 'Potrebna revizija',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Manjša',
     'patch' => 'Popravek',
     'date_installed' => 'Datum namestitve',
-
     'item_name' => 'Ime postavke',
     'description_and_instructions' => 'Opis in navodila',
     'indicates_required_item' => 'Označuje obvezno postavko',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Polje :attribute je obvezno, kadar je vrsta postavke Potrditveno polje, Izbirni gumb ali Spustni seznam',
     'new_option' => 'Nova možnost',
     'payment_fee_form_items' => 'Postavke obrazca za pristojbino',
-
     'item_type_text' => 'Enovrstično besedilno polje',
     'item_type_textarea' => 'Razširjeno besedilno polje',
     'item_type_checkbox' => 'Potrditvena polja (izberete lahko eno ali več)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Spustni seznam',
     'item_type_select_scored' => 'Spustni seznam z uteženim točkovanjem.',
     'item_type_upload' => 'Nalaganje datoteke',
-
     'reviewer_number' => 'Recenzent :number',
-
     'form_item' => 'postavka obrazca',
-
     'editor_guidance_understood' => 'Navodila za urednike so razumljena. Tega ne prikaži več',
-
     'review_submission_page' => 'Recenziraj oddajo',
     'reviewer_invitation_page' => 'Povabilo k recenziranju',
     'recommend_value' => 'Priporoči :recommendation',

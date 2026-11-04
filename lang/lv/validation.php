@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute lauks jāpieņem.',
     'accepted_if' => ':attribute lauks jāpieņem, kad :other ir :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'citas-ziņas',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Iarrtas air a chruthachadh',
     'submission_updated' => 'Iarrtas air ùrachadh',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Dàmhan',
     'role_assigned_successfully' => 'Dreuchd air a shònrachadh gu soirbheachail',
     'no_roles_selected' => 'Cha deach dreuchdan a thaghadh',
-
     'language' => 'Cànan',
     'switch_language' => 'Atharraich cànan na h-eadar-aghaidh',
     'current_language' => 'An cànan làithreach:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Teacsa tùsail',
     'translator' => 'Eadar-theangaiche',
     'general_track' => 'Roinn cuspaireil choitcheann',
-
     'make_a_submission' => 'Cuir tagradh a-steach',
     'payment_fee' => 'Cìs pàighidh',
     'add_on_items' => 'Nithean a bharrachd',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Cìsean chom-pàirtichean',
     'invoice' => 'Fàirdeal',
     'editors' => 'Deasaichean',
-
     'admin' => 'Rianaire',
     'conference_manager' => 'Manaidsear na co-labhairt',
     'scheduled_conference_editor' => 'Deasaiche na co-labhairt sgeidealaichte',
     'track_editor' => 'Deasaiche roinn cuspaireil',
-
     'recommendation_accept' => 'Gabh ris',
     'recommendation_decline' => 'Diùlt',
     'revision_required' => 'Feumar ath-sgrùdadh',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Beag',
     'patch' => 'Càradh',
     'date_installed' => 'Ceann-latha an stàlaidh',
-
     'item_name' => 'Ainm an nì',
     'description_and_instructions' => 'Tuairisgeul agus stiùireadh',
     'indicates_required_item' => 'A’ comharrachadh nì riatanach',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Tha an raon :attribute riatanach nuair as e Bogsa-cromaige, Putan rèidio no Liosta theàrnaidh seòrsa an nì',
     'new_option' => 'Roghainn ùr',
     'payment_fee_form_items' => 'Nithean foirm na cìse pàighidh',
-
     'item_type_text' => 'Bogsa teacsa singilte',
     'item_type_textarea' => 'Bogsa teacsa leudaichte',
     'item_type_checkbox' => 'Bogsaichean-cromaige (’s urrainn dhut aon no barrachd a thaghadh)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Liosta theàrnaidh',
     'item_type_select_scored' => 'Liosta theàrnaidh le sgòradh cuideim.',
     'item_type_upload' => 'Luchdaich suas faidhle',
-
     'reviewer_number' => 'Ath-sgrùdaire :number',
-
     'form_item' => 'nì foirm',
-
     'editor_guidance_understood' => 'Thuig mi stiùireadh an deasaiche. Na seall seo a-rithist',
-
     'review_submission_page' => 'Dèan lèirmheas air an tagradh',
     'reviewer_invitation_page' => 'Cuireadh do dh’ath-sgrùdaire',
     'recommend_value' => 'Mol :recommendation',

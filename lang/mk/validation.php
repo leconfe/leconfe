@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Полето :attribute мора да се прифати.',
     'accepted_if' => 'Полето :attribute мора да се прифати кога :other е :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'прилагодена порака',
         ],
     ],
-    'attributes' => [],
 ];

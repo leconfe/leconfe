@@ -1,7 +1,5 @@
 <?php
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +10,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted' => 'Поле :attribute должно быть принято.',
     'accepted_if' => 'Поле :attribute должно быть принято, если :other равно :value.',
     'active_url' => 'Поле :attribute должно быть допустимым URL.',
@@ -31,7 +28,6 @@ return [
         'numeric' => 'Поле :attribute должно быть между :min и :max.',
         'string' => 'Поле :attribute должно содержать от :min до :max символов.',
     ],
-
     'boolean' => 'Поле :attribute должно быть истинным или ложным.',
     'can' => 'Поле :attribute содержит неразрешенное значение.',
     'confirmed' => 'Подтверждение поля :attribute не совпадает.',
@@ -153,8 +149,9 @@ return [
     'url' => 'Поле :attribute должно быть допустимым URL-адресом.',
     'ulid' => 'Поле :attribute должно быть допустимым ULID.',
     'uuid' => 'Поле :attribute должно быть допустимым UUID.',
-
-    /*
+    'custom' => [
+        'attribute-name' => [
+            /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
     |--------------------------------------------------------------------------
@@ -164,9 +161,6 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-
-    'custom' => [
-        'attribute-name' => [
             'rule-name' => 'пользовательское сообщение',
         ],
     ],
@@ -180,9 +174,5 @@ return [
     | of "email". This simply helps us make our message more expressive.
     |
     */
-
-    'attributes' => [],
-
-
     'weight_over' => 'Пожалуйста, убедитесь, что общий вес не превышает 100%. В настоящее время это :attribute%.',
 ];

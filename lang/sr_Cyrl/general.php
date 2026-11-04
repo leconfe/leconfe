@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Поднесак креиран',
     'submission_updated' => 'Поднесак ажуриран',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Факултети',
     'role_assigned_successfully' => 'Рола је успешно додељена',
     'no_roles_selected' => 'Нема изабраних улога',
-
     'language' => 'Језик',
     'switch_language' => 'Промени језик интерфејса',
     'current_language' => 'Тренутни језик:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Изворни текст',
     'translator' => 'Преводилац',
     'general_track' => 'Општа тематска секција',
-
     'make_a_submission' => 'Пошаљи пријаву',
     'payment_fee' => 'Накнада',
     'add_on_items' => 'Додатне ставке',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Котизације учесника',
     'invoice' => 'Фактура',
     'editors' => 'Уредници',
-
     'admin' => 'Администратор',
     'conference_manager' => 'Менаџер конференције',
     'scheduled_conference_editor' => 'Уредник заказане конференције',
     'track_editor' => 'Уредник тематске секције',
-
     'recommendation_accept' => 'Прихвати',
     'recommendation_decline' => 'Одбиј',
     'revision_required' => 'Потребна ревизија',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Споредна',
     'patch' => 'Закрпа',
     'date_installed' => 'Датум инсталације',
-
     'item_name' => 'Назив ставке',
     'description_and_instructions' => 'Опис и упутства',
     'indicates_required_item' => 'Означава обавезну ставку',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Поље :attribute је обавезно када је тип ставке Поље за потврду, Радио дугме или Падајућа листа',
     'new_option' => 'Нова опција',
     'payment_fee_form_items' => 'Ставке обрасца за накнаду',
-
     'item_type_text' => 'Поље за текст у једном реду',
     'item_type_textarea' => 'Проширено поље за текст',
     'item_type_checkbox' => 'Поља за потврду (можете изабрати једно или више)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Падајућа листа',
     'item_type_select_scored' => 'Падајућа листа са пондерисаним бодовањем.',
     'item_type_upload' => 'Отпремање датотеке',
-
     'reviewer_number' => 'Рецензент :number',
-
     'form_item' => 'ставка обрасца',
-
     'editor_guidance_understood' => 'Упутства за уреднике су прочитана. Не приказуј поново',
-
     'review_submission_page' => 'Рецензирај пријаву',
     'reviewer_invitation_page' => 'Позив за рецензирање',
     'recommend_value' => 'Препоручи :recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Innsending opprettet',
     'submission_updated' => 'Innsending oppdatert',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakulteter',
     'role_assigned_successfully' => 'Rolle tildelt vellykket',
     'no_roles_selected' => 'Ingen roller valgt',
-
     'language' => 'Språk',
     'switch_language' => 'Endre grensesnittspråk',
     'current_language' => 'Gjeldende språk:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Kildetekst',
     'translator' => 'Oversetter',
     'general_track' => 'Generell tematisk seksjon',
-
     'make_a_submission' => 'Send inn et bidrag',
     'payment_fee' => 'Avgift',
     'add_on_items' => 'Tilleggsvalg',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Deltakeravgifter',
     'invoice' => 'Faktura',
     'editors' => 'Redaktører',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Konferanseansvarlig',
     'scheduled_conference_editor' => 'Redaktør for planlagt konferanse',
     'track_editor' => 'Seksjonsredaktør',
-
     'recommendation_accept' => 'Godta',
     'recommendation_decline' => 'Avslå',
     'revision_required' => 'Revisjon kreves',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Delversjon',
     'patch' => 'Feilretting',
     'date_installed' => 'Installasjonsdato',
-
     'item_name' => 'Elementnavn',
     'description_and_instructions' => 'Beskrivelse og instruksjoner',
     'indicates_required_item' => 'Angir obligatorisk element',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Feltet :attribute er obligatorisk når elementtypen er Avkrysningsboks, Alternativknapp eller Rullegardinliste',
     'new_option' => 'Nytt alternativ',
     'payment_fee_form_items' => 'Skjemaelementer for avgifter',
-
     'item_type_text' => 'Tekstfelt med én linje',
     'item_type_textarea' => 'Utvidet tekstfelt',
     'item_type_checkbox' => 'Avkrysningsbokser (du kan velge ett eller flere)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Rullegardinliste',
     'item_type_select_scored' => 'Rullegardinliste med vektet poengsum.',
     'item_type_upload' => 'Last opp fil',
-
     'reviewer_number' => 'Vurderer :number',
-
     'form_item' => 'skjemaelement',
-
     'editor_guidance_understood' => 'Veiledning for redaktører forstått. Ikke vis dette igjen',
-
     'review_submission_page' => 'Gjennomgå innsendelse',
     'reviewer_invitation_page' => 'Invitasjon til gjennomgang',
     'recommend_value' => 'Anbefal :recommendation',

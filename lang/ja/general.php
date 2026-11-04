@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => '提出物が作成されました',
     'submission_updated' => '提出物が更新されました',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => '学部',
     'role_assigned_successfully' => '役割が正常に割り当てられました',
     'no_roles_selected' => '役割が選択されていません',
-
     'language' => '言語',
     'switch_language' => 'インターフェース言語を変更',
     'current_language' => '現在の言語:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => '原文',
     'translator' => '翻訳者',
     'general_track' => '一般テーマ別セクション',
-
     'make_a_submission' => '投稿する',
     'payment_fee' => '支払い料金',
     'add_on_items' => '追加項目',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => '参加費',
     'invoice' => '請求書',
     'editors' => '編集者',
-
     'admin' => '管理者',
     'conference_manager' => 'カンファレンスマネージャー',
     'scheduled_conference_editor' => '予定カンファレンス編集者',
     'track_editor' => 'テーマ別セクション編集者',
-
     'recommendation_accept' => '採択',
     'recommendation_decline' => '不採択',
     'revision_required' => '修正が必要',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'マイナー',
     'patch' => 'パッチ',
     'date_installed' => 'インストール日',
-
     'item_name' => '項目名',
     'description_and_instructions' => '説明と手順',
     'indicates_required_item' => '必須項目を示します',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => '項目の種類がチェックボックス、ラジオボタン、またはドロップダウンの場合、:attribute は必須です',
     'new_option' => '新しい選択肢',
     'payment_fee_form_items' => '支払い料金フォームの項目',
-
     'item_type_text' => '1行のテキストボックス',
     'item_type_textarea' => '複数行のテキストボックス',
     'item_type_checkbox' => 'チェックボックス(1つ以上選択可)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'ドロップダウンボックス',
     'item_type_select_scored' => '重み付きスコアのドロップダウンボックス。',
     'item_type_upload' => 'ファイルをアップロード',
-
     'reviewer_number' => '査読者 :number',
-
     'form_item' => 'フォーム項目',
-
     'editor_guidance_understood' => '編集者向けガイダンスを理解しました。今後表示しない',
-
     'review_submission_page' => '提出物を査読',
     'reviewer_invitation_page' => '査読者への招待',
     'recommend_value' => ':recommendation を推奨',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Η υποβολή δημιουργήθηκε',
     'submission_updated' => 'Η υποβολή ενημερώθηκε',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Σχολές',
     'role_assigned_successfully' => 'Ο ρόλος ανατέθηκε με επιτυχία',
     'no_roles_selected' => 'Δεν επιλέχθηκαν ρόλοι',
-
     'language' => 'Γλώσσα',
     'switch_language' => 'Αλλαγή γλώσσας διεπαφής',
     'current_language' => 'Τρέχουσα γλώσσα:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Κείμενο πηγής',
     'translator' => 'Μεταφραστής',
     'general_track' => 'Γενική θεματική ενότητα',
-
     'make_a_submission' => 'Υποβολή εργασίας',
     'payment_fee' => 'Τέλος',
     'add_on_items' => 'Πρόσθετα στοιχεία',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Τέλη συμμετοχής',
     'invoice' => 'Τιμολόγιο',
     'editors' => 'Επιμελητές',
-
     'admin' => 'Διαχειριστής',
     'conference_manager' => 'Υπεύθυνος συνεδρίου',
     'scheduled_conference_editor' => 'Επιμελητής προγραμματισμένου συνεδρίου',
     'track_editor' => 'Επιμελητής θεματικής ενότητας',
-
     'recommendation_accept' => 'Αποδοχή',
     'recommendation_decline' => 'Απόρριψη',
     'revision_required' => 'Απαιτείται αναθεώρηση',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Δευτερεύουσα',
     'patch' => 'Διόρθωση',
     'date_installed' => 'Ημερομηνία εγκατάστασης',
-
     'item_name' => 'Όνομα στοιχείου',
     'description_and_instructions' => 'Περιγραφή και οδηγίες',
     'indicates_required_item' => 'Υποδεικνύει υποχρεωτικό στοιχείο',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Το πεδίο :attribute είναι υποχρεωτικό όταν ο τύπος στοιχείου είναι Πλαίσιο ελέγχου, Κουμπί επιλογής ή Αναπτυσσόμενη λίστα',
     'new_option' => 'Νέα επιλογή',
     'payment_fee_form_items' => 'Στοιχεία φόρμας τέλους',
-
     'item_type_text' => 'Πλαίσιο κειμένου μίας γραμμής',
     'item_type_textarea' => 'Εκτεταμένο πλαίσιο κειμένου',
     'item_type_checkbox' => 'Πλαίσια ελέγχου (μπορείτε να επιλέξετε ένα ή περισσότερα)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Αναπτυσσόμενη λίστα',
     'item_type_select_scored' => 'Αναπτυσσόμενη λίστα με σταθμισμένη βαθμολόγηση.',
     'item_type_upload' => 'Μεταφόρτωση αρχείου',
-
     'reviewer_number' => 'Κριτής :number',
-
     'form_item' => 'στοιχείο φόρμας',
-
     'editor_guidance_understood' => 'Κατανόησα τις οδηγίες για τους επιμελητές. Να μην εμφανιστεί ξανά',
-
     'review_submission_page' => 'Αξιολόγηση υποβολής',
     'reviewer_invitation_page' => 'Πρόσκληση αξιολόγησης',
     'recommend_value' => 'Σύσταση: :recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Presentación creada',
     'submission_updated' => 'Envío actualizado',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Facultades',
     'role_assigned_successfully' => 'Función asignada correctamente',
     'no_roles_selected' => 'Non se seleccionaron roles',
-
     'language' => 'Lingua',
     'switch_language' => 'Cambiar a lingua da interface',
     'current_language' => 'Lingua actual:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Texto fonte',
     'translator' => 'Tradutor',
     'general_track' => 'Sección temática xeral',
-
     'make_a_submission' => 'Facer unha presentación',
     'payment_fee' => 'Tarifa de pagamento',
     'add_on_items' => 'Elementos adicionais',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Tarifas de participación',
     'invoice' => 'Factura',
     'editors' => 'Editores',
-
     'admin' => 'Administrador',
     'conference_manager' => 'Xestor da conferencia',
     'scheduled_conference_editor' => 'Editor da conferencia programada',
     'track_editor' => 'Editor de sección temática',
-
     'recommendation_accept' => 'Aceptar',
     'recommendation_decline' => 'Declinar',
     'revision_required' => 'Revisións necesarias',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Menor',
     'patch' => 'Parche',
     'date_installed' => 'Data de instalación',
-
     'item_name' => 'Nome do elemento',
     'description_and_instructions' => 'Descrición e instrucións',
     'indicates_required_item' => 'Indica un elemento obrigatorio',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'O campo :attribute é obrigatorio cando o tipo de elemento é Caixa de verificación, Botón de opción ou Lista despregable',
     'new_option' => 'Nova opción',
     'payment_fee_form_items' => 'Elementos do formulario da tarifa de pagamento',
-
     'item_type_text' => 'Caixa de texto dunha liña',
     'item_type_textarea' => 'Caixa de texto ampliada',
     'item_type_checkbox' => 'Caixas de verificación (pode escoller unha ou máis)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Lista despregable',
     'item_type_select_scored' => 'Lista despregable con puntuación ponderada.',
     'item_type_upload' => 'Cargar ficheiro',
-
     'reviewer_number' => 'Revisor :number',
-
     'form_item' => 'elemento do formulario',
-
     'editor_guidance_understood' => 'Entendín as indicacións para editores. Non mostrar de novo',
-
     'review_submission_page' => 'Revisar a presentación',
     'reviewer_invitation_page' => 'Invitación para revisar',
     'recommend_value' => 'Recomendar :recommendation',

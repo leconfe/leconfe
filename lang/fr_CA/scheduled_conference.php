@@ -1,5 +1,4 @@
 <?php
-
 return [
     'review_form_item' => [
         'select_options_input_label' => 'Sélectionner des options',
@@ -9,7 +8,7 @@ return [
         'weight_input_helper_full' => 'Saisissez la pondération en pourcentage. Cela détermine la contribution de ce critère au score final.',
         'checkbox_options_input_label' => 'Options de case à cocher',
         'radio_options_input_label' => 'Options de bouton radio',
-        'reviewer_required_input_label' => 'Évaluateurs devant remplir cet élément'
+        'reviewer_required_input_label' => 'Évaluateurs devant remplir cet élément',
     ],
     'label' => 'Libellé',
     'value' => 'Valeur',
@@ -34,7 +33,6 @@ return [
     'welcome_overview_description' => 'La conférence se déroule du :start_date au :end_date.',
     'no_self_assignable_roles_available' => 'Aucun rôle automatiquement attribué n\'est disponible pour cette conférence.',
     'submit_paper' => 'Soumettre une communication',
-
     'unpublished_title' => 'La conférence programmée n\'est pas encore publiée',
     'unpublished_description' => 'Cette page de conférence programmée n\'est pas encore accessible au public. Veuillez revenir plus tard.',
 ];

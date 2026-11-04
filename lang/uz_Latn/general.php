@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Material yaratildi',
     'submission_updated' => 'Material yangilandi',
@@ -24,14 +23,11 @@ return [
     'review_assgined' => ':name tekshiruvchi sifatida tayinlandi',
     'review_complete' => ':name tekshiruvni yakunladi',
     'email_sent' => 'Email `:name` yuborildi',
-
     'pagination_previous' => 'Oldingi',
     'pagination_next' => 'Keyingi',
-
     'failed_credentials' => 'Ushbu ma’lumotlar bizning bazamiz bilan mos kelmaydi',
     'throttle_to_many_login_attempts' => 'Juda ko‘p urinish qilindi. Iltimos, :seconds soniyadan keyin qayta urinib ko‘ring',
     'throttle_please_try_again' => 'Iltimos, :seconds soniyadan keyin qayta urinib ko‘ring',
-
     'view_conference' => 'Konferensiyani ko‘rish',
     'current_event' => 'Joriy Tadbir',
     'login' => 'Kirish',
@@ -63,7 +59,6 @@ return [
     'edit_my_profile' => 'Profilimni tahrirlash',
     'continue_browsing' => 'Ko‘rishda davom etish',
     'no_content_provided' => 'Hech qanday ma’lumot berilmagan.',
-
     'dashboard' => 'Boshqaruv paneli',
     'administration' => 'Boshqaruv',
     'expire_user_session' => 'Foydalanuvchi sessiyasini tugatish',
@@ -74,7 +69,6 @@ return [
     'data_caches_cleared_successfully' => 'Ma’lumotlar kesh muvaffaqiyatli tozalandi',
     'clear_view_caches' => 'Ko‘rish keshini tozalash',
     'view_caches_cleared_successfully' => 'Ko‘rish kesh muvaffaqiyatli tozalandi',
-
     'conference' => 'Konferensiya',
     'open_conference' => 'Konferensiyani ochish',
     'open_scheduled_conference' => 'Rejalashtirilgan Konferensiyani Ochish',
@@ -84,7 +78,6 @@ return [
     'name' => 'Nomi',
     'path' => 'Yo‘l',
     'url_path' => 'Konferensiyaning yo‘li. Bu konferensiyaning URL manzilida ishlatiladi.',
-
     'appearance' => 'Ko‘rinish',
     'theme' => 'Mavzu',
     'appearance_color' => 'Ko‘rinish rangi',
@@ -93,7 +86,6 @@ return [
     'saved' => 'Saqlandi!',
     'failed' => 'Muvaffaqiyatsiz!',
     'data_could_not_saved' => 'Ma’lumot saqlanmadi.',
-
     'setup' => 'Sozlamalar',
     'site_setup' => 'Sayt sozlamalari',
     'website_name' => 'Veb-sayt nomi',
@@ -103,17 +95,13 @@ return [
     'short_description_of_the_website' => 'Veb-sayt haqida qisqa tavsif. Bu qidiruv tizimlariga saytni tushunishga yordam beradi.',
     'about_site' => 'Sayt haqida',
     'page_footer' => 'Sahifaning pastki qismi',
-
     'sidebar' => 'Yon panel',
     'sidebars_manager' => 'Yon panellar boshqaruvi',
     'no_sidebars_found' => 'Hech qanday yon panel topilmadi.',
-
     'navigation_menu' => 'Navigatsiya menyusi',
     'languages' => 'Tillar',
-
     'no_navigation_menu_items_found' => 'Navigatsiya menyusi elementlari topilmadi',
     'no_navigation_menu_found' => 'Navigatsiya menyusi topilmadi',
-
     'add_navigation_menu' => 'Navigatsiya menyusini qo‘shish',
     'edit' => 'Tahrirlash',
     'delete' => 'O‘chirish',
@@ -124,12 +112,9 @@ return [
     'edit_navigation_menu_item' => 'Navigatsiya menyusi elementini tahrirlash',
     'label' => 'Yorliq',
     'type' => 'Turi',
-
     'default_language' => 'Birlamchi til',
-
     'settings' => 'Sozlamalar',
     'website_setting' => 'Veb-sayt sozlamalari',
-
     'plugin' => 'Plagin',
     'enabled' => 'Faollashtirilgan',
     'author' => 'Muallif',
@@ -143,7 +128,6 @@ return [
     'plugin_installed_successfully' => 'Plagin muvaffaqiyatli o‘rnatildi',
     'submit' => 'Yuborish',
     'cancel' => 'Bekor qilish',
-
     'static_page' => 'Statik sahifa',
     'title' => 'Sarlavha',
     'slug' => 'Havola (slug)',
@@ -151,7 +135,6 @@ return [
     'the_complete_page_content' => 'Sahifaning to‘liq mazmuni.',
     'preview' => 'Ko‘rib chiqish',
     'switch_conference' => 'Konferensiyani almashtirish',
-
     'scheduled_conference' => 'Rejalashtirilgan konferensiya',
     'enter_the_title_of_the_serie' => 'Seriya sarlavhasini kiriting',
     'start_date' => 'Boshlanish sanasi',
@@ -161,7 +144,6 @@ return [
     'publish' => 'Nashr qilish',
     'set_as_current' => 'Joriy sifatida belgilash',
     'set_as_draft' => 'Qoralama sifatida saqlash',
-
     'move_to_archive' => 'Arxivga o‘tkazish',
     'move_to_trash' => 'Chiqindiga yuborish',
     'delete_permanently' => 'Butunlay o‘chirish',
@@ -172,7 +154,6 @@ return [
     'upcoming' => 'Bo‘lajak',
     'archived' => 'Arxivlangan',
     'trash' => 'Chiqindi',
-
     'proceeding' => 'Materiallar to‘plami',
     'proceedings' => 'Materiallar to‘plami',
     'identification' => 'Identifikatsiya',
@@ -189,7 +170,6 @@ return [
     'proceeding_data' => 'Nashr ma’lumotlari',
     'articles' => 'Maqolalar',
     'remove' => 'O‘chirish',
-
     'conference_settings' => 'Konferensiya sozlamalari',
     'conference_identity' => 'Konferensiya shaxsiyati',
     'information_about_scheduled_conference' => 'Rejalashtirilgan konferensiya haqida maʼlumot',
@@ -200,7 +180,6 @@ return [
     'conference_summary' => 'Konferensiya sharhi',
     'include_about_your_conference' => 'O‘quvchilar, mualliflar yoki hakamlar uchun qiziqarli bo‘lishi mumkin bo‘lgan konferensiya haqida har qanday maʼlumotni qo‘shing.',
     'about_the_conference' => 'Konferensiya haqida',
-
     'website' => 'Veb-sayt',
     'conference_thumbnail' => 'Konferensiya miniatyurasi',
     'image_representation_of_the_serie_will_uses' => 'Seriyalar ro‘yxatida ishlatiladigan seriyaning rasmli ko‘rinishi.',
@@ -213,7 +192,6 @@ return [
     'enter_custom_time_format' => 'Maxsus vaqt formatini kiriting',
     'time' => 'Vaqt',
     'date_and_time_formats' => 'Sana va vaqt formatlari',
-
     'distribution' => 'Tarqatish',
     'distribution_settings' => 'Tarqatish sozlamalari',
     'allow_digital_object_dois' => 'Ushbu konferensiyada chop etilgan ishlarga DOI (raqamli obyekt identifikatorlari) tayinlashga ruxsat bering',
@@ -230,7 +208,6 @@ return [
     'doi_format' => 'DOI formati',
     'automatically_generate_unique_suffix' => 'Andoza - Avtomatik ravishda sakkiz belgili noyob suffiks yaratadi',
     'not_be_automatically_generate_unique_suffix' => 'Yo‘q - Suffikslar DOI boshqaruv sahifasida qo‘lda kiritilishi kerak',
-
     'registration' => 'Ro‘yxatdan o‘tish',
     'registration_agency' => 'Ro‘yxatga oluvchi tashkilot',
     'registration_select_agency_dois' => 'Iltimos, DOI topshirishda foydalanmoqchi bo‘lgan ro‘yxatga tashkilotini tanlang.',
@@ -246,23 +223,19 @@ return [
     'name_organization_included_with_deposited_meta_data' => 'DOI larni ro‘yxatdan o‘tkazayotgan tashkilot nomi. U metama’lumotlar bilan birga yuboriladi va kim topshirganini aniqlash uchun ishlatiladi.',
     'depositor_email' => 'Topshiruvchining elektron pochtasi',
     'email_address_individual_responsible' => 'Crossref bilan kontentni ro‘yxatdan o‘tkazishga mas’ul shaxsning elektron pochtasi. Bu ma’lumotlar metama’lumotlarga kiritiladi va tasdiq xat yuborishda ishlatiladi.',
-
     'username' => 'Foydalanuvchi nomi',
     'password' => 'Parol',
     'use_crossref_test_api' => 'Crossref test API (sinov muhiti)dan foydalaning, чтобы выполнить DOI depozit',
     'username_crossref' => 'Crossref foydalanuvchi nomi, sizning depozitlaringizni autentifikatsiya qilish uchun ishlatiladi. Agar shaxsiy akkauntdan foydalansangiz, yuqoridagi maslahatga qarang.',
-
     'search_indexing' => 'Qidiruv indeksatsiyasi',
     'meta_tags' => 'Meta teglari',
     'add_meta_tags_conference' => 'Konferensiyangizdagi har bir sahifa bosh qismiga meta teglar qo‘shing. Biroq, ular mosligini tekshirish uchun dasturchi bilan maslahatlashish tavsiya etiladi.',
-
     'role' => 'Rol',
     'role_management' => 'Rollarni boshqarish',
     'copy_permissions_from' => 'Ruxsatlarni nusxalash',
     'advanced_permissions' => 'Kengaytirilgan ruxsatlar',
     'persist_permissions' => 'Ruxsatlarni saqlash',
     'permissions_persisted_successfully' => 'Ruxsatlar muvaffaqiyatli saqlandi.',
-
     'user' => 'Foydalanuvchi',
     'profile_photo' => 'Profil rasmi',
     'disabled_at' => 'O‘chirilgan vaqti',
@@ -280,7 +253,6 @@ return [
     'send_email_to' => 'Quyidagiga xat yuborish',
     'reason_for_disabling_user' => 'Foydalanuvchini o‘chirish sababi',
     'to_disable_permanently_leave_field_empty' => 'Doimiy o‘chirish uchun maydonni bo‘sh qoldiring',
-
     'profile_picture' => 'Profil rasmi',
     'expertise' => 'Mutaxassisligi',
     'select_a_country' => 'Mamlakatni tanlang',
@@ -293,7 +265,6 @@ return [
     'phone_format_international' => 'Xalqaro formatda, masalan: +998901234567',
     'roles' => 'Rollar',
     'hide_users_with_no_roles' => 'Ushbu konferensiyada roli yo‘q foydalanuvchilarni yashirish',
-
     'permission' => 'Ruxsat',
     'context' => 'Kontekst',
     'action' => 'Harakat',
@@ -301,7 +272,6 @@ return [
     'context_must_be_studlycase' => 'Kontekst StudlyCase bo‘lishi kerak',
     'action_must_be_camelCase' => 'Harakat camelCase bo‘lishi kerak',
     'persist_all_permissions_to_storage' => 'Bu barcha ruxsatlarni saqlashga olib keladi.',
-
     'my_submissions' => 'Mening topshiriqlarim',
     'submitted_papers' => 'Yuborilgan maqolalar',
     'accepted_papers' => 'Qabul qilingan maqolalar',
@@ -309,7 +279,6 @@ return [
     'total_number_of_papers_submitted' => 'Yuborilgan maqolalar soni',
     'accepted_paper_in_the_last_30_days' => 'So‘nggi 30 kunda qabul qilingan maqola',
     'new_authors_in_the_last_30_days' => 'So‘nggi 30 kunda yangi mualliflar',
-
     'incomplete' => 'Tugallanmagan',
     'queued' => 'Navbatda',
     'on_payment' => 'To‘lovda',
@@ -320,7 +289,6 @@ return [
     'scheduled' => 'Rejalashtirilgan',
     'declined' => 'Rad etilgan',
     'withdrawn' => 'Bekor qilingan',
-
     'no_editor_assigned' => 'Muharrir biriktirilmagan',
     'reviewed' => 'Ko‘rib chiqilgan',
     'my_queue' => 'Mening navbatim',
@@ -339,7 +307,6 @@ return [
     'submission_checklist' => 'Yuborish ro‘yxati',
     'submission_meets_all_of_requirements' => 'Ha, mening yuborilgan ishim barcha talablarga javob beradi.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'Ha, men ma’lumotlarimning maxfiylik siyosatiga muvofiq yig‘ilishi va saqlanishiga roziman.',
-
     'submission_details' => 'Yuborilgan ish tafsilotlari',
     'provide_details_to_help_us' => 'Iltimos, tizimimizda yuborilgan ishni boshqarish uchun quyidagi ma’lumotlarni taqdim eting.',
     'topic' => 'Mavzu',
@@ -382,7 +349,6 @@ return [
     'nothing_to_download' => 'Yuklab olinadigan hech narsa yo‘q',
     'problem_creating_file_type' => 'Fayl turi yaratishda muammo yuz berdi',
     'file_type_created_successfulyy' => 'Fayl turi muvaffaqiyatli yaratildi',
-
     'create_author_role' => 'Muallif roli yarating',
     'new_contributor' => 'Yangi hissa qo‘shuvchi',
     'add_myself_as_contributor' => 'O‘zimni qo‘shish',
@@ -431,7 +397,6 @@ return [
     'submitted_submission' => 'Siz topshirig‘ingizni yubordingiz, va sizga xabar yuborildi. Menejer uni ko‘rib chiqib, keyin sizga yana xat yuboradi.',
     'submit_submission' => 'Yuborishni tasdiqlash',
     'go_to_submission_page' => '<a href=":url" class="text-primary-500">Yuborilgan ishlar sahifasi</a>ga o‘ting va holatini tekshiring.',
-
     'scheduled_conference_identity' => 'Rejalashtirilgan konferensiya ma’lumotlari',
     'information_about_the_scheduled_conference' => 'Rejalashtirilgan konferensiya haqida ma’lumot',
     'enter_the_title_of_the_scheduled_conference' => 'Konferensiya nomini kiriting',
@@ -449,7 +414,6 @@ return [
     'url_must_be_valid' => 'URL manzili yaroqli bo‘lishi kerak.',
     'editorial_team' => 'Tahririyat jamoasi',
     'about_the_scheduled_conference' => 'Rejalashtirilgan konferensiya haqida',
-
     'masthead' => 'Bosh sahifa sarlavhasi',
     'contact' => 'Aloqa',
     'scheduled_conference_setting' => 'Konferensiya sozlamalari',
@@ -476,7 +440,6 @@ return [
     'privacy_statement' => 'Maxfiylik bayonoti',
     'create_sponsorship_level' => 'Homiylik darajasini yaratish',
     'add_sponsorship_level' => 'Homiylik darajasini qo‘shish',
-
     'registrations' => 'Ro‘yxatdan o‘tishlar',
     'participant_quota' => 'Ishtirokchilar limiti',
     'registrations_settings' => 'Ro‘yxatdan o‘tish sozlamalari',
@@ -504,7 +467,6 @@ return [
     'create_a_type_to_get_started' => 'Ishni boshlash uchun toifa yarating.',
     'select_type_opened_date' => 'Toifa ochilish sanasini tanlang..',
     'select_type_closed_date' => 'Toifa yopilish sanasini tanlang..',
-
     'payments' => 'To‘lovlar',
     'payment' => 'To‘lov',
     'payment_declined' => 'To‘lov rad etildi',
@@ -520,7 +482,6 @@ return [
     'manual_payment_list' => 'Qo‘lda to‘lovlar ro‘yxati',
     'payment_methods' => 'To‘lov usullari',
     'payment_policy' => 'To‘lov siyosati',
-
     'workflow' => 'Ish jarayoni',
     'components' => 'Komponentlar',
     'author_guidance' => 'Mualliflar uchun yo‘riqnoma',
@@ -577,7 +538,6 @@ return [
     'anonymous_author' => 'Nomsiz tahlilchi/Nomsiz muallif',
     'anonymous_disclosed_author' => 'Nomsiz tahlilchi/Ochilgan muallif',
     'open' => 'Ochiq',
-
     'timeline' => 'Xronologiya',
     'key' => 'Kalit',
     'body' => 'Matn',
@@ -617,7 +577,6 @@ return [
     'full_name' => 'To‘liq ism',
     'committee_roles_table' => 'Qo‘mita rollari jadvali',
     'new_committee_role' => 'Yangi qo‘mita roli',
-
     'subtitle' => 'Tag sarlavha',
     'speakers' => 'Maʼruzachilar',
     'speaker' => 'Maʼruzachi',
@@ -645,7 +604,6 @@ return [
     'select_registration_paid_date' => 'Ro‘yxatdan o‘tgan to‘lov sanasini tanlang..',
     'paid' => 'To‘langan',
     'unpaid' => 'To‘lanmagan',
-
     'payment_has_been_made' => ':variable uchun to‘lov amalga oshirildi.',
     'problem_with_configured_payment_method' => "<p>Siz tanlagan to‘lov usuli bilan muammo bor. Iltimos, administrator bilan bog‘laning. <br>To‘lov usuli: :variable </p>'",
     'payment_success' => 'To‘lov muvaffaqiyatli amalga oshirildi',
@@ -750,7 +708,6 @@ return [
     'no_references' => 'Hech qanday manba yo‘q',
     'submission_wizard' => 'Taqdim etish ustasi',
     'submission' => 'Taqdim etish',
-
     'failed_to_save' => 'Saqlab bo‘lmadi.',
     'enable_email_notification' => 'Email xabarnomasini yoqish',
     'reviewing_interests' => 'Ko‘rib chiqishdagi qiziqishlar',
@@ -762,7 +719,6 @@ return [
     'abstract_declined' => 'Annotatsiya rad etildi',
     'new_discussion_topic_created' => 'Yangi muhokama mavzusi yaratildi',
     'cannot_delete_role_commites' => ':name ni o‘chirish mumkin emas, chunki bu rolga bog‘langan :roleType mavjud.',
-
     'topic_name' => 'Mavzu nomi',
     'participant' => 'Ishtirokchi',
     'participants' => 'Ishtirokchilar',
@@ -782,7 +738,6 @@ return [
     'topic_created_successfully' => 'Mavzu muvaffaqiyatli yaratildi',
     'topic_createtion_failed' => 'Mavzuni yaratishda xatolik yuz berdi',
     'failed_to_send_notification_to_participants' => 'Ishtirokchilarga bildirishnoma yuborib bo‘lmadi.',
-
     'attachments' => 'Ilovalar',
     'papers' => 'Maqolalar',
     'after_uploading_your_paper_system_will_send_notification' => 'Maqolangiz yuklangach, tizim muharrirga xabar yuboradi.',
@@ -822,7 +777,6 @@ return [
     'view_current_event' => 'Joriy tadbirni ko‘rish',
     'view_event' => 'Tadbirni ko‘rish',
     'no_conferences_were_found' => 'Hech qanday konferensiyalar topilmadi',
-
     'session_name' => 'Sessiya nomi',
     'detail_that_visible_to_all_user' => 'Barcha foydalanuvchilarga ko‘rinadigan tafsilot',
     'detail_that_visible_only_to_participant' => 'Faqat ishtirokchilarga ko‘rinadigan tafsilot',
@@ -850,7 +804,6 @@ return [
     'select_valid_timeline' => 'Yaroqli vaqt jadvalini tanlang.',
     'input_participant_attendance_time' => 'Ishtirokchining kelish vaqtini kiriting.',
     'mark_out_day' => 'Ketganini belgilash (kun)',
-
     'attendance_required' => 'Davomad talab qilinmaydi.',
     'attendance_required_per_day_attendance' => 'Davomad talab qilinmaydi, chunki har kunlik davomad nazarda tutilgan.',
     'attendance_status' => 'Davomad holati',
@@ -885,7 +838,6 @@ return [
     'citation_contributor_translator_helper' => 'Tarjimon sifatida belgilanadigan rollarni tanlang',
     'citation_contributor_authors_helper' => 'Muallif sifatida belgilanadigan rollarni tanlang',
     'citation_contributors_description' => 'Ayrim iqtibos uslublarida mualliflar rollariga qarab farqlanishi kerak. Iltimos, to‘g‘ri rollarni belgilang.',
-
     'unpublished' => 'Nashr qilinmagan',
     'date_published' => 'Nashr qilingan sana',
     'custom_copyright_holder' => 'Maxsus mualliflik huquqi egasi',
@@ -957,7 +909,6 @@ return [
     'consider_registration_process' => 'Taqdimotingiz uchun rahmat. Iltimos, <a class="text-primary-500 hover:underline" href=":route">ro‘yxatdan o‘tish</a> jarayonini yakunlab, to‘lovni bajaring. Muallif sifatida ro‘yxatdan o‘tganingizga ishonch hosil qiling.',
     'we_apologize_registration_currenty_closed' => 'Uzr, hozirda ro‘yxatdan o‘tish yopilgan.',
     'have_questin_contact_our_technical_support' => 'Savolingiz bormi? <strong>Texnik yordam xizmati</strong> bilan bog‘laning.',
-
     'are_you_sure_registration' => '<strong>:type</strong> sifatida ro‘yxatdan o‘tmoqchimisiz?',
     'heres_your_registration_details' => 'Mana ro‘yxatdan o‘tish tafsilotlaringiz',
     'author_registration' => 'Muallif sifatida ro‘yxatdan o‘tish',
@@ -976,7 +927,6 @@ return [
     'total_pending_registration' => 'Kutilayotgan ro‘yxatga olishlar soni',
     'finished_registrations' => 'Yakunlangan ro‘yxatlar',
     'finished_registration_30_days' => 'So‘nggi 30 kun ichida yakunlangan ro‘yxatlar',
-
     'you_have_to_register_to_complete_submission_payment' => 'Siz quyidagi ro‘yxatdan o‘tish turlaridan birini tanlab to‘lovni yakunlashingiz kerak.',
     'forgot_password_question' => 'Parolni unutdingizmi?',
     'reset_password' => 'Parolni tiklash',
@@ -989,11 +939,9 @@ return [
     'reset_password_mail_sent' => 'Elektron pochtangizga tasdiqlovchi xat yuborildi. Parolni tiklash uchun undagi ko‘rsatmalarga amal qiling.',
     'enter_password_to_update' => 'Kirish parolini yangilash uchun yangi parolni kiriting.',
     'reset_password_update_success' => 'Parol muvaffaqiyatli yangilandi. Iltimos, yangi parol bilan tizimga kiring.',
-
     'apply' => 'Qo‘llash',
     'search' => 'Qidirish',
     'filter' => 'Filtr',
-
     'scope' => 'Qamrov',
     'coordinator' => 'Koordinator',
     'over' => 'Yuqorida',
@@ -1003,12 +951,10 @@ return [
     'conference_scope_description' => 'Konferensiya doirasi',
     'clear' => 'Tozalash',
     'coordinator_setting_description' => 'Konferensiyani tashkil etish va boshqarish uchun javobgar shaxs yoki jamoa.',
-
     'option_are_empty' => 'Variantlar mavjud emas',
     'reset' => 'Tiklash',
     'reset_all' => 'Hammasini tiklash',
     'incoming' => 'Kiruvchi',
-
     'conference_list' => 'Konferensiyalar roʻyxati',
     'paper_published_on_external' => 'Maqola tashqi saytga joylangan',
     'paper_external_url' => 'Tashqi maqola havolasi',
@@ -1069,7 +1015,6 @@ return [
     'no_roles' => 'Rol mavjud emas',
     'registration_required_fields' => 'Roʻyxatdan oʻtish uchun majburiy maydonlar',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Bu rolni o‘chirib bo‘lmaydi, chunki u hali ham foydalanuvchilarga biriktirilgan.',
-
     'categories' => 'Kategoriyalar',
     'category' => 'Kategoriya',
     'new_category' => 'Yangi kategoriya',
@@ -1079,10 +1024,8 @@ return [
     'scheduled_conference_faculties_hint' => 'Bu rejalashtirilgan konferensiyalarni fakultet bo‘yicha filtrlash va guruhlash uchun ishlatiladi.',
     'faculty' => 'Fakultet',
     'faculties' => 'Fakultetlar',
-
     'role_assigned_successfully' => 'Rol muvaffaqiyatli tayinlandi',
     'no_roles_selected' => 'Hech bir rol seçilmedi',
-
     'submission_review_assigned' => '":name" ":submissionName (:submissionId)" taqdimotini ko\'rib chiqish uchun tayinlangan.',
     'submission_review_assign_accepted' => '":name" ":submissionName (:submissionId)" taqdimotini ko\'rib chiqishni qabul qildi.',
     'submission_review_assign_declined' => '":name" ":submissionName (:submissionId)" taqdimotini ko\'rib chiqishdan bosh tortdi.',
@@ -1146,7 +1089,6 @@ return [
     'no_user_invitations' => 'Hozircha taklifnomalar yoʻq',
     'no_user_invitations_description' => 'Konferensiya yoki rejalashtirilgan konferensiya uchun rollarni tayinlash maqsadida taklifnoma yarating.',
     'failed_to_send' => 'Yuborib boʻlmadi',
-
     'language' => 'Til',
     'switch_language' => 'Interfeys tilini o‘zgartirish',
     'current_language' => 'Joriy til:',
@@ -1239,7 +1181,6 @@ return [
     'source_text' => 'Manba matn',
     'translator' => 'Tarjimon',
     'general_track' => 'Umumiy yo‘nalish',
-
     'make_a_submission' => 'Material taqdim etish',
     'payment_fee' => 'To‘lov summasi',
     'add_on_items' => 'Qo‘shimcha elementlar',
@@ -1271,12 +1212,10 @@ return [
     'participant_fees' => 'Ishtirokchi to‘lovlari',
     'invoice' => 'Hisob-faktura',
     'editors' => 'Muharrirlar',
-
     'admin' => 'Administrator',
     'conference_manager' => 'Konferensiya menejeri',
     'scheduled_conference_editor' => 'Rejalashtirilgan konferensiya muharriri',
     'track_editor' => 'Yo‘nalish muharriri',
-
     'recommendation_accept' => 'Qabul qilish',
     'recommendation_decline' => 'Rad etish',
     'revision_required' => 'Qayta ishlash talab etiladi',
@@ -1311,7 +1250,6 @@ return [
     'minor' => 'Kichik',
     'patch' => 'Tuzatish',
     'date_installed' => 'O‘rnatilgan sana',
-
     'item_name' => 'Element nomi',
     'description_and_instructions' => 'Tavsif va ko‘rsatmalar',
     'indicates_required_item' => 'Majburiy elementni bildiradi',
@@ -1320,7 +1258,6 @@ return [
     'response_options_required' => 'Element turi Belgilash katakchasi, Radio tugma yoki Ochiladigan ro‘yxat bo‘lganda :attribute maydoni majburiy',
     'new_option' => 'Yangi variant',
     'payment_fee_form_items' => 'To‘lov summasi shakli elementlari',
-
     'item_type_text' => 'Bir qatorli matn maydoni',
     'item_type_textarea' => 'Kengaytirilgan matn maydoni',
     'item_type_checkbox' => 'Belgilash katakchalari (bir yoki bir nechtasini tanlash mumkin)',
@@ -1328,13 +1265,9 @@ return [
     'item_type_select' => 'Ochiladigan ro‘yxat',
     'item_type_select_scored' => 'Vaznli baholashli ochiladigan ro‘yxat.',
     'item_type_upload' => 'Fayl yuklash',
-
     'reviewer_number' => 'Retsenzent :number',
-
     'form_item' => 'shakl elementi',
-
     'editor_guidance_understood' => 'Muharrir ko‘rsatmalari tushunildi. Buni boshqa ko‘rsatmaslik',
-
     'review_submission_page' => 'Taqdim etilgan materialni ko‘rib chiqish',
     'reviewer_invitation_page' => 'Retsenzentlikka taklif',
     'recommend_value' => 'Tavsiya: :recommendation',

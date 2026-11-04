@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'S\'ha d\'acceptar el camp :attribute.',
     'accepted_if' => 'El camp :attribute s\'ha d\'acceptar quan :other és :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'missatge personalitzat',
         ],
     ],
-    'attributes' => [],
 ];

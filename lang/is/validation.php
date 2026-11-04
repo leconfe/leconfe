@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Samþykkja verður reitinn :attribute.',
     'accepted_if' => 'Það verður að samþykkja :attribute reitinn þegar :other er :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'sérsniðin skilaboð',
         ],
     ],
-    'attributes' => [],
 ];

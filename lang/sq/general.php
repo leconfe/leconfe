@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Dorëzimi u krijua',
     'submission_updated' => 'Dorëzimi u përditësua',
@@ -56,7 +55,6 @@ return [
     'edit_my_profile' => 'Ndrysho Profilin Tim',
     'continue_browsing' => 'Vazhdo Shfletimin',
     'no_content_provided' => 'Asnjë përmbajtje nuk është ofruar.',
-
     'dashboard' => 'Paneli',
     'administration' => 'Administrimi',
     'expire_user_session' => 'Përfundo Sesionin e Përdoruesit',
@@ -67,7 +65,6 @@ return [
     'data_caches_cleared_successfully' => 'Cache-t e të dhënave u pastruan me sukses',
     'clear_view_caches' => 'Pastro Cache-t e Shikimit',
     'view_caches_cleared_successfully' => 'Cache-t e shikimit u pastruan me sukses',
-
     'conference' => 'Konferenca',
     'open_conference' => 'Hap Konferencën',
     'open_scheduled_conference' => 'Hap Konferencën e Planifikuar',
@@ -77,7 +74,6 @@ return [
     'name' => 'Emri',
     'path' => 'Shtegu',
     'url_path' => 'Shtegu i konferencës. Ky do të përdoret në URL-në e konferencës.',
-
     'appearance' => 'Pamja',
     'theme' => 'Tema',
     'appearance_color' => 'Ngjyra e Pamjes',
@@ -86,7 +82,6 @@ return [
     'saved' => 'U Ruajt!',
     'failed' => 'Dështoi!',
     'data_could_not_saved' => 'Të dhënat nuk mund të ruheshin.',
-
     'setup' => 'Konfigurimi',
     'site_setup' => 'Konfigurimi i Faqes',
     'website_name' => 'Emri i Faqes',
@@ -96,17 +91,13 @@ return [
     'short_description_of_the_website' => 'Një përshkrim i shkurtër i faqes. Ky përshkrim do të ndihmojë motorët e kërkimit të kuptojnë faqen.',
     'about_site' => 'Rreth Faqes',
     'page_footer' => 'Këmbë e Faqes',
-
     'sidebars' => 'Panelet anësore',
     'sidebars_manager' => 'Menaxheri i Paneleve Anësore',
     'no_sidebars_found' => 'Nuk u gjetën panellat anësore.',
-
     'navigation_menu' => 'Meniu i Navigimit',
     'languages' => 'Gjuhet',
-
     'no_navigation_menu_items_found' => 'Nuk u gjetën artikuj të Meniut të Navigimit',
     'no_navigation_menu_found' => 'Nuk u gjet Meniu i Navigimit',
-
     'add_navigation_menu' => 'Shto Meniu Navigimi',
     'edit' => 'Redakto',
     'delete' => 'Fshi',
@@ -117,12 +108,9 @@ return [
     'edit_navigation_menu_item' => 'Redakto Artikul të Meniut të Navigimit',
     'label' => 'Etiketë',
     'type' => 'Lloji',
-
     'default_language' => 'Gjuha e Paracaktuar',
-
     'settings' => 'Cilësimet',
     'website_setting' => 'Cilësimet e Faqes',
-
     'plugin' => 'Plugin',
     'enabled' => 'Aktivizuar',
     'author' => 'Autori',
@@ -134,7 +122,6 @@ return [
     'install_success' => 'Instalimi i suksesshëm',
     'plugin_installed_successfully' => 'Plugin i instaluar me sukses',
     'submit' => 'Dërgo',
-
     'static_page' => 'Faqe Statike',
     'title' => 'Titulli',
     'slug' => 'Identifikuesi i URL-së',
@@ -142,7 +129,6 @@ return [
     'the_complete_page_content' => 'Përmbajtja e plotë e faqes.',
     'preview' => 'Paragjykim',
     'switch_conference' => 'Ndrysho Konferencën',
-
     'scheduled_conference' => 'Konferenca e Planifikuar',
     'enter_the_title_of_the_serie' => 'Fut titullin e serisë',
     'start_date' => 'Data e Fillimit',
@@ -162,7 +148,6 @@ return [
     'upcoming' => 'Të Ardhshëm',
     'archived' => 'Arkivuar',
     'trash' => 'Plehra',
-
     'proceeding' => 'Përmbledhja e punimeve',
     'proceedings' => 'Procedurat',
     'identification' => 'Identifikimi',
@@ -181,7 +166,6 @@ return [
     'proceeding_data' => 'Të Dhënat e Proceedings',
     'articles' => 'Artikuj',
     'remove' => 'Hiq',
-
     'conference_settings' => 'Cilësimet e Konferencës',
     'conference_identity' => 'Identiteti i Konferencës',
     'information_about_scheduled_conference' => 'Informacion rreth konferencës së planifikuar',
@@ -192,7 +176,6 @@ return [
     'conference_summary' => 'Përmbledhja e Konferencës',
     'include_about_your_conference' => 'Përfshini çdo informacion rreth konferencës tuaj që mund të jetë i interesuar për lexuesit, autorët ose rishikuesit.',
     'about_the_conference' => 'Rreth Konferencës',
-
     'website' => 'Faqe',
     'conference_thumbnail' => 'Thumbnail i Konferencës',
     'image_representation_of_the_serie_will_uses' => 'Një përfaqësim vizual i serisë që do të përdoret në listën e serive.',
@@ -205,7 +188,6 @@ return [
     'enter_custom_time_format' => 'Fut një format të personalizuar për kohën',
     'time' => 'Koha',
     'date_and_time_formats' => 'Formatet e Datës dhe Kohës',
-
     'distribution' => 'Distribuimi',
     'distribution_settings' => 'Cilësimet e Distribuimit',
     'allow_digital_object_dois' => 'Lejo që Identifikuesit e Objektit Digjital (DOIs) të caktohen për punët e publikuara në këtë konferencë',
@@ -222,7 +204,6 @@ return [
     'doi_format' => 'Formati DOI',
     'automatically_generate_unique_suffix' => 'Parazgjedhja - Gjeneron automatikisht një sufiks unik me tetë karaktere',
     'not_be_automatically_generate_unique_suffix' => 'Asnjë - Sufikset duhet të futen manualisht në faqen e menaxhimit të DOI dhe nuk do të gjenerohen automatikisht',
-
     'registration' => 'Regjistrimi',
     'registration_agency' => 'Agjencia e Regjistrimit',
     'registration_select_agency_dois' => 'Ju lutem zgjidhni agjencinë e regjistrimit që dëshironi të përdorni kur depozitoni DOIs.',
@@ -251,18 +232,15 @@ return [
     'password' => 'Fjalëkalimi',
     'use_crossref_test_api' => 'Përdorni API-në e testimit të Crossref (mjedisi i testimit) për depozitimin e DOI.',
     'username_crossref' => 'Përdoruesi Crossref që do të përdoret për të autentifikuar depozitimet tuaja. Nëse po përdorni një llogari personale, ju lutem shikoni këshillat më lart.',
-
     'search_indexing' => 'Indeksimi i Kërkimeve',
     'meta_tags' => 'Etiketat Meta',
     'add_meta_tags_conference' => 'Shtoni etiketat meta, në kokën e çdo faqeje në konferencën tuaj. Para se të shtoni ndonjë etiketë, konsultohuni me një këshilltar teknik për të siguruar që ato janë të përshtatshme për faqen tuaj dhe nuk do të shkaktojnë probleme.',
-
     'role' => 'Roli',
     'role_management' => 'Menaxhimi i Rolave',
     'copy_permissions_from' => 'Kopjoni lejet nga',
     'advanced_permissions' => 'Lejet e Avancuara',
     'persist_permissions' => 'Ruani Lejet',
     'permissions_persisted_successfully' => 'Lejet janë ruajtur me sukses.',
-
     'user' => 'Përdoruesi',
     'profile_photo' => 'Foto e Profilit',
     'disabled_at' => 'Ndaluar në',
@@ -292,7 +270,6 @@ return [
     'phone_format_international' => 'Format ndërkombëtar, p.sh. +6281234567890',
     'roles' => 'Rolat',
     'hide_users_with_no_roles' => 'Fshi përdoruesit pa role në këtë konferencë të caktuar.',
-
     'permission' => 'Leje',
     'context' => 'Kontekst',
     'action' => 'Veprim',
@@ -300,7 +277,6 @@ return [
     'context_must_be_studlycase' => 'Konteksti duhet të jetë në StudlyCase',
     'action_must_be_camelCase' => 'Veprimi duhet të jetë në camelCase',
     'persist_all_permissions_to_storage' => 'Kjo do të ruajë të gjitha lejet në ruajtje.',
-
     'my_submissions' => 'Dërgesat E Mia',
     'submitted_papers' => 'Dokumentet e Dorëzuara',
     'accepted_papers' => 'Dokumentet e Pranuara',
@@ -308,7 +284,6 @@ return [
     'total_number_of_papers_submitted' => 'Numri total i dokumenteve të dorëzuara',
     'accepted_paper_in_the_last_30_days' => 'Dokumenti i pranuar në 30 ditët e fundit',
     'new_authors_in_the_last_30_days' => 'Autori të rinjtë në 30 ditët e fundit',
-
     'incomplete' => 'Të Paplota',
     'queued' => 'Në Radhë',
     'on_payment' => 'Në pagesë',
@@ -319,7 +294,6 @@ return [
     'scheduled' => 'I Planifikuar',
     'declined' => 'Refuzuar',
     'withdrawn' => 'Të Tërhequra',
-
     'no_editor_assigned' => 'Asnjë Redaktor i Caktuar',
     'reviewed' => 'Rishikuar',
     'my_queue' => 'Rradha Ime',
@@ -330,7 +304,6 @@ return [
     'create' => 'Krijo',
     'pending_withdrawal' => 'Në Proces Tërheqjeje',
     'submission_is_not_open' => 'Dërgesa nuk është e hapur',
-
     'before_you_begin' => 'Para se të Filloni',
     'before_you_begin_current_scheduled' => '<p>Faleminderit për dërgesën tuaj në :title. Do të kërkohet të ngarkoni skedarë, të identifikoni bashkëautorët dhe të jepni informacion si titulli dhe abstrakti.</p>
     <p>Ju lutemi lexoni udhëzimet tona për dërgesën nëse nuk e keni bërë tashmë. Kur plotësoni format, ofroni sa më shumë detaje të mundshme për të ndihmuar redaktorët tanë në vlerësimin e punës suaj.</p>
@@ -343,13 +316,11 @@ return [
                             <li>Teksti është me një hapësirë të vetme; përdor një font 12 pikë; përdor kursiv në vend të nënvizimit (përveç adresave URL); dhe të gjitha ilustret, figurat dhe tabelat janë vendosur brenda tekstin në pikat përkatëse, në vend që në fund.</li>
                             <li>Teksti i përmbahet kërkesave stilistike dhe bibliografike të përshkruara në Udhëzimet për Autorët.</li>
                         </ul>',
-
     'track' => 'Trajektori',
     'privacy_consent' => 'Konsenti për Privatësinë',
     'submission_checklist' => 'Lista e Kontrollit të Dërgesës',
     'submission_meets_all_of_requirements' => 'Po, dërgesa ime i plotëson të gjitha këto kërkesa.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'Po, pranoj që të dhënat e mia të mblidhen dhe të ruhet sipas deklaratës për privatësinë.',
-
     'submission_details' => 'Detajet e Dërgesës',
     'provide_details_to_help_us' => 'Ju lutemi ofroni detajet e mëposhtme për të ndihmuar në menaxhimin e dërgesës tuaj në sistemin tonë.',
     'topic' => 'Temë',
@@ -391,14 +362,12 @@ return [
     'nothing_to_download' => 'Nuk ka asgjë për të shkarkuar',
     'problem_creating_file_type' => 'Kishte një problem në krijimin e llojit të skedarit',
     'file_type_created_successfulyy' => 'Lloji i skedarit u krijua me sukses',
-
     'create_author_role' => 'Krijo Rol Autor',
     'new_contributor' => 'Kontribues i Ri',
     'add_myself_as_contributor' => 'Shto veten',
     'add_contributor' => 'Shto Kontribues',
     'contributor_added' => 'Kontribuesi u shtua',
     'abstract_files' => 'Skedarët e Abstraktit',
-
     'submission_complete' => 'Dorëzimi i Plotë',
     'submission_payment' => 'Pagesa e Dorëzimit',
     'enable_submission_payment' => 'Aktivizo pagesën e dorëzimit',
@@ -456,7 +425,6 @@ return [
     'url_must_be_valid' => 'URL-ja duhet të jetë një URL e vlefshme.',
     'editorial_team' => 'Ekipi Redaktorial',
     'about_the_scheduled_conference' => 'Rreth Konferencës të Programuar',
-
     'masthead' => 'Stafi redaktues',
     'contact' => 'Kontakt',
     'scheduled_conference_setting' => 'Cilësimi i Konferencës të Programuar',
@@ -464,7 +432,6 @@ return [
     'principal_contact_description' => 'Futni detajet e kontaktit, zakonisht për kryetarin e konferencës, komitetin organizues ose ekipin mbështetës administrativ, të cilat mund të shfaqen në faqen tuaj të konferencës të aksesueshme publikisht.',
     'technical_support_contact' => 'Kontakt për Mbështetje Teknike',
     'a_contact_person_who_can_assist_editors' => 'Një person kontakti që mund të ndihmojë redaktorët, autorët dhe rishikuesit me ndonjë problem që kanë në dorëzimin, redaktimin, rishikimin ose botimin e materialeve.',
-
     'scheduled_conference_thumbnail' => 'Thumbnail i Konferencës të Programuar',
     'supports' => 'Pajton',
     'sponsorship_levels' => 'Nivelet e Sponsorizimit',
@@ -484,7 +451,6 @@ return [
     'privacy_statement' => 'Deklarata e Privatësisë',
     'create_sponsorship_level' => 'Krijo Niveli Sponsorizimi',
     'add_sponsorship_level' => 'Shto Niveli Sponsorizimi',
-
     'registrations' => 'Regjistrimet',
     'participant_quota' => 'Kuota e Pjesëmarrësve',
     'registrations_settings' => 'Cilësimet e Regjistrimeve',
@@ -527,7 +493,6 @@ return [
     'manual_payment_list' => 'Lista e Pagesave Manuale',
     'payment_methods' => 'Metodat e Pagesës',
     'payment_policy' => 'Politika e Pagesës',
-
     'workflow' => 'Përshkrimi i Punës',
     'components' => 'Pjesët',
     'author_guidance' => 'Udhëzime për Autorët',
@@ -542,16 +507,13 @@ return [
     'editor_guidelines' => 'Udhëzimet për Redaktorët',
     'brief_explanation' => 'Jepni një shpjegim të shkurtër të procesit të dorëzimit që autori të di çfarë të presë.',
     'guidance_authors_might_need_to_know' => 'Jepni udhëzime për gjithçka që autorët mund të kenë nevojë të dinë, si standardet bibliografike dhe të formatimit, së bashku me shembuj të formateve të zakonshme të citimeve që duhet të përdoren. Ju gjithashtu mund të dëshironi të ofroni detaje në lidhje me formatin e preferuar dhe temën e dorëzimeve.',
-
     'authors' => 'Autorët',
     'new_author_role' => 'Roli i Ri i Autorit',
     'cannot_delete_role' => 'Nuk mund të fshini :variable, ka autorë që janë ende të lidhur me këtë rol',
-
     'new_track' => 'Pista e Re',
     'track_title' => 'Titulli i Pistes',
     'abbreviation' => 'Shkurtesa',
     'track_policy' => 'Politika e Pistes',
-
     'review_mode' => 'Moda e Rishikimit',
     'days' => 'Ditët',
     'review_guidelines' => 'Udhëzimet për Rishikimin',
@@ -584,11 +546,9 @@ return [
     'default_response_deadline' => 'Afati i Përgjigjes së Parë',
     'default_completing_deadline' => 'Afati për përfundimin e rishikimeve',
     'deadline_reviewers_invitations' => 'Afati për rishikuesit për të përgjigjur ndaj ftesave',
-
     'anonymous_author' => 'Rishikues/Autor i Anonim',
     'anonymous_disclosed_author' => 'Rishikues i Anonim/Autor i Zbuluar',
     'open' => 'E Hapur',
-
     'timeline' => 'Kohëzgjatja',
     'key' => 'Çelësi',
     'body' => 'Trupi',
@@ -610,18 +570,15 @@ return [
     'email_template_restored_to_default_data' => 'Modeli i postës u rikthye në të dhënat e fabrikës.',
     'add_new_timeline' => 'Shto një Kohëzgjatje të Re',
     'type_integrates_with_workflow_process' => 'Lloji që integrohet me procesin e përshkrimit të punës.',
-
     'payment_instruction' => 'Udhëzimi i Pagesës',
     'payment_proof' => 'Prova e Pagesës',
     'hidden' => 'E Fshehur',
-
     'announcement' => 'Njoftim',
     'summary' => 'Përmbledhje',
     'expires_at' => 'Skadon në',
     'view' => 'Shiko',
     'send_email_to_subscribed_users' => 'Dërgo email për këtë te përdoruesit e regjistruar',
     'complete_announcement_content' => 'Përmbajtja e plotë e njoftimit.',
-
     'committee' => 'Komiteti',
     'committees' => 'Komitetet',
     'committee_positions' => 'Pozitat në Komitet',
@@ -631,7 +588,6 @@ return [
     'full_name' => 'Emri i Plotë',
     'committee_roles_table' => 'Tabela e Roli i Komitetit',
     'new_committee_role' => 'Roli i Ri i Komitetit',
-
     'subtitle' => 'Nëntitulli',
     'speakers' => 'Fjalimtarët',
     'speaker' => 'Fjalimtari',
@@ -775,7 +731,6 @@ return [
     'abstract_declined' => 'Abstrakti është Refuzuar',
     'new_discussion_topic_created' => 'Temë e Re Diskutimi e Krijuar',
     'cannot_delete_role_commites' => 'Nuk mund të fshini :name, ka :roleType që janë ende të lidhur me këtë rol',
-
     'topic_name' => 'Emri i Temës',
     'participant' => 'pjesëmarrës',
     'participants' => 'Pjesëmarrësit',
@@ -795,7 +750,6 @@ return [
     'topic_created_successfully' => 'Tema është krijuar me sukses',
     'topic_createtion_failed' => 'Krijimi i Temës Dështoi',
     'failed_to_send_notification_to_participants' => 'Dështoi të dërgojë njoftim te pjesëmarrësit.',
-
     'attachments' => 'Bashkëngjitjet',
     'papers' => 'Papunë',
     'after_uploading_your_paper_system_will_send_notification' => 'Pas ngarkimit të punës tuaj, sistemi do të dërgojë një njoftim te redaktori.',
@@ -825,12 +779,10 @@ return [
     'revisions' => 'Rishikimet',
     'upload_your_reviews_files_here' => 'Ngarko filet e rishikimeve këtu.',
     'after_uploading_files_system_will_send_notification_to_editor' => 'Pas ngarkimit të fileve, sistemi do të dërgojë një njoftim te redaktori.',
-
     'presentation_files' => 'File të Prezantimeve',
     'payment_processing' => 'Përpunimi i Pagesës',
     'payment_waived' => 'Pagesa e Anuluar',
     'causer_name' => 'Nga',
-
     'switch_scheduled_conference' => 'Ndrysho Konferencën e Planifikuar',
     'back_to_conference' => 'Kthehu në Konferencë',
     'select_country' => 'Zgjidhni vendin',
@@ -929,7 +881,6 @@ return [
     'submission_license_url_helper' => 'Licenca do të vendoset automatikisht në <a class="text-primary-700 underline" href=":licenseUrl" target="_blank">:licenseName</a> kur kjo të publikohet.',
     'override' => 'Anashkalo',
     'copyright_statement' => 'Të drejtat e autorit (c) :copyrightYear :copyrightHolder',
-
     'waiting_for_payment' => 'Po presim pagesën',
     'this_your_pacticipant_retistration_details' => 'Këto janë detajet e regjistrimit tuaj si pjesëmarrës.',
     'payment_date' => 'Data e Pagesës',
@@ -968,7 +919,6 @@ return [
     'consider_registration_process' => 'Faleminderit për dorëzimin tuaj. Ju lutemi shqyrtoni <a class="text-primary-500 hover:underline" href=":route">procesin e regjistrimit</a> dhe përfundoni pagesën për të vazhduar me procesin e dorëzimit. Sigurohuni që të regjistroheni në nivelin e autorit për të vazhduar me procesin e dorëzimit.',
     'we_apologize_registration_currenty_closed' => 'Na vjen keq, por regjistrimi është aktualisht i mbyllur.',
     'have_questin_contact_our_technical_support' => 'Keni ndonjë pyetje? Kontaktoni <strong>Mbështetje Teknike</strong> tonë.',
-
     'are_you_sure_registration' => 'Jeni i sigurt që dëshironi të regjistroheni si <strong>:type</strong>?',
     'heres_your_registration_details' => 'Këtu janë detajet e regjistrimit tuaj',
     'author_registration' => 'Regjistrimi i autorit',
@@ -981,20 +931,16 @@ return [
     'registration_process_guide' => 'Ju mund të kryeni procesin e regjistrimit duke klikuar në llojin e regjistrimit që ju preferoni më poshtë.',
     'submission_not_started_registration' => 'Kjo dorëzim nuk ka filluar ende procesin e regjistrimit.',
     'we_apologize_registration_currenty_closed_agenda' => "Kërkojmë ndjesë, por regjistrimi është aktualisht i mbyllur. Shikoni <a class='text-primary-500 hover:underline' href=':href'>agjendën</a> mund t'ju ndihmojë të dini kur hapet regjistrimi.",
-
     'pending_submission_payment' => 'Pagesa e dorëzimit në pritje',
     'total_pending_submission_payment' => 'Numri total i pagesave të dorëzimit në pritje',
     'pending_registrations' => 'Regjistrimet në pritje',
     'total_pending_registration' => 'Numri total i regjistrimeve në pritje',
     'finished_registrations' => 'Regjistrimet e përfunduara',
     'finished_registration_30_days' => 'Regjistrimet e përfunduara në 30 ditët e fundit',
-
     'you_have_to_register_to_complete_submission_payment' => 'Duhet të regjistroheni në një nga këto lloje regjistrimi më poshtë për të përfunduar pagesën e dorëzimit.',
-
     'apply' => 'Apliko',
     'search' => 'Kërko',
     'filter' => 'Filtro',
-
     'scope' => 'Fusha e Veprimit',
     'coordinator' => 'Koordinatori',
     'over' => 'Mbi',
@@ -1004,14 +950,11 @@ return [
     'conference_scope_description' => 'Fusha e veprimit të konferencës',
     'clear' => 'Pastro',
     'coordinator_setting_description' => 'Individi ose ekipi që është përgjegjës për organizimin dhe menaxhimin e konferencës.',
-
     'option_are_empty' => 'Opsionet janë bosh',
     'reset' => 'Rivendos',
     'reset_all' => 'Rivendos të gjitha',
     'incoming' => 'Në ardhje',
-
     'conference_list' => 'Lista e konferencave',
-
     'forgot_password_question' => 'Keni harruar fjalëkalimin?',
     'reset_password' => 'Rivendos Fjalëkalimin',
     'please_enter_email_to_reset_password' => "Ju lutem shkruani adresën e email-it të lidhur me llogarinë tuaj të regjistruar më poshtë. Një email do t'i dërgohet në këtë adresë me udhëzime për të rivendosur fjalëkalimin tuaj.",
@@ -1023,7 +966,6 @@ return [
     'reset_password_mail_sent' => 'Një konfirmim është dërguar në adresën tuaj të email-it. Ju lutem ndiqni udhëzimet në email për të rivendosur fjalëkalimin tuaj.',
     'enter_password_to_update' => 'Shkruani fjalëkalimin e ri për të azhurnuar fjalëkalimin e hyrjes.',
     'reset_password_update_success' => 'Fjalëkalimi është azhurnuar me sukses. Ju lutem kyçuni me fjalëkalimin e azhurnuar.',
-
     'conference_redirect' => 'Përcjell Konferencën',
     'conference_redirect_hint' => 'Ridrejton kërkesat nga faqja kryesore e internetit në konferencën e specifikuar. I dobishëm për faqet individuale të konferencave.',
     'scheduled_conference_redirect' => 'Ridrejtimi i Konferencës së Planifikuar',
@@ -1056,7 +998,6 @@ return [
     'no_roles' => 'Asnjë rol',
     'registration_required_fields' => 'Fushat e detyrueshme të regjistrimit',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Ky rol nuk mund të fshihet sepse është ende i caktuar për përdoruesit.',
-
     'categories' => 'Kategoritë',
     'category' => 'Kategori',
     'new_category' => 'Kategori e re',
@@ -1066,10 +1007,8 @@ return [
     'scheduled_conference_faculties_hint' => 'Përdoret për të filtruar dhe grupuar konferencat e planifikuara sipas fakultetit.',
     'faculty' => 'Fakulteti',
     'faculties' => 'Fakultetet',
-
     'role_assigned_successfully' => 'Roli u caktua me sukses',
     'no_roles_selected' => 'Nuk u zgjodhën role',
-
     'submission_accept_and_skip_review' => 'Prano dorëzimin pa shqyrtim',
     'submission_review_assigned' => '":name" është caktuar për të rishikuar paraqitjen ":submissionName (:submissionId)".',
     'submission_review_assign_accepted' => '":name" ka pranuar të shqyrtojë dorëzimin ":submissionName (:submissionId)".',
@@ -1162,7 +1101,6 @@ return [
     'no_user_invitations' => 'Nuk ka ende ftesa',
     'no_user_invitations_description' => 'Krijo një ftesë për të caktuar role për konferencë ose konferencë të planifikuar.',
     'failed_to_send' => 'Dërgimi dështoi',
-
     'language' => 'Gjuha',
     'switch_language' => 'Ndrysho gjuhën e ndërfaqes',
     'current_language' => 'Gjuha aktuale:',
@@ -1255,7 +1193,6 @@ return [
     'source_text' => 'Teksti burimor',
     'translator' => 'Përkthyes',
     'general_track' => 'Trajektori i përgjithshëm',
-
     'make_a_submission' => 'Bëni një dorëzim',
     'payment_fee' => 'Tarifa e pagesës',
     'add_on_items' => 'Artikuj shtesë',
@@ -1287,12 +1224,10 @@ return [
     'participant_fees' => 'Tarifat e pjesëmarrësve',
     'invoice' => 'Faturë',
     'editors' => 'Redaktorët',
-
     'admin' => 'Administratori',
     'conference_manager' => 'Menaxheri i konferencës',
     'scheduled_conference_editor' => 'Redaktori i konferencës së planifikuar',
     'track_editor' => 'Redaktori i trajektores',
-
     'recommendation_accept' => 'Prano',
     'recommendation_decline' => 'Refuzo',
     'revision_required' => 'Kërkohet rishikim',
@@ -1327,7 +1262,6 @@ return [
     'minor' => 'Dytësor',
     'patch' => 'Arnë',
     'date_installed' => 'Data e instalimit',
-
     'item_name' => 'Emri i artikullit',
     'description_and_instructions' => 'Përshkrimi dhe udhëzimet',
     'indicates_required_item' => 'Tregon artikull të detyrueshëm',
@@ -1336,7 +1270,6 @@ return [
     'response_options_required' => 'Fusha :attribute është e detyrueshme kur lloji i artikullit është Kutizë, Buton radio ose Listë rënëse',
     'new_option' => 'Opsion i ri',
     'payment_fee_form_items' => 'Artikujt e formularit të tarifës së pagesës',
-
     'item_type_text' => 'Kuti teksti me një rresht',
     'item_type_textarea' => 'Kuti teksti e zgjeruar',
     'item_type_checkbox' => 'Kutiza (mund të zgjidhni një ose më shumë)',
@@ -1344,13 +1277,9 @@ return [
     'item_type_select' => 'Listë rënëse',
     'item_type_select_scored' => 'Listë rënëse me pikëzim të peshuar.',
     'item_type_upload' => 'Ngarko skedar',
-
     'reviewer_number' => 'Rishikuesi :number',
-
     'form_item' => 'artikull formulari',
-
     'editor_guidance_understood' => 'Udhëzimet për redaktorët u kuptuan. Mos e shfaq më',
-
     'review_submission_page' => 'Rishiko dorëzimin',
     'reviewer_invitation_page' => 'Ftesë për rishikim',
     'recommend_value' => 'Rekomando :recommendation',

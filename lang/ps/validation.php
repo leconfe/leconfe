@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'د :attribute ډګر باید ومنل شي.',
     'accepted_if' => 'د :attribute ډګر باید ومنل شي کله چې :other :value وي.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'مخصص پیغام',
         ],
     ],
-    'attributes' => [],
 ];

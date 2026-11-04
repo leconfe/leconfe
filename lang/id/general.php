@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Pengajuan dibuat',
     'submission_updated' => 'Pengajuan diperbarui',
@@ -26,7 +25,6 @@ return [
     'failed_credentials' => 'Kredensial ini tidak cocok dengan catatan kami.',
     'throttle_to_many_login_attempts' => 'Terlalu banyak upaya login. Silakan coba lagi dalam :seconds detik.',
     'throttle_please_try_again' => 'Silakan coba lagi dalam :seconds detik.',
-
     'view_conference' => 'Lihat Konferensi',
     'current_event' => 'Acara Saat Ini',
     'login' => 'Masuk',
@@ -58,7 +56,6 @@ return [
     'edit_my_profile' => 'Edit Profil Saya',
     'continue_browsing' => 'Lanjutkan Menjelajah',
     'no_content_provided' => 'Tidak ada konten yang disediakan.',
-
     'dashboard' => 'Dasbor',
     'administration' => 'Administrasi',
     'expire_user_session' => 'Hentikan Sesi Pengguna',
@@ -69,7 +66,6 @@ return [
     'data_caches_cleared_successfully' => 'Cache data berhasil dibersihkan',
     'clear_view_caches' => 'Bersihkan Cache Tampilan',
     'view_caches_cleared_successfully' => 'Cache tampilan berhasil dibersihkan',
-
     'conference' => 'Konferensi',
     'open_conference' => 'Buka Konferensi',
     'open_scheduled_conference' => 'Buka Konferensi Terjadwal',
@@ -79,7 +75,6 @@ return [
     'name' => 'Nama',
     'path' => 'Jalur URL',
     'url_path' => 'Path konferensi. Akan digunakan dalam URL konferensi.',
-
     'appearance' => 'Penampilan',
     'theme' => 'Tema',
     'appearance_color' => 'Warna Penampilan',
@@ -88,7 +83,6 @@ return [
     'saved' => 'Tersimpan!',
     'failed' => 'Gagal!',
     'data_could_not_saved' => 'Data tidak dapat disimpan.',
-
     'setup' => 'Pengaturan',
     'site_setup' => 'Pengaturan Situs',
     'website_name' => 'Nama Website',
@@ -98,18 +92,14 @@ return [
     'short_description_of_the_website' => 'Deskripsi singkat tentang website. Ini akan digunakan untuk membantu mesin pencari memahami website.',
     'about_site' => 'Tentang Situs',
     'page_footer' => 'Footer Halaman',
-
     'sidebar' => 'Bilah samping',
     'sidebars_manager' => 'Manajer Sidebar',
     'no_sidebars_found' => 'Tidak ada sidebar yang ditemukan.',
-
     'navigation_menu' => 'Menu Navigasi',
     'languages' => 'Bahasa',
     'languages_english_fallback' => 'Bahasa Inggris digunakan jika tidak ada bahasa yang dipilih.',
-
     'no_navigation_menu_items_found' => 'Item Menu Navigasi tidak ditemukan',
     'no_navigation_menu_found' => 'Menu Navigasi tidak ditemukan',
-
     'add_navigation_menu' => 'Tambahkan Menu Navigasi',
     'edit' => 'Sunting',
     'delete' => 'Hapus',
@@ -120,12 +110,9 @@ return [
     'edit_navigation_menu_item' => 'Edit Item Menu Navigasi',
     'label' => 'Label',
     'type' => 'Tipe',
-
     'default_language' => 'Bahasa Default',
-
     'settings' => 'Pengaturan',
     'website_setting' => 'Pengaturan Website',
-
     'plugin' => 'Pengaya',
     'enabled' => 'Aktif',
     'author' => 'Penulis',
@@ -138,7 +125,6 @@ return [
     'plugin_installed_successfully' => 'Plugin berhasil diinstal',
     'submit' => 'Kirim',
     'actions' => 'Aksi',
-
     'static_page' => 'Halaman Statis',
     'title' => 'Judul',
     'slug' => 'Slug',
@@ -146,7 +132,6 @@ return [
     'the_complete_page_content' => 'Konten halaman lengkap.',
     'preview' => 'Prabaca',
     'switch_conference' => 'Ganti Konferensi',
-
     'scheduled_conference' => 'Konferensi Terjadwal',
     'enter_the_title_of_the_serie' => 'Masukkan judul seri',
     'start_date' => 'Tanggal Mulai',
@@ -166,7 +151,6 @@ return [
     'upcoming' => 'Akan Datang',
     'archived' => 'Diarsipkan',
     'trash' => 'Sampah',
-
     'proceeding' => 'Prosiding',
     'proceedings' => 'Prosiding',
     'identification' => 'Identifikasi',
@@ -185,7 +169,6 @@ return [
     'proceeding_data' => 'Data Prosiding',
     'articles' => 'Artikel',
     'remove' => 'Hapus',
-
     'conference_settings' => 'Pengaturan Konferensi',
     'conference_identity' => 'Identitas Konferensi',
     'information_about_scheduled_conference' => 'Informasi tentang konferensi yang dijadwalkan',
@@ -196,7 +179,6 @@ return [
     'conference_summary' => 'Ringkasan Konferensi',
     'include_about_your_conference' => 'Cantumkan informasi apapun tentang konferensi Anda yang mungkin menarik bagi pembaca, penulis, atau reviewer.',
     'about_the_conference' => 'Tentang Konferensi',
-
     'website' => 'Website',
     'conference_thumbnail' => 'Thumbnail Konferensi',
     'image_representation_of_the_serie_will_uses' => 'Gambar representasi dari seri yang akan digunakan dalam daftar seri.',
@@ -209,7 +191,6 @@ return [
     'enter_custom_time_format' => 'Masukkan format waktu kustom',
     'time' => 'Waktu',
     'date_and_time_formats' => 'Format Tanggal dan Waktu',
-
     'distribution' => 'Distribusi',
     'distribution_settings' => 'Pengaturan Distribusi',
     'allow_digital_object_dois' => 'Izinkan Identifikator Objek Digital (DOI) diberikan kepada karya yang diterbitkan di konferensi ini',
@@ -226,7 +207,6 @@ return [
     'doi_format' => 'Format DOI',
     'automatically_generate_unique_suffix' => 'Default - Menghasilkan akhiran unik delapan karakter secara otomatis',
     'not_be_automatically_generate_unique_suffix' => 'Tidak Ada - Akhiran harus dimasukkan secara manual di halaman manajemen DOI dan tidak akan dihasilkan secara otomatis',
-
     'registration' => 'Pendaftaran',
     'registration_agency' => 'Agen Pendaftaran',
     'registration_select_agency_dois' => 'Silakan pilih agen pendaftaran yang ingin Anda gunakan saat menyetor DOI.',
@@ -255,18 +235,15 @@ return [
     'password' => 'Kata Sandi',
     'use_crossref_test_api' => 'Gunakan API uji Crossref (lingkungan pengujian) untuk setoran DOI.',
     'username_crossref' => 'Nama pengguna Crossref yang akan digunakan untuk mengautentikasi setoran Anda. Jika Anda menggunakan akun pribadi, silakan lihat saran di atas.',
-
     'search_indexing' => 'Pengindeksan Pencarian',
     'meta_tags' => 'Meta Tag',
     'add_meta_tags_conference' => 'Tambahkan meta tag ke bagian head setiap halaman di konferensi Anda. Sebelum menambahkan tag apa pun, konsultasikan dengan penasihat teknis untuk memastikan bahwa tag tersebut kompatibel dengan situs web Anda dan tidak menimbulkan masalah.',
-
     'role' => 'Peran',
     'role_management' => 'Manajemen Peran',
     'copy_permissions_from' => 'Salin izin dari',
     'advanced_permissions' => 'Izin Lanjutan',
     'persist_permissions' => 'Pertahankan Izin',
     'permissions_persisted_successfully' => 'Izin berhasil dipertahankan.',
-
     'user' => 'Pengguna',
     'profile_photo' => 'Foto Profil',
     'disabled_at' => 'Dinonaktifkan pada',
@@ -284,7 +261,6 @@ return [
     'send_email_to' => 'Kirim Email kepada',
     'reason_for_disabling_user' => 'Alasan Menonaktifkan Pengguna',
     'to_disable_permanently_leave_field_empty' => 'Untuk menonaktifkan secara permanen, biarkan kolom kosong',
-
     'profile_picture' => 'Foto Profil',
     'expertise' => 'Keahlian',
     'select_a_country' => 'Pilih negara',
@@ -297,7 +273,6 @@ return [
     'phone_format_international' => 'Format internasional, misalnya +6281234567890',
     'roles' => 'Peran',
     'hide_users_with_no_roles' => 'Sembunyikan pengguna tanpa peran di konferensi terjadwal ini.',
-
     'permission' => 'Izin',
     'context' => 'Konteks',
     'action' => 'Aksi',
@@ -305,7 +280,6 @@ return [
     'context_must_be_studlycase' => 'Konteks harus dalam format StudlyCase',
     'action_must_be_camelCase' => 'Aksi harus dalam format camelCase',
     'persist_all_permissions_to_storage' => 'Ini akan menyimpan semua izin ke dalam penyimpanan.',
-
     'my_submissions' => 'Kirimanku',
     'submitted_papers' => 'Makalah yang Dikirim',
     'accepted_papers' => 'Makalah yang Diterima',
@@ -313,7 +287,6 @@ return [
     'total_number_of_papers_submitted' => 'Jumlah total makalah yang dikirim',
     'accepted_paper_in_the_last_30_days' => 'Makalah yang diterima dalam 30 hari terakhir',
     'new_authors_in_the_last_30_days' => 'Penulis baru dalam 30 hari terakhir',
-
     'incomplete' => 'Belum Lengkap',
     'queued' => 'Antrian',
     'on_payment' => 'Saat Pembayaran',
@@ -324,7 +297,6 @@ return [
     'scheduled' => 'Terjadwal',
     'declined' => 'Ditolak',
     'withdrawn' => 'Ditarik',
-
     'no_editor_assigned' => 'Editor Belum Ditugaskan',
     'reviewed' => 'Telah Ditinjau',
     'my_queue' => 'Antrian Saya',
@@ -335,7 +307,6 @@ return [
     'create' => 'Buat',
     'pending_withdrawal' => 'Menunggu Penarikan',
     'submission_is_not_open' => 'Pengajuan Belum Dibuka',
-
     'before_you_begin' => 'Sebelum Anda Mulai',
     'before_you_begin_current_scheduled' => '<p>Terima kasih telah mengirimkan ke :title. Anda akan diminta untuk mengunggah file, mengidentifikasi rekan penulis, dan memberikan informasi seperti judul dan abstrak.</p>
     <p>Silakan baca Pedoman Pengiriman kami jika Anda belum melakukannya. Saat mengisi formulir, berikan detail sebanyak mungkin untuk membantu editor kami mengevaluasi pekerjaan Anda.</p>
@@ -353,7 +324,6 @@ return [
     'submission_checklist' => 'Daftar Periksa Pengiriman',
     'submission_meets_all_of_requirements' => 'Ya, pengiriman saya memenuhi semua persyaratan ini.',
     'agree_to_my_collected_stored_to_privacy_statement' => 'Ya, saya setuju agar data saya dikumpulkan dan disimpan sesuai dengan pernyataan privasi.',
-
     'submission_details' => 'Rincian Pengiriman',
     'provide_details_to_help_us' => 'Silakan berikan rincian berikut untuk membantu kami mengelola pengiriman Anda dalam sistem kami.',
     'topic' => 'Topik',
@@ -788,7 +758,6 @@ return [
     'new_discussion_topic_created' => 'Topik Diskusi Baru Dibuat',
     'cannot_delete_role_commites' => 'Tidak dapat menghapus :name, ada :roleType yang masih terkait dengan peran ini',
     'topic_name' => 'Nama Topik',
-
     'participant' => 'Peserta',
     'participants' => 'Peserta',
     'discussion' => 'Diskusi',
@@ -936,7 +905,6 @@ return [
     'submission_license_url_helper' => 'Lisensi akan diatur secara otomatis ke <a class="text-primary-700 underline" href=\':licenseUrl\' target=\'_blank\'>:licenseName</a> saat ini diterbitkan.',
     'override' => 'Timpa',
     'copyright_statement' => 'Hak Cipta (c) :copyrightYear :copyrightHolder',
-
     'waiting_for_payment' => 'Menunggu pembayaran',
     'this_your_pacticipant_retistration_details' => 'Ini adalah detail pendaftaran Anda sebagai peserta.',
     'payment_date' => 'Tanggal Pembayaran',
@@ -975,7 +943,6 @@ return [
     'consider_registration_process' => 'Terima kasih atas kiriman Anda. Harap pertimbangkan untuk melakukan <a class="text-primary-500 hover:underline" href=":route">proses pendaftaran</a> dan selesaikan pembayaran untuk melanjutkan proses pengiriman. Pastikan Anda mendaftar di tingkat penulis untuk melanjutkan proses pengiriman.',
     'we_apologize_registration_currenty_closed' => 'Kami mohon maaf, tetapi pendaftaran saat ini sedang ditutup.',
     'have_questin_contact_our_technical_support' => 'Punya pertanyaan? Hubungi <strong>Kontak Dukungan Teknis</strong> kami.',
-
     'are_you_sure_registration' => 'Apakah Anda yakin ingin mendaftar sebagai <strong>:type</strong>?',
     'heres_your_registration_details' => 'Berikut rincian pendaftaran Anda',
     'author_registration' => 'Registrasi Penulis',
@@ -988,20 +955,16 @@ return [
     'registration_process_guide' => 'Anda dapat melakukan proses pendaftaran dengan mengklik jenis pendaftaran yang Anda inginkan di bawah ini.',
     'submission_not_started_registration' => 'Pengajuan ini belum memulai proses pendaftaran.',
     'we_apologize_registration_currenty_closed_agenda' => "Kami mohon maaf, tetapi pendaftaran saat ini sudah ditutup. Lihatlah <a class='text-primary-500 hover:underline' href=':href'>agenda</a> untuk membantu Anda mengetahui kapan pendaftaran dibuka.",
-
     'pending_submission_payment' => 'Pembayaran Pengajuan Tertunda',
     'total_pending_submission_payment' => 'Jumlah total pembayaran pengajuan tertunda',
     'pending_registrations' => 'Pendaftaran Tertunda',
     'total_pending_registration' => 'Jumlah total pendaftaran tertunda',
     'finished_registrations' => 'Pendaftaran Selesai',
     'finished_registration_30_days' => 'Pendaftaran selesai dalam 30 hari terakhir',
-
     'you_have_to_register_to_complete_submission_payment' => 'Anda harus mendaftar ke salah satu jenis pendaftaran di bawah ini untuk menyelesaikan pembayaran pengajuan Anda.',
-
     'apply' => 'Terapkan',
     'search' => 'Cari',
     'filter' => 'Filter',
-
     'scope' => 'Ruang Lingkup',
     'coordinator' => 'Koordinator',
     'over' => 'Lebih',
@@ -1011,14 +974,11 @@ return [
     'conference_scope_description' => 'Ruang lingkup konferensi',
     'clear' => 'Bersihkan',
     'coordinator_setting_description' => 'Individu atau tim yang bertanggung jawab untuk mengatur dan mengelola konferensi.',
-
     'option_are_empty' => 'Opsi kosong',
     'reset' => 'Atur Ulang',
     'reset_all' => 'Atur Ulang Semua',
     'incoming' => 'Masuk',
-
     'conference_list' => 'Daftar Konferensi',
-
     'forgot_password_question' => 'Lupa kata sandi?',
     'reset_password' => 'Atur Ulang Kata Sandi',
     'please_enter_email_to_reset_password' => 'Silakan masukkan alamat email yang terkait dengan akun terdaftar Anda di bawah ini. Sebuah email akan dikirim ke alamat ini dengan instruksi tentang cara mengatur ulang kata sandi Anda.',
@@ -1066,7 +1026,6 @@ return [
     'support' => 'Dukungan',
     'documentation' => 'Dokumentasi',
     'forum' => 'Forum',
-
     'users' => 'Pengguna',
     'send_notification' => 'Kirim Notifikasi',
     'send_notification_description' => 'Pilih pengguna yang akan menerima notifikasi email Anda',
@@ -1081,7 +1040,6 @@ return [
     'no_roles' => 'Tidak ada peran',
     'registration_required_fields' => 'Field Wajib Registrasi',
     'cannot_delete_this_role_because_it_is_still_assigned_to_users' => 'Peran ini tidak dapat dihapus karena masih digunakan oleh pengguna.',
-
     'categories' => 'Kategori',
     'category' => 'Kategori',
     'new_category' => 'Kategori Baru',
@@ -1091,10 +1049,8 @@ return [
     'scheduled_conference_faculties_hint' => 'Ini digunakan untuk memfilter dan mengelompokkan konferensi yang sudah terjadwal berdasarkan fakultas.',
     'faculty' => 'Fakultas',
     'faculties' => 'Fakultas',
-
     'role_assigned_successfully' => 'Peran berhasil ditetapkan',
     'no_roles_selected' => 'Tidak ada peran yang dipilih',
-
     'submission_accept_and_skip_review' => 'Terima pengajuan tanpa tinjauan',
     'submission_review_assigned' => '":name" ditugaskan untuk meninjau pengajuan ":submissionName (:submissionId)".',
     'submission_review_assign_accepted' => '":name" menerima tugas meninjau pengajuan ":submissionName (:submissionId)".',
@@ -1149,7 +1105,6 @@ return [
     'slug_helper' => 'Masukkan pengenal ramah URL unik untuk laman ini. Gunakan huruf kecil, angka, tanda hubung, dan garis bawah saja. Misalnya, \'tentang-kami\' atau \'info-kontak\'',
     'submission_file_renamed_activity' => 'File dengan nama ":oldName" dan id :id, pada kategori ":category" diganti namanya menjadi ":newName".',
     'submission_file_deleted_activity' => 'File dengan nama ":name" dan id :id dihapus.',
-
     'language' => 'Bahasa',
     'switch_language' => 'Ganti bahasa antarmuka',
     'current_language' => 'Bahasa saat ini:',
@@ -1241,7 +1196,6 @@ return [
     'source_text' => 'Teks Sumber',
     'translator' => 'Penerjemah',
     'general_track' => 'Jalur Umum',
-
     'make_a_submission' => 'Kirim Pengajuan',
     'payment_fee' => 'Biaya',
     'add_on_items' => 'Item Tambahan',
@@ -1273,12 +1227,10 @@ return [
     'participant_fees' => 'Biaya Peserta',
     'invoice' => 'Faktur',
     'editors' => 'Editor',
-
     'admin' => 'Admin',
     'conference_manager' => 'Pengelola Konferensi',
     'scheduled_conference_editor' => 'Editor Konferensi Terjadwal',
     'track_editor' => 'Editor Jalur',
-
     'recommendation_accept' => 'Terima',
     'recommendation_decline' => 'Tolak',
     'revision_required' => 'Perlu Revisi',
@@ -1313,7 +1265,6 @@ return [
     'minor' => 'Minor',
     'patch' => 'Patch',
     'date_installed' => 'Tanggal Pemasangan',
-
     'item_name' => 'Nama Item',
     'description_and_instructions' => 'Deskripsi dan Petunjuk',
     'indicates_required_item' => 'Menandakan item wajib',
@@ -1322,7 +1273,6 @@ return [
     'response_options_required' => 'Kolom :attribute wajib diisi jika Jenis Item adalah Kotak Centang, Tombol Radio, atau Daftar Tarik-turun',
     'new_option' => 'Opsi Baru',
     'payment_fee_form_items' => 'Item Formulir Biaya',
-
     'item_type_text' => 'Kotak teks satu baris',
     'item_type_textarea' => 'Kotak teks panjang',
     'item_type_checkbox' => 'Kotak centang (dapat memilih satu atau lebih)',
@@ -1330,13 +1280,9 @@ return [
     'item_type_select' => 'Daftar tarik-turun',
     'item_type_select_scored' => 'Daftar tarik-turun dengan pembobotan skor.',
     'item_type_upload' => 'Unggah Berkas',
-
     'reviewer_number' => 'Peninjau :number',
-
     'form_item' => 'item formulir',
-
     'editor_guidance_understood' => 'Panduan editor sudah dipahami. Jangan tampilkan lagi',
-
     'review_submission_page' => 'Tinjau Pengajuan',
     'reviewer_invitation_page' => 'Undangan Peninjau',
     'recommend_value' => 'Rekomendasikan :recommendation',

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Lähetys luotu',
     'submission_updated' => 'Lähetys päivitetty',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Tiedekunnat',
     'role_assigned_successfully' => 'Roolin määrittäminen onnistui',
     'no_roles_selected' => 'Rooleja ei ole valittu',
-
     'language' => 'Kieli',
     'switch_language' => 'Vaihda käyttöliittymän kieli',
     'current_language' => 'Nykyinen kieli:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Lähdeteksti',
     'translator' => 'Kääntäjä',
     'general_track' => 'Yleinen teemaosio',
-
     'make_a_submission' => 'Tee lähetys',
     'payment_fee' => 'Maksu',
     'add_on_items' => 'Lisävalinnat',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Osallistumismaksut',
     'invoice' => 'Lasku',
     'editors' => 'Toimittajat',
-
     'admin' => 'Ylläpitäjä',
     'conference_manager' => 'Konferenssin hallinnoija',
     'scheduled_conference_editor' => 'Aikataulutetun konferenssin toimittaja',
     'track_editor' => 'Teemaosion toimittaja',
-
     'recommendation_accept' => 'Hyväksy',
     'recommendation_decline' => 'Hylkää',
     'revision_required' => 'Korjauksia vaaditaan',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Väliversio',
     'patch' => 'Korjausversio',
     'date_installed' => 'Asennuspäivä',
-
     'item_name' => 'Kohteen nimi',
     'description_and_instructions' => 'Kuvaus ja ohjeet',
     'indicates_required_item' => 'Osoittaa pakollisen kohteen',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Kenttä :attribute on pakollinen, kun kohteen tyyppi on Valintaruutu, Valintanappi tai Pudotusvalikko',
     'new_option' => 'Uusi vaihtoehto',
     'payment_fee_form_items' => 'Maksulomakkeen kohteet',
-
     'item_type_text' => 'Yksirivinen tekstikenttä',
     'item_type_textarea' => 'Laaja tekstikenttä',
     'item_type_checkbox' => 'Valintaruudut (voit valita yhden tai useamman)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Pudotusvalikko',
     'item_type_select_scored' => 'Pudotusvalikko painotetulla pisteytyksellä.',
     'item_type_upload' => 'Lataa tiedosto',
-
     'reviewer_number' => 'Arvostelija :number',
-
     'form_item' => 'lomakkeen kohde',
-
     'editor_guidance_understood' => 'Toimittajan ohjeet ymmärretty. Älä näytä tätä uudelleen',
-
     'review_submission_page' => 'Arvioi lähetys',
     'reviewer_invitation_page' => 'Arvostelijakutsu',
     'recommend_value' => 'Suosittele: :recommendation',

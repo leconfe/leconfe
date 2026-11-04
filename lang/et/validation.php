@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Välja :attribute tuleb aktsepteerida.',
     'accepted_if' => 'Välja :attribute tuleb aktsepteerida, kui :other on :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'kohandatud sõnum',
         ],
     ],
-    'attributes' => [],
 ];

@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'Het :attribute veld moet worden geaccepteerd.',
     'accepted_if' => 'Het :attribute veld moet worden geaccepteerd wanneer :other :value is.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'gebruikersbericht',
         ],
     ],
-    'attributes' => [],
 ];

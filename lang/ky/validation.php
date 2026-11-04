@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => ':attribute талаасы кабыл алынышы керек.',
     'accepted_if' => ':attribute талаасы :other :value болгондо кабыл алынышы керек.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'жеке билдирүү',
         ],
     ],
-    'attributes' => [],
 ];

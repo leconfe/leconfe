@@ -1,5 +1,4 @@
 <?php
-
 return [
     'accepted' => 'ພາກສະຫນາມ :attribute ຕ້ອງໄດ້ຮັບການຍອມຮັບ.',
     'accepted_if' => 'ພາກສະຫນາມ :attribute ຕ້ອງໄດ້ຮັບການຍອມຮັບເມື່ອ :other ແມ່ນ :value.',
@@ -146,5 +145,4 @@ return [
             'rule-name' => 'ຂໍ້ຄວາມແບບກຳນົດເອງ',
         ],
     ],
-    'attributes' => [],
 ];

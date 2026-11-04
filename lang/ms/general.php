@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Penyerahan dibuat',
     'submission_updated' => 'Penyerahan dikemas kini',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Fakulti-fakulti',
     'role_assigned_successfully' => 'Peranan berjaya diberikan',
     'no_roles_selected' => 'Tiada peranan dipilih',
-
     'language' => 'Bahasa',
     'switch_language' => 'Tukar bahasa antara muka',
     'current_language' => 'Bahasa semasa:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Teks Sumber',
     'translator' => 'Penterjemah',
     'general_track' => 'Bahagian Tematik Umum',
-
     'make_a_submission' => 'Buat Hantaran',
     'payment_fee' => 'Yuran',
     'add_on_items' => 'Item Tambahan',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Yuran Peserta',
     'invoice' => 'Invois',
     'editors' => 'Editor',
-
     'admin' => 'Pentadbir',
     'conference_manager' => 'Pengurus Persidangan',
     'scheduled_conference_editor' => 'Editor Persidangan Berjadual',
     'track_editor' => 'Editor Bahagian Tematik',
-
     'recommendation_accept' => 'Terima',
     'recommendation_decline' => 'Tolak',
     'revision_required' => 'Semakan Semula Diperlukan',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Kecil',
     'patch' => 'Tampalan',
     'date_installed' => 'Tarikh Dipasang',
-
     'item_name' => 'Nama Item',
     'description_and_instructions' => 'Penerangan dan Arahan',
     'indicates_required_item' => 'Menunjukkan item wajib',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Medan :attribute diperlukan apabila Jenis Item ialah Kotak Semak, Butang Radio atau Senarai Juntai Bawah',
     'new_option' => 'Pilihan Baharu',
     'payment_fee_form_items' => 'Item Borang Yuran',
-
     'item_type_text' => 'Kotak teks satu baris',
     'item_type_textarea' => 'Kotak teks lanjutan',
     'item_type_checkbox' => 'Kotak semak (anda boleh memilih satu atau lebih)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Senarai juntai bawah',
     'item_type_select_scored' => 'Senarai juntai bawah dengan pemberatan skor.',
     'item_type_upload' => 'Muat Naik Fail',
-
     'reviewer_number' => 'Penilai :number',
-
     'form_item' => 'item borang',
-
     'editor_guidance_understood' => 'Panduan editor difahami. Jangan tunjukkan ini lagi',
-
     'review_submission_page' => 'Semak Hantaran',
     'reviewer_invitation_page' => 'Jemputan Penilai',
     'recommend_value' => 'Cadangkan :recommendation',

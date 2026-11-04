@@ -1,5 +1,4 @@
 <?php
-
 return [
     'submission_created' => 'Inzending gemaakt',
     'submission_updated' => 'Inzending bijgewerkt',
@@ -1086,7 +1085,6 @@ return [
     'faculties' => 'Faculteiten',
     'role_assigned_successfully' => 'Rol succesvol toegewezen',
     'no_roles_selected' => 'Geen rollen geselecteerd',
-
     'language' => 'Taal',
     'switch_language' => 'Interfacetaal wijzigen',
     'current_language' => 'Huidige taal:',
@@ -1179,7 +1177,6 @@ return [
     'source_text' => 'Brontekst',
     'translator' => 'Vertaler',
     'general_track' => 'Algemene thematische sectie',
-
     'make_a_submission' => 'Een inzending doen',
     'payment_fee' => 'Tarief',
     'add_on_items' => 'Aanvullende opties',
@@ -1211,12 +1208,10 @@ return [
     'participant_fees' => 'Deelnamekosten',
     'invoice' => 'Factuur',
     'editors' => 'Redacteuren',
-
     'admin' => 'Beheerder',
     'conference_manager' => 'Conferentiebeheerder',
     'scheduled_conference_editor' => 'Redacteur van de geplande conferentie',
     'track_editor' => 'Redacteur van thematische sectie',
-
     'recommendation_accept' => 'Accepteren',
     'recommendation_decline' => 'Afwijzen',
     'revision_required' => 'Revisie vereist',
@@ -1251,7 +1246,6 @@ return [
     'minor' => 'Subversie',
     'patch' => 'Patch',
     'date_installed' => 'Installatiedatum',
-
     'item_name' => 'Naam van het item',
     'description_and_instructions' => 'Beschrijving en instructies',
     'indicates_required_item' => 'Geeft een verplicht item aan',
@@ -1260,7 +1254,6 @@ return [
     'response_options_required' => 'Het veld :attribute is verplicht wanneer het type item Selectievakje, Keuzerondje of Vervolgkeuzelijst is',
     'new_option' => 'Nieuwe optie',
     'payment_fee_form_items' => 'Formulieritems voor tarieven',
-
     'item_type_text' => 'Tekstvak met één regel',
     'item_type_textarea' => 'Uitgebreid tekstvak',
     'item_type_checkbox' => 'Selectievakjes (u kunt er een of meer kiezen)',
@@ -1268,13 +1261,9 @@ return [
     'item_type_select' => 'Vervolgkeuzelijst',
     'item_type_select_scored' => 'Vervolgkeuzelijst met gewogen score.',
     'item_type_upload' => 'Bestand uploaden',
-
     'reviewer_number' => 'Beoordelaar :number',
-
     'form_item' => 'formulieritem',
-
     'editor_guidance_understood' => 'Instructies voor redacteuren begrepen. Niet meer tonen',
-
     'review_submission_page' => 'Inzending beoordelen',
     'reviewer_invitation_page' => 'Uitnodiging om te beoordelen',
     'recommend_value' => 'Aanbevelen: :recommendation',
