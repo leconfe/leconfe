@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Pozvánka na recenziu',
     'recommend_value' => 'Odporučiť: :recommendation',
     'completed' => 'Dokončené',
+    'publication_date_helper' => 'Dátum publikovania sa nastaví automaticky pri zverejnení článku. Dátum zadajte iba vtedy, ak bol článok už publikovaný inde a je potrebné uviesť skorší dátum.',
+    'submission_publication_date_updated' => 'Dátum publikovania článku bol aktualizovaný',
 ];

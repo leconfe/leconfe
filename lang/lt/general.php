@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Kvietimas recenzuoti',
     'recommend_value' => 'Rekomenduoti: :recommendation',
     'completed' => 'Užbaigta',
+    'publication_date_helper' => 'Publikavimo data bus nustatyta automatiškai paskelbus straipsnį. Įveskite datą tik jei straipsnis jau buvo paskelbtas kitur ir reikia nurodyti ankstesnę datą.',
+    'submission_publication_date_updated' => 'Straipsnio publikavimo data atnaujinta',
 ];

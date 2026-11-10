@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Einladung zur Rezension',
     'recommend_value' => 'Empfehlen: :recommendation',
     'completed' => 'Abgeschlossen',
+    'publication_date_helper' => 'Das Veröffentlichungsdatum wird bei der Veröffentlichung des Beitrags automatisch festgelegt. Geben Sie nur dann ein Datum ein, wenn der Beitrag bereits anderswo veröffentlicht wurde und zurückdatiert werden muss.',
+    'submission_publication_date_updated' => 'Veröffentlichungsdatum des Beitrags aktualisiert',
 ];

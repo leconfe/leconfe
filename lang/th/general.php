@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'คำเชิญผู้ตรวจสอบ',
     'recommend_value' => 'เสนอแนะ :recommendation',
     'completed' => 'เสร็จสิ้น',
+    'publication_date_helper' => 'ระบบจะกำหนดวันที่เผยแพร่โดยอัตโนมัติเมื่อเผยแพร่บทความ ให้กรอกวันที่เฉพาะเมื่อบทความเคยเผยแพร่ที่อื่นและจำเป็นต้องระบุวันที่ย้อนหลังเท่านั้น',
+    'submission_publication_date_updated' => 'อัปเดตวันที่เผยแพร่บทความแล้ว',
 ];

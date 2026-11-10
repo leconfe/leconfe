@@ -1284,4 +1284,6 @@ return [
     'reviewer_invitation_page' => 'Ftesë për rishikim',
     'recommend_value' => 'Rekomando :recommendation',
     'completed' => 'Përfunduar',
+    'publication_date_helper' => 'Data e publikimit do të caktohet automatikisht kur të publikohet artikulli. Vendosni një datë vetëm nëse artikulli është publikuar më parë diku tjetër dhe duhet shënuar një datë më e hershme.',
+    'submission_publication_date_updated' => 'Data e publikimit të artikullit u përditësua',
 ];

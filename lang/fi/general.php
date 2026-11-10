@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Arvostelijakutsu',
     'recommend_value' => 'Suosittele: :recommendation',
     'completed' => 'Valmis',
+    'publication_date_helper' => 'Julkaisupäivä asetetaan automaattisesti, kun artikkeli julkaistaan. Syötä päivämäärä vain, jos artikkeli on julkaistu aiemmin muualla ja sille on merkittävä aiempi päiväys.',
+    'submission_publication_date_updated' => 'Artikkelin julkaisupäivä päivitetty',
 ];

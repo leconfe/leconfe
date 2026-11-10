@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'جائزہ کار کی دعوت',
     'recommend_value' => 'سفارش: :recommendation',
     'completed' => 'مکمل',
+    'publication_date_helper' => 'مقالہ شائع ہونے پر اشاعت کی تاریخ خود بخود مقرر ہو جائے گی۔ تاریخ صرف اس صورت میں درج کریں جب مقالہ پہلے کہیں اور شائع ہو چکا ہو اور پچھلی تاریخ درج کرنا ضروری ہو۔',
+    'submission_publication_date_updated' => 'مقالے کی اشاعت کی تاریخ اپ ڈیٹ کر دی گئی',
 ];

@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Invitació per revisar',
     'recommend_value' => 'Recomana :recommendation',
     'completed' => 'Completada',
+    'publication_date_helper' => 'La data de publicació s\'establirà automàticament quan es publiqui l\'article. Introduïu una data només si l\'article ja s\'ha publicat en un altre lloc i cal indicar una data anterior.',
+    'submission_publication_date_updated' => 'S\'ha actualitzat la data de publicació de l\'article',
 ];

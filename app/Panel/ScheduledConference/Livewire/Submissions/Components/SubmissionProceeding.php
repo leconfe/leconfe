@@ -3,10 +3,13 @@
 namespace App\Panel\ScheduledConference\Livewire\Submissions\Components;
 
 use App\Actions\Submissions\SubmissionUpdateAction;
+use App\Actions\Submissions\UpdateSubmissionPublicationDateAction;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\Proceeding;
 use App\Models\Submission;
 use App\Models\Track;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -19,6 +22,8 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
 class SubmissionProceeding extends \Livewire\Component implements HasForms, HasInfolists
@@ -41,6 +46,8 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
     public function mount(Submission $submission)
     {
         $this->form->fill([
+            'published_at' => $this->submission->published_at?->toDateString(),
+            'track_id' => $this->submission->track_id,
             'meta' => [
                 'article_pages' => $this->submission->getMeta('article_pages'),
                 'isbn' => $this->submission->getMeta('isbn'),
@@ -118,41 +125,58 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
     {
         return $form
             ->model($this->submission)
-            ->disabled(function (): bool {
-                return ! auth()->user()->can('editing', $this->submission);
-            })
             ->schema([
-                Select::make('track_id')
-                    ->required()
-                    ->relationship('track', 'title', fn ($query) => $query->with('translate'))
-                    ->getOptionLabelFromRecordUsing(fn (Track $record) => $record->translated('title'))
-                    ->label(__('general.track')),
-                TextInput::make('meta.isbn')
-                    ->label('ISBN'),
-                SpatieMediaLibraryFileUpload::make('media.cover')
-                    ->label(__('general.cover_image'))
-                    ->collection('cover')
-                    ->model($this->submission)
-                    ->image()
-                    ->preserveFilenames(),
-                TextInput::make('meta.article_pages')
-                    ->label(__('general.pages'))
-                    ->maxWidth('xs')
-                    ->placeholder(__('general.eg_1_10')),
+                DatePicker::make('published_at')
+                    ->label(__('general.date_published'))
+                    ->format('Y-m-d')
+                    ->native()
+                    ->fieldWrapperView('forms.publication-date-field-wrapper')
+                    ->extraInputAttributes(fn (DatePicker $component): array => [
+                        'aria-describedby' => $component->getId().'-description',
+                    ])
+                    ->disabled(fn (): bool => ! auth()->user()->can('updatePublicationDate', $this->submission)),
+                Group::make([
+                    Select::make('track_id')
+                        ->required()
+                        ->relationship('track', 'title', fn ($query) => $query->with('translate'))
+                        ->getOptionLabelFromRecordUsing(fn (Track $record) => $record->translated('title'))
+                        ->label(__('general.track')),
+                    TextInput::make('meta.isbn')
+                        ->label('ISBN'),
+                    SpatieMediaLibraryFileUpload::make('media.cover')
+                        ->label(__('general.cover_image'))
+                        ->collection('cover')
+                        ->model($this->submission)
+                        ->image()
+                        ->preserveFilenames(),
+                    TextInput::make('meta.article_pages')
+                        ->label(__('general.pages'))
+                        ->maxWidth('xs')
+                        ->placeholder(__('general.eg_1_10')),
+                ])->disabled(fn (): bool => ! auth()->user()->can('editing', $this->submission)),
             ])
             ->statePath('formData');
     }
 
     public function submit()
     {
+        $this->submission = $this->submission->fresh();
+        $canEdit = Gate::allows('editing', $this->submission);
+        abort_unless($canEdit || Gate::allows('updatePublicationDate', $this->submission), 403);
+
         $data = $this->form->getState();
         try {
-            $submission = SubmissionUpdateAction::run(
-                $data,
-                $this->submission
-            );
+            DB::transaction(function () use ($data, $canEdit) {
+                if (array_key_exists('published_at', $data)) {
+                    $this->submission = UpdateSubmissionPublicationDateAction::run($this->submission, $data['published_at']);
+                    unset($data['published_at']);
+                }
 
-            $this->form->model($submission)->saveRelationships();
+                if ($canEdit) {
+                    $this->submission = SubmissionUpdateAction::run($data, $this->submission);
+                    $this->form->model($this->submission)->saveRelationships();
+                }
+            });
 
             Notification::make()
                 ->success()

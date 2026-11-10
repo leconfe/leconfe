@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Felkérés bírálatra',
     'recommend_value' => 'Javaslat: :recommendation',
     'completed' => 'Befejezve',
+    'publication_date_helper' => 'A megjelenés dátuma a cikk közzétételekor automatikusan beállításra kerül. Csak akkor adjon meg dátumot, ha a cikket korábban máshol már közzétették, és korábbi dátumot kell feltüntetni.',
+    'submission_publication_date_updated' => 'A cikk megjelenési dátuma frissítve',
 ];

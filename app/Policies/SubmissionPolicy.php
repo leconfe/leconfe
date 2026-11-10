@@ -347,6 +347,27 @@ class SubmissionPolicy
         return $user->can('actAsEditor', $submission);
     }
 
+    public function updatePublicationDate(User $user, Submission $submission): bool
+    {
+        if (in_array($submission->status, [SubmissionStatus::Published, SubmissionStatus::Declined, SubmissionStatus::Withdrawn], true)) {
+            return false;
+        }
+
+        return $user->roles()
+            ->withoutGlobalScopes()
+            ->where('roles.conference_id', $submission->conference_id)
+            ->where(function (Builder $query) use ($submission) {
+                $query->where(function (Builder $query) {
+                    $query->where('roles.name', UserRole::ConferenceManager->value)
+                        ->where('roles.scheduled_conference_id', 0);
+                })->orWhere(function (Builder $query) use ($submission) {
+                    $query->where('roles.name', UserRole::ScheduledConferenceEditor->value)
+                        ->where('roles.scheduled_conference_id', $submission->scheduled_conference_id);
+                });
+            })
+            ->exists();
+    }
+
     public function withdraw(User $user, Submission $submission)
     {
         if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined])) {

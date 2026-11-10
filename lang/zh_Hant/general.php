@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => '審稿邀請',
     'recommend_value' => '推薦：:recommendation',
     'completed' => '已完成',
+    'publication_date_helper' => '論文發表時將自動設定發表日期。僅當論文先前已在其他地方發表，且需要使用較早的日期時，才填寫此欄位。',
+    'submission_publication_date_updated' => '論文發表日期已更新',
 ];

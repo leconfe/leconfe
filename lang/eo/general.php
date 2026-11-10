@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Invito por recenzi',
     'recommend_value' => 'Rekomendi :recommendation',
     'completed' => 'Finita',
+    'publication_date_helper' => 'La eldondato estos aŭtomate agordita kiam la artikolo estos publikigita. Enigu daton nur se la artikolo jam estis publikigita aliloke kaj necesas indiki pli fruan daton.',
+    'submission_publication_date_updated' => 'La eldondato de la artikolo estas ĝisdatigita',
 ];

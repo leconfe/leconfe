@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Invitație pentru recenzor',
     'recommend_value' => 'Recomandă :recommendation',
     'completed' => 'Finalizată',
+    'publication_date_helper' => 'Data publicării va fi setată automat când articolul este publicat. Introduceți o dată doar dacă articolul a fost publicat anterior în altă parte și trebuie indicată o dată anterioară.',
+    'submission_publication_date_updated' => 'Data publicării articolului a fost actualizată',
 ];

@@ -1272,4 +1272,6 @@ return [
     'reviewer_invitation_page' => 'Retsenzentlikka taklif',
     'recommend_value' => 'Tavsiya: :recommendation',
     'completed' => 'Yakunlangan',
+    'publication_date_helper' => 'Maqola chop etilganda nashr sanasi avtomatik belgilanadi. Faqat maqola avval boshqa joyda chop etilgan va oldingi sanani ko‘rsatish kerak bo‘lsa, sanani kiriting.',
+    'submission_publication_date_updated' => 'Maqolaning nashr sanasi yangilandi',
 ];

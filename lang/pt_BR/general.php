@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Convite para avaliação',
     'recommend_value' => 'Recomendar :recommendation',
     'completed' => 'Concluída',
+    'publication_date_helper' => 'A data de publicação será definida automaticamente quando o artigo for publicado. Informe uma data somente se o artigo já tiver sido publicado em outro local e for necessário indicar uma data anterior.',
+    'submission_publication_date_updated' => 'Data de publicação do artigo atualizada',
 ];

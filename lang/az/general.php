@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Rəyçi dəvəti',
     'recommend_value' => ':recommendation tövsiyə et',
     'completed' => 'Tamamlanıb',
+    'publication_date_helper' => 'Məqalə dərc ediləndə nəşr tarixi avtomatik təyin ediləcək. Yalnız məqalə əvvəllər başqa yerdə dərc edilibsə və daha əvvəlki tarix göstərilməlidirsə tarix daxil edin.',
+    'submission_publication_date_updated' => 'Məqalənin nəşr tarixi yeniləndi',
 ];

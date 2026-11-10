@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'ການເຊີນຜູ້ທົບທວນ',
     'recommend_value' => 'ສະເໜີແນະ: :recommendation',
     'completed' => 'ສຳເລັດແລ້ວ',
+    'publication_date_helper' => 'ວັນທີເຜີຍແຜ່ຈະຖືກກຳນົດອັດຕະໂນມັດເມື່ອບົດຄວາມຖືກເຜີຍແຜ່. ປ້ອນວັນທີສະເພາະເມື່ອບົດຄວາມເຄີຍເຜີຍແຜ່ຢູ່ບ່ອນອື່ນ ແລະ ຕ້ອງການລະບຸວັນທີຍ້ອນຫຼັງ.',
+    'submission_publication_date_updated' => 'ອັບເດດວັນທີເຜີຍແຜ່ບົດຄວາມແລ້ວ',
 ];

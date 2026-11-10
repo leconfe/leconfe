@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Boð til gagnrýnanda',
     'recommend_value' => 'Mæla með :recommendation',
     'completed' => 'Lokið',
+    'publication_date_helper' => 'Útgáfudagsetning verður stillt sjálfkrafa þegar greinin er birt. Sláðu aðeins inn dagsetningu ef greinin hefur áður verið birt annars staðar og tilgreina þarf eldri dagsetningu.',
+    'submission_publication_date_updated' => 'Útgáfudagsetning greinar uppfærð',
 ];

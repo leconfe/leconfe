@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Hakem Daveti',
     'recommend_value' => 'Öner: :recommendation',
     'completed' => 'Tamamlandı',
+    'publication_date_helper' => 'Yayın tarihi, makale yayımlandığında otomatik olarak ayarlanır. Yalnızca makale daha önce başka bir yerde yayımlanmışsa ve daha eski bir tarih belirtilmesi gerekiyorsa tarih girin.',
+    'submission_publication_date_updated' => 'Makalenin yayın tarihi güncellendi',
 ];

@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => '리뷰어 초대',
     'recommend_value' => '권고: :recommendation',
     'completed' => '완료됨',
+    'publication_date_helper' => '논문이 출판되면 출판일이 자동으로 설정됩니다. 논문이 이전에 다른 곳에서 출판되어 과거 날짜를 지정해야 하는 경우에만 날짜를 입력하세요.',
+    'submission_publication_date_updated' => '논문 출판일이 수정되었습니다',
 ];

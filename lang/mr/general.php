@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'पुनरावलोकनाचे आमंत्रण',
     'recommend_value' => 'शिफारस करा: :recommendation',
     'completed' => 'पूर्ण झाले',
+    'publication_date_helper' => 'लेख प्रकाशित झाल्यावर प्रकाशनाची तारीख आपोआप निश्चित केली जाईल. लेख पूर्वी इतरत्र प्रकाशित झाला असेल आणि मागील तारीख नोंदवायची असेल तरच तारीख भरा.',
+    'submission_publication_date_updated' => 'लेखाची प्रकाशन तारीख अद्ययावत केली',
 ];

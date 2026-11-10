@@ -1268,4 +1268,6 @@ return [
     'reviewer_invitation_page' => 'Рецензентке чакыруу',
     'recommend_value' => 'Сунуш: :recommendation',
     'completed' => 'Аякталды',
+    'publication_date_helper' => 'Жарыяланган күн макала жарыяланганда автоматтык түрдө коюлат. Макала мурда башка жерде жарыяланып, мурунку күндү көрсөтүү керек болсо гана күндү киргизиңиз.',
+    'submission_publication_date_updated' => 'Макаланын жарыяланган күнү жаңыртылды',
 ];
