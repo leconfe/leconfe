@@ -1285,4 +1285,7 @@ return [
     'reviewer_invitation_page' => 'دعوة المراجع',
     'recommend_value' => 'التوصية بـ :recommendation',
     'completed' => 'مكتملة',
+    'publication_date_helper' => 'سيُحدَّد تاريخ النشر تلقائيًا عند نشر الورقة. أدخل تاريخًا فقط إذا نُشرت الورقة سابقًا في مكان آخر وتحتاج إلى تأريخها بتاريخ أقدم.',
+    'submission_publication_date_updated' => 'تم تحديث تاريخ نشر الورقة',
+    'submission_proceeding_changes_not_saved' => 'لم يتم حفظ التغييرات لأنه لم يعد من الممكن تعديل هذه الورقة. تم تحديث النموذج.',
 ];

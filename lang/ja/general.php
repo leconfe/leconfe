@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => '査読者への招待',
     'recommend_value' => ':recommendation を推奨',
     'completed' => '完了',
+    'publication_date_helper' => '公開日は論文の公開時に自動設定されます。論文がすでに他の場所で公開されており、過去の日付を指定する必要がある場合にのみ入力してください。',
+    'submission_publication_date_updated' => '論文の公開日を更新しました',
+    'submission_proceeding_changes_not_saved' => 'この論文は編集できなくなったため、変更は保存されませんでした。フォームを再読み込みしました。',
 ];

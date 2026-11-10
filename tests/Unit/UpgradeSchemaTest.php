@@ -2,12 +2,16 @@
 
 namespace Tests\Unit;
 
+use App\Models\Permission;
 use App\Utils\UpgradeSchema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class UpgradeSchemaTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_upgrade_from_1_4_4_to_1_5_0_beta_1_runs_upgrade_schema(): void
     {
         $schemas = UpgradeSchema::getSchemasByVersion('1.4.4', '1.5.0-beta.1');
@@ -103,6 +107,8 @@ class UpgradeSchemaTest extends TestCase
             ->andReturn(0);
 
         $schemas['1.6.0']->run();
+
+        $this->assertTrue(Permission::query()->where('name', 'Submission:updatePublicationDate')->exists());
     }
 
     public function test_upgrade_from_1_5_1_to_1_6_0_runs_both_upgrade_schemas(): void

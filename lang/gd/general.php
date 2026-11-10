@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Cuireadh do dh’ath-sgrùdaire',
     'recommend_value' => 'Mol :recommendation',
     'completed' => 'Coileanta',
+    'publication_date_helper' => 'Thèid ceann-là an fhoillseachaidh a shuidheachadh gu fèin-obrachail nuair a thèid am pàipear fhoillseachadh. Na cuir a-steach ceann-là ach ma chaidh am pàipear fhoillseachadh ann an àite eile roimhe agus ma tha feum air ceann-là nas tràithe.',
+    'submission_publication_date_updated' => 'Chaidh ceann-là foillseachaidh a’ phàipeir ùrachadh',
+    'submission_proceeding_changes_not_saved' => 'Cha deach na h-atharrachaidhean a shàbhaladh oir chan urrainnear am pàipear seo a dheasachadh tuilleadh. Chaidh am foirm ùrachadh.',
 ];

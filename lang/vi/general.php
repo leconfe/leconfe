@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Lời mời đánh giá',
     'recommend_value' => 'Khuyến nghị :recommendation',
     'completed' => 'Hoàn thành',
+    'publication_date_helper' => 'Ngày xuất bản sẽ được đặt tự động khi bài báo được xuất bản. Chỉ nhập ngày nếu bài báo đã được xuất bản ở nơi khác và cần ghi ngày trước đó.',
+    'submission_publication_date_updated' => 'Đã cập nhật ngày xuất bản bài báo',
+    'submission_proceeding_changes_not_saved' => 'Các thay đổi chưa được lưu vì bài báo này không còn có thể chỉnh sửa. Biểu mẫu đã được làm mới.',
 ];

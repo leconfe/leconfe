@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'دعوت‌نامه بازبینی',
     'recommend_value' => 'توصیه به :recommendation',
     'completed' => 'تکمیل شده',
+    'publication_date_helper' => 'تاریخ انتشار هنگام انتشار مقاله به‌صورت خودکار تنظیم می‌شود. فقط اگر مقاله قبلاً در جای دیگری منتشر شده و نیاز به درج تاریخ گذشته دارد، تاریخ وارد کنید.',
+    'submission_publication_date_updated' => 'تاریخ انتشار مقاله به‌روزرسانی شد',
+    'submission_proceeding_changes_not_saved' => 'تغییرات ذخیره نشد، زیرا این مقاله دیگر قابل ویرایش نیست. فرم بازخوانی شد.',
 ];

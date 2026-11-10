@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Позив за рецензирање',
     'recommend_value' => 'Препоручи :recommendation',
     'completed' => 'Завршено',
+    'publication_date_helper' => 'Датум објављивања биће аутоматски постављен када се рад објави. Унесите датум само ако је рад раније објављен на другом месту и потребно је навести ранији датум.',
+    'submission_publication_date_updated' => 'Датум објављивања рада је ажуриран',
+    'submission_proceeding_changes_not_saved' => 'Измене нису сачуване јер се овај рад више не може уређивати. Образац је освежен.',
 ];

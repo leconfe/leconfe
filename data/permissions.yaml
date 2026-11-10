@@ -76,6 +76,7 @@
 - 'Submission:skipReview'
 - 'Submission:submitAs'
 - 'Submission:update'
+- 'Submission:updatePublicationDate'
 - 'Submission:uploadAbstract'
 - 'Submission:uploadPaper'
 - 'Submission:uploadPresentation'

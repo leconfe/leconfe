@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Pozvánka na recenziu',
     'recommend_value' => 'Odporučiť: :recommendation',
     'completed' => 'Dokončené',
+    'publication_date_helper' => 'Dátum publikovania sa nastaví automaticky pri zverejnení článku. Dátum zadajte iba vtedy, ak bol článok už publikovaný inde a je potrebné uviesť skorší dátum.',
+    'submission_publication_date_updated' => 'Dátum publikovania článku bol aktualizovaný',
+    'submission_proceeding_changes_not_saved' => 'Zmeny neboli uložené, pretože tento príspevok už nie je možné upravovať. Formulár bol obnovený.',
 ];

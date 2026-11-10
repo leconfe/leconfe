@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Invitation à évaluer',
     'recommend_value' => 'Recommandation : :recommendation',
     'completed' => 'Terminée',
+    'publication_date_helper' => 'La date de publication sera définie automatiquement lors de la publication de l’article. Saisissez une date uniquement si l’article a déjà été publié ailleurs et doit être antidaté.',
+    'submission_publication_date_updated' => 'Date de publication de l’article mise à jour',
+    'submission_proceeding_changes_not_saved' => 'Les modifications n’ont pas été enregistrées, car cet article ne peut plus être modifié. Le formulaire a été actualisé.',
 ];

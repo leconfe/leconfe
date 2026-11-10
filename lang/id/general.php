@@ -1287,4 +1287,7 @@ return [
     'reviewer_invitation_page' => 'Undangan Peninjau',
     'recommend_value' => 'Rekomendasikan :recommendation',
     'completed' => 'Selesai',
+    'publication_date_helper' => 'Tanggal publikasi akan diisi otomatis saat paper diterbitkan. Isi tanggal hanya jika paper pernah diterbitkan sebelumnya di tempat lain dan tanggalnya perlu dimundurkan.',
+    'submission_publication_date_updated' => 'Tanggal publikasi paper diperbarui',
+    'submission_proceeding_changes_not_saved' => 'Perubahan tidak disimpan karena paper ini sudah tidak dapat diubah. Formulir telah dimuat ulang.',
 ];

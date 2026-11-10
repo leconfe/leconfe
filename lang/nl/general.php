@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Uitnodiging om te beoordelen',
     'recommend_value' => 'Aanbevelen: :recommendation',
     'completed' => 'Voltooid',
+    'publication_date_helper' => 'De publicatiedatum wordt automatisch ingesteld wanneer het artikel wordt gepubliceerd. Vul alleen een datum in als het artikel eerder elders is gepubliceerd en een eerdere datum moet krijgen.',
+    'submission_publication_date_updated' => 'Publicatiedatum van het artikel bijgewerkt',
+    'submission_proceeding_changes_not_saved' => 'De wijzigingen zijn niet opgeslagen omdat dit artikel niet meer kan worden bewerkt. Het formulier is vernieuwd.',
 ];

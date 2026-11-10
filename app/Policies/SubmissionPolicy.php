@@ -347,6 +347,19 @@ class SubmissionPolicy
         return $user->can('actAsEditor', $submission);
     }
 
+    public function updatePublicationDate(User $user, Submission $submission): bool
+    {
+        if (in_array($submission->status, [SubmissionStatus::Published, SubmissionStatus::Declined, SubmissionStatus::Withdrawn], true)) {
+            return false;
+        }
+
+        if ((int) $submission->scheduled_conference_id !== (int) app()->getCurrentScheduledConferenceId()) {
+            return false;
+        }
+
+        return $user->can('Submission:updatePublicationDate');
+    }
+
     public function withdraw(User $user, Submission $submission)
     {
         if (in_array($submission->status, [SubmissionStatus::Withdrawn, SubmissionStatus::Declined])) {

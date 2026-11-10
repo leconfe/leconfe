@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Poziv za recenziranje',
     'recommend_value' => 'Preporuči :recommendation',
     'completed' => 'Završeno',
+    'publication_date_helper' => 'Datum objavljivanja biće automatski postavljen kada se rad objavi. Unesite datum samo ako je rad ranije objavljen na drugom mestu i potrebno je navesti raniji datum.',
+    'submission_publication_date_updated' => 'Datum objavljivanja rada je ažuriran',
+    'submission_proceeding_changes_not_saved' => 'Izmene nisu sačuvane jer se ovaj rad više ne može uređivati. Obrazac je osvežen.',
 ];

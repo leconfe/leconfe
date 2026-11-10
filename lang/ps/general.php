@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'د بیاکتونکي بلنه',
     'recommend_value' => 'د :recommendation سپارښتنه',
     'completed' => 'بشپړ شو',
+    'publication_date_helper' => 'د خپرېدو نېټه به د مقالې د خپرېدو پر مهال په اوتومات ډول وټاکل شي. نېټه یوازې هغه وخت ولیکئ چې مقاله مخکې په بل ځای کې خپره شوې وي او پخوانۍ نېټه ورته ټاکل اړین وي.',
+    'submission_publication_date_updated' => 'د مقالې د خپرېدو نېټه تازه شوه',
+    'submission_proceeding_changes_not_saved' => 'بدلونونه خوندي نه شول، ځکه چې دا مقاله نور د سمون وړ نه ده. فورمه بیا تازه شوه.',
 ];

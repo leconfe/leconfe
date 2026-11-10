@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Invitation til bedømmelse',
     'recommend_value' => 'Anbefal: :recommendation',
     'completed' => 'Fuldført',
+    'publication_date_helper' => 'Udgivelsesdatoen indstilles automatisk, når artiklen udgives. Angiv kun en dato, hvis artiklen tidligere er udgivet et andet sted og skal have en tidligere dato.',
+    'submission_publication_date_updated' => 'Artiklens udgivelsesdato er opdateret',
+    'submission_proceeding_changes_not_saved' => 'Ændringerne blev ikke gemt, fordi dette bidrag ikke længere kan redigeres. Formularen er blevet opdateret.',
 ];

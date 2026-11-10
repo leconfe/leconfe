@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Invitasjon til vurderer',
     'recommend_value' => 'Tilrå :recommendation',
     'completed' => 'Fullført',
+    'publication_date_helper' => 'Publiseringsdatoen vert sett automatisk når artikkelen vert publisert. Skriv berre inn ein dato dersom artikkelen tidlegare er publisert ein annan stad og må få ein tidlegare dato.',
+    'submission_publication_date_updated' => 'Publiseringsdatoen til artikkelen er oppdatert',
+    'submission_proceeding_changes_not_saved' => 'Endringane vart ikkje lagra fordi denne artikkelen ikkje lenger kan redigerast. Skjemaet er oppdatert.',
 ];

@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Jemputan Penilai',
     'recommend_value' => 'Cadangkan :recommendation',
     'completed' => 'Selesai',
+    'publication_date_helper' => 'Tarikh penerbitan akan ditetapkan secara automatik apabila makalah diterbitkan. Masukkan tarikh hanya jika makalah pernah diterbitkan di tempat lain dan perlu menggunakan tarikh terdahulu.',
+    'submission_publication_date_updated' => 'Tarikh penerbitan makalah dikemas kini',
+    'submission_proceeding_changes_not_saved' => 'Perubahan tidak disimpan kerana kertas kerja ini tidak lagi boleh disunting. Borang telah dimuat semula.',
 ];

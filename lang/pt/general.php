@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Convite ao revisor',
     'recommend_value' => 'Recomendar :recommendation',
     'completed' => 'Concluída',
+    'publication_date_helper' => 'A data de publicação será definida automaticamente quando o artigo for publicado. Introduza uma data apenas se o artigo já tiver sido publicado noutro local e for necessário indicar uma data anterior.',
+    'submission_publication_date_updated' => 'Data de publicação do artigo atualizada',
+    'submission_proceeding_changes_not_saved' => 'As alterações não foram guardadas porque este artigo já não pode ser editado. O formulário foi atualizado.',
 ];

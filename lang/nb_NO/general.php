@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Invitasjon til gjennomgang',
     'recommend_value' => 'Anbefal :recommendation',
     'completed' => 'Fullført',
+    'publication_date_helper' => 'Publiseringsdatoen angis automatisk når artikkelen publiseres. Angi bare en dato hvis artikkelen tidligere er publisert et annet sted og må tilbakedateres.',
+    'submission_publication_date_updated' => 'Artikkelens publiseringsdato er oppdatert',
+    'submission_proceeding_changes_not_saved' => 'Endringene ble ikke lagret fordi denne artikkelen ikke lenger kan redigeres. Skjemaet er oppdatert.',
 ];

@@ -1283,4 +1283,7 @@ return [
     'reviewer_invitation_page' => 'Reviewer Invitation',
     'recommend_value' => 'Recommend :recommendation',
     'completed' => 'Completed',
+    'publication_date_helper' => 'The publication date will be set automatically when the paper is published. Only enter a date if the paper was previously published elsewhere and needs to be backdated.',
+    'submission_publication_date_updated' => 'Paper publication date updated',
+    'submission_proceeding_changes_not_saved' => 'Changes were not saved because this paper can no longer be edited. The form has been refreshed.',
 ];

@@ -1268,4 +1268,7 @@ return [
     'reviewer_invitation_page' => 'Pozvánka k recenzi',
     'recommend_value' => 'Doporučit: :recommendation',
     'completed' => 'Dokončeno',
+    'publication_date_helper' => 'Datum publikace se nastaví automaticky při zveřejnění článku. Datum zadejte pouze tehdy, pokud byl článek již publikován jinde a je třeba uvést dřívější datum.',
+    'submission_publication_date_updated' => 'Datum publikace článku bylo aktualizováno',
+    'submission_proceeding_changes_not_saved' => 'Změny nebyly uloženy, protože tento příspěvek již nelze upravovat. Formulář byl obnoven.',
 ];
