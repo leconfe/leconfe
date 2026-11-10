@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Lõpetatud',
     'publication_date_helper' => 'Avaldamiskuupäev määratakse artikli avaldamisel automaatselt. Sisestage kuupäev ainult siis, kui artikkel on varem mujal avaldatud ja vaja on märkida varasem kuupäev.',
     'submission_publication_date_updated' => 'Artikli avaldamiskuupäev on uuendatud',
+    'submission_proceeding_changes_not_saved' => 'Muudatusi ei salvestatud, sest seda artiklit ei saa enam muuta. Vorm on värskendatud.',
 ];

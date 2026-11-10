@@ -1286,4 +1286,5 @@ return [
     'completed' => 'Përfunduar',
     'publication_date_helper' => 'Data e publikimit do të caktohet automatikisht kur të publikohet artikulli. Vendosni një datë vetëm nëse artikulli është publikuar më parë diku tjetër dhe duhet shënuar një datë më e hershme.',
     'submission_publication_date_updated' => 'Data e publikimit të artikullit u përditësua',
+    'submission_proceeding_changes_not_saved' => 'Ndryshimet nuk u ruajtën sepse ky punim nuk mund të redaktohet më. Formulari u rifreskua.',
 ];

@@ -45,6 +45,11 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
 
     public function mount(Submission $submission)
     {
+        $this->fillProceedingForm();
+    }
+
+    protected function fillProceedingForm(): void
+    {
         $this->form->fill([
             'published_at' => $this->submission->published_at?->toDateString(),
             'track_id' => $this->submission->track_id,
@@ -129,6 +134,7 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
                 DatePicker::make('published_at')
                     ->label(__('general.date_published'))
                     ->format('Y-m-d')
+                    ->maxDate(now())
                     ->native()
                     ->fieldWrapperView('forms.publication-date-field-wrapper')
                     ->extraInputAttributes(fn (DatePicker $component): array => [
@@ -162,7 +168,17 @@ class SubmissionProceeding extends \Livewire\Component implements HasForms, HasI
     {
         $this->submission = $this->submission->fresh();
         $canEdit = Gate::allows('editing', $this->submission);
-        abort_unless($canEdit || Gate::allows('updatePublicationDate', $this->submission), 403);
+
+        if (! $canEdit && ! Gate::allows('updatePublicationDate', $this->submission)) {
+            Notification::make()
+                ->danger()
+                ->title(__('general.submission_proceeding_changes_not_saved'))
+                ->send();
+
+            $this->fillProceedingForm();
+
+            return;
+        }
 
         $data = $this->form->getState();
         try {

@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Osatua',
     'publication_date_helper' => 'Argitalpen-data automatikoki ezarriko da artikulua argitaratzean. Sartu data soilik artikulua lehenago beste nonbait argitaratu bada eta aurreko data adierazi behar bada.',
     'submission_publication_date_updated' => 'Artikuluaren argitalpen-data eguneratu da',
+    'submission_proceeding_changes_not_saved' => 'Aldaketak ez dira gorde, artikulu hau ezin delako jada editatu. Inprimakia freskatu da.',
 ];

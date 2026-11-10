@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Tamamlandı',
     'publication_date_helper' => 'Yayın tarihi, makale yayımlandığında otomatik olarak ayarlanır. Yalnızca makale daha önce başka bir yerde yayımlanmışsa ve daha eski bir tarih belirtilmesi gerekiyorsa tarih girin.',
     'submission_publication_date_updated' => 'Makalenin yayın tarihi güncellendi',
+    'submission_proceeding_changes_not_saved' => 'Bu makale artık düzenlenemediği için değişiklikler kaydedilmedi. Form yenilendi.',
 ];

@@ -1270,4 +1270,5 @@ return [
     'completed' => '已完成',
     'publication_date_helper' => '论文发表时将自动设置发表日期。仅当论文之前已在其他地方发表且需要使用较早的日期时，才填写此项。',
     'submission_publication_date_updated' => '论文发表日期已更新',
+    'submission_proceeding_changes_not_saved' => '由于该论文已无法编辑，更改未保存。表单已刷新。',
 ];

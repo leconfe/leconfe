@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Completada',
     'publication_date_helper' => 'A data de publicación establecerase automaticamente ao publicar o artigo. Introduza unha data só se o artigo xa se publicou noutro lugar e cómpre indicar unha data anterior.',
     'submission_publication_date_updated' => 'Actualizouse a data de publicación do artigo',
+    'submission_proceeding_changes_not_saved' => 'Os cambios non se gardaron porque este artigo xa non se pode editar. O formulario actualizouse.',
 ];

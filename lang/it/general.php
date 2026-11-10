@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Completata',
     'publication_date_helper' => 'La data di pubblicazione verrà impostata automaticamente quando l\'articolo sarà pubblicato. Inserire una data solo se l\'articolo è già stato pubblicato altrove ed è necessario indicare una data precedente.',
     'submission_publication_date_updated' => 'Data di pubblicazione dell\'articolo aggiornata',
+    'submission_proceeding_changes_not_saved' => 'Le modifiche non sono state salvate perché questo articolo non può più essere modificato. Il modulo è stato aggiornato.',
 ];

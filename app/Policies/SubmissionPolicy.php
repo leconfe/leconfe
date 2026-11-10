@@ -353,19 +353,11 @@ class SubmissionPolicy
             return false;
         }
 
-        return $user->roles()
-            ->withoutGlobalScopes()
-            ->where('roles.conference_id', $submission->conference_id)
-            ->where(function (Builder $query) use ($submission) {
-                $query->where(function (Builder $query) {
-                    $query->where('roles.name', UserRole::ConferenceManager->value)
-                        ->where('roles.scheduled_conference_id', 0);
-                })->orWhere(function (Builder $query) use ($submission) {
-                    $query->where('roles.name', UserRole::ScheduledConferenceEditor->value)
-                        ->where('roles.scheduled_conference_id', $submission->scheduled_conference_id);
-                });
-            })
-            ->exists();
+        if ((int) $submission->scheduled_conference_id !== (int) app()->getCurrentScheduledConferenceId()) {
+            return false;
+        }
+
+        return $user->can('Submission:updatePublicationDate');
     }
 
     public function withdraw(User $user, Submission $submission)

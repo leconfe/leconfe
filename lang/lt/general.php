@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Užbaigta',
     'publication_date_helper' => 'Publikavimo data bus nustatyta automatiškai paskelbus straipsnį. Įveskite datą tik jei straipsnis jau buvo paskelbtas kitur ir reikia nurodyti ankstesnę datą.',
     'submission_publication_date_updated' => 'Straipsnio publikavimo data atnaujinta',
+    'submission_proceeding_changes_not_saved' => 'Pakeitimai neišsaugoti, nes šio straipsnio nebegalima redaguoti. Forma atnaujinta.',
 ];

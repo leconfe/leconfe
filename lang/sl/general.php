@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Dokončano',
     'publication_date_helper' => 'Datum objave bo samodejno nastavljen ob objavi članka. Datum vnesite le, če je bil članek že objavljen drugje in je treba navesti zgodnejši datum.',
     'submission_publication_date_updated' => 'Datum objave članka je posodobljen',
+    'submission_proceeding_changes_not_saved' => 'Spremembe niso bile shranjene, ker tega prispevka ni več mogoče urejati. Obrazec je bil osvežen.',
 ];

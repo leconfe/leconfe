@@ -1270,4 +1270,5 @@ return [
     'completed' => '已完成',
     'publication_date_helper' => '論文發表時將自動設定發表日期。僅當論文先前已在其他地方發表，且需要使用較早的日期時，才填寫此欄位。',
     'submission_publication_date_updated' => '論文發表日期已更新',
+    'submission_proceeding_changes_not_saved' => '由於該論文已無法編輯，變更未儲存。表單已重新整理。',
 ];

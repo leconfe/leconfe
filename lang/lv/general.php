@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Pabeigts',
     'publication_date_helper' => 'Publicēšanas datums tiks iestatīts automātiski, kad raksts tiks publicēts. Ievadiet datumu tikai tad, ja raksts jau ir publicēts citur un jānorāda agrāks datums.',
     'submission_publication_date_updated' => 'Raksta publicēšanas datums ir atjaunināts',
+    'submission_proceeding_changes_not_saved' => 'Izmaiņas netika saglabātas, jo šo rakstu vairs nevar rediģēt. Veidlapa ir atsvaidzināta.',
 ];

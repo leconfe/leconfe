@@ -2,6 +2,7 @@
 
 namespace App\Utils\UpgradeSchemas;
 
+use App\Models\Permission;
 use Illuminate\Support\Facades\Artisan;
 
 class Upgrade160 extends UpgradeBase
@@ -10,6 +11,10 @@ class Upgrade160 extends UpgradeBase
     {
         Artisan::call('migrate', [
             '--force' => true,
+        ]);
+
+        Permission::firstOrCreate([
+            'name' => 'Submission:updatePublicationDate',
         ]);
     }
 }

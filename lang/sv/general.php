@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Slutförd',
     'publication_date_helper' => 'Publiceringsdatumet anges automatiskt när artikeln publiceras. Ange endast ett datum om artikeln tidigare har publicerats någon annanstans och behöver dateras bakåt.',
     'submission_publication_date_updated' => 'Artikelns publiceringsdatum har uppdaterats',
+    'submission_proceeding_changes_not_saved' => 'Ändringarna sparades inte eftersom den här artikeln inte längre kan redigeras. Formuläret har uppdaterats.',
 ];

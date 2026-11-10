@@ -1270,4 +1270,5 @@ return [
     'completed' => '완료됨',
     'publication_date_helper' => '논문이 출판되면 출판일이 자동으로 설정됩니다. 논문이 이전에 다른 곳에서 출판되어 과거 날짜를 지정해야 하는 경우에만 날짜를 입력하세요.',
     'submission_publication_date_updated' => '논문 출판일이 수정되었습니다',
+    'submission_proceeding_changes_not_saved' => '이 논문은 더 이상 편집할 수 없으므로 변경 사항이 저장되지 않았습니다. 양식을 새로 고쳤습니다.',
 ];

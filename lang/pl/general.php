@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Ukończono',
     'publication_date_helper' => 'Data publikacji zostanie ustawiona automatycznie podczas publikowania artykułu. Wpisz datę tylko wtedy, gdy artykuł został już opublikowany gdzie indziej i trzeba wskazać wcześniejszą datę.',
     'submission_publication_date_updated' => 'Data publikacji artykułu została zaktualizowana',
+    'submission_proceeding_changes_not_saved' => 'Zmiany nie zostały zapisane, ponieważ tego artykułu nie można już edytować. Formularz został odświeżony.',
 ];

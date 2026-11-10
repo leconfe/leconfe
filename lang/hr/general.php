@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Dovršeno',
     'publication_date_helper' => 'Datum objave postavit će se automatski kada se rad objavi. Unesite datum samo ako je rad prethodno objavljen drugdje i potrebno je navesti raniji datum.',
     'submission_publication_date_updated' => 'Datum objave rada je ažuriran',
+    'submission_proceeding_changes_not_saved' => 'Promjene nisu spremljene jer se ovaj rad više ne može uređivati. Obrazac je osvježen.',
 ];

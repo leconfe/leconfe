@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Valmis',
     'publication_date_helper' => 'Julkaisupäivä asetetaan automaattisesti, kun artikkeli julkaistaan. Syötä päivämäärä vain, jos artikkeli on julkaistu aiemmin muualla ja sille on merkittävä aiempi päiväys.',
     'submission_publication_date_updated' => 'Artikkelin julkaisupäivä päivitetty',
+    'submission_proceeding_changes_not_saved' => 'Muutoksia ei tallennettu, koska tätä artikkelia ei voi enää muokata. Lomake on päivitetty.',
 ];

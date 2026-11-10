@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Finalizată',
     'publication_date_helper' => 'Data publicării va fi setată automat când articolul este publicat. Introduceți o dată doar dacă articolul a fost publicat anterior în altă parte și trebuie indicată o dată anterioară.',
     'submission_publication_date_updated' => 'Data publicării articolului a fost actualizată',
+    'submission_proceeding_changes_not_saved' => 'Modificările nu au fost salvate deoarece această lucrare nu mai poate fi editată. Formularul a fost reîmprospătat.',
 ];

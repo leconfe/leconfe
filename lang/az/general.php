@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Tamamlanıb',
     'publication_date_helper' => 'Məqalə dərc ediləndə nəşr tarixi avtomatik təyin ediləcək. Yalnız məqalə əvvəllər başqa yerdə dərc edilibsə və daha əvvəlki tarix göstərilməlidirsə tarix daxil edin.',
     'submission_publication_date_updated' => 'Məqalənin nəşr tarixi yeniləndi',
+    'submission_proceeding_changes_not_saved' => 'Dəyişikliklər yadda saxlanılmadı, çünki bu məqalə artıq redaktə edilə bilməz. Forma yeniləndi.',
 ];

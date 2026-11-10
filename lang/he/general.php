@@ -1270,4 +1270,5 @@ return [
     'completed' => 'הושלם',
     'publication_date_helper' => 'תאריך הפרסום יוגדר אוטומטית בעת פרסום המאמר. יש להזין תאריך רק אם המאמר פורסם בעבר במקום אחר ויש לציין תאריך מוקדם יותר.',
     'submission_publication_date_updated' => 'תאריך פרסום המאמר עודכן',
+    'submission_proceeding_changes_not_saved' => 'השינויים לא נשמרו כי לא ניתן עוד לערוך מאמר זה. הטופס רוענן.',
 ];

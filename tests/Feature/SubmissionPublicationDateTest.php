@@ -17,8 +17,10 @@ use App\Models\Track;
 use App\Models\User;
 use App\Panel\ScheduledConference\Livewire\Submissions\Components\SubmissionProceeding;
 use App\Providers\PanelProvider;
+use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RickSelby\Laravel\GateCache\GateCache;
 use Spatie\Activitylog\Models\Activity;
 use Tests\Feature\Multilingual\Concerns\InteractsWithContentLanguages;
 use Tests\Feature\Multilingual\Concerns\MakesPapers;
@@ -56,6 +59,7 @@ class SubmissionPublicationDateTest extends TestCase
         $this->event = $this->makeScheduledConference($this->conference);
         $this->useConference($this->conference, $this->event);
         Permission::query()->firstOrCreate(['name' => 'Submission:submitAs', 'guard_name' => 'web']);
+        Permission::query()->firstOrCreate(['name' => 'Submission:updatePublicationDate', 'guard_name' => 'web']);
 
         $this->paper = $this->makePaper(
             $this->makeAuthor(),
@@ -72,7 +76,7 @@ class SubmissionPublicationDateTest extends TestCase
     }
 
     #[DataProvider('authorizedRoles')]
-    public function test_manager_and_scheduled_editor_can_correct_the_date_after_unpublishing(UserRole $role): void
+    public function test_admin_manager_and_scheduled_editor_can_correct_the_date_after_unpublishing(UserRole $role): void
     {
         $staff = $this->userWithRole($role);
         $this->actingAs($staff);
@@ -114,7 +118,7 @@ class SubmissionPublicationDateTest extends TestCase
 
     public static function authorizedRoles(): array
     {
-        return [[UserRole::ConferenceManager], [UserRole::ScheduledConferenceEditor]];
+        return [[UserRole::Admin], [UserRole::ConferenceManager], [UserRole::ScheduledConferenceEditor]];
     }
 
     #[DataProvider('unauthorizedRoles')]
@@ -142,8 +146,32 @@ class SubmissionPublicationDateTest extends TestCase
             [UserRole::Author],
             [UserRole::Reviewer],
             [UserRole::Participant],
-            [UserRole::Admin],
         ];
+    }
+
+    public function test_access_follows_the_permission_instead_of_the_role_name(): void
+    {
+        $this->setEditing();
+        $role = Role::withoutGlobalScopes()->create([
+            'name' => 'Production Editor',
+            'guard_name' => 'web',
+            'conference_id' => $this->event->conference_id,
+            'scheduled_conference_id' => $this->event->id,
+        ]);
+        $role->setMeta('permission_level', UserRole::TrackEditor->value);
+        $staff = User::factory()->create(['password' => 'password123456']);
+        $staff->assignRole($role);
+        $this->actingAs($staff);
+
+        $this->assertFalse(Gate::allows('updatePublicationDate', $this->paper));
+
+        $role->givePermissionTo('Submission:updatePublicationDate');
+        $staff->unsetRelation('roles');
+        $this->forgetCachedAbilities();
+
+        $this->assertTrue(Gate::allows('updatePublicationDate', $this->paper));
+        UpdateSubmissionPublicationDateAction::run($this->paper, '2025-11-10');
+        $this->assertSame('2025-11-10', $this->paper->fresh()->published_at->toDateString());
     }
 
     #[DataProvider('foreignRoleScopes')]
@@ -181,7 +209,11 @@ class SubmissionPublicationDateTest extends TestCase
         $staff->roles()->detach();
         $staff->unsetRelation('roles');
 
-        $component->call('submit')->assertFormFieldIsDisabled('published_at');
+        $this->forgetCachedAbilities();
+
+        $component->call('submit')
+            ->assertNotified(__('general.submission_proceeding_changes_not_saved'))
+            ->assertFormFieldIsDisabled('published_at');
         $this->assertNull($this->paper->fresh()->published_at);
         $this->expectException(AuthorizationException::class);
         UpdateSubmissionPublicationDateAction::run($this->paper, '2025-11-10');
@@ -322,7 +354,7 @@ class SubmissionPublicationDateTest extends TestCase
             ->assertFormFieldIsDisabled('published_at')
             ->fillForm(['published_at' => '2025-11-10'])
             ->call('submit')
-            ->assertForbidden();
+            ->assertNotified(__('general.submission_proceeding_changes_not_saved'));
 
         $this->assertSame('2027-02-02', $this->paper->fresh()->published_at->toDateString());
         $this->expectException(AuthorizationException::class);
@@ -342,11 +374,38 @@ class SubmissionPublicationDateTest extends TestCase
         $this->paper->state()->publish();
         $publicationDate = $this->paper->fresh()->published_at->toDateTimeString();
 
-        $component->call('submit')->assertForbidden();
+        $component->call('submit')
+            ->assertNotified(__('general.submission_proceeding_changes_not_saved'))
+            ->assertFormSet(['published_at' => fn ($date): bool => Carbon::parse($date)->toDateString() === Carbon::parse($publicationDate)->toDateString()])
+            ->assertFormFieldIsDisabled('published_at');
         $this->assertSame($publicationDate, $this->paper->fresh()->published_at->toDateTimeString());
 
         $this->expectException(AuthorizationException::class);
         UpdateSubmissionPublicationDateAction::run($stalePaper, '2025-11-10');
+    }
+
+    public function test_a_future_date_is_rejected(): void
+    {
+        $this->setEditing();
+        $this->travelTo(Carbon::parse('2026-11-10 09:30:00'));
+        $this->actingAs($this->userWithRole(UserRole::ScheduledConferenceEditor));
+
+        Livewire::test(SubmissionProceeding::class, ['submission' => $this->paper])
+            ->fillForm(['published_at' => '2026-11-11'])
+            ->call('submit')
+            ->assertHasFormErrors(['published_at']);
+        $this->assertNull($this->paper->fresh()->published_at);
+
+        try {
+            UpdateSubmissionPublicationDateAction::run($this->paper, '2026-11-11');
+            $this->fail('A future publication date was saved.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('published_at', $exception->errors());
+            $this->assertNull($this->paper->fresh()->published_at);
+        }
+
+        UpdateSubmissionPublicationDateAction::run($this->paper, '2026-11-10');
+        $this->assertSame('2026-11-10', $this->paper->fresh()->published_at->toDateString());
     }
 
     #[DataProvider('invalidDates')]
@@ -389,6 +448,14 @@ class SubmissionPublicationDateTest extends TestCase
             [SubmissionStatus::Declined, false],
             [SubmissionStatus::Withdrawn, false],
         ];
+    }
+
+    private function forgetCachedAbilities(): void
+    {
+        Closure::bind(function (): void {
+            $this->rawResults = collect();
+            $this->userInstances = [];
+        }, app(GateContract::class), GateCache::class)();
     }
 
     private function setEditing(): void

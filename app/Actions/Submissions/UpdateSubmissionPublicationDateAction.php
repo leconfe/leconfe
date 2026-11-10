@@ -22,7 +22,7 @@ class UpdateSubmissionPublicationDateAction
 
             $data = Validator::make(
                 ['published_at' => $publishedAt],
-                ['published_at' => ['nullable', 'date_format:Y-m-d']],
+                ['published_at' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:today']],
                 [],
                 ['published_at' => __('general.date_published')],
             )->validate();

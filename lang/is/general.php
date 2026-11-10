@@ -1270,4 +1270,5 @@ return [
     'completed' => 'Lokið',
     'publication_date_helper' => 'Útgáfudagsetning verður stillt sjálfkrafa þegar greinin er birt. Sláðu aðeins inn dagsetningu ef greinin hefur áður verið birt annars staðar og tilgreina þarf eldri dagsetningu.',
     'submission_publication_date_updated' => 'Útgáfudagsetning greinar uppfærð',
+    'submission_proceeding_changes_not_saved' => 'Breytingarnar voru ekki vistaðar því ekki er lengur hægt að breyta þessari grein. Eyðublaðið hefur verið endurnýjað.',
 ];
