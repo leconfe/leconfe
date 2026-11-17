@@ -110,6 +110,7 @@ class Submission extends Model implements HasMedia, HasPayment, Sortable
         });
 
         static::deleting(function (Submission $submission) {
+            $submission->presentations()->get()->each->delete();
             $submission->discussionTopics->each->delete();
             $submission->submissionFiles->each->delete();
             $submission->authors->each->delete();
