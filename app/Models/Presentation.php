@@ -32,6 +32,12 @@ class Presentation extends Model implements HasMedia
 
     protected static function booted(): void
     {
+        static::deleting(function (Presentation $presentation) {
+            $presentation->comments()->get()->each->delete();
+            $presentation->views()->delete();
+            $presentation->likes()->delete();
+        });
+
         static::created(function (Presentation $presentation) {
             // set as final when presentation is only one exists
             if (!$presentation->is_final && $presentation->submission->presentations()->count() === 1) {
